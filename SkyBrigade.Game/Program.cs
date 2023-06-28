@@ -2,8 +2,7 @@
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.OpenGL;
-
-
+using SkyBrigade.Engine.Rendering;
 using Shader = SkyBrigade.Engine.OpenGL.Shader;
 using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
@@ -20,6 +19,7 @@ class DemoGameScreen : IGameScreen
             new Vertex(1, 1, 0, 1, 0),
             new Vertex(-1, 1, 0, 0, 0),
     };
+    private Camera testCamera;
 
 
     public void Initialize(GL gl)
@@ -42,18 +42,23 @@ class DemoGameScreen : IGameScreen
         testVbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
 
         testShader = GameManager.Instance.ContentManager.GenerateNamedShader("basic_shader", "Assets/shaders/basic/basic.vert", "Assets/shaders/basic/basic.frag");
+
+        testCamera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5) };
     }
 
     public void Render(GL gl, float dt)
     {
         gl.Clear(ClearBufferMask.ColorBufferBit);
-        gl.Viewport(0, 0, 1280, 720);
+        gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
 
         testShader.Use();
 
         gl.ActiveTexture(TextureUnit.Texture0);
         gl.BindTexture(TextureTarget.Texture2D, testTexture.Handle);
         testShader.SetUniform("uTexture", 0);
+
+        testShader.SetUniform("uView", testCamera.View);
+        testShader.SetUniform("uProjection", testCamera.Projection);
 
         testVbo.Bind();
 
@@ -70,7 +75,7 @@ class DemoGameScreen : IGameScreen
 
     public void Update(float dt)
     {
-
+        testCamera.Update(dt);
     }
 
     public void Dispose()

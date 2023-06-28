@@ -16,11 +16,13 @@
     <None Remove="OpenGL\" />
     <None Remove="Content\" />
     <None Remove="Data\" />
+    <None Remove="Rendering\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
     <Folder Include="Content\" />
     <Folder Include="Data\" />
+    <Folder Include="Rendering\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />
