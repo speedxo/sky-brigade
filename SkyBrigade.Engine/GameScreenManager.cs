@@ -3,7 +3,7 @@ using Silk.NET.OpenGL;
 
 namespace SkyBrigade.Engine;
 
-public class GameScreenManager
+public class GameScreenManager : IDisposable
 {
     private Dictionary<Type, IGameScreen> screens;
     private Type currentScreenType;
@@ -37,10 +37,10 @@ public class GameScreenManager
             var newScreen = Activator.CreateInstance(type) as IGameScreen;
 
             if (newScreen == null)
-                throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upsets occurred??");
+                throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upset occurred??");
 
             newScreen.Initialize(gl);
-            newScreen.LoadContent();
+            //newScreen.LoadContent();
 
             currentScreenType = type;
             screens.Add(type, newScreen);
@@ -50,7 +50,10 @@ public class GameScreenManager
         {
             if (screens.TryGetValue(currentScreenType, out var currentScreen))
             {
-                currentScreen.UnloadContent();
+                /*  TODO: need some kind of system to load and unload larger
+                 *  objects for gamescreens we intent to go back to.
+                 */
+                //currentScreen.UnloadContent();
             }
 
         }
@@ -70,5 +73,11 @@ public class GameScreenManager
         {
             screen.Render(gl, dt);
         }
+    }
+
+    public void Dispose()
+    {
+        foreach (var item in screens.Values)
+            item.Dispose();
     }
 }

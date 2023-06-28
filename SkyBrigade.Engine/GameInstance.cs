@@ -5,6 +5,7 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
+using SkyBrigade.Engine.Content;
 
 namespace SkyBrigade.Engine;
 
@@ -15,6 +16,7 @@ public class GameManager : IDisposable
     public static GameManager Instance => _instance.Value;
 
     #region Public Members
+    public ContentManager ContentManager { get; private set; }
     public GL Gl { get; private set; }
     public bool IsInputCaptured { get; private set; } = true;
     public GameScreenManager GameScreenManager { get; private set; }
@@ -68,7 +70,7 @@ public class GameManager : IDisposable
         {
             Input.Keyboards[i].KeyDown += onKeyDown;
         }
-
+        ContentManager = new ContentManager();
 
         GameScreenManager = new GameScreenManager(Gl);
         GameScreenManager.ChangeGameScreen(initialGameScreen);
@@ -124,6 +126,7 @@ public class GameManager : IDisposable
 
     public void Dispose()
     {
+        GameScreenManager.Dispose();
         Window.Dispose();
     }
 }
