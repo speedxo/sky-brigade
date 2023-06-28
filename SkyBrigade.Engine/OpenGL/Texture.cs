@@ -9,9 +9,11 @@ public class Texture : IDisposable
 {
     public uint Handle { get; }
     private GL _gl;
+    internal string path;
 
     public unsafe Texture(GL gl, string path)
     {
+        this.path = path;
         _gl = gl;
 
         Handle = _gl.GenTexture();
