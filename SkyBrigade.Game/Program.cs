@@ -12,7 +12,7 @@ class DemoGameScreen : IGameScreen
 
     public void Initialize(GL gl)
     {
-
+        gl.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     }
 
     public void LoadContent()
@@ -22,7 +22,7 @@ class DemoGameScreen : IGameScreen
 
     public void Render(GL gl, float dt)
     {
-
+        gl.Clear(ClearBufferMask.ColorBufferBit);
     }
 
     public void UnloadContent()
@@ -40,7 +40,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        GameInstance.Instance.Run(GameInstanceParameters.Default with {
+        GameManager.Instance.Run(GameInstanceParameters.Default with {
             InitialGameScreen = typeof(DemoGameScreen),
             WindowTitle = "vrek"
         });

@@ -8,11 +8,11 @@ using Silk.NET.Windowing;
 
 namespace SkyBrigade.Engine;
 
-public class GameInstance : IDisposable
+public class GameManager : IDisposable
 {
-    private static readonly Lazy<GameInstance> _instance = new Lazy<GameInstance>(() => new GameInstance());
+    private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
 
-    public static GameInstance Instance => _instance.Value;
+    public static GameManager Instance => _instance.Value;
 
     #region Public Members
     public GL Gl { get; private set; }
