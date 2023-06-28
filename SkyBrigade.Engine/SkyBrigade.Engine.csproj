@@ -17,6 +17,8 @@
     <None Remove="Content\" />
     <None Remove="Data\" />
     <None Remove="Rendering\" />
+    <None Remove="Assets\render_rectangle_shader\basic.frag" />
+    <None Remove="Assets\render_rectangle_shader\basic.vert" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -36,5 +38,13 @@
     <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.17.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.17.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\render_rectangle_shader\basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\render_rectangle_shader\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
