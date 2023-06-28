@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Game", "SkyBrigade.Game.csproj", "{84051FAA-80FF-4329-A7C4-21A6542E020F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Engine", "..\SkyBrigade.Engine\SkyBrigade.Engine.csproj", "{4F04B038-6099-43D6-A2AC-FCA8A32EDF62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{84051FAA-80FF-4329-A7C4-21A6542E020F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84051FAA-80FF-4329-A7C4-21A6542E020F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84051FAA-80FF-4329-A7C4-21A6542E020F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F04B038-6099-43D6-A2AC-FCA8A32EDF62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F04B038-6099-43D6-A2AC-FCA8A32EDF62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F04B038-6099-43D6-A2AC-FCA8A32EDF62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F04B038-6099-43D6-A2AC-FCA8A32EDF62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
