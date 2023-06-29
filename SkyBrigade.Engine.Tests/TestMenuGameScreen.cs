@@ -38,6 +38,7 @@ public class TestMenuGameScreen : IGameScreen
         if (ImGui.Begin("information"))
         {
             ImGui.Text($"Test: '{tests[index].Name}' ({index + 1}/{tests.Count})");
+            tests[index].RenderGui();
             ImGui.End();
         }
 

@@ -10,6 +10,7 @@ namespace SkyBrigade.Engine.Tests.Tests
 		public string Name { get; protected set; }
 		void Render(float dt, GL gl, RenderOptions? renderOptions=null);
 		void Update(float dt);
+		void RenderGui();
 
 		void LoadContent(GL gl);
 	}

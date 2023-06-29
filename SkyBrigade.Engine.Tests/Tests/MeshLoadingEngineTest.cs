@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Numerics;
+using ImGuiNET;
 using Silk.NET.OpenGL;
+using Silk.NET.SDL;
 using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.Tests.Tests
@@ -9,7 +12,9 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; } = false;
         public string Name { get; set; } = "Mesh Loading Test";
 
-        Mesh? mesh;
+        private Mesh mesh;
+        private Vector2 scale = Vector2.One;
+        private Vector3 rot = Vector3.Zero;
 
         public void LoadContent(GL gl)
         {
@@ -23,20 +28,29 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
-            mesh?.Draw(renderOptions);
+            mesh.Draw(renderOptions);            
         }
 
         public void Update(float dt)
         {
-
+            if (mesh.Scale != scale)
+                mesh.Scale = scale;
+            if (mesh.Rotation != rot)
+                mesh.Rotation = rot;
         }
 
         public void Dispose()
         {
             Loaded = false;
-            mesh?.Dispose();
+            mesh.Dispose();
 
             GC.SuppressFinalize(this);
+        }
+
+        public void RenderGui()
+        {
+            ImGui.DragFloat2("Scale", ref scale, 0.01f);
+            ImGui.DragFloat3("Rotation", ref rot, 0.1f);
         }
     }
 }

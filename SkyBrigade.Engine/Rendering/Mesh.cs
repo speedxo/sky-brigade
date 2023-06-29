@@ -14,11 +14,11 @@ public class Mesh : IDisposable
      *  TODO: somehow improve
      */
     private Vector3 pos;
-    private float rot;
+    private Vector3 rot;
     private Vector2 scale;
 
     public Vector3 Position { get => pos; set { pos = value; updateModelMatrix(); } }
-    public float Rotation { get => rot; set { rot = value; updateModelMatrix(); } }
+    public Vector3 Rotation { get => rot; set { rot = value; updateModelMatrix(); } }
     public Vector2 Scale { get => scale; set { scale = value; updateModelMatrix(); } }
 
     public Matrix4x4 ModelMatrix { get; private set; }
@@ -26,7 +26,7 @@ public class Mesh : IDisposable
 
     private void updateModelMatrix()
     {
-        ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot));
+        ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y))*Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z));
     }
 
     public Vertex[] Vertices { get; private set; }
@@ -54,7 +54,7 @@ public class Mesh : IDisposable
 
         pos = Vector3.Zero;
         scale = Vector2.One;
-        rot = 0.0f;
+        rot = Vector3.Zero;
         updateModelMatrix();
     }
 
