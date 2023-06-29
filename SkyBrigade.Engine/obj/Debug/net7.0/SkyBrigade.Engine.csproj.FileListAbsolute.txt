@@ -10,5 +10,6 @@
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/refint/SkyBrigade.Engine.dll
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/SkyBrigade.Engine.pdb
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/ref/SkyBrigade.Engine.dll
-/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/render_rectangle_shader/basic.frag
-/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/render_rectangle_shader/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/basic_shader/basic.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/basic_shader/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/among.png
