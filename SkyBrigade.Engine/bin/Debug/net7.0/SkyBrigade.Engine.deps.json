@@ -8,6 +8,8 @@
     ".NETCoreApp,Version=v7.0": {
       "SkyBrigade.Engine/1.0.0": {
         "dependencies": {
+          "CjClutter.ObjLoader.Unofficial": "1.1.0",
+          "Karma.CoreOBJ": "1.4.4",
           "Silk.NET": "2.17.1",
           "Silk.NET.Core": "2.17.1",
           "Silk.NET.Input.Common": "2.17.1",
@@ -24,11 +26,19 @@
           "SkyBrigade.Engine.dll": {}
         }
       },
+      "CjClutter.ObjLoader.Unofficial/1.1.0": {
+        "runtime": {
+          "lib/net5.0/CjClutter.ObjLoader.Loader.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "ImGui.NET/1.88.0": {
         "dependencies": {
           "System.Buffers": "4.5.1",
           "System.Numerics.Vectors": "4.5.0",
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+          "System.Runtime.CompilerServices.Unsafe": "7.0.0-preview.1.22076.8"
         },
         "runtime": {
           "lib/net6.0/ImGui.NET.dll": {
@@ -59,12 +69,81 @@
           }
         }
       },
+      "Karma.CoreInvoke/1.4.3": {
+        "dependencies": {
+          "Karma.Kommons": "1.4.2",
+          "Microsoft.Extensions.Logging": "7.0.0-preview.1.22076.8",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0-preview.1.22076.8"
+        },
+        "runtime": {
+          "lib/net6.0/Karma.CoreInvoke.dll": {
+            "assemblyVersion": "1.4.3.0",
+            "fileVersion": "1.4.3.0"
+          }
+        }
+      },
+      "Karma.CoreOBJ/1.4.4": {
+        "dependencies": {
+          "Karma.CoreInvoke": "1.4.3",
+          "Karma.Kommons": "1.4.2"
+        },
+        "runtime": {
+          "lib/net6.0/Karma.CoreOBJ.dll": {
+            "assemblyVersion": "1.4.4.0",
+            "fileVersion": "1.4.4.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libfast_obj.so": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx-universal/native/libfast_obj.dylib": {
+            "rid": "osx-universal",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/fast_obj.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "Karma.Kommons/1.4.2": {
+        "runtime": {
+          "lib/net6.0/Karma.Kommons.dll": {
+            "assemblyVersion": "1.4.2.0",
+            "fileVersion": "1.4.2.0"
+          }
+        }
+      },
       "Microsoft.CSharp/4.7.0": {},
       "Microsoft.DotNet.PlatformAbstractions/3.1.6": {
         "runtime": {
           "lib/netstandard2.0/Microsoft.DotNet.PlatformAbstractions.dll": {
             "assemblyVersion": "3.1.6.0",
             "fileVersion": "3.100.620.31604"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection/7.0.0-preview.1.22076.8": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0-preview.1.22076.8"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.7608"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0-preview.1.22076.8": {
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.7608"
           }
         }
       },
@@ -77,6 +156,52 @@
           "lib/net7.0/Microsoft.Extensions.DependencyModel.dll": {
             "assemblyVersion": "7.0.0.0",
             "fileVersion": "7.0.22.51805"
+          }
+        }
+      },
+      "Microsoft.Extensions.Logging/7.0.0-preview.1.22076.8": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "7.0.0-preview.1.22076.8",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0-preview.1.22076.8",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0-preview.1.22076.8",
+          "Microsoft.Extensions.Options": "7.0.0-preview.1.22076.8",
+          "System.Diagnostics.DiagnosticSource": "7.0.0-preview.1.22076.8"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.Logging.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.7608"
+          }
+        }
+      },
+      "Microsoft.Extensions.Logging.Abstractions/7.0.0-preview.1.22076.8": {
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.7608"
+          }
+        }
+      },
+      "Microsoft.Extensions.Options/7.0.0-preview.1.22076.8": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0-preview.1.22076.8",
+          "Microsoft.Extensions.Primitives": "7.0.0-preview.1.22076.8"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.Options.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.7608"
+          }
+        }
+      },
+      "Microsoft.Extensions.Primitives/7.0.0-preview.1.22076.8": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "7.0.0-preview.1.22076.8"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.Primitives.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.7608"
           }
         }
       },
@@ -99,7 +224,7 @@
           "Microsoft.Extensions.DependencyModel": "7.0.0",
           "System.Memory": "4.5.5",
           "System.Numerics.Vectors": "4.5.0",
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+          "System.Runtime.CompilerServices.Unsafe": "7.0.0-preview.1.22076.8"
         },
         "runtime": {
           "lib/net6.0/Silk.NET.Core.dll": {
@@ -308,9 +433,14 @@
         }
       },
       "System.Buffers/4.5.1": {},
+      "System.Diagnostics.DiagnosticSource/7.0.0-preview.1.22076.8": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "7.0.0-preview.1.22076.8"
+        }
+      },
       "System.Memory/4.5.5": {},
       "System.Numerics.Vectors/4.5.0": {},
-      "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
+      "System.Runtime.CompilerServices.Unsafe/7.0.0-preview.1.22076.8": {},
       "System.Text.Encodings.Web/7.0.0": {},
       "System.Text.Json/7.0.0": {
         "dependencies": {
@@ -383,12 +513,40 @@
       "serviceable": false,
       "sha512": ""
     },
+    "CjClutter.ObjLoader.Unofficial/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Z1zXHoAkoY7LqXU92fbLvh8Of0T0407SJp8smypjBVq7C5e+Ud1am7VHnx+ZTiEGobTXx5IJzP6EAlb3NvKqfg==",
+      "path": "cjclutter.objloader.unofficial/1.1.0",
+      "hashPath": "cjclutter.objloader.unofficial.1.1.0.nupkg.sha512"
+    },
     "ImGui.NET/1.88.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-5pYlZ4juw1+HaWD8sM8aPqUFcS3b1SHDCXBxfZ02ID96SKHp1icAKKiS0VJA9MbSATQGQd9lAAkY5p8JZGzomA==",
       "path": "imgui.net/1.88.0",
       "hashPath": "imgui.net.1.88.0.nupkg.sha512"
+    },
+    "Karma.CoreInvoke/1.4.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-i4DeGYRvQBBmrFyjL4C0Dh8fIM8EISu9wsi0nUphbwsL8dj0jTJEbPvQa6Xfug/Aizvmk2dIbDRIK7OmvgjhoQ==",
+      "path": "karma.coreinvoke/1.4.3",
+      "hashPath": "karma.coreinvoke.1.4.3.nupkg.sha512"
+    },
+    "Karma.CoreOBJ/1.4.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-F4/HBEIY3EweK2e1RW0qItxU5cVjNNvoKQggOUo2ofMjxihbMNvANLHrDPeMFNkPY1dhGpoHefErl8/aN0lAzw==",
+      "path": "karma.coreobj/1.4.4",
+      "hashPath": "karma.coreobj.1.4.4.nupkg.sha512"
+    },
+    "Karma.Kommons/1.4.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/f/MWMDJJ0lJIgUx/aMYaUYmSYfXHT7gmOAWYvSE2prcz2Ovq1Iw3Ka3/s2hfVEvuoKoXfwCbRbRq9AK6YeI8g==",
+      "path": "karma.kommons/1.4.2",
+      "hashPath": "karma.kommons.1.4.2.nupkg.sha512"
     },
     "Microsoft.CSharp/4.7.0": {
       "type": "package",
@@ -404,12 +562,54 @@
       "path": "microsoft.dotnet.platformabstractions/3.1.6",
       "hashPath": "microsoft.dotnet.platformabstractions.3.1.6.nupkg.sha512"
     },
+    "Microsoft.Extensions.DependencyInjection/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BMvlp0PiW+5LysfDr2Iril9F+RISOkPstVfoTv/NCn708D309Pz42hMyTj8sg5/9StUajG4un/Xgjwq5/uWOOQ==",
+      "path": "microsoft.extensions.dependencyinjection/7.0.0-preview.1.22076.8",
+      "hashPath": "microsoft.extensions.dependencyinjection.7.0.0-preview.1.22076.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ravYa6D2FfbmNkh7S6PsMRrB4+uN+8ZDxOxk2Neg49uOqNmHTvrN1IgB/CedzgiNQbyJCoAFdTIqKXU4dKSS6A==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/7.0.0-preview.1.22076.8",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.7.0.0-preview.1.22076.8.nupkg.sha512"
+    },
     "Microsoft.Extensions.DependencyModel/7.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-oONNYd71J3LzkWc4fUHl3SvMfiQMYUCo/mDHDEu76hYYxdhdrPYv6fvGv9nnKVyhE9P0h20AU8RZB5OOWQcAXg==",
       "path": "microsoft.extensions.dependencymodel/7.0.0",
       "hashPath": "microsoft.extensions.dependencymodel.7.0.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Logging/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uOC5qF5KTYIii34XGTx9ocTaI5sw/kJl/7g+fcZEW3vy/b2TDu4LlezPxfejeaotdwUQVMVf2xtMkW2jt1J5Tg==",
+      "path": "microsoft.extensions.logging/7.0.0-preview.1.22076.8",
+      "hashPath": "microsoft.extensions.logging.7.0.0-preview.1.22076.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Logging.Abstractions/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hBsEDA5RQ2naY8Ic9KIrPBQsVaElMb3XmelE4PgmNhPLRKqg6GOqOBIRiYD1Z8pQD6UXT2jNGIGRXayvjS1Img==",
+      "path": "microsoft.extensions.logging.abstractions/7.0.0-preview.1.22076.8",
+      "hashPath": "microsoft.extensions.logging.abstractions.7.0.0-preview.1.22076.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Options/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aWIaN03ikUr4ikctUklqtczZxwAsO2UPP+hKVUDo3SLBAi+bY6lpM9WzKzedHkJLZQ7eNXCppPOhCN7xmxzH3A==",
+      "path": "microsoft.extensions.options/7.0.0-preview.1.22076.8",
+      "hashPath": "microsoft.extensions.options.7.0.0-preview.1.22076.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Primitives/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1LUdAOSWD5OD8r1krRLEFNx3k69vSCBD9ZKDhKpVD5/8jqeAUUxhGTNlp2nrilWV7/G1yr6YL7QYwC+d9GMRkw==",
+      "path": "microsoft.extensions.primitives/7.0.0-preview.1.22076.8",
+      "hashPath": "microsoft.extensions.primitives.7.0.0-preview.1.22076.8.nupkg.sha512"
     },
     "Silk.NET/2.17.1": {
       "type": "package",
@@ -558,6 +758,13 @@
       "path": "system.buffers/4.5.1",
       "hashPath": "system.buffers.4.5.1.nupkg.sha512"
     },
+    "System.Diagnostics.DiagnosticSource/7.0.0-preview.1.22076.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iqeZ+Mz5QuU1UH9/wUIZBj1euJR1v1vT7Pd96Uo29Q+W56GT2egx2xIhViWZslOwqAY1Z0vrklIeTmvnh6rHQg==",
+      "path": "system.diagnostics.diagnosticsource/7.0.0-preview.1.22076.8",
+      "hashPath": "system.diagnostics.diagnosticsource.7.0.0-preview.1.22076.8.nupkg.sha512"
+    },
     "System.Memory/4.5.5": {
       "type": "package",
       "serviceable": true,
@@ -572,12 +779,12 @@
       "path": "system.numerics.vectors/4.5.0",
       "hashPath": "system.numerics.vectors.4.5.0.nupkg.sha512"
     },
-    "System.Runtime.CompilerServices.Unsafe/6.0.0": {
+    "System.Runtime.CompilerServices.Unsafe/7.0.0-preview.1.22076.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-/iUeP3tq1S0XdNNoMz5C9twLSrM/TH+qElHkXWaPvuNOt+99G75NrV0OS2EqHx5wMN7popYjpc8oTjC1y16DLg==",
-      "path": "system.runtime.compilerservices.unsafe/6.0.0",
-      "hashPath": "system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+      "sha512": "sha512-b2OHecZUPNE1oe0wEGsT+UWoaRLGWRMl2TKSiI8wAfYVhrPXKq7LeYwJUtMaTG7CG6gWI6IXgmL8pkQEYZYO8A==",
+      "path": "system.runtime.compilerservices.unsafe/7.0.0-preview.1.22076.8",
+      "hashPath": "system.runtime.compilerservices.unsafe.7.0.0-preview.1.22076.8.nupkg.sha512"
     },
     "System.Text.Encodings.Web/7.0.0": {
       "type": "package",

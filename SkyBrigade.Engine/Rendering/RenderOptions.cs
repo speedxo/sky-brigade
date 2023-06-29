@@ -17,7 +17,7 @@ public struct RenderOptions
 	{
 		Color = Vector4.One,
 		Shader = GameManager.Instance.ContentManager.GenerateNamedShader("basic", new Shader(GameManager.Instance.Gl, "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag")),
-		Camera = new Camera() { Position = Vector3.Zero },
+		Camera = new Camera() { Position = new Vector3(0, 0, 10) },
 		Texture = GameManager.Instance.ContentManager.GenerateNamedTexture("debug", "Assets/among.png")
 	};
 }

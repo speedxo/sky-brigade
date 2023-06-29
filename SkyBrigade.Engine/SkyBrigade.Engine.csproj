@@ -21,6 +21,7 @@
     <None Remove="Assets\basic_shader\basic.frag" />
     <None Remove="Assets\basic_shader\basic.vert" />
     <None Remove="Assets\among.png" />
+    <None Remove="Collections\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -28,6 +29,7 @@
     <Folder Include="Data\" />
     <Folder Include="Rendering\" />
     <Folder Include="Assets\basic_shader\" />
+    <Folder Include="Collections\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />
@@ -41,6 +43,8 @@
     <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.17.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.17.1" />
+    <PackageReference Include="Karma.CoreOBJ" Version="1.4.4" />
+    <PackageReference Include="CjClutter.ObjLoader.Unofficial" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\basic_shader\basic.frag">

@@ -24,7 +24,7 @@ public class Camera
 
     public Matrix4x4 View { get; private set; }
     public Matrix4x4 Projection { get; private set; }
-    public Vector3 Position { get; set; }
+    public Vector3 Position { get; set; } = new Vector3(0, 0, 10);
     
     public Camera()
     {
@@ -36,6 +36,8 @@ public class Camera
             GameManager.Instance.Input.Mice[i].Scroll += OnMouseWheel;
         }
 
+        View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.Window.FramebufferSize.X / (float)GameManager.Instance.Window.FramebufferSize.Y, 0.1f, 100.0f);
     }
 
 

@@ -23,18 +23,18 @@ namespace SkyBrigade.Engine.Rendering
 
         static RenderRectangle()
         {
-            _vertices = new Vertex[] {
-                new Vertex(-1, -1, 0, 0, 1),
-                new Vertex(1, -1, 0, 1, 1),
-                new Vertex(1, 1, 0, 1, 0),
-                new Vertex(-1, 1, 0, 0, 0)
-            };
-            _vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
-            _vbo.VertexBuffer.BufferData(_vertices);
-            _vbo.ElementBuffer.BufferData(new uint[] {
-                 0, 1, 3,
-                 1, 2, 3
-            });
+                    _vertices = new Vertex[] {
+                        new Vertex(-1, -1, 0, 0, 1),
+                        new Vertex(1, -1, 0, 1, 1),
+                        new Vertex(1, 1, 0, 1, 0),
+                        new Vertex(-1, 1, 0, 0, 0)
+                    };
+                    _vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
+                    _vbo.VertexBuffer.BufferData(_vertices);
+                    _vbo.ElementBuffer.BufferData(new uint[] {
+                             0, 1, 3,
+                             1, 2, 3
+                    });
 
             //Telling the VAO object how to lay out the attribute pointers
             _vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
