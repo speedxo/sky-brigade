@@ -24,11 +24,13 @@
     <None Remove="Assets\shaders\basic\" />
     <None Remove="Assets\shaders\basic\basic.vert" />
     <None Remove="Assets\shaders\basic\basic.frag" />
+    <None Remove="Player\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
     <Folder Include="Assets\shaders\" />
     <Folder Include="Assets\shaders\basic\" />
+    <Folder Include="Player\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\among.png">

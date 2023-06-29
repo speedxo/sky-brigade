@@ -45,7 +45,7 @@ public class Entity
     {
         return Components.ContainsKey(typeof(T));
     }
-    public void Update(float dt)
+    public virtual  void Update(float dt)
     {
         foreach (var item in Components.Values)
             item.Update(dt);
