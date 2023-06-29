@@ -13,20 +13,18 @@ public class Mesh : IDisposable
     /*  There definetly is better way to do this
      *  TODO: somehow improve
      */
-    private Vector3 pos;
-    private Vector3 rot;
-    private Vector2 scale;
+    private Vector3 pos, rot, scale;
 
     public Vector3 Position { get => pos; set { pos = value; updateModelMatrix(); } }
     public Vector3 Rotation { get => rot; set { rot = value; updateModelMatrix(); } }
-    public Vector2 Scale { get => scale; set { scale = value; updateModelMatrix(); } }
+    public Vector3 Scale { get => scale; set { scale = value; updateModelMatrix(); } }
 
     public Matrix4x4 ModelMatrix { get; private set; }
 
 
     private void updateModelMatrix()
     {
-        ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y))*Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z));
+        ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y))*Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z));
     }
 
     public Vertex[] Vertices { get; private set; }
@@ -53,7 +51,7 @@ public class Mesh : IDisposable
         vbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
 
         pos = Vector3.Zero;
-        scale = Vector2.One;
+        scale = Vector3.One;
         rot = Vector3.Zero;
         updateModelMatrix();
     }

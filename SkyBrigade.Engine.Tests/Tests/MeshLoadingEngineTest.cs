@@ -13,7 +13,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         public string Name { get; set; } = "Mesh Loading Test";
 
         private Mesh mesh;
-        private Vector2 scale = Vector2.One;
+        private Vector3 scale = Vector3.One;
         private Vector3 rot = Vector3.Zero;
 
         public void LoadContent(GL gl)
@@ -49,7 +49,7 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void RenderGui()
         {
-            ImGui.DragFloat2("Scale", ref scale, 0.01f);
+            ImGui.DragFloat3("Scale", ref scale, 0.01f);
             ImGui.DragFloat3("Rotation", ref rot, 0.1f);
         }
     }
