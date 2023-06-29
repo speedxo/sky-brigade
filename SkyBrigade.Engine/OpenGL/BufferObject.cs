@@ -25,7 +25,7 @@ public class BufferObject<TDataType> : IDisposable
         _handle = _gl.GenBuffer();
     }
 
-    public unsafe void BufferData(Span<TDataType> data)
+    public unsafe void BufferData(ReadOnlySpan<TDataType> data)
     {
         Bind();
         fixed (void* d = data)

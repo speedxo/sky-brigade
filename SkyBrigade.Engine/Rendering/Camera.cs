@@ -25,6 +25,7 @@ public class Camera
     public Matrix4x4 View { get; private set; }
     public Matrix4x4 Projection { get; private set; }
     public Vector3 Position { get; set; }
+    
     public Camera()
     {
         // this is hacky as shit balls 

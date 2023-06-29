@@ -14,13 +14,12 @@ namespace SkyBrigade.Engine.Rendering
      * 2D stuff but it has an iherent flaw in that it requires an OpenGL context
      * to exist before it can ever be instances, else it crashed the whole thing
      * 
-     * TODO: the vbo here never gets disposed but yolo we move
+     * TODO: the vbo here never gets disposed but yolo we move even if backwards
      */
     public class RenderRectangle
     {
         private static Vertex[] _vertices;
         private static VertexBufferObject<Vertex> _vbo;
-        private static Shader _shader;
 
         static RenderRectangle()
         {
@@ -41,11 +40,13 @@ namespace SkyBrigade.Engine.Rendering
             _vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
             _vbo.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 3 * sizeof(float));
             _vbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
-
-            _shader = GameManager.Instance.ContentManager.LoadShader("Assets/render_rectangle_shader/basic.vert", "Assets/render_rectangle_shader/basic.frag");
         }
 
 
+
+        /*  There definetly is better way to do this
+         *  TODO: improve somehow
+         */
         private Vector3 pos;
         private float rot;
         private Vector2 scale;
@@ -56,17 +57,15 @@ namespace SkyBrigade.Engine.Rendering
 
         public Matrix4x4 ModelMatrix { get; private set; }
 
-        public Texture? Texture { get; set; }
-        public Vector4 Color { get; set; } = Vector4.One;
 
         private void updateModelMatrix()
         {
             ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot));
         }
 
-        public RenderRectangle(Vector3? inPos=null, Vector2? inScale=null, float inRotation=0.0f)
+        public RenderRectangle(Vector3? inPos = null, Vector2? inScale = null, float inRotation = 0.0f)
         {
-            /* We do this in one operation because swag money BABY
+            /* We do this in one call of updateModelMatrix because swag money BABY
 			 */
             pos = inPos ?? Vector3.Zero;
             scale = inScale ?? Vector2.One;
@@ -74,20 +73,20 @@ namespace SkyBrigade.Engine.Rendering
             updateModelMatrix();
         }
 
-        public void Draw(Camera? camera=null)
+        public void Draw(RenderOptions? renderOptions = null)
         {
-            _shader.Use();
-            if (Texture != null)
-            {
-                GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-                GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, Texture.Handle);
-                _shader.SetUniform("uTexture", 0);
-            }
+            var options = renderOptions ?? RenderOptions.Default;
+            options.Shader.Use();
 
-            _shader.SetUniform("uView", camera == null ? Matrix4x4.Identity : camera.View);
-            _shader.SetUniform("uProjection", camera == null ? Matrix4x4.Identity : camera.Projection);
-            _shader.SetUniform("uModel", ModelMatrix);
-            _shader.SetUniform("uColor", Color);
+            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
+            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, options.Texture.Handle);
+            options.Shader.SetUniform("uTexture", 0);
+
+
+            options.Shader.SetUniform("uView", options.Camera.View);
+            options.Shader.SetUniform("uProjection", options.Camera.Projection);
+            options.Shader.SetUniform("uModel", ModelMatrix);
+            options.Shader.SetUniform("uColor", options.Color);
 
             _vbo.Bind();
 
