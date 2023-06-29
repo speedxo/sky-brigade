@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using ImGuiNET;
+using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Rendering;
 
@@ -28,6 +29,12 @@ class DemoGameScreen : IGameScreen
         gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
 
         rect.Draw(RenderOptions.Default with { Camera = testCamera, Texture = testTexture, Color = new System.Numerics.Vector4(MathF.Sin(timer * 0.5f), MathF.Sin(timer * 1.4f), MathF.Sin(timer), 1.0f) });
+
+        if (ImGui.Begin("Debug"))
+        {
+            ImGui.Text($"Memory Consumptions: {GC.GetTotalMemory(false) / 1000000.0}MB");
+            ImGui.End();
+        }
     }
 
     float timer = 0.0f;
