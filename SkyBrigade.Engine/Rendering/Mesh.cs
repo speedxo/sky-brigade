@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Numerics;
 using ObjLoader.Loader.Loaders;
@@ -90,6 +91,9 @@ public class Mesh : IDisposable
         List<Vector3> colors = new List<Vector3>();
         List<Vector2> texs = new List<Vector2>();
         List<Tuple<int, int, int>> faces = new List<Tuple<int, int, int>>();
+        
+        CultureInfo ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+        ci.NumberFormat.CurrencyDecimalSeparator = ".";
 
         foreach (string line in lines)
         {
@@ -97,19 +101,18 @@ public class Mesh : IDisposable
             {
                 // Cut off beginning of line!!! damnit
                 string temp = line.Substring(2);
-
-                Vector3 vec = new Vector3();
+                float x = 0, y = 0, z = 0;
 
                 if (temp.Count((char c) => c == ' ') == 2)
                 {
                     string[] vertparts = temp.Split(' ');
 
-                    bool success = float.TryParse(vertparts[0], out vec.X);
-                    success &= float.TryParse(vertparts[1], out vec.Y);
-                    success &= float.TryParse(vertparts[2], out vec.Z);                    
+                    x = (float)double.Parse(vertparts[0].Trim(), NumberStyles.Any, ci);
+                    y = (float)double.Parse(vertparts[1].Trim(), NumberStyles.Any, ci);
+                    z = (float)double.Parse(vertparts[2].Trim(), NumberStyles.Any, ci);                    
                 }
 
-                verts.Add(new Vertex(vec, Vector3.Zero, new Vector2((float)Math.Sin(vec.X), (float)Math.Sin(vec.Z))));
+                verts.Add(new Vertex(new Vector3(x, y, z), Vector3.Zero, new Vector2((float)Math.Sin(x), (float)Math.Sin(z))));
             }
             else if (line.StartsWith("f "))
             {
