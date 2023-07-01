@@ -133,5 +133,7 @@ public class Shader : IDisposable
         }
 
         return handle;
-    }   
+    }
+
+    public void End() => GameManager.Instance.Gl.UseProgram(0);
 }

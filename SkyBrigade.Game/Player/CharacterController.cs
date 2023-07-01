@@ -26,8 +26,6 @@ namespace SkyBrigade.Game.Player
         public override void Update(float dt)
         {
             base.Update(dt);
-
-			
         }
     }
 }

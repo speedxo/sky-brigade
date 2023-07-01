@@ -57,32 +57,7 @@ public class Mesh : IDisposable
         updateModelMatrix();
     }
 
-
-    // i am scared to test this as i know there is no way the indices are fucked
-    // edit: fuck
-    //public static Mesh FromObj(string path) => new Mesh(() => {
-    //    var objLoaderFactory = new ObjLoaderFactory();
-    //    var objLoader = objLoaderFactory.Create();
-
-    //    using var stream = new FileStream(path, FileMode.Open);
-    //    var data = objLoader.Load(stream);
-
-    //    List<Vertex> vertices = new List<Vertex>();
-    //    List<uint> elements = new List<uint>();
-
-    //    for (int i = 0; i < data.Vertices.Count; i++)
-    //        vertices.Add(new Vertex(new Vector3(data.Vertices[i].X, data.Vertices[i].Y, data.Vertices[i].Z), Vector3.Zero, Vector2.Zero));
-
-    //    foreach (var face in data.Groups[0].Faces)
-    //    {
-    //        elements.Add(face.);
-    //        temp.Add(face.Item2 + offset);
-    //        temp.Add(face.Item3 + offset);
-    //    }
-
-    //    return (vertices.ToArray(), elements.ToArray());
-    //});
-
+    // dont even bother
     public static Mesh FromObj(string path)
     {
         var lines = File.ReadAllLines(path);
@@ -169,6 +144,7 @@ public class Mesh : IDisposable
                     1, 2, 3
                 });
         });
+
     public void Draw(RenderOptions? renderOptions=null)
 	{
         //if (Indices == null || Indices.Length < 1) return; // Dont render if there is nothing to render. Precious performance mmmmm

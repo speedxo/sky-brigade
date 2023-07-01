@@ -24,6 +24,13 @@
     <None Remove="Collections\" />
     <None Remove="GameEntity\" />
     <None Remove="GameEntity\Components\" />
+    <None Remove="Assets\material_shader\" />
+    <None Remove="Assets\material_shader\basic.frag" />
+    <None Remove="Assets\material_shader\basic.vert" />
+    <None Remove="Assets\gray.png" />
+    <None Remove="Assets\white.png" />
+    <None Remove="Assets\material_shader\advanced.frag" />
+    <None Remove="Assets\material_shader\advanced.vert" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -34,6 +41,7 @@
     <Folder Include="Collections\" />
     <Folder Include="GameEntity\" />
     <Folder Include="GameEntity\Components\" />
+    <Folder Include="Assets\material_shader\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />
@@ -58,6 +66,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\among.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\material_shader\basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\material_shader\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\gray.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\white.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\material_shader\advanced.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\material_shader\advanced.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

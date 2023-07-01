@@ -6,12 +6,45 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "SkyBrigade.Game/1.0.0": {
+      "SkyBrigade.Engine/1.0.0": {
         "dependencies": {
-          "SkyBrigade.Engine": "1.0.0"
+          "BepuPhysics": "2.4.0",
+          "BepuUtilities": "2.4.0",
+          "CjClutter.ObjLoader.Unofficial": "1.1.0",
+          "Karma.CoreOBJ": "1.4.4",
+          "Silk.NET": "2.17.1",
+          "Silk.NET.Core": "2.17.1",
+          "Silk.NET.Input.Common": "2.17.1",
+          "Silk.NET.Input.Glfw": "2.17.1",
+          "Silk.NET.Maths": "2.17.1",
+          "Silk.NET.OpenGL": "2.17.1",
+          "Silk.NET.OpenGL.Extensions.ImGui": "2.17.1",
+          "Silk.NET.Windowing": "2.17.1",
+          "Silk.NET.Windowing.Common": "2.17.1",
+          "Silk.NET.Windowing.Glfw": "2.17.1",
+          "SixLabors.ImageSharp": "3.0.1"
         },
         "runtime": {
-          "SkyBrigade.Game.dll": {}
+          "SkyBrigade.Engine.dll": {}
+        }
+      },
+      "BepuPhysics/2.4.0": {
+        "dependencies": {
+          "BepuUtilities": "2.4.0"
+        },
+        "runtime": {
+          "lib/net6.0/BepuPhysics.dll": {
+            "assemblyVersion": "2.4.0.0",
+            "fileVersion": "2.4.0.0"
+          }
+        }
+      },
+      "BepuUtilities/2.4.0": {
+        "runtime": {
+          "lib/net6.0/BepuUtilities.dll": {
+            "assemblyVersion": "2.4.0.0",
+            "fileVersion": "2.4.0.0"
+          }
         }
       },
       "CjClutter.ObjLoader.Unofficial/1.1.0": {
@@ -492,34 +525,28 @@
             "fileVersion": "0.0.0.0"
           }
         }
-      },
-      "SkyBrigade.Engine/1.0.0": {
-        "dependencies": {
-          "CjClutter.ObjLoader.Unofficial": "1.1.0",
-          "Karma.CoreOBJ": "1.4.4",
-          "Silk.NET": "2.17.1",
-          "Silk.NET.Core": "2.17.1",
-          "Silk.NET.Input.Common": "2.17.1",
-          "Silk.NET.Input.Glfw": "2.17.1",
-          "Silk.NET.Maths": "2.17.1",
-          "Silk.NET.OpenGL": "2.17.1",
-          "Silk.NET.OpenGL.Extensions.ImGui": "2.17.1",
-          "Silk.NET.Windowing": "2.17.1",
-          "Silk.NET.Windowing.Common": "2.17.1",
-          "Silk.NET.Windowing.Glfw": "2.17.1",
-          "SixLabors.ImageSharp": "3.0.1"
-        },
-        "runtime": {
-          "SkyBrigade.Engine.dll": {}
-        }
       }
     }
   },
   "libraries": {
-    "SkyBrigade.Game/1.0.0": {
+    "SkyBrigade.Engine/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "BepuPhysics/2.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ck/BJgSQrBqYrj0T9jGljDdHNILBP5kTPTylc7N/hCzR1XJJc7p6ORzwtjTfjgoYkkdajvLHxEQv6BRC8kaysQ==",
+      "path": "bepuphysics/2.4.0",
+      "hashPath": "bepuphysics.2.4.0.nupkg.sha512"
+    },
+    "BepuUtilities/2.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KNMxkzKLHAvV7jRtErxs3rPv71fHToqo/WN96HlT6iomWuwL97tohEbt0B1WA8A6sO5t6PP+qF08d4T9A8k2uA==",
+      "path": "bepuutilities/2.4.0",
+      "hashPath": "bepuutilities.2.4.0.nupkg.sha512"
     },
     "CjClutter.ObjLoader.Unofficial/1.1.0": {
       "type": "package",
@@ -821,11 +848,6 @@
       "sha512": "sha512-1endYlArrsrtXE5L95KiKpAQqYgutpT2+k5EI5bXCqrHt/6gFPYNBac/pO8QMGpdhTJ3P/gfr2ASwvHB7otu0g==",
       "path": "ultz.native.sdl/2.24.3.1",
       "hashPath": "ultz.native.sdl.2.24.3.1.nupkg.sha512"
-    },
-    "SkyBrigade.Engine/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }

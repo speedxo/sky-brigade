@@ -70,11 +70,23 @@ public class GameManager : IDisposable
         {
             Input.Keyboards[i].KeyDown += onKeyDown;
         }
+
         ContentManager = new ContentManager();
+        LoadEssentialAssets();
+
 
         GameScreenManager = new GameScreenManager(Gl);
         GameScreenManager.ChangeGameScreen(initialGameScreen);
 
+    }
+
+    private void LoadEssentialAssets()
+    {
+        ContentManager.GenerateNamedShader("material_basic", "Assets/material_shader/basic.vert", "Assets/material_shader/basic.frag");
+        ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
+
+        ContentManager.GenerateNamedTexture("gray", "Assets/gray.png");
+        ContentManager.GenerateNamedTexture("white", "Assets/white.png");
     }
 
     private void onKeyDown(IKeyboard keyboard, Key key, int arg3)
