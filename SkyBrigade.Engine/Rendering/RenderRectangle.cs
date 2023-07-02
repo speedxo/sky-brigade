@@ -78,10 +78,15 @@ namespace SkyBrigade.Engine.Rendering
             var options = renderOptions ?? RenderOptions.Default;
             options.Material.Use();
 
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, options.Texture.Handle);
-            options.Material.Shader.SetUniform("uTexture", 0);
-
+            if (options.Texture == null)
+                options.Material.Shader.SetUniform("useTexture", 0);
+            else
+            {
+                GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
+                GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, options.Texture.Handle);
+                options.Material.Shader.SetUniform("uTexture", 0);
+                options.Material.Shader.SetUniform("useTexture", 1);
+            }
 
             options.Material.Shader.SetUniform("uView", options.Camera.View);
             options.Material.Shader.SetUniform("uProjection", options.Camera.Projection);

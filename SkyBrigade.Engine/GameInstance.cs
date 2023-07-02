@@ -83,6 +83,7 @@ public class GameManager : IDisposable
     private void LoadEssentialAssets()
     {
         ContentManager.GenerateNamedShader("material_basic", "Assets/material_shader/basic.vert", "Assets/material_shader/basic.frag");
+        ContentManager.GenerateNamedShader("basic", "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag");
         ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
 
         ContentManager.GenerateNamedTexture("gray", "Assets/gray.png");

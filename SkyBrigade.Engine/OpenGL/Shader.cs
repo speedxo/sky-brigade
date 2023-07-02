@@ -55,6 +55,7 @@ public class Shader : IDisposable
         }
         _gl.Uniform1(location, value);
     }
+        
     //Uniforms are properties that applies to the entire geometry
     public void SetUniform(string name, uint value)
     {

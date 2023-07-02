@@ -2,7 +2,7 @@
 {
     public class BasicMaterial : Material
     {
-        public BasicMaterialDescription MaterialDescription { get; set; }
+        public BasicMaterialDescription MaterialDescription;
 
         public BasicMaterial()
         {

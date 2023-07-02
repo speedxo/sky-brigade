@@ -162,6 +162,7 @@ public class Mesh : IDisposable
         options.Material.Shader.SetUniform("uProjection", options.Camera.Projection);
         options.Material.Shader.SetUniform("uModel", ModelMatrix);
         options.Material.Shader.SetUniform("uColor", options.Color);
+        options.Material.Shader.SetUniform("camPos", options.Camera.Position);
 
 
         vbo.Bind();

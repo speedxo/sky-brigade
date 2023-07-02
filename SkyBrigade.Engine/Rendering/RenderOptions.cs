@@ -16,7 +16,7 @@ public struct RenderOptions
 	public static RenderOptions Default { get; } = new RenderOptions
 	{
 		Color = Vector4.One,
-		Material = new BasicMaterial(),	
+		Material = new EmptyMaterial(),	
 		Camera = new Camera() { Position = new Vector3(0, 0, 10) },
 		Texture = GameManager.Instance.ContentManager.GenerateNamedTexture("debug", "Assets/among.png")
 	};

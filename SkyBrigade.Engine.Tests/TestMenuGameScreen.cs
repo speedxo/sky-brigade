@@ -25,15 +25,15 @@ public class TestMenuGameScreen : IGameScreen
         for (int i = 0; i < tests.Count; i++)
             tests[i].LoadContent(gl);
 
-        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
+        gl.ClearColor(System.Drawing.Color.Black);
         gl.Enable(EnableCap.DepthTest);
-
+        gl.DepthFunc(DepthFunction.Lequal);
     }
 
     public void Render(GL gl, float dt)
     {
-        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
+        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         if (ImGui.Begin("information"))
         {
