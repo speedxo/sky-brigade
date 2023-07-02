@@ -150,17 +150,19 @@ public class Mesh : IDisposable
         //if (Indices == null || Indices.Length < 1) return; // Dont render if there is nothing to render. Precious performance mmmmm
 
         var options = renderOptions ?? RenderOptions.Default;
-        options.Shader.Use();
+
+        options.Material.Use();
 
         GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
         GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, options.Texture.Handle);
-        options.Shader.SetUniform("uTexture", 0);
+        options.Material.Shader.SetUniform("uTexture", 0);
 
 
-        options.Shader.SetUniform("uView", options.Camera.View);
-        options.Shader.SetUniform("uProjection", options.Camera.Projection);
-        options.Shader.SetUniform("uModel", ModelMatrix);
-        options.Shader.SetUniform("uColor", options.Color);
+        options.Material.Shader.SetUniform("uView", options.Camera.View);
+        options.Material.Shader.SetUniform("uProjection", options.Camera.Projection);
+        options.Material.Shader.SetUniform("uModel", ModelMatrix);
+        options.Material.Shader.SetUniform("uColor", options.Color);
+
 
         vbo.Bind();
 
@@ -171,7 +173,8 @@ public class Mesh : IDisposable
         }
 
         vbo.Unbind();
-        GameManager.Instance.Gl.UseProgram(0);
+
+        options.Material.End();
     }
 
     public void Dispose()

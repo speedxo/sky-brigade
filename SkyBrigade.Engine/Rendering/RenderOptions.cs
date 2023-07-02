@@ -9,14 +9,14 @@ namespace SkyBrigade.Engine.Rendering;
 public struct RenderOptions
 {
 	public Vector4 Color { get; set; }
-	public Shader Shader { get; set; }
 	public Camera Camera { get; set; }
 	public Texture Texture { get; set; }
+	public Material Material { get; set; }
 
 	public static RenderOptions Default { get; } = new RenderOptions
 	{
 		Color = Vector4.One,
-		Shader = GameManager.Instance.ContentManager.GenerateNamedShader("basic", new Shader(GameManager.Instance.Gl, "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag")),
+		Material = new BasicMaterial(),	
 		Camera = new Camera() { Position = new Vector3(0, 0, 10) },
 		Texture = GameManager.Instance.ContentManager.GenerateNamedTexture("debug", "Assets/among.png")
 	};

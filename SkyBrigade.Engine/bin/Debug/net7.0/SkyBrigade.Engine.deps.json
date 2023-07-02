@@ -8,8 +8,6 @@
     ".NETCoreApp,Version=v7.0": {
       "SkyBrigade.Engine/1.0.0": {
         "dependencies": {
-          "BepuPhysics": "2.4.0",
-          "BepuUtilities": "2.4.0",
           "CjClutter.ObjLoader.Unofficial": "1.1.0",
           "Karma.CoreOBJ": "1.4.4",
           "Silk.NET": "2.17.1",
@@ -26,25 +24,6 @@
         },
         "runtime": {
           "SkyBrigade.Engine.dll": {}
-        }
-      },
-      "BepuPhysics/2.4.0": {
-        "dependencies": {
-          "BepuUtilities": "2.4.0"
-        },
-        "runtime": {
-          "lib/net6.0/BepuPhysics.dll": {
-            "assemblyVersion": "2.4.0.0",
-            "fileVersion": "2.4.0.0"
-          }
-        }
-      },
-      "BepuUtilities/2.4.0": {
-        "runtime": {
-          "lib/net6.0/BepuUtilities.dll": {
-            "assemblyVersion": "2.4.0.0",
-            "fileVersion": "2.4.0.0"
-          }
         }
       },
       "CjClutter.ObjLoader.Unofficial/1.1.0": {
@@ -533,20 +512,6 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
-    },
-    "BepuPhysics/2.4.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Ck/BJgSQrBqYrj0T9jGljDdHNILBP5kTPTylc7N/hCzR1XJJc7p6ORzwtjTfjgoYkkdajvLHxEQv6BRC8kaysQ==",
-      "path": "bepuphysics/2.4.0",
-      "hashPath": "bepuphysics.2.4.0.nupkg.sha512"
-    },
-    "BepuUtilities/2.4.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-KNMxkzKLHAvV7jRtErxs3rPv71fHToqo/WN96HlT6iomWuwL97tohEbt0B1WA8A6sO5t6PP+qF08d4T9A8k2uA==",
-      "path": "bepuutilities/2.4.0",
-      "hashPath": "bepuutilities.2.4.0.nupkg.sha512"
     },
     "CjClutter.ObjLoader.Unofficial/1.1.0": {
       "type": "package",

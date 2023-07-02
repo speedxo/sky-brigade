@@ -13,7 +13,10 @@ namespace SkyBrigade.Engine.GameEntity.Components
 
         }
 
-        public void Draw(RenderOptions? options = null) => Mesh?.Draw(options);
+        public void Draw(RenderOptions? options = null)
+        {
+            Mesh?.Draw(options);
+        }
 
         public void Update(float dt)
         {

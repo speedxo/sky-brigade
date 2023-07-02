@@ -16,3 +16,9 @@
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/refint/SkyBrigade.Engine.dll
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/SkyBrigade.Engine.pdb
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/ref/SkyBrigade.Engine.dll
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/material_shader/basic.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/material_shader/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/gray.png
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/white.png
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/material_shader/advanced.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/material_shader/advanced.vert
