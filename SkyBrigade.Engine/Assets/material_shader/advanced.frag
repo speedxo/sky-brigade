@@ -11,6 +11,7 @@ in vec3 fragPos;
 
 // physical parameters
 uniform vec3 camPos;
+uniform float uGamma = 2.2f;
 
 // material parameters
 uniform sampler2D uAlbedo;
@@ -89,7 +90,8 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 void main()
 {		
-    vec3 col = texture(uAlbedo, fTexCoords).rgb;
+    // gamma correct input
+    vec3 col = pow(texture(uAlbedo, fTexCoords).rgb, vec3(uGamma));
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(camPos - fragPos);
@@ -146,7 +148,7 @@ void main()
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
+    color = pow(color, vec3(1.0/uGamma)); 
 
     FragColor = vec4(color, 1.0);
 }

@@ -23,7 +23,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         private Vector3 rot = Vector3.Zero;
 
         private List<Mesh> meshes;
-
+        private float gamma = 2.2f;
         // lights
         Vector3[] lightPositions = new [] {
             new Vector3(-10.0f,  10.0f, 10.0f),
@@ -87,6 +87,7 @@ namespace SkyBrigade.Engine.Tests.Tests
                 options.Material = materials[i];
 
                 options.Material.Shader.Use();
+                options.Material.Shader.SetUniform("uGamma", gamma);
                 for (int v = 0; v < lightColors.Length; v++)
                 {
                     var newPos = lightPositions[v] + new Vector3(MathF.Sin(totalTime * 2.0f) * 10, 0.0f, MathF.Cos(totalTime * 2.0f) * 10);
@@ -132,6 +133,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             ImGui.DragFloat3("Scale", ref scale, 0.01f);
             ImGui.DragFloat3("Rotation", ref rot, 0.1f);
+            ImGui.DragFloat("Gamma", ref gamma, 0.1f);
         }
     }
 }
