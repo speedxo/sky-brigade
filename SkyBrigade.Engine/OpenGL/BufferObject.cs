@@ -44,6 +44,13 @@ public class BufferObject<TDataType> : IDisposable
 
     public void Dispose()
     {
-        _gl.DeleteBuffer(_handle);
+        try
+        {
+            _gl.DeleteBuffer(_handle);
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 }

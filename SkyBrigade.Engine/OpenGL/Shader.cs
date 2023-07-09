@@ -117,13 +117,11 @@ public class Shader : IDisposable
 
     private uint LoadShader(ShaderType type, string path)
     {
-        //To load a single shader we need to:
-        //1) Load the shader from a file.
-        //2) Create the handle.
-        //3) Upload the source to opengl.
-        //4) Compile the shader.
-        //5) Check for errors.
+        if (!File.Exists(path))
+            throw new Exception($"Shader file not found at {path}");
+
         string src = File.ReadAllText(path);
+
         uint handle = _gl.CreateShader(type);
         _gl.ShaderSource(handle, src);
         _gl.CompileShader(handle);

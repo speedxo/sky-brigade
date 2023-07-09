@@ -17,6 +17,7 @@ class Program
             WindowTitle = "SkyBridge.Engine.Tests",
             InitialWindowSize = new Vector2(1280, 720)
         });
+
     }
 }
 

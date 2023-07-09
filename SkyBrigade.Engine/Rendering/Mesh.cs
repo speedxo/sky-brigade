@@ -145,6 +145,105 @@ public class Mesh : IDisposable
                 });
         });
 
+    // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
+    public static Mesh CreateSphere(float radius, int vertexCount=10) 
+    {
+        List<Vertex> verts = new List<Vertex>();
+        List<uint> indices = new List<uint>();
+
+        for (int i = 0; i < vertexCount; i++)
+        {
+            for (int j = 0; j < vertexCount; j++)
+            {
+                // Calculate the position of the vertex
+                float x = (float)Math.Sin(Math.PI * i / (vertexCount - 1)) * (float)Math.Cos(2 * Math.PI * j / (vertexCount - 1));
+                float y = (float)Math.Cos(Math.PI * i / (vertexCount - 1));
+                float z = (float)Math.Sin(Math.PI * i / (vertexCount - 1)) * (float)Math.Sin(2 * Math.PI * j / (vertexCount - 1));
+
+                // Add the vertex to the list of vertices
+                verts.Add(new Vertex(new Vector3(x, y, z) * radius, new Vector3(x, y, z), new Vector2((float)j / (vertexCount - 1), (float)i / (vertexCount - 1))));
+            }
+        }
+
+        // Add the indices for the triangles to the list of indices
+        for (int i = 0; i < vertexCount - 1; i++)
+        {
+            for (int j = 0; j < vertexCount - 1; j++)
+            {
+                indices.Add((uint)(i * vertexCount + j));
+                indices.Add((uint)(i * vertexCount + j + 1));
+                indices.Add((uint)((i + 1) * vertexCount + j));
+
+                indices.Add((uint)(i * vertexCount + j + 1));
+                indices.Add((uint)((i + 1) * vertexCount + j + 1));
+                indices.Add((uint)((i + 1) * vertexCount + j));
+            }
+        }
+
+        return new Mesh(() => {
+            return (verts.ToArray(), indices.ToArray());
+        });
+    }
+
+    // write code to generate a cube
+    public static Mesh CreateCube(float size=1)
+    {
+        List<Vertex> verts = new List<Vertex>();
+        List<uint> indices = new List<uint>();
+
+        // front
+        verts.Add(new Vertex(new Vector3(-size, -size, size), new Vector3(0, 0, 1), new Vector2(0, 0)));
+        verts.Add(new Vertex(new Vector3(size, -size, size), new Vector3(0, 0, 1), new Vector2(1, 0)));
+        verts.Add(new Vertex(new Vector3(size, size, size), new Vector3(0, 0, 1), new Vector2(1, 1)));
+        verts.Add(new Vertex(new Vector3(-size, size, size), new Vector3(0, 0, 1), new Vector2(0, 1)));
+
+        // back
+        verts.Add(new Vertex(new Vector3(-size, -size, -size), new Vector3(0, 0, -1), new Vector2(0, 0)));
+        verts.Add(new Vertex(new Vector3(size, -size, -size), new Vector3(0, 0, -1), new Vector2(1, 0)));
+        verts.Add(new Vertex(new Vector3(size, size, -size), new Vector3(0, 0, -1), new Vector2(1, 1)));
+        verts.Add(new Vertex(new Vector3(-size, size, -size), new Vector3(0, 0, -1), new Vector2(0, 1)));
+
+        // left
+        verts.Add(new Vertex(new Vector3(-size, -size, -size), new Vector3(-1, 0, 0), new Vector2(0, 0)));
+        verts.Add(new Vertex(new Vector3(-size, -size, size), new Vector3(-1, 0, 0), new Vector2(1, 0)));
+        verts.Add(new Vertex(new Vector3(-size, size, size), new Vector3(-1, 0, 0), new Vector2(1, 1)));
+        verts.Add(new Vertex(new Vector3(-size, size, -size), new Vector3(-1, 0, 0), new Vector2(0, 1)));
+
+        // right
+        verts.Add(new Vertex(new Vector3(size, -size, -size), new Vector3(1, 0, 0), new Vector2(0, 0)));
+        verts.Add(new Vertex(new Vector3(size, -size, size), new Vector3(1, 0, 0), new Vector2(1, 0)));
+        verts.Add(new Vertex(new Vector3(size, size, size), new Vector3(1, 0, 0), new Vector2(1, 1)));
+        verts.Add(new Vertex(new Vector3(size, size, -size), new Vector3(1, 0, 0), new Vector2(0, 1)));
+
+        // top
+        verts.Add(new Vertex(new Vector3(-size, size, -size), new Vector3(0, 1, 0), new Vector2(0, 0)));
+        verts.Add(new Vertex(new Vector3(size, size, -size), new Vector3(0, 1, 0), new Vector2(1, 0)));
+        verts.Add(new Vertex(new Vector3(size, size, size), new Vector3(0, 1, 0), new Vector2(1, 1)));
+        verts.Add(new Vertex(new Vector3(-size, size, size), new Vector3(0, 1, 0), new Vector2(0, 1)));
+
+        // bottom
+        verts.Add(new Vertex(new Vector3(-size, -size, -size), new Vector3(0, -1, 0), new Vector2(0, 0)));
+        verts.Add(new Vertex(new Vector3(size, -size, -size), new Vector3(0, -1, 0), new Vector2(1, 0)));
+        verts.Add(new Vertex(new Vector3(size, -size, size), new Vector3(0, -1, 0), new Vector2(1, 1)));
+        verts.Add(new Vertex(new Vector3(-size, -size, size), new Vector3(0, -1, 0), new Vector2(0, 1)));
+
+        // generate indices
+        for (int i = 0; i < 6; i++)
+        {
+            indices.Add((uint)(i * 4));
+            indices.Add((uint)(i * 4 + 1));
+            indices.Add((uint)(i * 4 + 2));
+
+            indices.Add((uint)(i * 4));
+            indices.Add((uint)(i * 4 + 2));
+            indices.Add((uint)(i * 4 + 3));
+        }
+         return new Mesh(() => {
+            return (verts.ToArray(), indices.ToArray());
+         });
+    }
+    
+
     public void Draw(RenderOptions? renderOptions=null)
 	{
         //if (Indices == null || Indices.Length < 1) return; // Dont render if there is nothing to render. Precious performance mmmmm
@@ -152,10 +251,6 @@ public class Mesh : IDisposable
         var options = renderOptions ?? RenderOptions.Default;
 
         options.Material.Use();
-
-        GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, options.Texture.Handle);
-        options.Material.Shader.SetUniform("uTexture", 0);
 
 
         options.Material.Shader.SetUniform("uView", options.Camera.View);

@@ -10,6 +10,7 @@ using SkyBrigade.Engine.Rendering;
 using static Karma.CoreOBJ.OBJMesh;
 using Mesh = SkyBrigade.Engine.Rendering.Mesh;
 using Vertex = SkyBrigade.Engine.Data.Vertex;
+using System.Linq;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
@@ -23,14 +24,13 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         private List<Mesh> meshes;
 
-         // lights
-    // ------
-    Vector3[] lightPositions = new [] {
-        new Vector3(-10.0f,  10.0f, 10.0f),
-        new Vector3( 10.0f,  10.0f, 10.0f),
-        new Vector3(-10.0f, -10.0f, 10.0f),
-        new Vector3( 10.0f, -10.0f, 10.0f)
-    };
+        // lights
+        Vector3[] lightPositions = new [] {
+            new Vector3(-10.0f,  10.0f, 10.0f),
+            new Vector3( 10.0f,  10.0f, 10.0f),
+            new Vector3(-10.0f, -10.0f, 10.0f),
+            new Vector3( 10.0f, -10.0f, 10.0f)
+        };
 
         Vector3[] lightColors = new []{
         new Vector3(300.0f, 300.0f, 300.0f),
@@ -38,30 +38,26 @@ namespace SkyBrigade.Engine.Tests.Tests
         new Vector3(300.0f, 300.0f, 300.0f),
         new Vector3(300.0f, 300.0f, 300.0f) 
     };
-
-        private BasicMaterial mat;
+    
+        private AdvancedMaterial[] materials;
         private Mesh lightMesh;
 
         public void LoadContent(GL gl)
         {
             if (Loaded) return;
 
-            mat = new BasicMaterial();
-
-            meshes = new List<Mesh>() {
-                Mesh.CreateRectangle(),
-                Mesh.FromObj("Assets/teapot.obj"),
-                new Mesh(() => {
-                    SphereGenerator.GenerateSphere(1.0f, 15, 15, out Vertex[] verts, out uint[] indices);
-                    return (verts, indices);
-                })
+            //  now this is an intresting way to do this
+            materials = new AdvancedMaterial[] {
+                AdvancedMaterial.LoadFromDirectory("Assets/pbr_textures/metal_ball"),
+                AdvancedMaterial.LoadFromDirectory("Assets/pbr_textures/bricks_mortar")
             };
 
-            lightMesh = new Mesh(() =>
-            {
-                SphereGenerator.GenerateSphere(1.0f, 15, 15, out Vertex[] verts, out uint[] indices);
-                return (verts, indices);
-            });
+
+            // dynamically create a mesh for each material
+            meshes = (from mat in materials
+                      select Mesh.CreateSphere(2.0f, 500)).ToList();
+
+            lightMesh = Mesh.CreateSphere(2, 5);
 
             int counter = 0;
             foreach (var mesh in meshes)
@@ -70,6 +66,7 @@ namespace SkyBrigade.Engine.Tests.Tests
                 counter++;
             }
 
+            gl.Enable(EnableCap.CullFace);
             gl.Enable(EnableCap.DepthTest);
             Loaded = true;
         }
@@ -77,39 +74,45 @@ namespace SkyBrigade.Engine.Tests.Tests
         float totalTime = 0.0f;
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
+            // Accumulate the time
             totalTime += dt;
+            // Get the render options
             var options = renderOptions ?? RenderOptions.Default;
-            options.Material = mat;
+            
+            // loop through each material and draw the corresposinding mesh using the material
 
-
-            meshes.Sort((o1, o2) => {
-                var od1 = (int)Vector3.Distance(options.Camera.Position, o1.Position);
-                var od2 = (int)Vector3.Distance(options.Camera.Position, o2.Position);
-
-                return od1 > od2 ? 0 : 1;
-            });
-
-            options.Material.Shader.Use();
-            for (int i = 0; i < lightColors.Length; i++)
+            for (int i = 0; i < materials.Length; i++)
             {
-                var newPos = lightPositions[i] + new Vector3(MathF.Sin(totalTime * 2.0f) * 50, 0.0f, MathF.Cos(totalTime * 2.0f) * 50);
+                // Set the material
+                options.Material = materials[i];
 
-                options.Material.Shader.SetUniform("lightPositions[" + i + "]", newPos);
-                options.Material.Shader.SetUniform("lightColors[" + i + "]", lightColors[i]);
+                options.Material.Shader.Use();
+                for (int v = 0; v < lightColors.Length; v++)
+                {
+                    var newPos = lightPositions[v] + new Vector3(MathF.Sin(totalTime * 2.0f) * 10, 0.0f, MathF.Cos(totalTime * 2.0f) * 10);
 
-                lightMesh.Position = newPos;
-                lightMesh.Draw(RenderOptions.Default with { Camera = options.Camera });
+                    options.Material.Shader.SetUniform("lightPositions[" + v + "]", newPos);
+                    options.Material.Shader.SetUniform("lightColors[" + v + "]", lightColors[v]);
+
+                    lightMesh.Position = newPos;
+                    lightMesh.Draw(RenderOptions.Default with { Camera = options.Camera });
+                }
+                // Draw the mesh
+                meshes[i].Draw(options);
             }
+            
 
-            foreach (var m in meshes)
-                m.Draw(options);          
         }
 
+        // This method is called every frame.
         public void Update(float dt)
         {
+            // Loop through all the meshes in the meshes array.
             foreach (var mesh in meshes)
             {
+                // Check if the mesh's scale matches the scale instance variable.
                 if (mesh.Scale != scale)
+                    // If it doesn't, set the mesh's scale to the scale instance variable.
                     mesh.Scale = scale;
                 if (mesh.Rotation != rot)
                     mesh.Rotation = rot;
@@ -120,19 +123,15 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             Loaded = false;
             foreach (var m in meshes)
-                m.Dispose();
+            m.Dispose();
 
-                GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 
         public void RenderGui()
         {
             ImGui.DragFloat3("Scale", ref scale, 0.01f);
             ImGui.DragFloat3("Rotation", ref rot, 0.1f);
-
-            ImGui.DragFloat("Metallicness", ref mat.MaterialDescription.Metallicness, 0.01f, 0.0f, 1.0f);
-            ImGui.DragFloat("Roughness", ref mat.MaterialDescription.Roughness, 0.01f, 0.0f, 1.0f);
-            ImGui.DragFloat("AO", ref mat.MaterialDescription.AmbientOcclusion, 0.01f, 0.0f, 1.0f);
         }
     }
 }

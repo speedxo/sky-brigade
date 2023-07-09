@@ -32,8 +32,11 @@ public class GameManager : IDisposable
 
     public void Run(GameInstanceParameters parameters)
     {
+        // Store the initial game screen that we should display when the game starts.
         this.initialGameScreen = parameters.InitialGameScreen;
 
+        // Create a window with the specified options.
+        // This window is used to display the game to the user.
         var options = WindowOptions.Default with
         {
             API = new GraphicsAPI()
@@ -47,13 +50,19 @@ public class GameManager : IDisposable
             Size = new Silk.NET.Maths.Vector2D<int>((int)parameters.InitialWindowSize.X, (int)parameters.InitialWindowSize.Y)
         };
 
+        // Create the window.
         Window = Silk.NET.Windowing.Window.Create(options);
+
+        // Register event handlers for the window.
         Window.Render += onRender;
         Window.Update += onUpdate;
         Window.Load += onLoad;
 
+        // Run the window.
         Window.Run();
+        Dispose();
     }
+
 
     private void onLoad()
     {

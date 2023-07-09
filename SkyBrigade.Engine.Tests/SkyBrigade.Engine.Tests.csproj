@@ -20,6 +20,16 @@
     <None Remove="Tests\" />
     <None Remove="Assets\" />
     <None Remove="Assets\teapot.obj" />
+    <None Remove="Assets\pbr_textures\metal_ball\albedo.png" />
+    <None Remove="Assets\pbr_textures\metal_ball\ao.png" />
+    <None Remove="Assets\pbr_textures\metal_ball\roughness.png" />
+    <None Remove="Assets\pbr_textures\metal_ball\metallicness.png" />
+    <None Remove="Assets\pbr_textures\metal_ball\normals.png" />
+    <None Remove="Assets\pbr_textures\bricks_mortar\albedo.png" />
+    <None Remove="Assets\pbr_textures\bricks_mortar\ao.png" />
+    <None Remove="Assets\pbr_textures\bricks_mortar\metallicness.png" />
+    <None Remove="Assets\pbr_textures\bricks_mortar\normals.png" />
+    <None Remove="Assets\pbr_textures\bricks_mortar\roughness.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />
@@ -27,6 +37,36 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\teapot.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\metal_ball\albedo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\metal_ball\ao.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\metal_ball\roughness.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\metal_ball\metallicness.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\metal_ball\normals.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\bricks_mortar\albedo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\bricks_mortar\ao.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\bricks_mortar\metallicness.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\bricks_mortar\normals.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\bricks_mortar\roughness.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

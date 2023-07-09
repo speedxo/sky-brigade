@@ -57,6 +57,7 @@
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.17.1" />
     <PackageReference Include="Karma.CoreOBJ" Version="1.4.4" />
     <PackageReference Include="CjClutter.ObjLoader.Unofficial" Version="1.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\basic_shader\basic.frag">
