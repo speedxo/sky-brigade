@@ -7,7 +7,7 @@ using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
-	public class PingPongGameTest : IEngineTest
+    public class PingPongGameTest : IEngineTest
 	{
         public bool Loaded { get; set; }
         public string Name { get; set; } = "Ping Pong Test";
@@ -79,31 +79,38 @@ namespace SkyBrigade.Engine.Tests.Tests
             if (playerPaddle.Position.Y <= -3.5f)
                 playerPaddle.Position = new Vector3(playerPaddle.Position.X, -3.5f, playerPaddle.Position.Z);
 
-            ball.Position += new Vector3(direction * dt * 2.0f, 0);
+            ball.Position += new Vector3(direction * dt * 5.0f, 0);
 
-            botPaddle.Position = new Vector3(new Vector2(botPaddle.Position.X, ball.Position.Y), 0.0f);
+            updateBot(dt);
 
             if (ball.CheckIntersection(topBar))
                 direction.Y = 1;
             if (ball.CheckIntersection(bottomBar))
                 direction.Y = -1;
 
-            if (ball.Position.X > 4) direction.X = -direction.X;
-
-            if (ball.Position.X < -6) ball.Position = new Vector3(0);
+            if (MathF.Abs(ball.Position.X) > 6) ball.Position = new Vector3(0);
 
             if (ball.CheckIntersection(playerPaddle))
-                direction.X *= -1f;
+                direction.X = 1f;
 
             if (ball.CheckIntersection(botPaddle))
                 direction.X = -1;
         }
-
+        PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
+        private void updateBot(float dt)
+        {
+            var error = ball.Position.Y - botPaddle.Position.Y;
+            var output = controller.Update(error, dt);
+            botPaddle.Position = new Vector3(botPaddle.Position.X, botPaddle.Position.Y + output, botPaddle.Position.Z);
+        }
         public void RenderGui()
         {
-            ImGui.Text($"Ball: {MathF.Round(ball.Position.X)}, {MathF.Round(ball.Position.Y)}");
-            ImGui.Text($"Player: {MathF.Round(playerPaddle.Position.X)}, {MathF.Round(playerPaddle.Position.Y)}");
-            ImGui.Text($"Bounds: {MathF.Round(playerPaddle.Bounds.Top, 3)}, {MathF.Round(playerPaddle.Bounds.Bottom, 3)}");
+            ImGui.DragFloat("P: ", ref controller.kP, 0.001f);
+            ImGui.DragFloat("I: ", ref controller.kI, 0.001f);
+            ImGui.DragFloat("D: ", ref controller.kD, 0.0001f);
+
+            ImGui.Text($"BallY: {ball.Position.Y}");
+            ImGui.Text($"BotY: {botPaddle.Position.Y}");
         }
 
         public void Dispose()

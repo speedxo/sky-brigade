@@ -21,7 +21,8 @@ public class TestMenuGameScreen : IGameScreen
         tests = new List<IEngineTest>() {
             new RenderRectangleEngineTest(),
             new MeshLoadingEngineTest(),
-            new PingPongGameTest()
+            new PingPongGameTest(),
+            new PIDTest()
         };
 
         for (int i = 0; i < tests.Count; i++)
@@ -40,7 +41,6 @@ public class TestMenuGameScreen : IGameScreen
         if (ImGui.Begin("information"))
         {
             ImGui.Text($"Test: '{tests[index].Name}' ({index + 1}/{tests.Count})");
-            tests[index].RenderGui();
             
             if (ImGui.ArrowButton("Prev", ImGuiDir.Left))
                 index--;
@@ -49,6 +49,8 @@ public class TestMenuGameScreen : IGameScreen
                 index++;
 
             index = Math.Clamp(index, 0, tests.Count - 1);
+
+            tests[index].RenderGui();
 
             ImGui.End();
         }
