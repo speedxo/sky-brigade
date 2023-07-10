@@ -44,7 +44,7 @@ namespace SkyBrigade.Engine.Rendering
             Shader.SetUniform("uAo", 3);
 
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture4);
-            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.AmbientOcclusion.Handle);
+            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Normals.Handle);
             Shader.SetUniform("uNormals", 4);
         }
 
@@ -83,6 +83,25 @@ namespace SkyBrigade.Engine.Rendering
                 Albedo = GameManager.Instance.ContentManager.GetTexture(serializable.AlbedoTexturePath),
                 Normals = GameManager.Instance.ContentManager.GetTexture(serializable.NormalsTexturePath)
             };
+        }
+
+        public static AdvancedMaterial LoadFromZip(string path)
+        {
+            // check if the file at path exists, and load it if it does
+            if (!System.IO.File.Exists(path))
+                throw new System.IO.FileNotFoundException("File not found", path);
+
+            // extract the zip file to a temporary directory
+            string tempDirectory = System.IO.Path.GetTempPath() + System.IO.Path.GetRandomFileName();
+            System.IO.Compression.ZipFile.ExtractToDirectory(path, tempDirectory);
+
+            // load the material from the directory
+            AdvancedMaterial material = LoadFromDirectory(tempDirectory);
+
+            // delete the temporary directory
+            System.IO.Directory.Delete(tempDirectory, true);
+
+            return material;
         }
 
         // loads all the textures in the directory and returns a material description

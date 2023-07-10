@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGuiNET;
+using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using SkyBrigade.Engine.Rendering;
@@ -19,7 +20,8 @@ public class TestMenuGameScreen : IGameScreen
 
         tests = new List<IEngineTest>() {
             new RenderRectangleEngineTest(),
-            new MeshLoadingEngineTest()
+            new MeshLoadingEngineTest(),
+            new PingPongGameTest()
         };
 
         for (int i = 0; i < tests.Count; i++)
@@ -39,6 +41,15 @@ public class TestMenuGameScreen : IGameScreen
         {
             ImGui.Text($"Test: '{tests[index].Name}' ({index + 1}/{tests.Count})");
             tests[index].RenderGui();
+            
+            if (ImGui.ArrowButton("Prev", ImGuiDir.Left))
+                index--;
+            ImGui.SameLine();
+            if (ImGui.ArrowButton("Next", ImGuiDir.Right))
+                index++;
+
+            index = Math.Clamp(index, 0, tests.Count - 1);
+
             ImGui.End();
         }
 
@@ -47,16 +58,20 @@ public class TestMenuGameScreen : IGameScreen
         });
     }
 
+    IKeyboard prev;
     public void Update(float dt)
     {
-        if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.Right))
-            index++;
-        else if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.Left))
-            index--;
-        index = Math.Clamp(index, 0, tests.Count - 1);
+        var current = GameManager.Instance.Input.Keyboards[0];
+
+        //if (current.IsKeyPressed(Key.Right) && prev.IsKeyPressed(Key.Right))
+        //    index++;
+        //if (current.IsKeyPressed(Key.Left) && prev.IsKeyPressed(Key.Left))
+        //    index--;
 
         testCamera.Update(dt);  
         tests[index].Update(dt);
+
+        prev = current;
     }
     public void Dispose()
     {

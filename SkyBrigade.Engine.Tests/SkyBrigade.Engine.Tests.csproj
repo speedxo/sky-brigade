@@ -20,16 +20,9 @@
     <None Remove="Tests\" />
     <None Remove="Assets\" />
     <None Remove="Assets\teapot.obj" />
-    <None Remove="Assets\pbr_textures\metal_ball\albedo.png" />
-    <None Remove="Assets\pbr_textures\metal_ball\ao.png" />
-    <None Remove="Assets\pbr_textures\metal_ball\roughness.png" />
-    <None Remove="Assets\pbr_textures\metal_ball\metallicness.png" />
-    <None Remove="Assets\pbr_textures\metal_ball\normals.png" />
-    <None Remove="Assets\pbr_textures\bricks_mortar\albedo.png" />
-    <None Remove="Assets\pbr_textures\bricks_mortar\ao.png" />
-    <None Remove="Assets\pbr_textures\bricks_mortar\metallicness.png" />
-    <None Remove="Assets\pbr_textures\bricks_mortar\normals.png" />
-    <None Remove="Assets\pbr_textures\bricks_mortar\roughness.png" />
+    <None Remove="Assets\pbr_textures\metal_ball.material" />
+    <None Remove="Assets\pbr_textures\black_tiles.material" />
+    <None Remove="Assets\pbr_textures\bricks_mortar.material" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />
@@ -39,34 +32,13 @@
     <Content Include="Assets\teapot.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\pbr_textures\metal_ball\albedo.png">
+    <Content Include="Assets\pbr_textures\metal_ball.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\pbr_textures\metal_ball\ao.png">
+    <Content Include="Assets\pbr_textures\black_tiles.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\pbr_textures\metal_ball\roughness.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\metal_ball\metallicness.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\metal_ball\normals.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\bricks_mortar\albedo.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\bricks_mortar\ao.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\bricks_mortar\metallicness.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\bricks_mortar\normals.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\pbr_textures\bricks_mortar\roughness.png">
+    <Content Include="Assets\pbr_textures\bricks_mortar.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

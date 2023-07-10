@@ -25,6 +25,8 @@ public class Camera
     public Matrix4x4 View { get; private set; }
     public Matrix4x4 Projection { get; private set; }
     public Vector3 Position { get; set; } = new Vector3(0, 0, 10);
+
+    public bool Locked { get; set; } = false;
     
     public Camera()
     {
@@ -43,29 +45,30 @@ public class Camera
 
     public void Update(float dt)
     {
-        if (!GameManager.Instance.IsInputCaptured) return;
+        if (!Locked && GameManager.Instance.IsInputCaptured)
+        {
+            var moveSpeed = 18f * dt;
 
-        var moveSpeed = 18f * dt;
-
-        if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.W))
-        {
-            //Move forwards
-            Position += moveSpeed * CameraFront;
-        }
-        if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.S))
-        {
-            //Move backwards
-            Position -= moveSpeed * CameraFront;
-        }
-        if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.A))
-        {
-            //Move left
-            Position -= Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp)) * moveSpeed;
-        }
-        if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.D))
-        {
-            //Move right
-            Position += Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp)) * moveSpeed;
+            if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.W))
+            {
+                //Move forwards
+                Position += moveSpeed * CameraFront;
+            }
+            if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.S))
+            {
+                //Move backwards
+                Position -= moveSpeed * CameraFront;
+            }
+            if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.A))
+            {
+                //Move left
+                Position -= Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp)) * moveSpeed;
+            }
+            if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Key.D))
+            {
+                //Move right
+                Position += Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp)) * moveSpeed;
+            }
         }
 
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
@@ -74,7 +77,7 @@ public class Camera
 
     private unsafe void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
     {
-        if (!GameManager.Instance.IsInputCaptured) return;
+        if (!GameManager.Instance.IsInputCaptured || Locked) return;
 
         var lookSensitivity = 0.1f;
         if (LastMousePosition == default) { LastMousePosition = position; }
@@ -99,7 +102,7 @@ public class Camera
 
     private unsafe void OnMouseWheel(IMouse mouse, ScrollWheel scrollWheel)
     {
-        if (!GameManager.Instance.IsInputCaptured) return;
+        if (!GameManager.Instance.IsInputCaptured || Locked) return;
 
         //We don't want to be able to zoom in too close or too far away so clamp to these values
         CameraZoom = Math.Clamp(CameraZoom - scrollWheel.Y, 1.0f, 45f);

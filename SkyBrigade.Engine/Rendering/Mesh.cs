@@ -21,7 +21,7 @@ public class Mesh : IDisposable
     public Vector3 Scale { get => scale; set { scale = value; updateModelMatrix(); } }
 
     public Matrix4x4 ModelMatrix { get; private set; }
-
+    public Material Material { get; set; } 
 
     private void updateModelMatrix()
     {
@@ -33,7 +33,14 @@ public class Mesh : IDisposable
 
 	private VertexBufferObject<Vertex> vbo;
 
-	public Mesh(Func<(Vertex[], uint[])> loader)
+    public void Use() => Material.Use();
+    public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
+
+	public Mesh(Func<(Vertex[], uint[])> loader, Material? mat=null)
 	{
 		// yea i don't know why i went about it this way either
 		(Vertex[] vertices, uint[] indices) = loader();
@@ -55,6 +62,8 @@ public class Mesh : IDisposable
         scale = Vector3.One;
         rot = Vector3.Zero;
         updateModelMatrix();
+
+        Material = mat ?? new BasicMaterial();
     }
 
     // dont even bother
@@ -115,11 +124,30 @@ public class Mesh : IDisposable
                         faces.Add(face);
                     }
                 }
+            } 
+            else if (line.StartsWith("vt "))
+            {
+                string temp = line.Substring(3);
+
+                float x = 0, y = 0;
+
+                if (temp.Count((char c) => c == ' ') == 1)
+                {
+                    string[] texparts = temp.Split(' ');
+
+                    x = (float)double.Parse(texparts[0].Trim(), NumberStyles.Any, ci);
+                    y = (float)double.Parse(texparts[1].Trim(), NumberStyles.Any, ci);
+                }
+
+                texs.Add(new Vector2(x, y));
             }
         }
 
         List<uint> indices = new List<uint>();
-
+        if (texs.Count > 0)
+            for (int i = 0; i < verts.Count; i++)
+                verts[i] = new Vertex(verts[i].Position, verts[i].Normal, texs[i]);
+        
         foreach (var face in faces)
         {
             indices.Add((uint)face.Item1);
@@ -146,7 +174,7 @@ public class Mesh : IDisposable
         });
 
     // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
-    public static Mesh CreateSphere(float radius, int vertexCount=10) 
+    public static Mesh CreateSphere(float radius, int vertexCount=10, Material? mat=null) 
     {
         List<Vertex> verts = new List<Vertex>();
         List<uint> indices = new List<uint>();
@@ -182,7 +210,7 @@ public class Mesh : IDisposable
 
         return new Mesh(() => {
             return (verts.ToArray(), indices.ToArray());
-        });
+        }, mat);
     }
 
     // write code to generate a cube
@@ -250,14 +278,14 @@ public class Mesh : IDisposable
 
         var options = renderOptions ?? RenderOptions.Default;
 
-        options.Material.Use();
+        Use();
 
 
-        options.Material.Shader.SetUniform("uView", options.Camera.View);
-        options.Material.Shader.SetUniform("uProjection", options.Camera.Projection);
-        options.Material.Shader.SetUniform("uModel", ModelMatrix);
-        options.Material.Shader.SetUniform("uColor", options.Color);
-        options.Material.Shader.SetUniform("camPos", options.Camera.Position);
+        SetUniform("uView", options.Camera.View);
+        SetUniform("uProjection", options.Camera.Projection);
+        SetUniform("uModel", ModelMatrix);
+        SetUniform("uColor", options.Color);
+        SetUniform("camPos", options.Camera.Position);
 
 
         vbo.Bind();
@@ -270,7 +298,7 @@ public class Mesh : IDisposable
 
         vbo.Unbind();
 
-        options.Material.End();
+        Material.End();
     }
 
     public void Dispose()

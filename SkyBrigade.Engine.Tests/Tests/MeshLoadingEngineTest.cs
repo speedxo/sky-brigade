@@ -32,34 +32,43 @@ namespace SkyBrigade.Engine.Tests.Tests
             new Vector3( 10.0f, -10.0f, 10.0f)
         };
 
-        Vector3[] lightColors = new []{
-        new Vector3(300.0f, 300.0f, 300.0f),
-        new Vector3(300.0f, 300.0f, 300.0f),
-        new Vector3(300.0f, 300.0f, 300.0f),
-        new Vector3(300.0f, 300.0f, 300.0f) 
-    };
+        Vector3[] lightColors;
     
-        private AdvancedMaterial[] materials;
         private Mesh lightMesh;
 
+        Random rand = new Random();
         public void LoadContent(GL gl)
         {
             if (Loaded) return;
 
+
+            // make some random vector3
+            int intensity = 1000;
+            lightColors = new [] {
+                new Vector3(intensity),
+                new Vector3(intensity),
+                new Vector3(intensity),
+                new Vector3(intensity),
+            };
+
             //  now this is an intresting way to do this
-            materials = new AdvancedMaterial[] {
-                AdvancedMaterial.LoadFromDirectory("Assets/pbr_textures/metal_ball"),
-                AdvancedMaterial.LoadFromDirectory("Assets/pbr_textures/bricks_mortar")
+            var materials = new AdvancedMaterial[] {
+                AdvancedMaterial.LoadFromZip("Assets/pbr_textures/metal_ball.material"),
+                AdvancedMaterial.LoadFromZip("Assets/pbr_textures/bricks_mortar.material"),
+                AdvancedMaterial.LoadFromZip("Assets/pbr_textures/black_tiles.material"),
             };
 
 
-            // dynamically create a mesh for each material
-            meshes = (from mat in materials
-                      select Mesh.CreateSphere(2.0f, 500)).ToList();
+            // dynamically create a mesh for each material, assinging the material to the mesh
+            meshes = new List<Mesh>(materials.Length);
+            for (int i = 0; i < materials.Length; i++)
+                meshes.Add(Mesh.CreateSphere(1, 50, materials[i]));
+            
 
             lightMesh = Mesh.CreateSphere(2, 5);
 
             int counter = 0;
+            //meshes[2] = Mesh.FromObj("Assets/teapot.obj");
             foreach (var mesh in meshes)
             {
                 mesh.Position = new Vector3(counter * 5, 0, 0);
@@ -78,31 +87,31 @@ namespace SkyBrigade.Engine.Tests.Tests
             totalTime += dt;
             // Get the render options
             var options = renderOptions ?? RenderOptions.Default;
-            
-            // loop through each material and draw the corresposinding mesh using the material
 
-            for (int i = 0; i < materials.Length; i++)
+            meshes.Sort((o1, o2) => {
+                if (Vector3.Distance(options.Camera.Position, o1.Position) < Vector3.Distance(options.Camera.Position, o2.Position)) return 1;
+                return 0;
+            });
+
+            foreach (var item in meshes)
             {
-                // Set the material
-                options.Material = materials[i];
+                item.Use();
+                item.SetUniform("uGamma", gamma);
 
-                options.Material.Shader.Use();
-                options.Material.Shader.SetUniform("uGamma", gamma);
                 for (int v = 0; v < lightColors.Length; v++)
                 {
-                    var newPos = lightPositions[v] + new Vector3(MathF.Sin(totalTime * 2.0f) * 10, 0.0f, MathF.Cos(totalTime * 2.0f) * 10);
+                    var newPos = lightPositions[v] + new Vector3(MathF.Sin(totalTime * 2.0f) * 100, 0.0f, MathF.Cos(totalTime * 2.0f) * 100);
 
-                    options.Material.Shader.SetUniform("lightPositions[" + v + "]", newPos);
-                    options.Material.Shader.SetUniform("lightColors[" + v + "]", lightColors[v]);
+                    item.SetUniform("lightPositions[" + v + "]", newPos);
+                    item.SetUniform("lightColors[" + v + "]", lightColors[v]);
 
                     lightMesh.Position = newPos;
                     lightMesh.Draw(RenderOptions.Default with { Camera = options.Camera });
                 }
-                // Draw the mesh
-                meshes[i].Draw(options);
-            }
-            
 
+
+                item.Draw(options);
+            }
         }
 
         // This method is called every frame.
@@ -134,6 +143,16 @@ namespace SkyBrigade.Engine.Tests.Tests
             ImGui.DragFloat3("Scale", ref scale, 0.01f);
             ImGui.DragFloat3("Rotation", ref rot, 0.1f);
             ImGui.DragFloat("Gamma", ref gamma, 0.1f);
+
+            if (ImGui.Button("Reset Lights"))
+            {
+                lightColors = new[] {
+                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f),
+                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f),
+                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f),
+                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f)
+            };
+            }
         }
     }
 }

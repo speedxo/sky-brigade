@@ -44,7 +44,7 @@ vec3 getNormalFromMap()
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
 
-    return normalize(TBN * tangentNormal);
+    return normalize(tangentNormal * TBN);
 }
 
 // ----------------------------------------------------------------------------
