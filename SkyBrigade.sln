@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Game", "SkyBriga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Engine.Tests", "SkyBrigade.Engine.Tests\SkyBrigade.Engine.Tests.csproj", "{1A5C7370-CBD9-41A9-8131-05890AF31469}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.MaterialEditor", "SkyBrigade.MaterialEditor\SkyBrigade.MaterialEditor.csproj", "{3F07F3C9-FA6C-4093-98FC-F5843CBC88D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1A5C7370-CBD9-41A9-8131-05890AF31469}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A5C7370-CBD9-41A9-8131-05890AF31469}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A5C7370-CBD9-41A9-8131-05890AF31469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F07F3C9-FA6C-4093-98FC-F5843CBC88D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F07F3C9-FA6C-4093-98FC-F5843CBC88D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F07F3C9-FA6C-4093-98FC-F5843CBC88D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F07F3C9-FA6C-4093-98FC-F5843CBC88D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

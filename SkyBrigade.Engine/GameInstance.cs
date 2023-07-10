@@ -6,6 +6,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using SkyBrigade.Engine.Content;
+using SkyBrigade.Engine.Logging;
 
 namespace SkyBrigade.Engine;
 
@@ -23,6 +24,7 @@ public class GameManager : IDisposable
     public IInputContext Input { get; private set; }
     public long MemoryUsage { get; private set; }
     public IWindow Window { get; private set; }
+    public Logger Logger { get; private set; }
     #endregion
 
     #region Private Properties
@@ -71,6 +73,8 @@ public class GameManager : IDisposable
             Window, // pass in our window
             Input = Window.CreateInput() // create an input context
         );
+
+        Logger = new Logger(LogOutput.Console);
 
         if (Input.Keyboards.Count < 1)
             throw new Exception("No ways youre actually tryna play without a keyboard\n for any of this shitty code to work you *need* a keyboard.");

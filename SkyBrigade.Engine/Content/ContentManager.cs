@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using SkyBrigade.Engine.Logging;
 using SkyBrigade.Engine.OpenGL;
 
 namespace SkyBrigade.Engine.Content
@@ -34,7 +35,7 @@ namespace SkyBrigade.Engine.Content
 		public Texture LoadTexture(string path)
 		{
 			if (!unnamedTextures.ContainsKey(path)) unnamedTextures.Add(path, new Texture(GameManager.Instance.Gl, path));
-			else Console.WriteLine($"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned.");
+			else GameManager.Instance.Logger.Log(Logger.LogLevel.Warning, $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned.");
 				
             return unnamedTextures[path];
         }

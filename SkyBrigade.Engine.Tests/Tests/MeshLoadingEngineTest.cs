@@ -44,14 +44,11 @@ namespace SkyBrigade.Engine.Tests.Tests
 
             // make some random vector3
             int intensity = 1000;
-            lightColors = new [] {
-                new Vector3(intensity),
-                new Vector3(intensity),
-                new Vector3(intensity),
-                new Vector3(intensity),
-            };
+            lightColors = new Vector3[4];
+            for (int i = 0; i < lightColors.Length; i++) {
+                lightColors[i] = new Vector3(intensity);
+            }
 
-            //  now this is an intresting way to do this
             var materials = new AdvancedMaterial[] {
                 AdvancedMaterial.LoadFromZip("Assets/pbr_textures/metal_ball.material"),
                 AdvancedMaterial.LoadFromZip("Assets/pbr_textures/bricks_mortar.material"),
@@ -71,7 +68,7 @@ namespace SkyBrigade.Engine.Tests.Tests
             //meshes[2] = Mesh.FromObj("Assets/teapot.obj");
             foreach (var mesh in meshes)
             {
-                mesh.Position = new Vector3(counter * 5, 0, 0);
+                mesh.Position = new Vector3(counter * 2.5f, 0, 0);
                 counter++;
             }
 
