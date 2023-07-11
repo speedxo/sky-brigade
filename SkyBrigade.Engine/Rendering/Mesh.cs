@@ -30,6 +30,7 @@ public class Mesh : IDisposable
 
     public Vertex[] Vertices { get; private set; }
 	public uint[] Indices { get; private set; }
+    public uint ElementCount { get; private set; }
 
 	private VertexBufferObject<Vertex> vbo;
 
@@ -52,6 +53,10 @@ public class Mesh : IDisposable
 
 		vbo.VertexBuffer.BufferData(Vertices);
 		vbo.ElementBuffer.BufferData(Indices);
+        ElementCount = (uint)Indices.Length;
+
+        vertices = Array.Empty<Vertex>();
+        indices = Array.Empty<uint>();
 
         // Telling the VAO object how to lay out the attribute pointers
         vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
@@ -293,7 +298,7 @@ public class Mesh : IDisposable
         // once again, i really dont wanna make the whole method unsafe for one call
         unsafe
         {
-            GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, null);
+            GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
         }
 
         vbo.Unbind();
