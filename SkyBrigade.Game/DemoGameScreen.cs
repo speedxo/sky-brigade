@@ -1,14 +1,13 @@
-﻿        using ImGuiNET;
+﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Collections;
 
 using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Game;
 
-class DemoGameScreen : IGameScreen
+internal class DemoGameScreen : IGameScreen
 {
     private RenderRectangle rect;
     private Camera testCamera;
@@ -44,21 +43,18 @@ class DemoGameScreen : IGameScreen
         }
     }
 
-    float timer = 0.0f;
+    private float timer = 0.0f;
+
     public void Update(float dt)
     {
         timer += dt * 10.0f;
-      
+
         testCamera.Update(dt);
 
         rect.Rotation += dt * 100.0f;
-        
     }
 
     public void Dispose()
     {
-
     }
-
 }
-

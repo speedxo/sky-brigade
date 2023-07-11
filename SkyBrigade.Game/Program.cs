@@ -1,15 +1,10 @@
-﻿using System.Numerics;
-using SkyBrigade.Engine;
-using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.OpenGL;
-using Shader = SkyBrigade.Engine.OpenGL.Shader;
-using Texture = SkyBrigade.Engine.OpenGL.Texture;
+﻿using SkyBrigade.Engine;
 
 namespace SkyBrigade.Game;
 
-class Program
+internal class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         GameManager.Instance.Run(GameInstanceParameters.Default with
         {
@@ -19,4 +14,3 @@ class Program
         });
     }
 }
-

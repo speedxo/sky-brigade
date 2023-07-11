@@ -6,8 +6,5 @@ public class MaterialSerialiser
 {
     public static void SaveMaterial(Material material)
     {
-        
     }
-
-    
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace SkyBrigade.Engine.Data;
 
@@ -10,6 +9,7 @@ namespace SkyBrigade.Engine.Data;
  *  projection) matrix. it also holds the UV coordinate and sometimes
  *  a unique color for the vertex (usefull for debugging).
  */
+
 public struct Vertex
 {
     public Vector3 Position { get; set; }
@@ -35,4 +35,3 @@ public struct Vertex
         this.Normal = new Vector3();
     }
 }
-

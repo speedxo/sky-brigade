@@ -1,14 +1,14 @@
 ﻿using Silk.NET.OpenGL;
-using System;
 
 namespace SkyBrigade.Engine.OpenGL;
 
 /* This is an abstractation for a buffer object */
+
 public class BufferObject<TDataType> : IDisposable
     where TDataType : unmanaged
 {
     /* These are private because they have no reason to be public
-     * Traditional OOP style principles break when you have to abstract 
+     * Traditional OOP style principles break when you have to abstract
      */
     private uint _handle;
     private BufferTargetARB _bufferType;
@@ -50,7 +50,6 @@ public class BufferObject<TDataType> : IDisposable
         }
         catch (Exception ex)
         {
-
         }
     }
 }

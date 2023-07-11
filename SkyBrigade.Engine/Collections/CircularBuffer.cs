@@ -1,9 +1,9 @@
-﻿using System;
-namespace SkyBrigade.Engine.Collections;
+﻿namespace SkyBrigade.Engine.Collections;
 
 /* The reason this implementation is so primative and sloppy but i need it to
  * be fast
  */
+
 public class CircularBuffer<T>
 {
     private T[] buffer;
@@ -56,4 +56,3 @@ public class CircularBuffer<T>
         return result;
     }
 }
-

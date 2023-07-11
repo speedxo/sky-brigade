@@ -9,6 +9,7 @@ namespace SkyBrigade.Engine.Rendering
         public Texture Roughness { get; set; }
         public Texture AmbientOcclusion { get; set; }
         public Texture Normals { get; set; }
+
         public static AdvancedMaterialDescription Default { get; } = new AdvancedMaterialDescription
         {
             Roughness = GameManager.Instance.ContentManager.GetTexture("gray"),
@@ -17,6 +18,5 @@ namespace SkyBrigade.Engine.Rendering
             Albedo = GameManager.Instance.ContentManager.GetTexture("white"),
             Normals = GameManager.Instance.ContentManager.GetTexture("white")
         };
-    }   
+    }
 }
-

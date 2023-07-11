@@ -1,5 +1,4 @@
 ﻿using Silk.NET.OpenGL;
-using System;
 
 namespace SkyBrigade.Engine.OpenGL;
 
@@ -11,9 +10,10 @@ public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
     //Our handle and the GL instance this class will use, these are private because they have no reason to be public.
     //Most of the time you would want to abstract items to make things like this invisible.
     private uint _handle;
+
     private GL _gl;
-    BufferObject<TVertexType> vbo;
-    BufferObject<TIndexType> ebo;
+    private BufferObject<TVertexType> vbo;
+    private BufferObject<TIndexType> ebo;
 
     public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, BufferObject<TIndexType> ebo)
     {
@@ -60,7 +60,6 @@ public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
         _gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
         _gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
     }
-
 
     public void Dispose()
     {

@@ -1,5 +1,4 @@
-﻿using System.IO.Compression;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace SkyBrigade.Engine.Rendering
 {
@@ -18,7 +17,7 @@ namespace SkyBrigade.Engine.Rendering
             // check if the file at path exists, and load it if it does
             if (!System.IO.File.Exists(path))
                 throw new System.IO.FileNotFoundException("File not found", path);
-            
+
             // return new BasicMaterial() {
             //     MaterialDescription = JsonConvert.DeserializeObject<BasicMaterialDescription>(System.IO.File.ReadAllText(path))
             // };
@@ -39,11 +38,10 @@ namespace SkyBrigade.Engine.Rendering
         public override void Use()
         {
             Shader.Use();
-            
+
             Shader.SetUniform("uMetallicness", MaterialDescription.Metallicness);
             Shader.SetUniform("uRoughness", MaterialDescription.Roughness);
             Shader.SetUniform("uAo", MaterialDescription.AmbientOcclusion);
         }
     }
 }
-

@@ -1,5 +1,4 @@
-﻿using System;
-using SkyBrigade.Engine.Rendering;
+﻿using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.GameEntity.Components
 {
@@ -8,14 +7,15 @@ namespace SkyBrigade.Engine.GameEntity.Components
         public Entity Parent { get; set; }
 
         public delegate void OnUpdateDelegate(float dt);
+
         public delegate void OnDrawDelegate(RenderOptions? options = null);
 
         public event OnDrawDelegate? OnDraw;
+
         public event OnUpdateDelegate? OnUpdate;
 
         public void Initialize()
         {
-
         }
 
         public void Update(float dt)
@@ -29,4 +29,3 @@ namespace SkyBrigade.Engine.GameEntity.Components
         }
     }
 }
-

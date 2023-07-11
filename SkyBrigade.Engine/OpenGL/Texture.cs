@@ -1,9 +1,6 @@
 ﻿using Silk.NET.OpenGL;
-using System;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-namespace SkyBrigade.Engine.OpenGL;
 
+namespace SkyBrigade.Engine.OpenGL;
 
 public class Texture : IDisposable
 {
@@ -40,7 +37,6 @@ public class Texture : IDisposable
         }
 
         SetParameters();
-
     }
 
     public unsafe Texture(GL gl, Span<byte> data, uint width, uint height)

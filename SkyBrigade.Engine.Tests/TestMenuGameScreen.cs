@@ -1,8 +1,6 @@
-﻿using System;
-using ImGuiNET;
+﻿using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using Silk.NET.SDL;
 using SkyBrigade.Engine.Rendering;
 using SkyBrigade.Engine.Tests.Tests;
 
@@ -11,8 +9,15 @@ namespace SkyBrigade.Engine.Tests;
 public class TestMenuGameScreen : IGameScreen
 {
     private int index = 0;
-    private List<IEngineTest> tests;
+    private IKeyboard prev;
     private Camera testCamera;
+    private List<IEngineTest> tests;
+
+    public void Dispose()
+    {
+        for (int i = 0; i < tests.Count; i++)
+            tests[i].Dispose();
+    }
 
     public void Initialize(GL gl)
     {
@@ -41,7 +46,7 @@ public class TestMenuGameScreen : IGameScreen
         if (ImGui.Begin("information"))
         {
             ImGui.Text($"Test: '{tests[index].Name}' ({index + 1}/{tests.Count})");
-            
+
             if (ImGui.ArrowButton("Prev", ImGuiDir.Left))
                 index--;
             ImGui.SameLine();
@@ -55,12 +60,12 @@ public class TestMenuGameScreen : IGameScreen
             ImGui.End();
         }
 
-        tests[index].Render(dt, gl, RenderOptions.Default with {
+        tests[index].Render(dt, gl, RenderOptions.Default with
+        {
             Camera = testCamera
         });
     }
 
-    IKeyboard prev;
     public void Update(float dt)
     {
         var current = GameManager.Instance.Input.Keyboards[0];
@@ -70,15 +75,9 @@ public class TestMenuGameScreen : IGameScreen
         //if (current.IsKeyPressed(Key.Left) && prev.IsKeyPressed(Key.Left))
         //    index--;
 
-        testCamera.Update(dt);  
+        testCamera.Update(dt);
         tests[index].Update(dt);
 
         prev = current;
     }
-    public void Dispose()
-    {
-        for (int i = 0; i < tests.Count; i++)
-            tests[i].Dispose();
-    }
 }
-

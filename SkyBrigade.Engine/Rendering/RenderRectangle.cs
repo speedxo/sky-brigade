@@ -1,21 +1,17 @@
-﻿using System;
-using System.Numerics;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.OpenGL;
-
-using Texture = SkyBrigade.Engine.OpenGL.Texture;
-using Shader = SkyBrigade.Engine.OpenGL.Shader;
-using Color = System.Drawing.Color;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Rendering
 {
     /* This class is very convenient for either billboard rendering or simple
      * 2D stuff but it has an iherent flaw in that it requires an OpenGL context
      * to exist before it can ever be instances, else it crashed the whole thing
-     * 
+     *
      * TODO: the vbo here never gets disposed but yolo we move even if backwards
      */
+
     public class RenderRectangle
     {
         private Vertex[] _vertices;
@@ -27,11 +23,17 @@ namespace SkyBrigade.Engine.Rendering
         private float rot;
         private Vector2 scale, size;
 
-        public Vector3 Position { get => pos; set { pos = value; updateModelMatrix(); } }
-        public float Rotation { get => rot; set { rot = value; updateModelMatrix(); } }
-        public Vector2 Scale { get => scale; set { scale = value; updateModelMatrix(); } }
+        public Vector3 Position
+        { get => pos; set { pos = value; updateModelMatrix(); } }
 
-        public Vector2 Size { get => size; set { size = value; updateVertices(); } }
+        public float Rotation
+        { get => rot; set { rot = value; updateModelMatrix(); } }
+
+        public Vector2 Scale
+        { get => scale; set { scale = value; updateModelMatrix(); } }
+
+        public Vector2 Size
+        { get => size; set { size = value; updateVertices(); } }
 
         private void updateVertices()
         {
@@ -41,15 +43,16 @@ namespace SkyBrigade.Engine.Rendering
                         new Vertex(Size.X, Size.Y, 0, 1, 0),
                         new Vertex(-Size.X, Size.Y, 0, 0, 0)
             };
-            
+
             _vbo.VertexBuffer.BufferData(_vertices);
         }
+
         public Material Material { get; set; }
         public Matrix4x4 ModelMatrix { get; private set; }
 
-       public RectangleF Bounds { get => new RectangleF(pos.X, pos.Y, size.X, size.Y); }
+        public RectangleF Bounds { get => new RectangleF(pos.X, pos.Y, size.X, size.Y); }
 
-       public bool CheckIntersection(RenderRectangle rect2)
+        public bool CheckIntersection(RenderRectangle rect2)
         {
             // Get the corner points of each rectangle
             Vector2 rect1TopLeft = new Vector2(Position.X - Size.X, Position.Y + Size.Y);
@@ -70,14 +73,12 @@ namespace SkyBrigade.Engine.Rendering
             return false;
         }
 
-
-
         private void updateModelMatrix()
         {
             ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot)) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f);
         }
 
-        public RenderRectangle(Vector3? inPos = null, Vector2? inSize = null, Vector2? inScale = null, float inRotation = 0.0f, Material? mat=null)
+        public RenderRectangle(Vector3? inPos = null, Vector2? inSize = null, Vector2? inScale = null, float inRotation = 0.0f, Material? mat = null)
         {
             /* We do this in one call of updateModelMatrix because swag money BABY
 			 */
@@ -98,12 +99,10 @@ namespace SkyBrigade.Engine.Rendering
             _vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
             _vbo.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 3 * sizeof(float));
             _vbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
-            
+
             updateModelMatrix();
             updateVertices();
         }
-
-
 
         public void Draw(RenderOptions? renderOptions = null)
         {
@@ -138,4 +137,3 @@ namespace SkyBrigade.Engine.Rendering
         }
     }
 }
-

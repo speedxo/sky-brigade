@@ -1,14 +1,13 @@
-﻿using System;
-using System.Numerics;
-using ImGuiNET;
+﻿using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
     public class PingPongGameTest : IEngineTest
-	{
+    {
         public bool Loaded { get; set; }
         public string Name { get; set; } = "Ping Pong Test";
 
@@ -20,12 +19,14 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             if (Loaded) return;
 
-            playerPaddle = new RenderRectangle() {
+            playerPaddle = new RenderRectangle()
+            {
                 Size = new Vector2(0.1f, 1.0f),
                 Position = new Vector3(-5, 0, 0)
             };
 
-            topBar = new RenderRectangle() {
+            topBar = new RenderRectangle()
+            {
                 Size = new Vector2(10, 0.1f),
                 Position = new Vector3(0, -4, 0)
             };
@@ -41,7 +42,8 @@ namespace SkyBrigade.Engine.Tests.Tests
                 Position = new Vector3(5, 0, 0)
             };
 
-            ball = new RenderRectangle() {
+            ball = new RenderRectangle()
+            {
                 Size = new Vector2(0.1f)
             };
             gameCamera = new Camera() { Position = new Vector3(0, 0, 10), Locked = true };
@@ -96,13 +98,16 @@ namespace SkyBrigade.Engine.Tests.Tests
             if (ball.CheckIntersection(botPaddle))
                 direction.X = -1;
         }
-        PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
+
+        private PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
+
         private void updateBot(float dt)
         {
             var error = ball.Position.Y - botPaddle.Position.Y;
             var output = controller.Update(error, dt);
             botPaddle.Position = new Vector3(botPaddle.Position.X, botPaddle.Position.Y + output, botPaddle.Position.Z);
         }
+
         public void RenderGui()
         {
             ImGui.DragFloat("P: ", ref controller.kP, 0.001f);
@@ -115,9 +120,6 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void Dispose()
         {
-
         }
-
     }
 }
-

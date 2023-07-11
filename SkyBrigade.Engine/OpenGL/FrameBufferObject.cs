@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
+using System.Diagnostics;
 
 namespace SkyBrigade.Engine.OpenGL;
 
@@ -13,7 +13,6 @@ public class FrameBufferObject
     /// <summary>
     /// The texture attachment.
     /// </summary>
-
 
     /// <summary>
     /// The frag attachment.
@@ -34,6 +33,7 @@ public class FrameBufferObject
     /// The depth attachment.
     /// </summary>
     public uint TextureNormalAttachment { get; }
+
     public uint DepthAttachment { get; }
     /// <summary>
     /// The gl.
@@ -45,12 +45,12 @@ public class FrameBufferObject
     /// </summary>
     /// <value>The width.</value>
 
-
     /// <summary>
     /// Gets the height.
     /// </summary>
     /// <value>The height.</value>
     public int Width { get; private set; }
+
     public int Height { get; private set; }
 
     /// <summary>
@@ -103,7 +103,6 @@ public class FrameBufferObject
         // TODO: Use a custom exception.
         // Unbind the framebuffer
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
     }
 
     /// <summary>

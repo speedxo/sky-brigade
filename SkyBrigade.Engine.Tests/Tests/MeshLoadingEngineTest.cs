@@ -1,51 +1,51 @@
-﻿using System;
-using System.Numerics;
-using System.Xml.Linq;
-using ImGuiNET;
+﻿using ImGuiNET;
 using Silk.NET.OpenGL;
-using Silk.NET.SDL;
-using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.OpenGL;
 using SkyBrigade.Engine.Rendering;
-using static Karma.CoreOBJ.OBJMesh;
+using System.Numerics;
 using Mesh = SkyBrigade.Engine.Rendering.Mesh;
-using Vertex = SkyBrigade.Engine.Data.Vertex;
-using System.Linq;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
     public class MeshLoadingEngineTest : IEngineTest
     {
-        public bool Loaded { get; set; } = false;
-        public string Name { get; set; } = "Mesh Loading Test";
-
-        private Vector3 scale = Vector3.One;
-        private Vector3 rot = Vector3.Zero;
-
-        private List<Mesh> meshes;
         private float gamma = 2.2f;
+        private Vector3[] lightColors;
+        private Mesh lightMesh;
+
         // lights
-        Vector3[] lightPositions = new [] {
+        private Vector3[] lightPositions = new[] {
             new Vector3(-10.0f,  10.0f, 10.0f),
             new Vector3( 10.0f,  10.0f, 10.0f),
             new Vector3(-10.0f, -10.0f, 10.0f),
             new Vector3( 10.0f, -10.0f, 10.0f)
         };
 
-        Vector3[] lightColors;
-    
-        private Mesh lightMesh;
+        private List<Mesh> meshes;
+        private Random rand = new Random();
+        private Vector3 rot = Vector3.Zero;
+        private Vector3 scale = Vector3.One;
+        private float totalTime = 0.0f;
+        public bool Loaded { get; set; } = false;
+        public string Name { get; set; } = "Mesh Loading Test";
 
-        Random rand = new Random();
+        public void Dispose()
+        {
+            Loaded = false;
+            foreach (var m in meshes)
+                m.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
+
         public void LoadContent(GL gl)
         {
             if (Loaded) return;
 
-
             // make some random vector3
             int intensity = 1000;
             lightColors = new Vector3[4];
-            for (int i = 0; i < lightColors.Length; i++) {
+            for (int i = 0; i < lightColors.Length; i++)
+            {
                 lightColors[i] = new Vector3(intensity);
             }
 
@@ -55,12 +55,10 @@ namespace SkyBrigade.Engine.Tests.Tests
                 AdvancedMaterial.LoadFromZip("Assets/pbr_textures/black_tiles.material"),
             };
 
-
             // dynamically create a mesh for each material, assinging the material to the mesh
             meshes = new List<Mesh>(materials.Length);
             for (int i = 0; i < materials.Length; i++)
                 meshes.Add(Mesh.CreateSphere(1, 500, materials[i]));
-            
 
             lightMesh = Mesh.CreateSphere(2, 5);
 
@@ -77,7 +75,6 @@ namespace SkyBrigade.Engine.Tests.Tests
             Loaded = true;
         }
 
-        float totalTime = 0.0f;
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
             // Accumulate the time
@@ -85,7 +82,8 @@ namespace SkyBrigade.Engine.Tests.Tests
             // Get the render options
             var options = renderOptions ?? RenderOptions.Default;
 
-            meshes.Sort((o1, o2) => {
+            meshes.Sort((o1, o2) =>
+            {
                 if (Vector3.Distance(options.Camera.Position, o1.Position) < Vector3.Distance(options.Camera.Position, o2.Position)) return 1;
                 return 0;
             });
@@ -106,33 +104,8 @@ namespace SkyBrigade.Engine.Tests.Tests
                     lightMesh.Draw(RenderOptions.Default with { Camera = options.Camera });
                 }
 
-
                 item.Draw(options);
             }
-        }
-
-        // This method is called every frame.
-        public void Update(float dt)
-        {
-            // Loop through all the meshes in the meshes array.
-            foreach (var mesh in meshes)
-            {
-                // Check if the mesh's scale matches the scale instance variable.
-                if (mesh.Scale != scale)
-                    // If it doesn't, set the mesh's scale to the scale instance variable.
-                    mesh.Scale = scale;
-                if (mesh.Rotation != rot)
-                    mesh.Rotation = rot;
-            }
-        }
-
-        public void Dispose()
-        {
-            Loaded = false;
-            foreach (var m in meshes)
-            m.Dispose();
-
-            GC.SuppressFinalize(this);
         }
 
         public void RenderGui()
@@ -151,6 +124,20 @@ namespace SkyBrigade.Engine.Tests.Tests
             };
             }
         }
+
+        // This method is called every frame.
+        public void Update(float dt)
+        {
+            // Loop through all the meshes in the meshes array.
+            foreach (var mesh in meshes)
+            {
+                // Check if the mesh's scale matches the scale instance variable.
+                if (mesh.Scale != scale)
+                    // If it doesn't, set the mesh's scale to the scale instance variable.
+                    mesh.Scale = scale;
+                if (mesh.Rotation != rot)
+                    mesh.Rotation = rot;
+            }
+        }
     }
 }
-

@@ -76,7 +76,9 @@ namespace SkyBrigade.Engine.Content
 		public Shader GetShader(string name) => namedShaders.ContainsKey(name) ? namedShaders[name] : throw new Exception($"Key {name} not found in stored shaders.");
         #endregion
 
-		/*  Make sure we cleanup nicely.
+		/*  Make sure we cleanup nicely. 
+		 *  update: yea right
+		 *  TODO: fix
 		 */
         public void Dispose()
         {

@@ -8,11 +8,11 @@ namespace SkyBrigade.Engine.Rendering
         // this is to store the material description in a serializable format, more specifically the paths to the textures
         private struct AdvancedMaterialSerializable
         {
-            public string MetallicnessTexturePath {get;set;}
-            public string RoughnessTexturePath {get;set;}
-            public string AmbientOcclusionTexturePath {get;set;}
-            public string AlbedoTexturePath {get;set;}
-            public string NormalsTexturePath {get;set;}
+            public string MetallicnessTexturePath { get; set; }
+            public string RoughnessTexturePath { get; set; }
+            public string AmbientOcclusionTexturePath { get; set; }
+            public string AlbedoTexturePath { get; set; }
+            public string NormalsTexturePath { get; set; }
         }
 
         public AdvancedMaterialDescription MaterialDescription { get; set; }
@@ -121,4 +121,3 @@ namespace SkyBrigade.Engine.Rendering
         }
     }
 }
-

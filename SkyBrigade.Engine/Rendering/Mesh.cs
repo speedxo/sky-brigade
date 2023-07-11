@@ -1,11 +1,8 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Numerics;
-using ObjLoader.Loader.Loaders;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.OpenGL;
+using System.Globalization;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Rendering;
 
@@ -16,43 +13,53 @@ public class Mesh : IDisposable
      */
     private Vector3 pos, rot, scale;
 
-    public Vector3 Position { get => pos; set { pos = value; updateModelMatrix(); } }
-    public Vector3 Rotation { get => rot; set { rot = value; updateModelMatrix(); } }
-    public Vector3 Scale { get => scale; set { scale = value; updateModelMatrix(); } }
+    public Vector3 Position
+    { get => pos; set { pos = value; updateModelMatrix(); } }
+
+    public Vector3 Rotation
+    { get => rot; set { rot = value; updateModelMatrix(); } }
+
+    public Vector3 Scale
+    { get => scale; set { scale = value; updateModelMatrix(); } }
 
     public Matrix4x4 ModelMatrix { get; private set; }
-    public Material Material { get; set; } 
+    public Material Material { get; set; }
 
     private void updateModelMatrix()
     {
-        ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y))*Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z));
+        ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y)) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z));
     }
 
     public Vertex[] Vertices { get; private set; }
-	public uint[] Indices { get; private set; }
+    public uint[] Indices { get; private set; }
     public uint ElementCount { get; private set; }
 
-	private VertexBufferObject<Vertex> vbo;
+    private VertexBufferObject<Vertex> vbo;
 
     public void Use() => Material.Use();
+
     public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
+
     public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
+
     public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
+
     public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
+
     public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
 
-	public Mesh(Func<(Vertex[], uint[])> loader, Material? mat=null)
-	{
-		// yea i don't know why i went about it this way either
-		(Vertex[] vertices, uint[] indices) = loader();
+    public Mesh(Func<(Vertex[], uint[])> loader, Material? mat = null)
+    {
+        // yea i don't know why i went about it this way either
+        (Vertex[] vertices, uint[] indices) = loader();
         Vertices = vertices;
         Indices = indices;
 
-		// you already know the issue here
-		vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
+        // you already know the issue here
+        vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
 
-		vbo.VertexBuffer.BufferData(Vertices);
-		vbo.ElementBuffer.BufferData(Indices);
+        vbo.VertexBuffer.BufferData(Vertices);
+        vbo.ElementBuffer.BufferData(Indices);
         ElementCount = (uint)Indices.Length;
 
         vertices = Array.Empty<Vertex>();
@@ -80,7 +87,7 @@ public class Mesh : IDisposable
         List<Vector3> colors = new List<Vector3>();
         List<Vector2> texs = new List<Vector2>();
         List<Tuple<int, int, int>> faces = new List<Tuple<int, int, int>>();
-        
+
         CultureInfo ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
         ci.NumberFormat.CurrencyDecimalSeparator = ".";
 
@@ -98,7 +105,7 @@ public class Mesh : IDisposable
 
                     x = (float)double.Parse(vertparts[0].Trim(), NumberStyles.Any, ci);
                     y = (float)double.Parse(vertparts[1].Trim(), NumberStyles.Any, ci);
-                    z = (float)double.Parse(vertparts[2].Trim(), NumberStyles.Any, ci);                    
+                    z = (float)double.Parse(vertparts[2].Trim(), NumberStyles.Any, ci);
                 }
 
                 verts.Add(new Vertex(new Vector3(x, y, z), Vector3.Zero, new Vector2((float)Math.Sin(x), (float)Math.Sin(z))));
@@ -129,7 +136,7 @@ public class Mesh : IDisposable
                         faces.Add(face);
                     }
                 }
-            } 
+            }
             else if (line.StartsWith("vt "))
             {
                 string temp = line.Substring(3);
@@ -152,7 +159,7 @@ public class Mesh : IDisposable
         if (texs.Count > 0)
             for (int i = 0; i < verts.Count; i++)
                 verts[i] = new Vertex(verts[i].Position, verts[i].Normal, texs[i]);
-        
+
         foreach (var face in faces)
         {
             indices.Add((uint)face.Item1);
@@ -160,13 +167,15 @@ public class Mesh : IDisposable
             indices.Add((uint)face.Item3);
         }
 
-        return new Mesh(() => {
+        return new Mesh(() =>
+        {
             return (verts.ToArray(), indices.ToArray());
         });
     }
 
     public static Mesh CreateRectangle() =>
-        new(() => {
+        new(() =>
+        {
             return (new Vertex[] {
                     new Vertex(-1, -1, 0, 0, 1),
                     new Vertex(1, -1, 0, 1, 1),
@@ -179,7 +188,7 @@ public class Mesh : IDisposable
         });
 
     // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
-    public static Mesh CreateSphere(float radius, int vertexCount=10, Material? mat=null) 
+    public static Mesh CreateSphere(float radius, int vertexCount = 10, Material? mat = null)
     {
         List<Vertex> verts = new List<Vertex>();
         List<uint> indices = new List<uint>();
@@ -213,13 +222,14 @@ public class Mesh : IDisposable
             }
         }
 
-        return new Mesh(() => {
+        return new Mesh(() =>
+        {
             return (verts.ToArray(), indices.ToArray());
         }, mat);
     }
 
     // write code to generate a cube
-    public static Mesh CreateCube(float size=1)
+    public static Mesh CreateCube(float size = 1)
     {
         List<Vertex> verts = new List<Vertex>();
         List<uint> indices = new List<uint>();
@@ -271,27 +281,25 @@ public class Mesh : IDisposable
             indices.Add((uint)(i * 4 + 2));
             indices.Add((uint)(i * 4 + 3));
         }
-         return new Mesh(() => {
+        return new Mesh(() =>
+        {
             return (verts.ToArray(), indices.ToArray());
-         });
+        });
     }
-    
 
-    public void Draw(RenderOptions? renderOptions=null)
-	{
+    public void Draw(RenderOptions? renderOptions = null)
+    {
         //if (Indices == null || Indices.Length < 1) return; // Dont render if there is nothing to render. Precious performance mmmmm
 
         var options = renderOptions ?? RenderOptions.Default;
 
         Use();
 
-
         SetUniform("uView", options.Camera.View);
         SetUniform("uProjection", options.Camera.Projection);
         SetUniform("uModel", ModelMatrix);
         SetUniform("uColor", options.Color);
         SetUniform("camPos", options.Camera.Position);
-
 
         vbo.Bind();
 
@@ -311,4 +319,3 @@ public class Mesh : IDisposable
         vbo.Dispose();
     }
 }
-

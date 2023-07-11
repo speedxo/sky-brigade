@@ -1,9 +1,5 @@
-﻿using System;
+﻿using Silk.NET.Input;
 using System.Numerics;
-using System.Reflection;
-using Silk.NET.Input;
-using Silk.NET.OpenGL;
-using SkyBrigade.Engine;
 
 namespace SkyBrigade.Engine.Rendering;
 
@@ -11,6 +7,7 @@ public class Camera
 {
     //Setup the camera's location, directions, and movement speed
     private Vector3 CameraFront = new Vector3(0.0f, 0.0f, -1.0f);
+
     private Vector3 CameraUp = Vector3.UnitY;
     private Vector3 _camDir = Vector3.Zero;
     private float CameraYaw = -90f;
@@ -27,10 +24,10 @@ public class Camera
     public Vector3 Position { get; set; } = new Vector3(0, 0, 10);
 
     public bool Locked { get; set; } = false;
-    
+
     public Camera()
     {
-        // this is hacky as shit balls 
+        // this is hacky as shit balls
         for (int i = 0; i < GameManager.Instance.Input.Mice.Count; i++)
         {
             GameManager.Instance.Input.Mice[i].Cursor.CursorMode = CursorMode.Raw;
@@ -41,7 +38,6 @@ public class Camera
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
         Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.Window.FramebufferSize.X / (float)GameManager.Instance.Window.FramebufferSize.Y, 0.01f, 100.0f);
     }
-
 
     public void Update(float dt)
     {
@@ -108,4 +104,3 @@ public class Camera
         CameraZoom = Math.Clamp(CameraZoom - scrollWheel.Y, 1.0f, 45f);
     }
 }
-

@@ -18,7 +18,7 @@ public class Logger : IDisposable
     // the different prefixes for each level of logging
     public static Dictionary<LogLevel, string> Prefixes { get; } = new Dictionary<LogLevel, string>()
     {
-        { LogLevel.Debug, "[DEBUG] " },
+        { LogLevel.Debug, $"[DEBUG] " },
         { LogLevel.Info, "[INFO] " },
         { LogLevel.Warning, "[WARNING] " },
         { LogLevel.Error, "[ERROR] " },
@@ -71,13 +71,19 @@ public class Logger : IDisposable
         Console.ResetColor();
 
         if (Output > 0)
-            textWriter.WriteLine(log);        
+            textWriter.WriteLine(log);
+
+        if (level == LogLevel.Fatal) {
+            Dispose();
+            throw new Exception(message);
+        }
     }
 
     public void Dispose()
     {
         if (Output == 0) return;
 
+        textWriter.Flush();
         textWriter.Dispose();
         GC.SuppressFinalize(this);
     }

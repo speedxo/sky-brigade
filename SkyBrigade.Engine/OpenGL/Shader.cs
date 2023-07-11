@@ -2,6 +2,7 @@
 using System.IO;
 using System.Numerics;
 using Silk.NET.OpenGL;
+using SkyBrigade.Engine.Logging;
 
 namespace SkyBrigade.Engine.OpenGL;
 
@@ -28,9 +29,8 @@ public class Shader : IDisposable
         //Check for linking errors.
         _gl.GetProgram(_handle, GLEnum.LinkStatus, out var status);
         if (status == 0)
-        {
-            throw new Exception($"Program failed to link with error: {_gl.GetProgramInfoLog(_handle)}");
-        }
+            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Program failed to link with error: {_gl.GetProgramInfoLog(_handle)}");
+        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{_handle}] created!");
         //Detach and delete the shaders
         _gl.DetachShader(_handle, vertex);
         _gl.DetachShader(_handle, fragment);
@@ -113,6 +113,7 @@ public class Shader : IDisposable
     {
         //Remember to delete the program when we are done.
         _gl.DeleteProgram(_handle);
+        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{_handle}] destroyed!");
     }
 
     private uint LoadShader(ShaderType type, string path)

@@ -1,21 +1,19 @@
-﻿using System;
-using System.Numerics;
-using ImGuiNET;
+﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
     public class RenderRectangleEngineTest : IEngineTest
-	{
+    {
         public bool Loaded { get; set; } = false;
         public string Name { get; set; } = "Render Rectangle Test";
 
         private RenderRectangle rect;
 
         private Vector2 scale = Vector2.One;
-        private float rot = 0.0f;   
-
+        private float rot = 0.0f;
 
         public void LoadContent(GL gl)
         {
@@ -26,7 +24,7 @@ namespace SkyBrigade.Engine.Tests.Tests
             Loaded = true;
         }
 
-        public void Render(float dt, GL gl, RenderOptions? renderOptions=null)
+        public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
             rect.Draw(renderOptions);
         }
@@ -42,7 +40,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         public void Dispose()
         {
             Loaded = false;
-                
+
             GC.SuppressFinalize(this);
         }
 
@@ -53,4 +51,3 @@ namespace SkyBrigade.Engine.Tests.Tests
         }
     }
 }
-

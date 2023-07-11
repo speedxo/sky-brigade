@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using SkyBrigade.Engine.GameEntity.Components;
+﻿using SkyBrigade.Engine.GameEntity.Components;
 
 namespace SkyBrigade.Engine.GameEntity;
 
@@ -45,10 +43,10 @@ public class Entity
     {
         return Components.ContainsKey(typeof(T));
     }
-    public virtual  void Update(float dt)
+
+    public virtual void Update(float dt)
     {
         foreach (var item in Components.Values)
             item.Update(dt);
     }
 }
-

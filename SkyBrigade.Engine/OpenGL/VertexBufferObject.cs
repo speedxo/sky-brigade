@@ -1,5 +1,4 @@
-﻿using System;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace SkyBrigade.Engine.OpenGL;
 
@@ -7,7 +6,7 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
 {
     /* In OpenGL, buffers can store a wide variety of data
      * and all buffers require us to specify the data type
-     * aswell as its use case; this assists us in constructing 
+     * aswell as its use case; this assists us in constructing
      * more complicated buffers that require multiple smaller
      * buffers to contruct.
      */
@@ -31,7 +30,7 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
         vbo = new BufferObject<T>(gl, BufferTargetARB.ArrayBuffer);
 
         /* The VBO and EBO would be useless without a way of understanding
-         * the structure of the data, thats where the VAO comes in. It  
+         * the structure of the data, thats where the VAO comes in. It
          * stores the structure of the vertex data, how it is in RAM.
          */
         vao = new VertexArrayObject<T, uint>(gl, vbo, ebo);
@@ -39,6 +38,7 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
 
     /* Forwarding this method.
      */
+
     public unsafe void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint vertexSize, int offSet)
     {
         vao.VertexAttributePointer(index, count, type, vertexSize, offSet);
@@ -48,10 +48,10 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
 
     public void Unbind() => vao.Unbind();
 
-
     /* I guess the benifit of using a managed language is that i can
      * trust the garbage collector to dispose of these. (fatal mistake)
      */
+
     public void Dispose()
     {
         vao.Dispose();
@@ -59,4 +59,3 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
         vbo.Dispose();
     }
 }
-

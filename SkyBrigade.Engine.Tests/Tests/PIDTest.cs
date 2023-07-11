@@ -7,18 +7,18 @@ using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
-	public class PIDTest : IEngineTest
-	{
+    public class PIDTest : IEngineTest
+    {
         public bool Loaded { get; set; }
         public string Name { get; set; } = "PID Controller Test";
 
-        RenderRectangle axisLine, marker, autoMarker;
+        private RenderRectangle axisLine, marker, autoMarker;
 
         public void LoadContent(GL gl)
         {
             Loaded = true;
 
-            axisLine = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize:new Vector2(10, 0.1f));
+            axisLine = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize: new Vector2(10, 0.1f));
             marker = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize: new Vector2(0.1f, 0.2f));
             autoMarker = new RenderRectangle(inPos: new Vector3(0, 1.5f, 0), inSize: new Vector2(0.1f, 0.2f));
         }
@@ -30,8 +30,9 @@ namespace SkyBrigade.Engine.Tests.Tests
             {
                 Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f)
             });
-            marker.Draw(RenderOptions.Default with {
-                 Color = new Vector4(0.0f, 1.0f, 0.0f, 0.0f)
+            marker.Draw(RenderOptions.Default with
+            {
+                Color = new Vector4(0.0f, 1.0f, 0.0f, 0.0f)
             });
         }
 
@@ -49,8 +50,10 @@ namespace SkyBrigade.Engine.Tests.Tests
                 marker.Position = new Vector3(0, 1, 0);
             }
         }
-        PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
-        float timer = 0.0f, speed = 2.0f;
+
+        private PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
+        private float timer = 0.0f, speed = 2.0f;
+
         public void Update(float dt)
         {
             timer += dt;
@@ -63,13 +66,10 @@ namespace SkyBrigade.Engine.Tests.Tests
             setMarkerPos(controller.Update(autoMarkerPos - marker.Position.X, dt));
         }
 
-        void setMarkerPos(float value) => marker.Position = new Vector3(marker.Position.X + value, marker.Position.Y, marker.Position.Z);
+        private void setMarkerPos(float value) => marker.Position = new Vector3(marker.Position.X + value, marker.Position.Y, marker.Position.Z);
 
         public void Dispose()
         {
-
         }
-
     }
 }
-

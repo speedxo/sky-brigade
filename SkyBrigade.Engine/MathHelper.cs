@@ -8,4 +8,3 @@ public static class MathHelper
         return MathF.PI / 180f * degrees;
     }
 }
-

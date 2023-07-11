@@ -9,12 +9,10 @@
 
         public override void Load(string path)
         {
-
         }
 
         public override void Save(string path)
         {
-
         }
 
         public override void Use()
@@ -23,4 +21,3 @@
         }
     }
 }
-

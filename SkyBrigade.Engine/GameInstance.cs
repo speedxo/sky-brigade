@@ -10,7 +10,7 @@ using SkyBrigade.Engine.Logging;
 
 namespace SkyBrigade.Engine;
 
-public class GameManager : IDisposable
+public class GameManager
 {
     private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
 
@@ -53,7 +53,7 @@ public class GameManager : IDisposable
         };
 
         // Create the window.
-        Window = Silk.NET.Windowing.Window.Create(options);
+        this.Window  = Silk.NET.Windowing.Window.Create(options);
 
         // Register event handlers for the window.
         Window.Render += onRender;
@@ -62,7 +62,14 @@ public class GameManager : IDisposable
 
         // Run the window.
         Window.Run();
-        Dispose();
+
+        Window.Closing += () => {
+            ContentManager.Dispose();
+            GameScreenManager.Dispose();
+            Logger.Dispose();
+        };
+
+        Window.Dispose();
     }
 
 
@@ -74,7 +81,7 @@ public class GameManager : IDisposable
             Input = Window.CreateInput() // create an input context
         );
 
-        Logger = new Logger(LogOutput.Console);
+        Logger = new Logger(LogOutput.Both);
 
         if (Input.Keyboards.Count < 1)
             throw new Exception("No ways youre actually tryna play without a keyboard\n for any of this shitty code to work you *need* a keyboard.");
@@ -148,12 +155,6 @@ public class GameManager : IDisposable
 
         // Make sure ImGui renders too!
         imguiController.Render();
-    }
-
-    public void Dispose()
-    {
-        GameScreenManager.Dispose();
-        Window.Dispose();
     }
 }
 
