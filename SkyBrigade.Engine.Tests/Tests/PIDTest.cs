@@ -7,8 +7,8 @@ using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
-    public class PIDTest : IEngineTest
-    {
+	public class PIDTest : IEngineTest
+	{
         public bool Loaded { get; set; }
         public string Name { get; set; } = "PID Controller Test";
 
@@ -17,6 +17,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         public void LoadContent(GL gl)
         {
             Loaded = true;
+            config = PIDTestConfig.Default;
 
             axisLine = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize: new Vector2(10, 0.1f));
             marker = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize: new Vector2(0.1f, 0.2f));
@@ -38,29 +39,28 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void RenderGui()
         {
-            ImGui.DragFloat("P: ", ref controller.kP, 0.001f);
-            ImGui.DragFloat("I: ", ref controller.kI, 0.001f);
-            ImGui.DragFloat("D: ", ref controller.kD, 0.0001f);
+            ImGui.DragFloat("P: ", ref controller.Config.kP, 0.001f);
+            ImGui.DragFloat("I: ", ref controller.Config.kI, 0.001f);
+            ImGui.DragFloat("D: ", ref controller.Config.kD, 0.0001f);
+            ImGui.Checkbox(config.TargetMouseLabel, ref config.TargetMouse);
 
-            ImGui.DragFloat("Speed: ", ref speed, 0.1f);
+            ImGui.DragFloat(config.SpeedLabel, ref config.Speed, 0.1f);
 
             if (ImGui.Button("Reset Position"))
             {
-                controller = new PIDController(0.5f, 0.1f, 0.001f);
+                controller = new PIDController();
                 marker.Position = new Vector3(0, 1, 0);
             }
         }
-
-        private PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
-        private float timer = 0.0f, speed = 2.0f;
-
+        PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
+        float timer = 0.0f, speed = 2.0f;
         public void Update(float dt)
         {
             timer += dt;
 
             float mousePos = (GameManager.Instance.Input.Mice[0].Position.X - GameManager.Instance.Window.Position.X - GameManager.Instance.Window.Size.X / 2.0f) / (100.0f);
+            float autoMarkerPos = config.TargetMouse ? mousePos : MathF.Sin(timer * speed) * 5;
 
-            float autoMarkerPos = MathF.Sin(timer * speed) * 5.0f;
             autoMarker.Position = new Vector3(autoMarkerPos, autoMarker.Position.Y, autoMarker.Position.Z);
 
             setMarkerPos(controller.Update(autoMarkerPos - marker.Position.X, dt));

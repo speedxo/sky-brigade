@@ -14,13 +14,13 @@ namespace SkyBrigade.Engine.Tests.Tests
         private RenderRectangle playerPaddle, botPaddle, ball, topBar, bottomBar;
         private Camera gameCamera;
         private Vector2 direction;
+        private float speed = 5.0f;
 
         public void LoadContent(GL gl)
         {
             if (Loaded) return;
 
-            playerPaddle = new RenderRectangle()
-            {
+            playerPaddle = new RenderRectangle() {
                 Size = new Vector2(0.1f, 1.0f),
                 Position = new Vector3(-5, 0, 0)
             };
@@ -38,7 +38,7 @@ namespace SkyBrigade.Engine.Tests.Tests
 
             botPaddle = new RenderRectangle()
             {
-                Size = new Vector2(0.1f, 1.0f),
+                Size = new Vector2(0.1f, 0.5f),
                 Position = new Vector3(5, 0, 0)
             };
 
@@ -70,18 +70,21 @@ namespace SkyBrigade.Engine.Tests.Tests
 
             var pos = playerPaddle.Position;
 
-            if (isKeyDown(Key.W))
-                playerPaddle.Position += new System.Numerics.Vector3(0, 1, 0) * dt * 10;
-            if (isKeyDown(Key.S))
-                playerPaddle.Position += new System.Numerics.Vector3(0, -1, 0) * dt * 10;
+            if (!isAutomatic)
+            {
+                if (isKeyDown(Key.W))
+                    playerPaddle.Position += new System.Numerics.Vector3(0, 1, 0) * dt * 10;
+                if (isKeyDown(Key.S))
+                    playerPaddle.Position += new System.Numerics.Vector3(0, -1, 0) * dt * 10;
 
-            if (playerPaddle.Position.Y >= 3.5f)
-                playerPaddle.Position = new Vector3(playerPaddle.Position.X, 3.5f, playerPaddle.Position.Z);
+                if (playerPaddle.Position.Y >= 3.5f)
+                    playerPaddle.Position = new Vector3(playerPaddle.Position.X, 3.5f, playerPaddle.Position.Z);
 
-            if (playerPaddle.Position.Y <= -3.5f)
-                playerPaddle.Position = new Vector3(playerPaddle.Position.X, -3.5f, playerPaddle.Position.Z);
+                if (playerPaddle.Position.Y <= -3.5f)
+                    playerPaddle.Position = new Vector3(playerPaddle.Position.X, -3.5f, playerPaddle.Position.Z);
+            }
 
-            ball.Position += new Vector3(direction * dt * 5.0f, 0);
+            ball.Position += new Vector3(direction * dt * speed, 0);
 
             updateBot(dt);
 
@@ -98,24 +101,24 @@ namespace SkyBrigade.Engine.Tests.Tests
             if (ball.CheckIntersection(botPaddle))
                 direction.X = -1;
         }
-
-        private PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
-
+        PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
         private void updateBot(float dt)
         {
             var error = ball.Position.Y - botPaddle.Position.Y;
             var output = controller.Update(error, dt);
             botPaddle.Position = new Vector3(botPaddle.Position.X, botPaddle.Position.Y + output, botPaddle.Position.Z);
+            if (isAutomatic) playerPaddle.Position = new Vector3(playerPaddle.Position.X, botPaddle.Position.Y, playerPaddle.Position.Z);
         }
 
         public void RenderGui()
         {
-            ImGui.DragFloat("P: ", ref controller.kP, 0.001f);
-            ImGui.DragFloat("I: ", ref controller.kI, 0.001f);
-            ImGui.DragFloat("D: ", ref controller.kD, 0.0001f);
+            ImGui.DragFloat("P", ref controller.kP, 0.001f);
+            ImGui.DragFloat("I", ref controller.kI, 0.001f);
+            ImGui.DragFloat("D", ref controller.kD, 0.0001f);
+            ImGui.DragFloat("Speed", ref speed, 0.01f);
+            ImGui.Checkbox("Auto", ref isAutomatic);
 
-            ImGui.Text($"BallY: {ball.Position.Y}");
-            ImGui.Text($"BotY: {botPaddle.Position.Y}");
+            ImGui.Text($"Delta Error: {ball.Position.Y - botPaddle.Position.Y}");
         }
 
         public void Dispose()

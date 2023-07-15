@@ -1,6 +1,6 @@
 ﻿namespace SkyBrigade.Engine.Tests.Tests
 {
-    internal class PIDController
+    class PIDController
     {
         public float kP, kI, kD;
         public float integral, previousError;
@@ -8,7 +8,7 @@
         public float Min;
         public float Max;
 
-        public PIDController(float kP, float kI, float kD, float min = -1.0f, float max = 1.0f)
+        public PIDController(float kP, float kI, float kD, float min=-1.0f, float max=1.0f)
         {
             this.kP = kP;
             this.kI = kI;
@@ -17,14 +17,12 @@
             this.Min = min;
             this.Max = max;
         }
-
         private float Clamp(float variableToClamp)
         {
             if (variableToClamp <= Min) { return Min; }
             if (variableToClamp >= Max) { return Max; }
             return variableToClamp;
         }
-
         public float Update(float error, float dt)
         {
             integral += error * dt;
@@ -38,3 +36,4 @@
         }
     }
 }
+

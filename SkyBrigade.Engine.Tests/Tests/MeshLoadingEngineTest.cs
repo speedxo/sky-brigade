@@ -116,12 +116,13 @@ namespace SkyBrigade.Engine.Tests.Tests
 
             if (ImGui.Button("Reset Lights"))
             {
+                float multiplier = 1000;
                 lightColors = new[] {
-                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f),
-                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f),
-                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f),
-                new Vector3(rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f, rand.NextSingle() * 100.0f)
-            };
+                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier),
+                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier),
+                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier),
+                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier)
+                };
             }
         }
 
