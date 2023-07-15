@@ -15,6 +15,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         private Camera gameCamera;
         private Vector2 direction;
         private float speed = 5.0f;
+        private bool isAutomatic = true;
 
         public void LoadContent(GL gl)
         {
