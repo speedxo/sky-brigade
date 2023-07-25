@@ -11,11 +11,15 @@ in vec3 fragPos;
 
 // physical parameters
 uniform vec3 camPos;
+uniform float uGamma = 2.2f;
+uniform float uAmbientStrength = 0.03f;
 
 // material parameters
 uniform float uMetallicness;
 uniform float uRoughness;
 uniform float uAo;
+
+uniform int uDebug_defferedRenderLayer = 0;
 
 // lights
 uniform vec3 lightPositions[4];
@@ -63,8 +67,43 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 // ----------------------------------------------------------------------------
+
+/*
+    None = 0,
+
+    Albedo = 1,
+    Normal = 2,
+    Metallicness = 3,
+    Roughness = 4,
+    AmbientOcclusion = 5
+*/
+
+// adapted for 1D
+vec4 renderDefferedLayer()
+{
+    switch (uDebug_defferedRenderLayer)
+    {
+        case 1:
+            return texture(uTexture, fTexCoords);
+        case 3:
+            return vec4(vec3(uMetallicness), 1.0f);
+        case 4:
+            return vec4(vec3(uRoughness), 1.0f);
+        case 5:
+            return vec4(vec3(uAo), 1.0f);
+        default:
+            return vec4(1.0);
+    }
+}
+
 void main()
-{		
+{
+    if (uDebug_defferedRenderLayer > 0) 
+    {
+        FragColor = renderDefferedLayer();
+        return;
+    }   
+
     vec3 col = texture(uTexture, fTexCoords).rgb;
 
     vec3 N = normalize(fNorm);
@@ -115,14 +154,14 @@ void main()
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * col.rgb * uAo;
+    vec3 ambient = vec3(uAmbientStrength) * col.rgb * uAo;
 
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
+    color = pow(color, vec3(1.0/uGamma)); 
 
     FragColor = vec4(color, 1.0);
 }

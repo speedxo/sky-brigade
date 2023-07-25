@@ -12,7 +12,7 @@ namespace SkyBrigade.Engine.Rendering
      * TODO: the vbo here never gets disposed but yolo we move even if backwards
      */
 
-    public class RenderRectangle
+    public class Plane
     {
         private Vertex[] _vertices;
         private VertexBufferObject<Vertex> _vbo;
@@ -22,6 +22,20 @@ namespace SkyBrigade.Engine.Rendering
         private Vector3 pos;
         private float rot;
         private Vector2 scale, size;
+
+        public Material Material { get; set; }
+
+        public void Use() => Material.Use();
+
+        public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
+
+        public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
+
+        public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
+
+        public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
+
+        public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
 
         public Vector3 Position
         { get => pos; set { pos = value; updateModelMatrix(); } }
@@ -47,12 +61,11 @@ namespace SkyBrigade.Engine.Rendering
             _vbo.VertexBuffer.BufferData(_vertices);
         }
 
-        public Material Material { get; set; }
         public Matrix4x4 ModelMatrix { get; private set; }
 
         public RectangleF Bounds { get => new RectangleF(pos.X, pos.Y, size.X, size.Y); }
 
-        public bool CheckIntersection(RenderRectangle rect2)
+        public bool CheckIntersection(Plane rect2)
         {
             // Get the corner points of each rectangle
             Vector2 rect1TopLeft = new Vector2(Position.X - Size.X, Position.Y + Size.Y);
@@ -78,7 +91,7 @@ namespace SkyBrigade.Engine.Rendering
             ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot)) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f);
         }
 
-        public RenderRectangle(Vector3? inPos = null, Vector2? inSize = null, Vector2? inScale = null, float inRotation = 0.0f, Material? mat = null)
+        public Plane(Vector3? inPos = null, Vector2? inSize = null, Vector2? inScale = null, float inRotation = 0.0f, Material? mat = null)
         {
             /* We do this in one call of updateModelMatrix because swag money BABY
 			 */
@@ -86,7 +99,6 @@ namespace SkyBrigade.Engine.Rendering
             scale = inScale ?? Vector2.One;
             rot = inRotation;
             size = inSize ?? Vector2.One;
-            Material = mat ?? new EmptyMaterial();
 
             _vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
 
@@ -102,27 +114,19 @@ namespace SkyBrigade.Engine.Rendering
 
             updateModelMatrix();
             updateVertices();
+
+            Material = mat ?? new EmptyMaterial();
         }
 
         public void Draw(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
-            Material.Use();
+            Use();
 
-            //if (options.Texture == null)
-            //    options.Material.Shader.SetUniform("useTexture", 0);
-            //else
-            //{
-            //    GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-            //    GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, options.Texture.Handle);
-            //    options.Material.Shader.SetUniform("uTexture", 0);
-            //    options.Material.Shader.SetUniform("useTexture", 1);
-            //}
-
-            Material.Shader.SetUniform("uView", options.Camera.View);
-            Material.Shader.SetUniform("uProjection", options.Camera.Projection);
-            Material.Shader.SetUniform("uModel", ModelMatrix);
-            Material.Shader.SetUniform("uColor", options.Color);
+            SetUniform("uView", options.Camera.View);
+            SetUniform("uProjection", options.Camera.Projection);
+            SetUniform("uModel", ModelMatrix);
+            SetUniform("uColor", Material.Color * options.Color);
 
             _vbo.Bind();
 

@@ -24,7 +24,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         private Random rand = new Random();
         private Vector3 rot = Vector3.Zero;
         private Vector3 scale = Vector3.One;
-        private float totalTime = 0.0f;
+        private float totalTime = 0.0f, ambientStrength = 0.03f;
         public bool Loaded { get; set; } = false;
         public string Name { get; set; } = "Mesh Loading Test";
 
@@ -91,7 +91,6 @@ namespace SkyBrigade.Engine.Tests.Tests
             foreach (var item in meshes)
             {
                 item.Use();
-                item.SetUniform("uGamma", gamma);
 
                 for (int v = 0; v < lightColors.Length; v++)
                 {
@@ -112,7 +111,6 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             ImGui.DragFloat3("Scale", ref scale, 0.01f);
             ImGui.DragFloat3("Rotation", ref rot, 0.1f);
-            ImGui.DragFloat("Gamma", ref gamma, 0.1f);
 
             if (ImGui.Button("Reset Lights"))
             {

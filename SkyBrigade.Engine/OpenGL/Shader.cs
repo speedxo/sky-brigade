@@ -104,13 +104,16 @@ public class Shader : IDisposable
         int location = _gl.GetUniformLocation(_handle, name);
         if (location == -1)
         {
-            //Console.WriteLine($"{name} uniform not found on shader.");
+            Console.WriteLine($"{name} uniform not found on shader.");
         }
         _gl.UniformMatrix4(location, 1, false, (float*)&value);
     }
 
     public void Dispose()
     {
+        // TODO: OH OH
+        // TODO: urgently fix this
+        // TODO: this is BAD
         //Remember to delete the program when we are done.
         _gl.DeleteProgram(_handle);
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{_handle}] destroyed!");
@@ -122,7 +125,7 @@ public class Shader : IDisposable
             throw new Exception($"Shader file not found at {path}");
 
         string src = File.ReadAllText(path);
-
+        
         uint handle = _gl.CreateShader(type);
         _gl.ShaderSource(handle, src);
         _gl.CompileShader(handle);

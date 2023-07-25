@@ -10,7 +10,7 @@ using SkyBrigade.Engine.Logging;
 
 namespace SkyBrigade.Engine;
 
-public class GameManager
+public class GameManager : IDisposable
 {
     private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
 
@@ -32,7 +32,7 @@ public class GameManager
     private Type initialGameScreen;
     #endregion
 
-    public void Run(GameInstanceParameters parameters)
+    public GameManager Run(GameInstanceParameters parameters)
     {
         // Store the initial game screen that we should display when the game starts.
         this.initialGameScreen = parameters.InitialGameScreen;
@@ -62,14 +62,7 @@ public class GameManager
 
         // Run the window.
         Window.Run();
-
-        Window.Closing += () => {
-            ContentManager.Dispose();
-            GameScreenManager.Dispose();
-            Logger.Dispose();
-        };
-
-        Window.Dispose();
+        return this;
     }
 
 
@@ -97,7 +90,6 @@ public class GameManager
 
         GameScreenManager = new GameScreenManager(Gl);
         GameScreenManager.ChangeGameScreen(initialGameScreen);
-
     }
 
     private void LoadEssentialAssets()
@@ -106,6 +98,7 @@ public class GameManager
         ContentManager.GenerateNamedShader("basic", "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag");
         ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
 
+        ContentManager.GenerateNamedTexture("debug", "Assets/among.png");
         ContentManager.GenerateNamedTexture("gray", "Assets/gray.png");
         ContentManager.GenerateNamedTexture("white", "Assets/white.png");
     }
@@ -148,13 +141,22 @@ public class GameManager
         imguiController.Update((float)delta);
 
         // Clearing the screen buffer
-        Gl.Clear(ClearBufferMask.ColorBufferBit);
+        Gl.Clear(ClearBufferMask.ColorBufferBit| ClearBufferMask.DepthBufferBit);
 
 
         GameScreenManager.Render(Gl, (float)delta);
 
         // Make sure ImGui renders too!
         imguiController.Render();
+    }
+
+    public void Dispose()
+    {
+        ContentManager.Dispose();
+        GameScreenManager.Dispose();
+        Window.Dispose();
+
+        Logger.Dispose();
     }
 }
 

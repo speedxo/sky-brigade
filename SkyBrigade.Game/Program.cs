@@ -6,11 +6,12 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        GameManager.Instance.Run(GameInstanceParameters.Default with
+        var instance = GameManager.Instance.Run(GameInstanceParameters.Default with
         {
             InitialGameScreen = typeof(DemoGameScreen),
             WindowTitle = "vrek",
             InitialWindowSize = new System.Numerics.Vector2(1280, 720)
         });
+        instance.Dispose();
     }
 }

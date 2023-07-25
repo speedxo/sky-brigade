@@ -30,40 +30,32 @@ public class Mesh : IDisposable
         ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y)) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z));
     }
 
-    public Vertex[] Vertices { get; private set; }
-    public uint[] Indices { get; private set; }
     public uint ElementCount { get; private set; }
 
     private VertexBufferObject<Vertex> vbo;
 
-    public void Use() => Material.Use();
+    public void Use(RenderOptions? renderOptions = null) => Material.Use(renderOptions);
 
-    public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
+        public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
 
-    public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
+        public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
 
-    public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
+        public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
 
-    public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
+        public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
 
-    public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
+        public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
 
-    public Mesh(Func<(Vertex[], uint[])> loader, Material? mat = null)
+    public Mesh(Func<(ReadOnlyMemory<Vertex>, ReadOnlyMemory<uint>)> loader, Material? mat = null)
     {
-        // yea i don't know why i went about it this way either
-        (Vertex[] vertices, uint[] indices) = loader();
-        Vertices = vertices;
-        Indices = indices;
+        (ReadOnlyMemory<Vertex> vertices, ReadOnlyMemory<uint> indices) = loader();
 
-        // you already know the issue here
         vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
 
-        vbo.VertexBuffer.BufferData(Vertices);
-        vbo.ElementBuffer.BufferData(Indices);
-        ElementCount = (uint)Indices.Length;
+        vbo.VertexBuffer.BufferData(vertices.Span);
+        vbo.ElementBuffer.BufferData(indices.Span);
 
-        vertices = Array.Empty<Vertex>();
-        indices = Array.Empty<uint>();
+        ElementCount = (uint)indices.Length;
 
         // Telling the VAO object how to lay out the attribute pointers
         vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
@@ -173,7 +165,7 @@ public class Mesh : IDisposable
         });
     }
 
-    public static Mesh CreateRectangle() =>
+    public static Mesh CreateRectangle(Material? mat=null) =>
         new(() =>
         {
             return (new Vertex[] {
@@ -185,13 +177,14 @@ public class Mesh : IDisposable
                     0, 1, 3,
                     1, 2, 3
                 });
-        });
+        }, mat);
 
     // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
     public static Mesh CreateSphere(float radius, int vertexCount = 10, Material? mat = null)
     {
-        List<Vertex> verts = new List<Vertex>();
-        List<uint> indices = new List<uint>();
+        int vertexCountSquared = vertexCount * vertexCount;
+        Memory<Vertex> verts = new Vertex[vertexCountSquared];
+        Memory<uint> indices = new uint[(vertexCount - 1) * (vertexCount - 1) * 6];
 
         for (int i = 0; i < vertexCount; i++)
         {
@@ -202,31 +195,33 @@ public class Mesh : IDisposable
                 float y = (float)Math.Cos(Math.PI * i / (vertexCount - 1));
                 float z = (float)Math.Sin(Math.PI * i / (vertexCount - 1)) * (float)Math.Sin(2 * Math.PI * j / (vertexCount - 1));
 
-                // Add the vertex to the list of vertices
-                verts.Add(new Vertex(new Vector3(x, y, z) * radius, new Vector3(x, y, z), new Vector2((float)j / (vertexCount - 1), (float)i / (vertexCount - 1))));
+                // Add the vertex to the memory region of vertices
+                verts.Span[i * vertexCount + j] = new Vertex(new Vector3(x, y, z) * radius, new Vector3(x, y, z), new Vector2((float)j / (vertexCount - 1), (float)i / (vertexCount - 1)));
             }
         }
 
-        // Add the indices for the triangles to the list of indices
+        // Add the indices for the triangles to the memory region of indices
+        int index = 0;
         for (int i = 0; i < vertexCount - 1; i++)
         {
             for (int j = 0; j < vertexCount - 1; j++)
             {
-                indices.Add((uint)(i * vertexCount + j));
-                indices.Add((uint)(i * vertexCount + j + 1));
-                indices.Add((uint)((i + 1) * vertexCount + j));
+                indices.Span[index++] = (uint)(i * vertexCount + j);
+                indices.Span[index++] = (uint)(i * vertexCount + j + 1);
+                indices.Span[index++] = (uint)((i + 1) * vertexCount + j);
 
-                indices.Add((uint)(i * vertexCount + j + 1));
-                indices.Add((uint)((i + 1) * vertexCount + j + 1));
-                indices.Add((uint)((i + 1) * vertexCount + j));
+                indices.Span[index++] = (uint)(i * vertexCount + j + 1);
+                indices.Span[index++] = (uint)((i + 1) * vertexCount + j + 1);
+                indices.Span[index++] = (uint)((i + 1) * vertexCount + j);
             }
         }
 
         return new Mesh(() =>
         {
-            return (verts.ToArray(), indices.ToArray());
+            return (verts, indices);
         }, mat);
     }
+
 
     // write code to generate a cube
     public static Mesh CreateCube(float size = 1)
@@ -293,12 +288,11 @@ public class Mesh : IDisposable
 
         var options = renderOptions ?? RenderOptions.Default;
 
-        Use();
+        Use(options);
 
         SetUniform("uView", options.Camera.View);
         SetUniform("uProjection", options.Camera.Projection);
         SetUniform("uModel", ModelMatrix);
-        SetUniform("uColor", options.Color);
         SetUniform("camPos", options.Camera.Position);
 
         vbo.Bind();

@@ -50,6 +50,7 @@ public class BufferObject<TDataType> : IDisposable
         }
         catch (Exception ex)
         {
+            /* i dont fucking care */
         }
     }
 }

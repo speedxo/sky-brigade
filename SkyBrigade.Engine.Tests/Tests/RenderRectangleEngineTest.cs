@@ -5,12 +5,12 @@ using System.Numerics;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
-    public class RenderRectangleEngineTest : IEngineTest
+    public class PlaneEngineTest : IEngineTest
     {
         public bool Loaded { get; set; } = false;
         public string Name { get; set; } = "Render Rectangle Test";
 
-        private RenderRectangle rect;
+        private Rendering.Plane rect;
 
         private Vector2 scale = Vector2.One;
         private float rot = 0.0f;
@@ -19,7 +19,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             if (Loaded) return;
 
-            rect = new RenderRectangle();
+            rect = new Rendering.Plane();
 
             Loaded = true;
         }

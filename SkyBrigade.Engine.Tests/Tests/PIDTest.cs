@@ -12,21 +12,23 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; set; } = "PID Controller Test";
 
-        private RenderRectangle axisLine, marker, autoMarker;
+        private Rendering.Plane axisLine, marker, autoMarker;
         private bool targetMouse = false;
 
         public void LoadContent(GL gl)
         {
             Loaded = true;
 
-            axisLine = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize: new Vector2(10, 0.1f));
-            marker = new RenderRectangle(inPos: new Vector3(0, 1, 0), inSize: new Vector2(0.1f, 0.2f));
-            autoMarker = new RenderRectangle(inPos: new Vector3(0, 1.5f, 0), inSize: new Vector2(0.1f, 0.2f));
+            axisLine = new Rendering.Plane(inPos: new Vector3(0, 1, 0), inSize: new Vector2(10, 0.1f));
+            marker = new Rendering.Plane(inPos: new Vector3(0, 1, 0), inSize: new Vector2(0.1f, 0.2f));
+            autoMarker = new Rendering.Plane(inPos: new Vector3(0, 1.5f, 0), inSize: new Vector2(0.1f, 0.2f));
         }
 
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
-            axisLine.Draw();
+            axisLine.Draw(RenderOptions.Default with {
+                Color = Vector4.One
+            });
             autoMarker.Draw(RenderOptions.Default with
             {
                 Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f)

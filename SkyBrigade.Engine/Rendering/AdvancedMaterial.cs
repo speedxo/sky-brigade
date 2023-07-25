@@ -23,9 +23,17 @@ namespace SkyBrigade.Engine.Rendering
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
 
-        public override void Use()
+        public override void Use(RenderOptions? renderOptions = null)
         {
+            var options = renderOptions ?? RenderOptions.Default;
+
             Shader.Use();
+
+            Shader.SetUniform("uDebug_defferedRenderLayer", (int)options.DebugOptions.DefferedLayer);
+
+            Shader.SetUniform("uGamma", options.Gamma);
+            Shader.SetUniform("uAmbientStrength", options.AmbientLightingStrength);
+            Shader.SetUniform("uColor", Color * options.Color);
 
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Albedo.Handle);
@@ -89,14 +97,14 @@ namespace SkyBrigade.Engine.Rendering
         {
             // check if the file at path exists, and load it if it does
             if (!System.IO.File.Exists(path))
-                throw new System.IO.FileNotFoundException("File not found", path);
+                throw new System.IO.FileNotFoundException($"File({path}) not found", path);
 
             // extract the zip file to a temporary directory
             string tempDirectory = System.IO.Path.GetTempPath() + System.IO.Path.GetRandomFileName();
             System.IO.Compression.ZipFile.ExtractToDirectory(path, tempDirectory);
 
             // load the material from the directory
-            AdvancedMaterial material = LoadFromDirectory(tempDirectory);
+            AdvancedMaterial material = LoadFromDirectory(path, tempDirectory);
 
             // delete the temporary directory
             System.IO.Directory.Delete(tempDirectory, true);
@@ -105,17 +113,17 @@ namespace SkyBrigade.Engine.Rendering
         }
 
         // loads all the textures in the directory and returns a material description
-        public static AdvancedMaterial LoadFromDirectory(string path)
+        public static AdvancedMaterial LoadFromDirectory(string realPath, string path)
         {
             return new AdvancedMaterial()
             {
                 MaterialDescription = new AdvancedMaterialDescription()
                 {
-                    Metallicness = GameManager.Instance.ContentManager.LoadTexture(path + "/metallicness.png"),
-                    Roughness = GameManager.Instance.ContentManager.LoadTexture(path + "/roughness.png"),
-                    AmbientOcclusion = GameManager.Instance.ContentManager.LoadTexture(path + "/ao.png"),
-                    Albedo = GameManager.Instance.ContentManager.LoadTexture(path + "/albedo.png"),
-                    Normals = GameManager.Instance.ContentManager.LoadTexture(path + "/normals.png")
+                    Metallicness = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/metallicness.png", path + "/metallicness.png"),
+                    Roughness = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/roughness.png", path + "/roughness.png"),
+                    AmbientOcclusion = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/ao.png", path + "/ao.png"),
+                    Albedo = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/albedo.png", path + "/albedo.png"),
+                    Normals = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/normals.png", path + "/normals.png")
                 }
             };
         }

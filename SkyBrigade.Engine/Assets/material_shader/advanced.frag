@@ -12,6 +12,7 @@ in vec3 fragPos;
 // physical parameters
 uniform vec3 camPos;
 uniform float uGamma = 2.2f;
+uniform float uAmbientStrength = 0.03f;
 
 // material parameters
 uniform sampler2D uAlbedo;
@@ -19,6 +20,8 @@ uniform sampler2D uRoughness;
 uniform sampler2D uMetallicness;
 uniform sampler2D uAo;
 uniform sampler2D uNormals;
+
+uniform int uDebug_defferedRenderLayer = 0;
 
 // lights
 uniform vec3 lightPositions[4];
@@ -88,8 +91,44 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 // ----------------------------------------------------------------------------
+
+    /*
+        None = 0,
+
+        Albedo = 1,
+        Normal = 2,
+        Metallicness = 3,
+        Roughness = 4,
+        AmbientOcclusion = 5
+    */
+
+vec4 renderDefferedLayer()
+{
+    switch (uDebug_defferedRenderLayer)
+    {
+        case 1:
+            return texture(uAlbedo, fTexCoords);
+        case 2:
+            return vec4(getNormalFromMap(), 1.0f);
+        case 3:
+            return texture(uMetallicness, fTexCoords);
+        case 4:
+            return texture(uRoughness, fTexCoords);
+        case 5:
+            return texture(uAo, fTexCoords);
+        default:
+            return vec4(1.0);
+    }
+}
+
 void main()
 {		
+    if (uDebug_defferedRenderLayer > 0) 
+    {
+        FragColor = renderDefferedLayer();
+        return;
+    }
+
     // gamma correct input
     vec3 col = pow(texture(uAlbedo, fTexCoords).rgb, vec3(uGamma));
 
@@ -141,7 +180,7 @@ void main()
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * col.rgb * texture(uAo, fTexCoords).r;
+    vec3 ambient = vec3(uAmbientStrength) * col.rgb * texture(uAo, fTexCoords).r;
 
     vec3 color = ambient + Lo;
 
@@ -150,5 +189,5 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/uGamma)); 
 
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, 1.0) * uColor;
 }

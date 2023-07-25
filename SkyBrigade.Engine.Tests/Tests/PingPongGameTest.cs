@@ -11,7 +11,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; set; } = "Ping Pong Test";
 
-        private RenderRectangle playerPaddle, botPaddle, ball, topBar, bottomBar;
+        private Rendering.Plane playerPaddle, botPaddle, ball, topBar, bottomBar;
         private Camera gameCamera;
         private Vector2 direction;
         private float speed = 5.0f;
@@ -21,29 +21,29 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             if (Loaded) return;
 
-            playerPaddle = new RenderRectangle() {
+            playerPaddle = new Rendering.Plane() {
                 Size = new Vector2(0.1f, 1.0f),
                 Position = new Vector3(-5, 0, 0)
             };
 
-            topBar = new RenderRectangle()
+            topBar = new Rendering.Plane()
             {
                 Size = new Vector2(10, 0.1f),
                 Position = new Vector3(0, -4, 0)
             };
-            bottomBar = new RenderRectangle()
+            bottomBar = new Rendering.Plane()
             {
                 Size = new Vector2(10, 0.1f),
                 Position = new Vector3(0, 4, 0)
             };
 
-            botPaddle = new RenderRectangle()
+            botPaddle = new Rendering.Plane()
             {
                 Size = new Vector2(0.1f, 0.5f),
                 Position = new Vector3(5, 0, 0)
             };
 
-            ball = new RenderRectangle()
+            ball = new Rendering.Plane()
             {
                 Size = new Vector2(0.1f)
             };
@@ -54,7 +54,7 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
-            var options = RenderOptions.Default with { Camera = gameCamera };
+            var options = RenderOptions.Default with { Camera = gameCamera, Color = Vector4.One };
 
             playerPaddle.Draw(options);
             botPaddle.Draw(options);
