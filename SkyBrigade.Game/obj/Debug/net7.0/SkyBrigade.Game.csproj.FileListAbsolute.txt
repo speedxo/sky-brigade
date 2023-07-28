@@ -151,3 +151,4 @@ C:/Dev/sky-brigade/SkyBrigade/SkyBrigade.Game/obj/Debug/net7.0/ref/SkyBrigade.Ga
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0/SkyBrigade.Game.pdb
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0/SkyBrigade.Game.genruntimeconfig.cache
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0/ref/SkyBrigade.Game.dll
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Silk.NET.OpenGL.Extensions.APPLE.dll

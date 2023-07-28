@@ -327,6 +327,18 @@
           }
         }
       },
+      "Silk.NET.OpenGL.Extensions.APPLE/2.17.1": {
+        "dependencies": {
+          "Silk.NET.Core": "2.17.1",
+          "Silk.NET.OpenGL": "2.17.1"
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.OpenGL.Extensions.APPLE.dll": {
+            "assemblyVersion": "2.17.1.0",
+            "fileVersion": "2.17.1.0"
+          }
+        }
+      },
       "Silk.NET.OpenGL.Extensions.ImGui/2.17.1": {
         "dependencies": {
           "ImGui.NET": "1.88.0",
@@ -512,6 +524,7 @@
           "Silk.NET.Input.Glfw": "2.17.1",
           "Silk.NET.Maths": "2.17.1",
           "Silk.NET.OpenGL": "2.17.1",
+          "Silk.NET.OpenGL.Extensions.APPLE": "2.17.1",
           "Silk.NET.OpenGL.Extensions.ImGui": "2.17.1",
           "Silk.NET.Windowing": "2.17.1",
           "Silk.NET.Windowing.Common": "2.17.1",
@@ -711,6 +724,13 @@
       "sha512": "sha512-cQW4i0KL8ASjMNkpR/GTHbbG1cSFxZHNUSISwzdPmMxkj6LFxF5M6o6zhcMHi3LV3zRN5+5/Lp/WsfVOW2QO2w==",
       "path": "silk.net.opengl/2.17.1",
       "hashPath": "silk.net.opengl.2.17.1.nupkg.sha512"
+    },
+    "Silk.NET.OpenGL.Extensions.APPLE/2.17.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QuCsMkOLRFvokUec0ARBieE5Vn8gDrxiqo3iO8C41FPD1mqaD6z+YKl4ZDs9xagWV61kQE5KxSmU+exVRktrQw==",
+      "path": "silk.net.opengl.extensions.apple/2.17.1",
+      "hashPath": "silk.net.opengl.extensions.apple.2.17.1.nupkg.sha512"
     },
     "Silk.NET.OpenGL.Extensions.ImGui/2.17.1": {
       "type": "package",

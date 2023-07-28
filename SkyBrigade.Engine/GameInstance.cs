@@ -1,162 +1,227 @@
-﻿using System;
-using System.Diagnostics;
-using ImGuiNET;
-using Silk.NET.Input;
+﻿using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using SkyBrigade.Engine.Content;
 using SkyBrigade.Engine.Logging;
+using Silk.NET.OpenGL.Extensions.APPLE;
 
-namespace SkyBrigade.Engine;
-
-public class GameManager : IDisposable
+// Namespace declaration for the GameManager class
+namespace SkyBrigade.Engine
 {
-    private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
-
-    public static GameManager Instance => _instance.Value;
-
-    #region Public Members
-    public ContentManager ContentManager { get; private set; }
-    public GL Gl { get; private set; }
-    public bool IsInputCaptured { get; private set; } = true;
-    public GameScreenManager GameScreenManager { get; private set; }
-    public IInputContext Input { get; private set; }
-    public long MemoryUsage { get; private set; }
-    public IWindow Window { get; private set; }
-    public Logger Logger { get; private set; }
-    #endregion
-
-    #region Private Properties
-    private ImGuiController imguiController;
-    private Type initialGameScreen;
-    #endregion
-
-    public GameManager Run(GameInstanceParameters parameters)
+    /// <summary>
+    /// The GameManager class manages the main game loop and essential components for a game.
+    /// </summary>
+    public class GameManager
     {
-        // Store the initial game screen that we should display when the game starts.
-        this.initialGameScreen = parameters.InitialGameScreen;
+        // Singleton pattern: Lazy initialization of a single instance of the GameManager class
+        private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
 
-        // Create a window with the specified options.
-        // This window is used to display the game to the user.
-        var options = WindowOptions.Default with
+        /// <summary>
+        /// Gets the singleton instance of the GameManager class.
+        /// </summary>
+        public static GameManager Instance => _instance.Value;
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the ContentManager responsible for loading and managing game assets.
+        /// </summary>
+        public ContentManager ContentManager { get; private set; }
+
+        /// <summary>
+        /// Gets the OpenGL context used for rendering.
+        /// </summary>
+        public GL Gl { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the input is captured (e.g., for controlling the game).
+        /// </summary>
+        public bool IsInputCaptured { get; private set; } = true;
+
+        /// <summary>
+        /// Gets the GameScreenManager responsible for managing different game screens or scenes.
+        /// </summary>
+        public GameScreenManager GameScreenManager { get; private set; }
+
+        /// <summary>
+        /// Gets the input context used for handling user input.
+        /// </summary>
+        public IInputContext Input { get; private set; }
+
+        /// <summary>
+        /// Gets the total memory usage of the application in megabytes (MB).
+        /// </summary>
+        public long MemoryUsage { get; private set; }
+
+        /// <summary>
+        /// Gets the main game window.
+        /// </summary>
+        public IWindow Window { get; private set; }
+
+        /// <summary>
+        /// Gets the logger used for logging application messages.
+        /// </summary>
+        public Logger Logger { get; private set; }
+
+        #endregion
+
+        #region Private Properties
+
+        private ImGuiController imguiController;
+        private Type initialGameScreen;
+        private float oneSecondTimer;
+
+        #endregion
+
+        /// <summary>
+        /// Runs the game with the specified parameters and sets up the main game loop.
+        /// </summary>
+        /// <param name="parameters">Parameters used to initialize the game instance.</param>
+        /// <returns>The initialized GameManager instance.</returns>
+        public GameManager Run(GameInstanceParameters parameters)
         {
-            API = new GraphicsAPI()
+            // Store the initial game screen that we should display when the game starts.
+            this.initialGameScreen = parameters.InitialGameScreen;
+
+            // Create a window with the specified options.
+            var options = WindowOptions.Default with
             {
-                Flags = ContextFlags.ForwardCompatible,
-                API = ContextAPI.OpenGL,
-                Profile = ContextProfile.Core,
-                Version = new APIVersion(4, 1)
-            },
-            Title = parameters.WindowTitle,
-            Size = new Silk.NET.Maths.Vector2D<int>((int)parameters.InitialWindowSize.X, (int)parameters.InitialWindowSize.Y)
-        };
+                API = new GraphicsAPI()
+                {
+                    Flags = ContextFlags.ForwardCompatible,
+                    API = ContextAPI.OpenGL,
+                    Profile = ContextProfile.Core,
+                    Version = new APIVersion(4, 1)
+                },
+                Title = parameters.WindowTitle,
+                Size = new Silk.NET.Maths.Vector2D<int>((int)parameters.InitialWindowSize.X, (int)parameters.InitialWindowSize.Y)
+            };
 
-        // Create the window.
-        this.Window  = Silk.NET.Windowing.Window.Create(options);
+            // Create the window.
+            this.Window = Silk.NET.Windowing.Window.Create(options);
 
-        // Register event handlers for the window.
-        Window.Render += onRender;
-        Window.Update += onUpdate;
-        Window.Load += onLoad;
+            // Register event handlers for the window.
+            Window.Render += onRender;
+            Window.Update += onUpdate;
+            Window.Load += onLoad;
+            Window.Closing += Window_Closing;
 
-        // Run the window.
-        Window.Run();
-        return this;
-    }
-
-
-    private void onLoad()
-    {
-        imguiController = new ImGuiController(
-            Gl = Window.CreateOpenGL(), // load OpenGL
-            Window, // pass in our window
-            Input = Window.CreateInput() // create an input context
-        );
-
-        Logger = new Logger(LogOutput.Both);
-
-        if (Input.Keyboards.Count < 1)
-            throw new Exception("No ways youre actually tryna play without a keyboard\n for any of this shitty code to work you *need* a keyboard.");
-
-        for (int i = 0; i < Input.Keyboards.Count; i++)
-        {
-            Input.Keyboards[i].KeyDown += onKeyDown;
+            // Run the window.
+            Window.Run();
+            Window.Dispose();
+            return this;
         }
 
-        ContentManager = new ContentManager();
-        LoadEssentialAssets();
-
-
-        GameScreenManager = new GameScreenManager(Gl);
-        GameScreenManager.ChangeGameScreen(initialGameScreen);
-    }
-
-    private void LoadEssentialAssets()
-    {
-        ContentManager.GenerateNamedShader("material_basic", "Assets/material_shader/basic.vert", "Assets/material_shader/basic.frag");
-        ContentManager.GenerateNamedShader("basic", "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag");
-        ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
-
-        ContentManager.GenerateNamedTexture("debug", "Assets/among.png");
-        ContentManager.GenerateNamedTexture("gray", "Assets/gray.png");
-        ContentManager.GenerateNamedTexture("white", "Assets/white.png");
-    }
-
-    private void onKeyDown(IKeyboard keyboard, Key key, int arg3)
-    {
-        if (key == Key.Escape)
+        private void Window_Closing()
         {
-            IsInputCaptured = !IsInputCaptured;
-            for (int i = 0; i < Input.Mice.Count; i++)
-                Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
+            Dispose();
         }
 
-        if (key == Key.Q) Window.Close();
-    }
-
-
-    private float oneSecondTimer = 0.0f;
-    private void onUpdate(double delta)
-    {
-        oneSecondTimer += (float)delta;
-        if (oneSecondTimer >= 1.0f)
+        // Method called when the game is loaded, before the game loop starts.
+        private void onLoad()
         {
-            oneSecondTimer = 0.0f;
-            nonEssentialUpdate();
+            // Initialize ImGui controller for UI rendering.
+            imguiController = new ImGuiController(
+                Gl = Window.CreateOpenGL(), // Load OpenGL
+                Window, // Pass in our window
+                Input = Window.CreateInput() // Create an input context
+            );
+            // Initialize the logger with both file and console outputs.
+            Logger = new Logger(LogOutput.Both);
+
+            // Check if at least one keyboard is available for input.
+            if (Input.Keyboards.Count < 1)
+                throw new Exception("Cannot play without a keyboard. A keyboard is required for this game to function.");
+
+            // Attach key down event handlers for all available keyboards.
+            for (int i = 0; i < Input.Keyboards.Count; i++)
+            {
+                Input.Keyboards[i].KeyDown += onKeyDown;
+            }
+
+            // Initialize the ContentManager responsible for loading assets.
+            ContentManager = new ContentManager();
+            LoadEssentialAssets();
+
+            // Initialize the GameScreenManager and set the initial game screen.
+            GameScreenManager = new GameScreenManager(Gl);
+            GameScreenManager.ChangeGameScreen(initialGameScreen);
+
+            Gl.Enable(EnableCap.VertexArray);
         }
 
-        GameScreenManager.Update((float)delta);
-    }
+        // Method to load essential assets required for the game.
+        private void LoadEssentialAssets()
+        {
+            ContentManager.GenerateNamedShader("material_basic", "Assets/material_shader/basic.vert", "Assets/material_shader/basic.frag");
+            ContentManager.GenerateNamedShader("basic", "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag");
+            ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
 
+            ContentManager.GenerateNamedTexture("debug", "Assets/among.png");
+            ContentManager.GenerateNamedTexture("gray", "Assets/gray.png");
+            ContentManager.GenerateNamedTexture("white", "Assets/white.png");
+        }
 
-    private void nonEssentialUpdate()
-    {
-        MemoryUsage = GC.GetTotalMemory(false) / 1000000;
-    }
+        // Event handler for key-down events.
+        private void onKeyDown(IKeyboard keyboard, Key key, int arg3)
+        {
+            // Toggle input capture when the Escape key is pressed.
+            if (key == Key.Escape)
+            {
+                IsInputCaptured = !IsInputCaptured;
+                for (int i = 0; i < Input.Mice.Count; i++)
+                    Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
+            }
 
-    private unsafe void onRender(double delta)
-    {
-        // Make sure ImGui is up-to-date
-        imguiController.Update((float)delta);
+            // Close the window when the Q key is pressed.
+            if (key == Key.Q)
+            {
+                Window.Close();
+            }
+        }
 
-        // Clearing the screen buffer
-        Gl.Clear(ClearBufferMask.ColorBufferBit| ClearBufferMask.DepthBufferBit);
+        // Variables and method used for non-essential updates that run once per second.
+        private void onUpdate(double delta)
+        {
+            oneSecondTimer += (float)delta;
+            if (oneSecondTimer >= 1.0f)
+            {
+                oneSecondTimer = 0.0f;
+                nonEssentialUpdate();
+            }
 
+            GameScreenManager.Update((float)delta);
+        }
 
-        GameScreenManager.Render(Gl, (float)delta);
+        // Update method for non-essential tasks, such as measuring memory usage.
+        private void nonEssentialUpdate()
+        {
+            MemoryUsage = GC.GetTotalMemory(false) / 1000000;
+        }
 
-        // Make sure ImGui renders too!
-        imguiController.Render();
-    }
+        // Method called when rendering a frame.
+        private unsafe void onRender(double delta)
+        {
+            // Make sure ImGui is up-to-date before rendering.
+            imguiController.Update((float)delta);
 
-    public void Dispose()
-    {
-        ContentManager.Dispose();
-        GameScreenManager.Dispose();
-        Window.Dispose();
+            // Clear the screen buffer before rendering the game screen.
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        Logger.Dispose();
+            // Render the current game screen.
+            GameScreenManager.Render(Gl, (float)delta);
+
+            // Render ImGui UI on top of the game screen.
+            imguiController.Render();
+        }
+
+        private void Dispose()
+        {
+            ContentManager.Dispose();
+            GameScreenManager.Dispose();
+
+            Logger.Dispose();
+        }
     }
 }
-

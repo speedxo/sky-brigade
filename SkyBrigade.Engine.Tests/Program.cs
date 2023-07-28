@@ -6,7 +6,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        using var instance = GameManager.Instance.Run(GameInstanceParameters.Default with
+        var instance = GameManager.Instance.Run(GameInstanceParameters.Default with
         {
             InitialGameScreen = typeof(TestMenuGameScreen),
             WindowTitle = "SkyBridge.Engine.Tests",

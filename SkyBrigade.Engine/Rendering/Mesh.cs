@@ -120,7 +120,7 @@ public class Mesh : IDisposable
 
                     if (!success)
                     {
-                        Console.WriteLine("Error parsing face: {0}", line);
+                        GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Error parsing face: {line}");
                     }
                     else
                     {

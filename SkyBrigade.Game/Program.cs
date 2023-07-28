@@ -12,6 +12,5 @@ internal class Program
             WindowTitle = "vrek",
             InitialWindowSize = new System.Numerics.Vector2(1280, 720)
         });
-        instance.Dispose();
     }
 }

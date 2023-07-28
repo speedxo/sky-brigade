@@ -1,4 +1,4 @@
-#version 410 core
+ #version 410 core
 
 uniform sampler2D uTexture;
 uniform vec4 uColor;

@@ -441,6 +441,23 @@
           }
         }
       },
+      "Silk.NET.OpenGL.Extensions.APPLE/2.17.1": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.17.1",
+          "Silk.NET.OpenGL": "2.17.1"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.OpenGL.Extensions.APPLE.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.OpenGL.Extensions.APPLE.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Silk.NET.OpenGL.Extensions.ImGui/2.17.1": {
         "type": "package",
         "dependencies": {
@@ -764,6 +781,7 @@
           "Silk.NET.Input.Glfw": "2.17.1",
           "Silk.NET.Maths": "2.17.1",
           "Silk.NET.OpenGL": "2.17.1",
+          "Silk.NET.OpenGL.Extensions.APPLE": "2.17.1",
           "Silk.NET.OpenGL.Extensions.ImGui": "2.17.1",
           "Silk.NET.Windowing": "2.17.1",
           "Silk.NET.Windowing.Common": "2.17.1",
@@ -1421,6 +1439,27 @@
         "lib/netstandard2.1/Silk.NET.OpenGL.xml",
         "silk.net.opengl.2.17.1.nupkg.sha512",
         "silk.net.opengl.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.OpenGL.Extensions.APPLE/2.17.1": {
+      "sha512": "QuCsMkOLRFvokUec0ARBieE5Vn8gDrxiqo3iO8C41FPD1mqaD6z+YKl4ZDs9xagWV61kQE5KxSmU+exVRktrQw==",
+      "type": "package",
+      "path": "silk.net.opengl.extensions.apple/2.17.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.OpenGL.Extensions.APPLE.dll",
+        "lib/net5.0/Silk.NET.OpenGL.Extensions.APPLE.xml",
+        "lib/netcoreapp3.1/Silk.NET.OpenGL.Extensions.APPLE.dll",
+        "lib/netcoreapp3.1/Silk.NET.OpenGL.Extensions.APPLE.xml",
+        "lib/netstandard2.0/Silk.NET.OpenGL.Extensions.APPLE.dll",
+        "lib/netstandard2.0/Silk.NET.OpenGL.Extensions.APPLE.xml",
+        "lib/netstandard2.1/Silk.NET.OpenGL.Extensions.APPLE.dll",
+        "lib/netstandard2.1/Silk.NET.OpenGL.Extensions.APPLE.xml",
+        "silk.net.opengl.extensions.apple.2.17.1.nupkg.sha512",
+        "silk.net.opengl.extensions.apple.nuspec",
         "silkdotnet_v3.png"
       ]
     },

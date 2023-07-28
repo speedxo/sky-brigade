@@ -36,8 +36,9 @@ internal class DemoGameScreen : IGameScreen
         {
             Camera = testCamera,
             Color = new System.Numerics.Vector4(MathF.Sin(timer * 0.5f), MathF.Sin(timer * 1.4f), MathF.Sin(timer), 1.0f),
-            Texture = GameManager.Instance.ContentManager.GetTexture("debug")
         });
+
+        rect.Material.Texture = GameManager.Instance.ContentManager.GetTexture("debug");
 
         if (ImGui.Begin("Debug"))
         {
