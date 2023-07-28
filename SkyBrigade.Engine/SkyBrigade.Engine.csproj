@@ -36,7 +36,6 @@
     <Folder Include="OpenGL\" />
     <Folder Include="Content\" />
     <Folder Include="Data\" />
-    <Folder Include="Rendering\" />
     <Folder Include="Assets\basic_shader\" />
     <Folder Include="Collections\" />
     <Folder Include="GameEntity\" />

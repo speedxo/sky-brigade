@@ -2,8 +2,11 @@
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Data;
+using SkyBrigade.Engine.Logging;
 using SkyBrigade.Engine.Rendering;
 using SkyBrigade.Engine.Tests.Tests;
+
+using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Engine.Tests;
 
@@ -44,7 +47,10 @@ public class TestMenuGameScreen : IGameScreen
 
         // automatically generate the render modes from the DefferedRenderLayer enum
         renderModes = Enum.GetNames(typeof(DefferedRenderLayer));
+
+        GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture constructor call count: {Texture.count}");
     }
+
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
     private bool showMemoryUsageWindow;
@@ -65,19 +71,16 @@ public class TestMenuGameScreen : IGameScreen
                 // Menu item for showing/hiding the Debug Information window.
                 if (ImGui.MenuItem("Debug Information", "", ref showDebugWindow))
                 {
-                    
                 }
 
                 // Menu item for showing/hiding the Memory Usage window.
                 if (ImGui.MenuItem("Memory Usage", "", ref showMemoryUsageWindow))
                 {
-
                 }
 
                 // Menu item for showing/hiding the Render Options window.
                 if (ImGui.MenuItem("Render Options", "", ref showRenderOptionsWindow))
                 {
-
                 }
 
                 ImGui.EndMenu();
@@ -85,7 +88,6 @@ public class TestMenuGameScreen : IGameScreen
 
             ImGui.EndMainMenuBar();
         }
-
 
         if (showDebugWindow && ImGui.Begin("Debug Info"))
         {
@@ -116,10 +118,9 @@ public class TestMenuGameScreen : IGameScreen
         {
             ImGui.DragFloat("Gamma", ref gamma, 0.01f, 0.1f, 10.0f);
             ImGui.DragFloat("Ambient", ref ambientStrength, 0.01f, 0.0f, 10.0f);
-            
+
             // Listbox to select the render mode.
             ImGui.Combo("Render Mode", ref renderModeIndex, renderModes, renderModes.Length);
-            
 
             ImGui.End();
         }

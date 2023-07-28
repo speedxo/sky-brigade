@@ -9,6 +9,7 @@ public struct RenderOptions
 {
     // Primative Properties
     public float Gamma { get; set; }
+
     public float AmbientLightingStrength { get; set; }
 
     // Reference Properties
@@ -16,6 +17,7 @@ public struct RenderOptions
 
     // Value Properties
     public Vector4 Color { get; set; }
+
     public DebugRenderOptions DebugOptions { get; set; }
 
     public static RenderOptions Default { get; } = new RenderOptions
@@ -26,22 +28,4 @@ public struct RenderOptions
         AmbientLightingStrength = 0.03f,
         DebugOptions = DebugRenderOptions.Default
     };
-}
-public struct DebugRenderOptions
-{
-    public DefferedRenderLayer DefferedLayer { get; set; }
-
-    public static DebugRenderOptions Default { get; } = new DebugRenderOptions {
-        DefferedLayer = DefferedRenderLayer.None
-    };
-}
-public enum DefferedRenderLayer
-{
-    None = 0,
-
-    Albedo = 1,
-    Normal = 2,
-    Metallicness = 3,
-    Roughness = 4,
-    AmbientOcclusion = 5
 }

@@ -64,7 +64,7 @@ namespace SkyBrigade.Engine
         /// </summary>
         public Logger Logger { get; private set; }
 
-        #endregion
+        #endregion Public Properties
 
         #region Private Properties
 
@@ -72,7 +72,7 @@ namespace SkyBrigade.Engine
         private Type initialGameScreen;
         private float oneSecondTimer;
 
-        #endregion
+        #endregion Private Properties
 
         /// <summary>
         /// Runs the game with the specified parameters and sets up the main game loop.
@@ -95,7 +95,10 @@ namespace SkyBrigade.Engine
                     Version = new APIVersion(4, 1)
                 },
                 Title = parameters.WindowTitle,
-                Size = new Silk.NET.Maths.Vector2D<int>((int)parameters.InitialWindowSize.X, (int)parameters.InitialWindowSize.Y)
+                Size = new Silk.NET.Maths.Vector2D<int>((int)parameters.InitialWindowSize.X, (int)parameters.InitialWindowSize.Y),
+                FramesPerSecond = 0,
+
+                VSync = false
             };
 
             // Create the window.

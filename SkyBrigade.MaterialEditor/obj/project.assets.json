@@ -1960,33 +1960,34 @@
     ]
   },
   "packageFolders": {
-    "/Users/bogz/.nuget/packages/": {}
+    "C:\\Users\\nield\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj",
+      "projectUniqueName": "C:\\Dev\\sky-brigade\\SkyBrigade\\SkyBrigade.MaterialEditor\\SkyBrigade.MaterialEditor.csproj",
       "projectName": "SkyBrigade.MaterialEditor",
-      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj",
-      "packagesPath": "/Users/bogz/.nuget/packages/",
-      "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/",
+      "projectPath": "C:\\Dev\\sky-brigade\\SkyBrigade\\SkyBrigade.MaterialEditor\\SkyBrigade.MaterialEditor.csproj",
+      "packagesPath": "C:\\Users\\nield\\.nuget\\packages\\",
+      "outputPath": "C:\\Dev\\sky-brigade\\SkyBrigade\\SkyBrigade.MaterialEditor\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/bogz/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\nield\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj": {
-              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+            "C:\\Dev\\sky-brigade\\SkyBrigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj": {
+              "projectPath": "C:\\Dev\\sky-brigade\\SkyBrigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj"
             }
           }
         }
@@ -2016,7 +2017,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
       }
     }
   }

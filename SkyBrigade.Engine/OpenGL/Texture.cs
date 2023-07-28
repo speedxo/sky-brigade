@@ -7,6 +7,7 @@ public class Texture : IDisposable
     public uint Handle { get; }
     private GL _gl;
     internal string path;
+    public static int count = 0;
 
     public unsafe Texture(GL gl, string path)
     {
@@ -17,25 +18,25 @@ public class Texture : IDisposable
         Bind();
 
         //Loading an image using imagesharp.
-        using (var img = Image.Load<Rgba32>(path))
+        using var img = Image.Load<Rgba32>(path);
+
+        //Reserve enough memory from the gpu for the whole image
+        gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+
+        img.ProcessPixelRows(accessor =>
         {
-            //Reserve enough memory from the gpu for the whole image
-            gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
-
-            img.ProcessPixelRows(accessor =>
+            //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
+            for (int y = 0; y < accessor.Height; y++)
             {
-                //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
-                for (int y = 0; y < accessor.Height; y++)
+                fixed (void* data = accessor.GetRowSpan(y))
                 {
-                    fixed (void* data = accessor.GetRowSpan(y))
-                    {
-                        //Loading the actual image.
-                        gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-                    }
+                    //Loading the actual image.
+                    gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                 }
-            });
-        }
+            }
+        });
 
+        count++;
         SetParameters();
     }
 

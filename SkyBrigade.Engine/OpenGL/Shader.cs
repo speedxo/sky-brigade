@@ -12,6 +12,7 @@ public class Shader : IDisposable
     //Our handle and the GL instance this class will use, these are private because they have no reason to be public.
     //Most of the time you would want to abstract items to make things like this invisible.
     private uint _handle;
+
     private GL _gl;
     private Dictionary<string, int> uniformIndexes;
 
@@ -51,12 +52,12 @@ public class Shader : IDisposable
         //Using the program
         _gl.UseProgram(_handle);
     }
-        
+
     private int GetUniformLocation(string name)
     {
         if (!uniformIndexes.ContainsKey(name))
-            uniformIndexes.Add(name, _gl.GetUniformLocation(_handle, name));        
-        
+            uniformIndexes.Add(name, _gl.GetUniformLocation(_handle, name));
+
         return uniformIndexes[name];
     }
 
@@ -71,7 +72,7 @@ public class Shader : IDisposable
         }
         _gl.Uniform1(location, value);
     }
-        
+
     //Uniforms are properties that applies to the entire geometry
     public void SetUniform(string name, uint value)
     {
@@ -126,7 +127,7 @@ public class Shader : IDisposable
     }
 
     public void Dispose()
-    {  
+    {
         // Remember to delete the program when we are done.
         _gl.DeleteProgram(_handle);
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{_handle}] destroyed!");
@@ -138,7 +139,7 @@ public class Shader : IDisposable
             GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Shader file not found at {path}");
 
         string src = File.ReadAllText(path);
-        
+
         uint handle = _gl.CreateShader(type);
         _gl.ShaderSource(handle, src);
         _gl.CompileShader(handle);
@@ -148,7 +149,7 @@ public class Shader : IDisposable
             // LogLevel of fatal throws an exception
             GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Error compiling shader of type {type}, failed with error {infoLog}");
         }
-
+        GC.Collect();
         return handle;
     }
 

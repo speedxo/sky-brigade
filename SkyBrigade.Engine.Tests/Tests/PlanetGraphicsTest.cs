@@ -8,7 +8,7 @@ using ImGuiNET;
 namespace SkyBrigade.Engine.Tests.Tests
 {
     public class PlanetGraphicsTest : IEngineTest
-	{
+    {
         private struct Planet
         {
             public Mesh Mesh { get; set; }
@@ -21,14 +21,12 @@ namespace SkyBrigade.Engine.Tests.Tests
         public string Name { get; set; }
 
         private List<Planet> planets;
-        private List<Mesh> planetMeshes;
 
         public void LoadContent(GL gl)
         {
             Name = "Planets Test";
             Loaded = true;
 
-            planetMeshes = new List<Mesh>();
             planets = new List<Planet>();
 
             AddPlanet("star", 10);
@@ -41,40 +39,40 @@ namespace SkyBrigade.Engine.Tests.Tests
         }
 
         private Random rand = new Random(420);
+
         private void AddPlanet(string materialPath, float size)
         {
-            planetMeshes.Add(Mesh.CreateSphere(size / 10.0f, mat: AdvancedMaterial.LoadFromZip(Path.Combine("Assets", "planets", $"{materialPath}.material"))));
-
-            //planetMeshes.Last().Material.Color = new Vector4(new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), 1.0f);
-
-            planets.Add(new Planet {
-                Mesh = planetMeshes.Last(),
+            planets.Add(new Planet
+            {
+                Mesh = Mesh.CreateSphere(size / 10.0f, mat: AdvancedMaterial.LoadFromZip(Path.Combine("Assets", "planets", $"{materialPath}.material"))),
                 Size = size / 10.0f,
                 Index = planets.Count,
                 DriftOffset = (float)rand.NextDouble() * 2 * MathF.PI
             });
+
+            planets.Last().Mesh.Material.Color = new Vector4(new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), 1.0f);
         }
 
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 
-            planetMeshes.Sort((o1, o2) =>
+            planets.Sort((o1, o2) =>
             {
-                return (int)(Vector3.Distance(options.Camera.Position, o2.Position) - Vector3.Distance(options.Camera.Position, o1.Position));
+                return (int)(Vector3.Distance(options.Camera.Position, o2.Mesh.Position) - Vector3.Distance(options.Camera.Position, o1.Mesh.Position));
             });
 
-            foreach (var planet in planetMeshes)
+            foreach (var planet in planets)
             {
-                planet.Material.Shader.Use();
+                planet.Mesh.Material.Shader.Use();
 
                 // Statically positioned sun
-                planet.Material.Shader.SetUniform("lightPositions[0]", Vector3.Zero);
+                planet.Mesh.Material.Shader.SetUniform("lightPositions[0]", Vector3.Zero);
 
                 // The *100.0f is because we have HDR and tonemapping so can go big
-                planet.Material.Shader.SetUniform("lightColors[0]", new Vector3(100.0f, 100.0f, 0.0f));
+                planet.Mesh.Material.Shader.SetUniform("lightColors[0]", new Vector3(100.0f, 100.0f, 0.0f));
 
-                planet.Draw(renderOptions);
+                planet.Mesh.Draw(renderOptions);
             }
         }
 
@@ -100,11 +98,10 @@ namespace SkyBrigade.Engine.Tests.Tests
             {
                 planets[0].Mesh.Position = Vector3.Zero; // Position the sun at the origin
             }
-
-            for (int i = 1; i < planets.Count; i++)
+            foreach (var planet in planets)
             {
-                var planet = planets[i];
-                
+                if (planet.Index < 1) continue;
+
                 // Calculate the orbit radius based on the planet's index and size
                 float orbitRadius = planets[0].Size + planet.Size * MathF.Pow(planet.Index, 1.5f) + 2.0f;
 
@@ -113,15 +110,12 @@ namespace SkyBrigade.Engine.Tests.Tests
                 float z = MathF.Sin(totalGameTime * orbitSpeed * planet.DriftOffset) * orbitRadius;
 
                 // Update the planet's position (scaling down by 10 fold)
-                planet.Mesh.Position = new Vector3(x , 0, z );
+                planet.Mesh.Position = new Vector3(x, 0, z);
             }
         }
 
-
         public void Dispose()
         {
-
         }
     }
 }
-
