@@ -4,7 +4,7 @@ uniform sampler2D uTexture;
 uniform vec4 uColor;
 
 out vec4 FragColor;
-
+    
 in vec3 fNorm;
 in vec2 fTexCoords;
 in vec3 fragPos;

@@ -31,6 +31,7 @@
     <None Remove="Assets\white.png" />
     <None Remove="Assets\material_shader\advanced.frag" />
     <None Remove="Assets\material_shader\advanced.vert" />
+    <None Remove="Primitives\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -41,6 +42,7 @@
     <Folder Include="GameEntity\" />
     <Folder Include="GameEntity\Components\" />
     <Folder Include="Assets\material_shader\" />
+    <Folder Include="Primitives\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />

@@ -49,7 +49,13 @@ namespace SkyBrigade.Engine.Content
             return namedTextures[name];
         }
 
-        public Texture GenerateNamedTexture(string name, string path) => GenerateNamedTexture(name, new Texture(GameManager.Instance.Gl, path));
+        public Texture GenerateNamedTexture(string name, string path)
+        {
+            if (File.Exists(path))
+                return GenerateNamedTexture(name, new Texture(GameManager.Instance.Gl, path));
+
+            return GenerateNamedTexture(name, GetTexture("debug"));
+        }
         public Texture GenerateNamedTexture(string name, Span<byte> data, uint w, uint h) => GenerateNamedTexture(name, new Texture(GameManager.Instance.Gl, data, w, h));
         public Texture GetTexture(string name) => namedTextures.TryGetValue(name, out var texture) ? texture : throw new Exception($"Key {name} not found in stored textures.");
         #endregion

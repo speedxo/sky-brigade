@@ -29,7 +29,7 @@ namespace SkyBrigade.Engine.Tests.Tests
 
             planets = new List<Planet>();
 
-            AddPlanet("star", 10);
+            AddPlanet("star2", 10);
             for (int i = 0; i < 9; i++)
             {
                 AddPlanet(rand.NextDouble() > 0.5 ? "metal_planet" : "rock_planet", rand.NextInt64(2, 10));

@@ -1,8 +1,10 @@
 ﻿using SkyBrigade.Engine.GameEntity.Components;
+using SkyBrigade.Engine.Primitives;
+using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.GameEntity;
 
-public class Entity
+public class Entity : IEntity
 {
     public Dictionary<Type, IGameComponent> Components { get; internal set; } = new Dictionary<Type, IGameComponent>();
 
@@ -48,5 +50,11 @@ public class Entity
     {
         foreach (var item in Components.Values)
             item.Update(dt);
+    }
+
+    public virtual void Draw(RenderOptions? renderOptions = null)
+    {
+        foreach (var item in Components.Values)
+            item.Draw(renderOptions);
     }
 }

@@ -27,6 +27,7 @@
     <None Remove="Assets\planets\metal_planet.material" />
     <None Remove="Assets\planets\rock_planet.material" />
     <None Remove="Assets\planets\star.material" />
+    <None Remove="Assets\planets\star2.material" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />
@@ -53,6 +54,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\planets\star.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\planets\star2.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
