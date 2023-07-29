@@ -160,17 +160,6 @@ C:\Dev\sky-brigade\SkyBrigade\SkyBrigade.Game\obj\Debug\net7.0\refint\SkyBrigade
 C:\Dev\sky-brigade\SkyBrigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.pdb
 C:\Dev\sky-brigade\SkyBrigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.genruntimeconfig.cache
 C:\Dev\sky-brigade\SkyBrigade\SkyBrigade.Game\obj\Debug\net7.0\ref\SkyBrigade.Game.dll
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.csproj.AssemblyReference.cache
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.AssemblyInfoInputs.cache
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.AssemblyInfo.cs
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.csproj.CoreCompileInputs.cache
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.dll
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\refint\SkyBrigade.Game.dll
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.pdb
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\fast_obj.dll
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\libfast_obj.so
-C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\libfast_obj.dylib
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Assets\basic_shader\basic.frag
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Assets\basic_shader\basic.vert
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Assets\material_shader\basic.frag
@@ -182,6 +171,9 @@ C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Assets\among.png
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Assets\shaders\basic\basic.vert
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Assets\shaders\basic\basic.frag
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\fast_obj.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\libfast_obj.so
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\libfast_obj.dylib
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\SkyBrigade.Game.exe
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\SkyBrigade.Game.deps.json
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\SkyBrigade.Game.runtimeconfig.json
@@ -200,6 +192,7 @@ C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Microsoft.Extensions.Primitives.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Silk.NET.Core.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Silk.NET.GLFW.dll
@@ -219,6 +212,7 @@ C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Silk.NET.Windowing.Glfw.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\Silk.NET.Windowing.Sdl.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\SixLabors.ImageSharp.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\System.Drawing.Common.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\linux-x64\native\libcimgui.so
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\osx\native\libcimgui.dylib
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\win-x64\native\cimgui.dll
@@ -226,6 +220,8 @@ C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\linux-x64\native\libfast_obj.so
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\osx-universal\native\libfast_obj.dylib
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\win-x64\native\fast_obj.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\linux-x64\native\libglfw.so.3
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\osx-arm64\native\libglfw.3.dylib
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\osx-x64\native\libglfw.3.dylib
@@ -238,6 +234,14 @@ C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\runtimes\win-x64\native\SDL2.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\SkyBrigade.Engine.dll
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\bin\Debug\net7.0\SkyBrigade.Engine.pdb
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.csproj.AssemblyReference.cache
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.AssemblyInfoInputs.cache
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.AssemblyInfo.cs
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.csproj.CoreCompileInputs.cache
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.csproj.CopyComplete
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\refint\SkyBrigade.Game.dll
+C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.pdb
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\SkyBrigade.Game.genruntimeconfig.cache
 C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Game\obj\Debug\net7.0\ref\SkyBrigade.Game.dll

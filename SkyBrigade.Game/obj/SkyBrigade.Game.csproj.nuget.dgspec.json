@@ -11,7 +11,7 @@
         "projectName": "SkyBrigade.Engine",
         "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj",
         "packagesPath": "C:\\Users\\bogda\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bogda\\Source\\Repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\obj\\",
+        "outputPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -104,6 +104,10 @@
             "SixLabors.ImageSharp": {
               "target": "Package",
               "version": "[3.0.1, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[7.0.0, )"
             }
           },
           "imports": [

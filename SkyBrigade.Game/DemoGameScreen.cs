@@ -49,7 +49,6 @@ internal class DemoGameScreen : IGameScreen
     }
 
     private readonly DeltaTracker<float> memoryTracker = new((prev, current) => current - prev);
-    private readonly float timer = 0.0f;
 
     public void Update(float dt)
     {
