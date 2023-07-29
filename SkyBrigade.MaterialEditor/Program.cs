@@ -47,7 +47,7 @@ internal class EditorMenuBar : IEntity
 
 internal class Program : IGameScreen
 {
-    private static void Main(string[] args)
+    private static void Main(string[] _)
     {
 
         Instance.Initialize(GameInstanceParameters.Default with
