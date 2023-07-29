@@ -133,7 +133,7 @@
         "projectName": "SkyBrigade.Game",
         "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\SkyBrigade.Game.csproj",
         "packagesPath": "C:\\Users\\bogda\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bogda\\Source\\Repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\obj\\",
+        "outputPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

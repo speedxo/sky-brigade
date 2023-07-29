@@ -8,12 +8,11 @@ namespace SkyBrigade.Engine.Tests.Tests
 {
     public class MeshLoadingEngineTest : IEngineTest
     {
-        private float gamma = 2.2f;
         private Vector3[] lightColors;
         private Mesh lightMesh;
 
         // lights
-        private Vector3[] lightPositions = new[] {
+        private readonly Vector3[] lightPositions = new[] {
             new Vector3(-10.0f,  10.0f, 10.0f),
             new Vector3( 10.0f,  10.0f, 10.0f),
             new Vector3(-10.0f, -10.0f, 10.0f),
@@ -21,10 +20,10 @@ namespace SkyBrigade.Engine.Tests.Tests
         };
 
         private List<Mesh> meshes;
-        private Random rand = new Random();
+        private readonly Random rand = new();
         private Vector3 rot = Vector3.Zero;
         private Vector3 scale = Vector3.One;
-        private float totalTime = 0.0f, ambientStrength = 0.03f;
+        private float totalTime;
         public bool Loaded { get; set; } = false;
         public string Name { get; set; } = "Mesh Loading Test";
 

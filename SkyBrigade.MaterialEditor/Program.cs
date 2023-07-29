@@ -47,11 +47,8 @@ internal class EditorMenuBar : IEntity
 
 internal class Program : IGameScreen
 {
-    private static string[] ProgramArgs;
-
     private static void Main(string[] args)
     {
-        ProgramArgs = args;
 
         Instance.Initialize(GameInstanceParameters.Default with
         {
@@ -63,12 +60,11 @@ internal class Program : IGameScreen
     }
 
     private List<IEntity> entities;
-    private AdvancedMaterial material;
 
     public void Initialize(GL gl)
     {
-        if (!TryLoadMaterial(ProgramArgs.FirstOrDefault()))
-            LoadDefaultMaterial();
+        //if (!TryLoadMaterial(ProgramArgs.FirstOrDefault()))
+        //    LoadDefaultMaterial();
 
         var menuBar = new EditorMenuBar();
         menuBar.OnMenuItemClicked += MenuBar_MenuItemClicked;
@@ -78,33 +74,33 @@ internal class Program : IGameScreen
         };
     }
 
-    private bool TryLoadMaterial(string? path)
-    {
-        if (path?.CompareTo(string.Empty) == 0) return false;
-        if (!File.Exists(path)) return false;
+    //private bool TryLoadMaterial(string? path)
+    //{
+    //    if (path?.CompareTo(string.Empty) == 0) return false;
+    //    if (!File.Exists(path)) return false;
 
-        return true;
-    }
+    //    return true;
+    //}
 
-    private void LoadDefaultMaterial()
-    {
-        //material = AdvancedMaterial.LoadFromZip("default.material");
-    }
+    //private void LoadDefaultMaterial()
+    //{
+    //    material = AdvancedMaterial.LoadFromZip("default.material");
+    //}
 
     private void MenuBar_MenuItemClicked(EditorMenuBarItem item)
     {
-        switch (item)
-        {
-            case EditorMenuBarItem.Close:
-                CloseWindow(); break;
-            case EditorMenuBarItem.Save:
-                SaveMaterial(); break;
-        }
+        //switch (item)
+        //{
+        //    case EditorMenuBarItem.Close:
+        //        CloseWindow(); break;
+        //    case EditorMenuBarItem.Save:
+        //        SaveMaterial(); break;
+        //}
     }
 
-    private void SaveMaterial()
-    {
-    }
+    //private void SaveMaterial()
+    //{
+    //}
 
     public void Render(GL gl, float dt)
     {
@@ -116,10 +112,10 @@ internal class Program : IGameScreen
         entities.ForEach(e => e.Update(dt));
     }
 
-    private void CloseWindow()
-    {
-        Instance.Window.Close();
-    }
+    //private void CloseWindow()
+    //{
+    //    Instance.Window.Close();
+    //}
 
     public void Dispose()
     {

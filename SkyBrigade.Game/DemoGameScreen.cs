@@ -4,22 +4,19 @@ using SkyBrigade.Engine;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
 
-using Texture = SkyBrigade.Engine.OpenGL.Texture;
-
 namespace SkyBrigade.Game;
 
 internal class DemoGameScreen : IGameScreen
 {
     private Plane rect;
     private Camera testCamera;
-    private Texture testTexture;
-    private Mesh testMesh;
 
     public void Initialize(GL gl)
     {
         gl.ClearColor(System.Drawing.Color.CornflowerBlue);
 
-        rect = new() {
+        rect = new()
+        {
             Rotation = new System.Numerics.Vector3(90, 0, 0),
             Scale = new System.Numerics.Vector2(10)
         };
@@ -51,8 +48,8 @@ internal class DemoGameScreen : IGameScreen
         }
     }
 
-    private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
-    private float timer = 0.0f;
+    private readonly DeltaTracker<float> memoryTracker = new((prev, current) => current - prev);
+    private readonly float timer = 0.0f;
 
     public void Update(float dt)
     {

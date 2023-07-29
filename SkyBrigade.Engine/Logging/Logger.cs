@@ -6,10 +6,10 @@ namespace SkyBrigade.Engine.Logging
     public class Logger : IDisposable
     {
         // Define a private object for thread synchronization
-        private readonly object locker = new object();
+        private readonly object locker = new();
 
         // the different colors for each level of logging
-        private static readonly Dictionary<LogLevel, ConsoleColor> Colors = new Dictionary<LogLevel, ConsoleColor>()
+        private static readonly Dictionary<LogLevel, ConsoleColor> Colors = new()
         {
             { LogLevel.Debug, ConsoleColor.Gray },
             { LogLevel.Info, ConsoleColor.White },
@@ -19,7 +19,7 @@ namespace SkyBrigade.Engine.Logging
         };
 
         // the different prefixes for each level of logging
-        private static readonly Dictionary<LogLevel, string> Prefixes = new Dictionary<LogLevel, string>()
+        private static readonly Dictionary<LogLevel, string> Prefixes = new()
         {
             { LogLevel.Debug, $"[DEBUG] " },
             { LogLevel.Info, "[INFO] " },
@@ -29,7 +29,7 @@ namespace SkyBrigade.Engine.Logging
         };
 
         // the different suffixes for each level of logging
-        private static readonly Dictionary<LogLevel, string> Suffixes = new Dictionary<LogLevel, string>()
+        private static readonly Dictionary<LogLevel, string> Suffixes = new()
         {
             { LogLevel.Debug, "" },
             { LogLevel.Info, "" },
@@ -38,19 +38,10 @@ namespace SkyBrigade.Engine.Logging
             { LogLevel.Fatal, "" }
         };
 
-        // the different prefixes for each level of logging
-        private static readonly Dictionary<LogLevel, string> PrefixesNoColor = new Dictionary<LogLevel, string>()
-        {
-            { LogLevel.Debug, "[DEBUG] " },
-            { LogLevel.Info, "[INFO] " },
-            { LogLevel.Warning, "[WARNING] " },
-            { LogLevel.Error, "[ERROR] " },
-            { LogLevel.Fatal, "[FATAL] " }
-        };
 
         public LogOutput Output { get; private set; }
-        private TextWriter textWriter;
-        private ConcurrentQueue<LogEntry> logQueue = new ConcurrentQueue<LogEntry>();
+        private readonly TextWriter textWriter;
+        private readonly ConcurrentQueue<LogEntry> logQueue = new();
         private bool isProcessingLogs = false;
 
         public Logger(LogOutput output = LogOutput.Console)
@@ -85,13 +76,13 @@ namespace SkyBrigade.Engine.Logging
             }
         }
 
-        private void ProcessLogs(object state)
+        private void ProcessLogs(object? state)
         {
             // This method is executed on a background thread
             while (true)
             {
                 // If there are logs in the queue, process them
-                if (logQueue.Count > 0)
+                if (!logQueue.IsEmpty)
                 {
                     lock (locker) // Ensure only one thread writes to the console or file
                     {

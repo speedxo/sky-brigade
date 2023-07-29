@@ -67,3 +67,6 @@
 [DEBUG] Shader[4] created!
 [DEBUG] Shader[5] created!
 [DEBUG] Shader[6] created!
+[DEBUG] Shader[4] created!
+[DEBUG] Shader[5] created!
+[DEBUG] Shader[6] created!

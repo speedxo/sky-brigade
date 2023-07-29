@@ -62,7 +62,7 @@ namespace SkyBrigade.Engine.Rendering
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path); // TODO: we should log this override.
 
-            AdvancedMaterialSerializable serializable = new AdvancedMaterialSerializable()
+            AdvancedMaterialSerializable serializable = new()
             {
                 MetallicnessTexturePath = MaterialDescription.Metallicness.path,
                 RoughnessTexturePath = MaterialDescription.Roughness.path,
@@ -105,7 +105,7 @@ namespace SkyBrigade.Engine.Rendering
             string tempDirectory = System.IO.Path.GetTempPath() + System.IO.Path.GetRandomFileName();
             System.IO.Compression.ZipFile.ExtractToDirectory(path, tempDirectory);
 
-            string[] files = Directory.GetFiles(tempDirectory).Select(Path.GetFileName).ToArray();
+            var files = Directory.GetFiles(tempDirectory).Select(Path.GetFileName).ToArray();
             List<string> missingFiles = fileNames.Where(fileName => !files.Contains(fileName)).ToList();
 
             if (missingFiles.Count > 0)

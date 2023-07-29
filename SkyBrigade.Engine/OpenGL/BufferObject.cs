@@ -10,9 +10,9 @@ public class BufferObject<TDataType> : IDisposable
     /* These are private because they have no reason to be public
      * Traditional OOP style principles break when you have to abstract
      */
-    private uint _handle;
-    private BufferTargetARB _bufferType;
-    private GL _gl;
+    private readonly uint _handle;
+    private readonly BufferTargetARB _bufferType;
+    private readonly GL _gl;
 
     public unsafe BufferObject(GL gl, BufferTargetARB bufferType)
     {
@@ -48,9 +48,10 @@ public class BufferObject<TDataType> : IDisposable
         {
             _gl.DeleteBuffer(_handle);
         }
-        catch (Exception ex)
+        catch
         {
             /* i dont fucking care */
         }
+        GC.SuppressFinalize(this);
     }
 }

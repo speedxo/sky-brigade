@@ -13,7 +13,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         private Rendering.Plane rect;
 
         private Vector2 scale = Vector2.One;
-        private float rot = 0.0f;
+        private Vector3 rot = Vector3.Zero;
 
         public void LoadContent(GL gl)
         {
@@ -47,7 +47,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         public void RenderGui()
         {
             ImGui.DragFloat2("Scale", ref scale, 0.01f);
-            ImGui.DragFloat("Rotation", ref rot, 0.1f);
+            ImGui.DragFloat3("Rotation", ref rot, 0.1f);
         }
     }
 }
