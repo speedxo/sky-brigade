@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Engine.Rendering;
 

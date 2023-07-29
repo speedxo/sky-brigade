@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using SkyBrigade.Engine.Logging;
+﻿using SkyBrigade.Engine.Logging;
 using SkyBrigade.Engine.OpenGL;
 
 namespace SkyBrigade.Engine.Content
@@ -56,11 +54,15 @@ namespace SkyBrigade.Engine.Content
 
             return GenerateNamedTexture(name, GetTexture("debug"));
         }
+
         public Texture GenerateNamedTexture(string name, Span<byte> data, uint w, uint h) => GenerateNamedTexture(name, new Texture(GameManager.Instance.Gl, data, w, h));
+
         public Texture GetTexture(string name) => namedTextures.TryGetValue(name, out var texture) ? texture : throw new Exception($"Key {name} not found in stored textures.");
-        #endregion
+
+        #endregion Textures
 
         #region Shaders
+
         public Shader LoadShader(string vertexPath, string fragmentPath)
         {
             string uniqueKey = vertexPath + fragmentPath;
@@ -93,13 +95,16 @@ namespace SkyBrigade.Engine.Content
         }
 
         public Shader GenerateNamedShader(string name, string vertexPath, string fragmentPath) => GenerateNamedShader(name, new Shader(GameManager.Instance.Gl, vertexPath, fragmentPath));
+
         public Shader GetShader(string name) => namedShaders.TryGetValue(name, out var shader) ? shader : throw new Exception($"Key {name} not found in stored shaders.");
-        #endregion
+
+        #endregion Shaders
 
         /*  Make sure we cleanup nicely.
          *  update: yea right
          *  TODO: fix
          */
+
         public void Dispose()
         {
             foreach (var item in namedShaders.Values)
@@ -119,6 +124,4 @@ namespace SkyBrigade.Engine.Content
             unnamedShaders.Clear();
         }
     }
-
 }
-

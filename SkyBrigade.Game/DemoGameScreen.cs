@@ -9,6 +9,7 @@ using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Game;
 
+
 internal class DemoGameScreen : IGameScreen
 {
     private Plane rect;
@@ -45,6 +46,7 @@ internal class DemoGameScreen : IGameScreen
             ImGui.Text($"Memory Consumption: {float.Round(GC.GetTotalMemory(false) / 1024.0f / 1024, 2)}MB");
             ImGui.Text($"Memory Delta: {memoryTracker.GetAverage()}KB");
             ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
+            ImGui.Text($"FPS: {1.0f / dt}");
             ImGui.End();
         }
     }

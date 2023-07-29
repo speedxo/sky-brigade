@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using SkyBrigade.Engine.OpenGL;
+﻿using SkyBrigade.Engine.OpenGL;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Rendering
 {

@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
-using System.Xml.Linq;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Logging;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.OpenGL;
 

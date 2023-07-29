@@ -4,7 +4,6 @@ using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using SkyBrigade.Engine.Content;
 using SkyBrigade.Engine.Logging;
-using Silk.NET.OpenGL.Extensions.APPLE;
 
 // Namespace declaration for the GameManager class
 namespace SkyBrigade.Engine;
@@ -114,7 +113,7 @@ public class GameManager
     }
 
     public void Run()
-    { 
+    {
         // Run the window.
         Window.Run();
         Window.Dispose();

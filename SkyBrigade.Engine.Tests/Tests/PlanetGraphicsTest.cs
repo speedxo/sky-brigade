@@ -1,9 +1,7 @@
-﻿using System;
-using Microsoft.Extensions.Options;
-using System.Numerics;
+﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
-using ImGuiNET;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {

@@ -92,8 +92,9 @@ namespace SkyBrigade.Engine.Rendering
                 Normals = GameManager.Instance.ContentManager.GetTexture(serializable.NormalsTexturePath)
             };
         }
+
         private static readonly string[] fileNames = new[] { "metallicness.png", "roughness.png", "ao.png", "albedo.png", "normals.png" };
-       
+
         public static AdvancedMaterial LoadFromZip(string path)
         {
             // check if the file at path exists, and load it if it does
@@ -107,12 +108,10 @@ namespace SkyBrigade.Engine.Rendering
             string[] files = Directory.GetFiles(tempDirectory).Select(Path.GetFileName).ToArray();
             List<string> missingFiles = fileNames.Where(fileName => !files.Contains(fileName)).ToList();
 
-
             if (missingFiles.Count > 0)
             {
                 GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Material({path}) is invalid!\n\nThe following textures could not be located:\n{string.Join(", ", missingFiles)}.\n");
             }
-            
 
             // load the material from the directory
             AdvancedMaterial material = LoadFromDirectory(path, tempDirectory);

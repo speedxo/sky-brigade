@@ -1,5 +1,4 @@
-﻿using System;
-using SkyBrigade.Engine.Rendering;
+﻿using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.Primitives;
 

@@ -107,8 +107,15 @@ namespace SkyBrigade.Engine.Logging
                             Console.WriteLine(logEntry.Message);
                             Console.ResetColor();
 
-                            if (Output > 0)
-                                textWriter.WriteLine(logEntry.Message);
+                            try
+                            {
+                                if (Output > 0)
+                                    textWriter.WriteLine(logEntry.Message);
+                            }
+                            catch
+                            {
+
+                            }
                         }
                         isProcessingLogs = false;
                     }

@@ -36,15 +36,15 @@ public class Mesh : IDisposable
 
     public void Use(RenderOptions? renderOptions = null) => Material.Use(renderOptions);
 
-        public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
 
-        public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
 
-        public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
 
-        public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
 
-        public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
 
     public Mesh(Func<(ReadOnlyMemory<Vertex>, ReadOnlyMemory<uint>)> loader, Material? mat = null)
     {
@@ -165,7 +165,7 @@ public class Mesh : IDisposable
         });
     }
 
-    public static Mesh CreateRectangle(Material? mat=null) =>
+    public static Mesh CreateRectangle(Material? mat = null) =>
         new(() =>
         {
             return (new Vertex[] {
@@ -221,7 +221,6 @@ public class Mesh : IDisposable
             return (verts, indices);
         }, mat);
     }
-
 
     // write code to generate a cube
     public static Mesh CreateCube(float size = 1)

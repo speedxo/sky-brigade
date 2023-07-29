@@ -21,7 +21,8 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             if (Loaded) return;
 
-            playerPaddle = new Rendering.Plane() {
+            playerPaddle = new Rendering.Plane()
+            {
                 Size = new Vector2(0.1f, 1.0f),
                 Position = new Vector3(-5, 0, 0)
             };
@@ -102,7 +103,9 @@ namespace SkyBrigade.Engine.Tests.Tests
             if (ball.CheckIntersection(botPaddle))
                 direction.X = -1;
         }
-        PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
+
+        private PIDController controller = new PIDController(0.8f, 0.1f, 0.001f);
+
         private void updateBot(float dt)
         {
             var error = ball.Position.Y - botPaddle.Position.Y;

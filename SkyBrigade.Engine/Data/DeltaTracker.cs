@@ -1,5 +1,4 @@
-﻿using System;
-using SkyBrigade.Engine.Collections;
+﻿using SkyBrigade.Engine.Collections;
 
 namespace SkyBrigade.Engine.Data;
 
@@ -24,6 +23,7 @@ public class DeltaTracker<T>
 
     // Get the average value
     public float GetAverage() => averageBuffer.Buffer.Average();
+
     public void Update(T currentState)
     {
         // The first time this loop runs, previous state will be null

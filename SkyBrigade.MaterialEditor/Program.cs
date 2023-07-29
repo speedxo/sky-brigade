@@ -82,11 +82,13 @@ internal class Program : IGameScreen
     {
         if (path?.CompareTo(string.Empty) == 0) return false;
         if (!File.Exists(path)) return false;
+
+        return true;
     }
 
     private void LoadDefaultMaterial()
     {
-        material = AdvancedMaterial.LoadFromZip("default.material");
+        //material = AdvancedMaterial.LoadFromZip("default.material");
     }
 
     private void MenuBar_MenuItemClicked(EditorMenuBarItem item)

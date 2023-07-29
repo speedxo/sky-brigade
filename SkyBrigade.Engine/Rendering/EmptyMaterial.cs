@@ -1,6 +1,5 @@
-﻿using System.Numerics;
-using Silk.NET.OpenGL;
-
+﻿using Silk.NET.OpenGL;
+using System.Numerics;
 using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Engine.Rendering
@@ -9,6 +8,7 @@ namespace SkyBrigade.Engine.Rendering
     {
         // forward some properties
         public override Vector4 Color { get; set; }
+
         public override Texture? Texture { get; set; }
 
         public EmptyMaterial()
@@ -25,7 +25,7 @@ namespace SkyBrigade.Engine.Rendering
         {
         }
 
-        public override void Use(RenderOptions? renderOptions=null)
+        public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 

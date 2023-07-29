@@ -1,5 +1,4 @@
 ﻿using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Primitives;
 using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.GameEntity;

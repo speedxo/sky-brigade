@@ -1,9 +1,7 @@
-﻿using System.Numerics;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.OpenGL;
-
+using System.Numerics;
 using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Engine.Rendering
@@ -14,6 +12,7 @@ namespace SkyBrigade.Engine.Rendering
 
         // forward some properties
         public override Vector4 Color { get => MaterialDescription.Color; set => MaterialDescription.Color = value; }
+
         public override Texture? Texture { get => MaterialDescription.Texture; set => MaterialDescription.Texture = value; }
 
         public BasicMaterial()
@@ -45,7 +44,7 @@ namespace SkyBrigade.Engine.Rendering
             System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(MaterialDescription));
         }
 
-        public override void Use(RenderOptions? renderOptions=null)
+        public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 

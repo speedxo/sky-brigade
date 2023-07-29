@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj": {}
+    "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\SkyBrigade.Game.csproj": {}
   },
   "projects": {
-    "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj": {
+    "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
+        "projectUniqueName": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj",
         "projectName": "SkyBrigade.Engine",
-        "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
-        "packagesPath": "/Users/bogz/.nuget/packages/",
-        "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/",
+        "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj",
+        "packagesPath": "C:\\Users\\bogda\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\bogda\\Source\\Repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/bogz/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\bogda\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -116,35 +122,41 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj": {
+    "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\SkyBrigade.Game.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj",
+        "projectUniqueName": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\SkyBrigade.Game.csproj",
         "projectName": "SkyBrigade.Game",
-        "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj",
-        "packagesPath": "/Users/bogz/.nuget/packages/",
-        "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/",
+        "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\SkyBrigade.Game.csproj",
+        "packagesPath": "C:\\Users\\bogda\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\bogda\\Source\\Repos\\speedxo\\sky-brigade\\SkyBrigade.Game\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/bogz/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\bogda\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj": {
-                "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+              "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj": {
+                "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj"
               }
             }
           }
@@ -174,7 +186,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     }

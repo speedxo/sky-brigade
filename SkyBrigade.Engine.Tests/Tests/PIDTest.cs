@@ -1,14 +1,12 @@
-﻿using System;
-using System.Numerics;
-using ImGuiNET;
-using Newtonsoft.Json.Linq;
+﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
+using System.Numerics;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
-	public class PIDTest : IEngineTest
-	{
+    public class PIDTest : IEngineTest
+    {
         public bool Loaded { get; set; }
         public string Name { get; set; } = "PID Controller Test";
 
@@ -26,7 +24,8 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
         {
-            axisLine.Draw(RenderOptions.Default with {
+            axisLine.Draw(RenderOptions.Default with
+            {
                 Color = Vector4.One
             });
             autoMarker.Draw(RenderOptions.Default with
@@ -54,8 +53,10 @@ namespace SkyBrigade.Engine.Tests.Tests
                 marker.Position = new Vector3(0, 1, 0);
             }
         }
-        PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
-        float timer = 0.0f, speed = 2.0f;
+
+        private PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
+        private float timer = 0.0f, speed = 2.0f;
+
         public void Update(float dt)
         {
             timer += dt;
