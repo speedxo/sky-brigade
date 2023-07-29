@@ -1,10 +1,5 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Threading;
 
 namespace SkyBrigade.Engine.Logging
 {
@@ -114,7 +109,6 @@ namespace SkyBrigade.Engine.Logging
                             }
                             catch
                             {
-
                             }
                         }
                         isProcessingLogs = false;

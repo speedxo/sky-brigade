@@ -1,14 +1,12 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
-using SkyBrigade.Engine.Collections;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
 
 using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Game;
-
 
 internal class DemoGameScreen : IGameScreen
 {
@@ -19,11 +17,15 @@ internal class DemoGameScreen : IGameScreen
 
     public void Initialize(GL gl)
     {
-        gl.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
 
-        rect = new();
+        rect = new() {
+            Rotation = new System.Numerics.Vector3(90, 0, 0),
+            Scale = new System.Numerics.Vector2(10)
+        };
+        rect.Material.Texture = GameManager.Instance.ContentManager.GetTexture("white");
 
-        testCamera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5) };
+        testCamera = new Camera() { Position = new System.Numerics.Vector3(0, 2, 5) };
 
         gl.Enable(EnableCap.DepthTest);
     }
@@ -35,11 +37,9 @@ internal class DemoGameScreen : IGameScreen
 
         rect.Draw(RenderOptions.Default with
         {
-            Camera = testCamera,
-            Color = new System.Numerics.Vector4(MathF.Sin(timer * 0.5f), MathF.Sin(timer * 1.4f), MathF.Sin(timer), 1.0f),
+            Camera = testCamera
         });
 
-        rect.Material.Texture = GameManager.Instance.ContentManager.GetTexture("debug");
 
         if (ImGui.Begin("Debug"))
         {
@@ -50,24 +50,15 @@ internal class DemoGameScreen : IGameScreen
             ImGui.End();
         }
     }
+
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
-    private float timer = 0.0f, memoryTimer = 0.0f;
+    private float timer = 0.0f;
 
     public void Update(float dt)
     {
         memoryTracker.Update(GC.GetTotalMemory(false) / 1024.0f);
 
-        timer += dt * 10.0f;
-        memoryTimer += dt;
-        if (memoryTimer > 1.0f)
-        {
-            GC.Collect();
-            memoryTimer = 0.0f;
-        }
-
-
         testCamera.Update(dt);
-        rect.Rotation += dt * 100.0f;
     }
 
     public void Dispose()

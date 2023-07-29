@@ -19,8 +19,7 @@ namespace SkyBrigade.Engine.Rendering
         /*  There definetly is better way to do this
          *  TODO: improve somehow
          */
-        private Vector3 pos;
-        private float rot;
+        private Vector3 pos, rot;
         private Vector2 scale, size;
 
         public Material Material { get; set; }
@@ -40,7 +39,7 @@ namespace SkyBrigade.Engine.Rendering
         public Vector3 Position
         { get => pos; set { pos = value; updateModelMatrix(); } }
 
-        public float Rotation
+        public Vector3 Rotation
         { get => rot; set { rot = value; updateModelMatrix(); } }
 
         public Vector2 Scale
@@ -88,16 +87,15 @@ namespace SkyBrigade.Engine.Rendering
 
         private void updateModelMatrix()
         {
-            ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot)) * Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f);
+            ModelMatrix = Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(rot.X)) * Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(rot.Y)) * Matrix4x4.CreateRotationZ(MathHelper.DegreesToRadians(rot.Z)) * Matrix4x4.CreateScale(scale.X, 1.0f, scale.Y);
         }
 
-        public Plane(Vector3? inPos = null, Vector2? inSize = null, Vector2? inScale = null, float inRotation = 0.0f, Material? mat = null)
+        public Plane(Vector3? inPos = null, Vector2? inSize = null, Vector2? inScale = null, Material? mat = null)
         {
             /* We do this in one call of updateModelMatrix because swag money BABY
 			 */
             pos = inPos ?? Vector3.Zero;
             scale = inScale ?? Vector2.One;
-            rot = inRotation;
             size = inSize ?? Vector2.One;
 
             _vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);

@@ -1,14 +1,11 @@
 ﻿namespace SkyBrigade.MaterialEditor;
 
-using static SkyBrigade.Engine.GameManager;
-
-using SkyBrigade.Engine;
-using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Primitives;
-using SkyBrigade.Engine.GameEntity;
 using ImGuiNET;
-using System;
+using Silk.NET.OpenGL;
+using SkyBrigade.Engine;
+using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.Rendering;
+using static SkyBrigade.Engine.GameManager;
 
 internal enum EditorMenuBarItem
 {
@@ -23,6 +20,7 @@ internal enum EditorMenuBarItem
 internal class EditorMenuBar : IEntity
 {
     public delegate void OnMenuItemClickDelegate(EditorMenuBarItem item);
+
     public event OnMenuItemClickDelegate? OnMenuItemClicked;
 
     // we will not be using renderOptions here as this entire
@@ -44,18 +42,19 @@ internal class EditorMenuBar : IEntity
 
     public void Update(float dt)
     {
-
     }
 }
 
 internal class Program : IGameScreen
 {
     private static string[] ProgramArgs;
+
     private static void Main(string[] args)
     {
         ProgramArgs = args;
 
-        Instance.Initialize(GameInstanceParameters.Default with {
+        Instance.Initialize(GameInstanceParameters.Default with
+        {
             InitialGameScreen = typeof(Program),
             WindowTitle = "Material Editor"
         });
@@ -65,6 +64,7 @@ internal class Program : IGameScreen
 
     private List<IEntity> entities;
     private AdvancedMaterial material;
+
     public void Initialize(GL gl)
     {
         if (!TryLoadMaterial(ProgramArgs.FirstOrDefault()))
@@ -104,14 +104,11 @@ internal class Program : IGameScreen
 
     private void SaveMaterial()
     {
-
     }
 
     public void Render(GL gl, float dt)
     {
         entities.ForEach(e => e.Draw());
-
-        
     }
 
     public void Update(float dt)
@@ -126,6 +123,5 @@ internal class Program : IGameScreen
 
     public void Dispose()
     {
-
     }
 }
