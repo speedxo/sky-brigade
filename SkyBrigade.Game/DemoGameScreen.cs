@@ -37,7 +37,6 @@ internal class DemoGameScreen : IGameScreen
             Camera = testCamera
         });
 
-
         if (ImGui.Begin("Debug"))
         {
             ImGui.Text($"Memory Consumption: {float.Round(GC.GetTotalMemory(false) / 1024.0f / 1024, 2)}MB");

@@ -1,4 +1,5 @@
 namespace SkyBrigade.MaterialEditor;
+
 using ImGuiNET;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Rendering;

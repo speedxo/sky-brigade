@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace SkyBrigade.Engine.Dialogs;
 
 using ImGuiNET;
@@ -12,7 +10,6 @@ public class OpenFileDialog : IEntity
     public string? Filter { get; set; }
     public bool Multiselect { get; set; }
 
-
     private List<FileItem> files = new();
     private DirectoryInfo? currentDirectory;
     private string[] fileNames = Array.Empty<string>();
@@ -21,14 +18,14 @@ public class OpenFileDialog : IEntity
     private List<FileItem> selectedFiles = new();
 
     public delegate void OnFileSelected(string path);
+
     public event OnFileSelected? FileSelected;
 
-
     public delegate void OnFilesSelected(FileItem[] files);
+
     public event OnFilesSelected? FilesSelected;
 
     private static string? prevDir;
-
 
     public OpenFileDialog(string filter = "")
     {
@@ -69,46 +66,57 @@ public class OpenFileDialog : IEntity
         if (ImGui.Begin("Open File"))
         {
             ImGui.Text("Select a file to open.");
-            
-            ImGui.Separator();
-            ImGui.Text(currentDirectory?.FullName);;
-            ImGui.Separator();
 
-            if (ImGui.ListBox("Files", ref index, fileNames, fileNames.Length))
+            ImGui.Separator();
+            if (currentDirectory != null)
             {
-                var targetDir = files[index];
-                if (targetDir.Type == FileItemType.Directory)
-                    LoadFiles(files[index].Path);
-                else if (Multiselect && !selectedFiles.Contains(files[index]))
-                {
-                    selectedFiles.Add(files[index]);
-                    selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
-                }
+                ImGui.Text(currentDirectory.FullName);
+                ImGui.Separator();
             }
 
-            ImGui.Separator();
+            if (fileNames != null && fileNames.Length > 0)
+            {
+                if (ImGui.ListBox("Files", ref index, fileNames, fileNames.Length))
+                {
+                    var targetDir = files[index];
+                    if (targetDir.Type == FileItemType.Directory)
+                        LoadFiles(files[index].Path);
+                    else if (Multiselect && !selectedFiles.Contains(files[index]))
+                    {
+                        selectedFiles.Add(files[index]);
+                        selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                    }
+                }
+                ImGui.Separator();
+            }
 
             if (Multiselect)
             {
-                if (ImGui.ListBox("Selected Files", ref selectedFileIndex, selectedFileNames, selectedFileNames.Length))
+                if (selectedFileNames != null && selectedFileNames.Length > 0)
                 {
-                    selectedFiles.RemoveAt(selectedFileIndex);
-                    selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                    if (ImGui.ListBox("Selected Files", ref selectedFileIndex, selectedFileNames, selectedFileNames.Length))
+                    {
+                        selectedFiles.RemoveAt(selectedFileIndex);
+                        selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                    }
+                    ImGui.Separator();
                 }
                 if (ImGui.Button("Open"))
                 {
                     FilesSelected?.Invoke(selectedFiles.ToArray());
                     return true;
                 }
-
             }
             else
             {
                 if (ImGui.Button("Open"))
                 {
-                    FileName = files[index].Path;
-                    FileSelected?.Invoke(FileName);
-                    return true;
+                    if (files != null && files.Count > 0)
+                    {
+                        FileName = files[index].Path;
+                        FileSelected?.Invoke(FileName);
+                        return true;
+                    }
                 }
             }
 
@@ -125,6 +133,5 @@ public class OpenFileDialog : IEntity
 
     public void Update(float dt)
     {
-
     }
 }

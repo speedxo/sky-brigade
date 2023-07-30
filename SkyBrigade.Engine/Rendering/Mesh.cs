@@ -165,6 +165,7 @@ public class Mesh : IDisposable
         });
     }
 
+
     public static Mesh CreateRectangle(Material? mat = null) =>
         new(() =>
         {
@@ -221,7 +222,7 @@ public class Mesh : IDisposable
             return (verts, indices);
         }, mat);
     }
-
+    
     // write code to generate a cube
     public static Mesh CreateCube(float size = 1)
     {

@@ -1,8 +1,5 @@
 ﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Logging;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using Image = SixLabors.ImageSharp.Image;
 using PixelFormat = Silk.NET.OpenGL.PixelFormat;
 
@@ -22,7 +19,6 @@ public class Texture : IDisposable
 
         Handle = _gl.GenTexture();
         Bind();
-
 
         //Loading an image using imagesharp.
         using (var img = Image.Load<Rgba32>(path))
@@ -92,6 +88,5 @@ public class Texture : IDisposable
         //In order to dispose we need to delete the opengl handle for the texure.
         _gl.DeleteTexture(Handle);
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Texture[{Handle}] destroyed!");
-
     }
 }

@@ -31,28 +31,35 @@ namespace SkyBrigade.Engine.Rendering
 
             Shader.Use();
 
+            // Pass debug options to the shader
             Shader.SetUniform("uDebug_defferedRenderLayer", (int)options.DebugOptions.DefferedLayer);
 
+            // Pass render options to the shader
             Shader.SetUniform("uGamma", options.Gamma);
             Shader.SetUniform("uAmbientStrength", options.AmbientLightingStrength);
             Shader.SetUniform("uColor", Color * options.Color);
 
+            // Bind the albedo texture to texture unit 0
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Albedo.Handle);
             Shader.SetUniform("uAlbedo", 0);
 
+            // Bind the metallicness texture to texture unit 1
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture1);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Metallicness.Handle);
             Shader.SetUniform("uMetallicness", 1);
 
+            // Bind the roughness texture to texture unit 2
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture2);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Roughness.Handle);
             Shader.SetUniform("uRoughness", 2);
 
+            // Bind the ambient occlusion texture to texture unit 3
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture3);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.AmbientOcclusion.Handle);
             Shader.SetUniform("uAo", 3);
 
+            // Bind the normals texture to texture unit 4
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture4);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Normals.Handle);
             Shader.SetUniform("uNormals", 4);

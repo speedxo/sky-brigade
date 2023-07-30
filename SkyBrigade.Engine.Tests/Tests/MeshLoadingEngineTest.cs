@@ -57,9 +57,9 @@ namespace SkyBrigade.Engine.Tests.Tests
             // dynamically create a mesh for each material, assinging the material to the mesh
             meshes = new List<Mesh>(materials.Length);
             for (int i = 0; i < materials.Length; i++)
-                meshes.Add(Mesh.CreateSphere(1, 500, materials[i]));
+                meshes.Add(Mesh.CreateSphere(1, 50, materials[i]));
 
-            lightMesh = Mesh.CreateSphere(2, 5);
+            lightMesh = Mesh.CreateSphere(1);
 
             int counter = 0;
             //meshes[2] = Mesh.FromObj("Assets/teapot.obj");

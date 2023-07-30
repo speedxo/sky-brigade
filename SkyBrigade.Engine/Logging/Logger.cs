@@ -38,7 +38,6 @@ namespace SkyBrigade.Engine.Logging
             { LogLevel.Fatal, "" }
         };
 
-
         public LogOutput Output { get; private set; }
         private readonly TextWriter textWriter;
         private readonly ConcurrentQueue<LogEntry> logQueue = new();
@@ -53,7 +52,6 @@ namespace SkyBrigade.Engine.Logging
             // Start a background thread to process logs from the queue
             // (i ADORE discards)
             ThreadPool.QueueUserWorkItem(ProcessLogs);
-            
         }
 
         public void Log(LogLevel level, string message)
