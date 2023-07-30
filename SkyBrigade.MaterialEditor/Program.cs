@@ -5,6 +5,7 @@ using System.Diagnostics;
 using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
+using SkyBrigade.Engine.Dialogs;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Rendering;
 using static SkyBrigade.Engine.GameManager;
@@ -59,17 +60,31 @@ internal class Program : IGameScreen
             case EditorMenuBarItem.Save:
                 SaveMaterial(); break;
             case EditorMenuBarItem.OpenFile:
-                var fileDialog = new OpenFileDialog(".material");
+                var fileDialog = new OpenFileDialog(".material") { 
+                    Multiselect = true
+                };
                 
-                fileDialog.FileSelected += (path) => {
+                fileDialog.FilesSelected += (files) => {
                     entities.Remove(fileDialog);
-                    LoadMaterial(path);
+                    LoadMaterials(files);
                 }; 
                 
                 entities.Add(fileDialog); break;
         }
     }
 
+    private void LoadMaterials(FileItem[] files)
+    {
+        // safety check ensuring we dont try load directories!
+        foreach (var path in (from file in files where file.Type == FileItemType.File select file.Path).Distinct())
+            LoadMaterial(path);
+        
+        if (loadedMaterials.Count < 1) return;
+
+        mesh.Material = loadedMaterials.Values.FirstOrDefault();
+        materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
+
+    }
     private void LoadMaterial(string path)
     {
         Instance.Logger.Log(Engine.Logging.LogLevel.Info, $"Loading material({path})...");
@@ -81,9 +96,6 @@ internal class Program : IGameScreen
 
         var material = AdvancedMaterial.LoadFromZip(path);
         loadedMaterials.Add(path, material);
-        mesh.Material = material;
-
-        materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
     }
 
     private void SaveMaterial()
@@ -101,10 +113,12 @@ internal class Program : IGameScreen
             if (materialNames != null && ImGui.ListBox("", ref selectedMaterialIndex, materialNames, loadedMaterials.Count))
                 mesh.Material = loadedMaterials.Values.ElementAt(selectedMaterialIndex);
 
-            if (ImGui.Button("Remove") & materialNames != null)
+            if (ImGui.Button("Remove") & loadedMaterials.Count > 0)
             {
+                loadedMaterials.ElementAt(selectedMaterialIndex).Value.Destroy();
+
                 loadedMaterials.Remove(materialNames[selectedMaterialIndex]);
-                materialNames = loadedMaterials.Keys.ToArray();
+                materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
                 if (selectedMaterialIndex >= materialNames.Length)
                     selectedMaterialIndex = materialNames.Length - 1;
             }

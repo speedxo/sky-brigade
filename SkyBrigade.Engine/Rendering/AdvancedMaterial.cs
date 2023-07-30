@@ -101,12 +101,12 @@ namespace SkyBrigade.Engine.Rendering
         {
             // check if the file at path exists, and load it if it does
             if (!System.IO.File.Exists(path))
-                throw new System.IO.FileNotFoundException($"File({path}) not found", path);
+                GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"File({path}) not found");
 
             // extract the zip file to a temporary directory
             string tempDirectory = System.IO.Path.GetTempPath() + System.IO.Path.GetRandomFileName();
             System.IO.Compression.ZipFile.ExtractToDirectory(path, tempDirectory);
-                
+
             var files = Directory.GetFiles(tempDirectory).Select(Path.GetFileName).ToArray();
             List<string> missingFiles = fileNames.Where(fileName => !files.Contains(fileName)).ToList();
 
@@ -131,11 +131,11 @@ namespace SkyBrigade.Engine.Rendering
             {
                 MaterialDescription = new AdvancedMaterialDescription()
                 {
-                    Metallicness = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/metallicness.png", path + "/metallicness.png"),
-                    Roughness = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/roughness.png", path + "/roughness.png"),
-                    AmbientOcclusion = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/ao.png", path + "/ao.png"),
-                    Albedo = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/albedo.png", path + "/albedo.png"),
-                    Normals = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/normals.png", path + "/normals.png")
+                    Metallicness = GameManager.Instance.ContentManager.GenerateNamedTexture(Path.Combine(realPath, "metallicness.png"), Path.Combine(path, "metallicness.png")),
+                    Roughness = GameManager.Instance.ContentManager.GenerateNamedTexture(Path.Combine(realPath, "roughness.png"), Path.Combine(path, "roughness.png")),
+                    AmbientOcclusion = GameManager.Instance.ContentManager.GenerateNamedTexture(Path.Combine(realPath, "ao.png"), Path.Combine(path, "ao.png")),
+                    Albedo = GameManager.Instance.ContentManager.GenerateNamedTexture(Path.Combine(realPath, "albedo.png"), Path.Combine(path, "albedo.png")),
+                    Normals = GameManager.Instance.ContentManager.GenerateNamedTexture(Path.Combine(realPath, "normals.png"), Path.Combine(path, "normals.png"))
                 }
             };
         }
@@ -143,14 +143,14 @@ namespace SkyBrigade.Engine.Rendering
         public void Destroy()
         {
             var textureNames = new[] {
-                $"{realPath}/metallicness.png",
-                $"{realPath}/roughness.png",
-                $"{realPath}/ao.png",
-                $"{realPath}/albedo.png",
-                $"{realPath}/normals.png"
+                Path.Combine(realPath, "metallicness.png"),
+                Path.Combine(realPath, "roughness.png"),
+                Path.Combine(realPath, "ao.png"),
+                Path.Combine(realPath, "albedo.png"),
+                Path.Combine(realPath, "normals.png")
             };
             foreach (var item in textureNames)
-                GameManager.Instance.ContentManager.DeleteTexture(item);    
+                GameManager.Instance.ContentManager.DeleteTexture(item);
         }
     }
 }
