@@ -52,7 +52,8 @@ namespace SkyBrigade.Engine.Logging
 
             // Start a background thread to process logs from the queue
             // (i ADORE discards)
-            _ = ThreadPool.QueueUserWorkItem(ProcessLogs);
+            ThreadPool.QueueUserWorkItem(ProcessLogs);
+            
         }
 
         public void Log(LogLevel level, string message)

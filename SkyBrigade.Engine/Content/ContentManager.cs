@@ -123,5 +123,16 @@ namespace SkyBrigade.Engine.Content
                 item.Dispose();
             unnamedShaders.Clear();
         }
+
+        public void DeleteTexture(string name)
+        {
+            if (!namedTextures.Remove(name))
+                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistant Texture({name})");
+        }
+        public void DeleteShader(string name)
+        {
+            if (!namedShaders.Remove(name))
+                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistant Shader({name})");
+        }
     }
 }

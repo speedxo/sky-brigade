@@ -6,6 +6,7 @@ namespace SkyBrigade.Engine.GameEntity;
 public class Entity : IEntity
 {
     public Dictionary<Type, IGameComponent> Components { get; internal set; } = new Dictionary<Type, IGameComponent>();
+    public List<IEntity> Entities { get; set; }
 
     public T AddComponent<T>(T component) where T : IGameComponent
     {

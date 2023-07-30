@@ -1,5 +1,7 @@
 ﻿namespace SkyBrigade.MaterialEditor;
 
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
@@ -7,49 +9,10 @@ using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Rendering;
 using static SkyBrigade.Engine.GameManager;
 
-internal enum EditorMenuBarItem
-{
-    Save,
-    Close
-}
-
-// The general entity primitive is perfect for stuff like this
-// where we need an object to have properties or functions but
-// no implmentation, hence why we have both an IEntity interface,
-// and a less abstract Entity class with function.
-internal class EditorMenuBar : IEntity
-{
-    public delegate void OnMenuItemClickDelegate(EditorMenuBarItem item);
-
-    public event OnMenuItemClickDelegate? OnMenuItemClicked;
-
-    // we will not be using renderOptions here as this entire
-    // class is just a big wrapper around ImGui
-    public void Draw(RenderOptions? renderOptions = null)
-    {
-        if (ImGui.BeginMainMenuBar())
-        {
-            if (ImGui.BeginMenu("File"))
-            {
-                if (ImGui.MenuItem("Save"))
-                    OnMenuItemClicked?.Invoke(EditorMenuBarItem.Save);
-
-                if (ImGui.MenuItem("Exit"))
-                    OnMenuItemClicked?.Invoke(EditorMenuBarItem.Close);
-            }
-        }
-    }
-
-    public void Update(float dt)
-    {
-    }
-}
-
 internal class Program : IGameScreen
 {
     private static void Main(string[] _)
-    {
-
+    { 
         Instance.Initialize(GameInstanceParameters.Default with
         {
             InitialGameScreen = typeof(Program),
@@ -59,12 +22,17 @@ internal class Program : IGameScreen
         Instance.Run();
     }
 
+    private Camera camera;
     private List<IEntity> entities;
+    private Mesh mesh;
+
+    private Dictionary<string, AdvancedMaterial> loadedMaterials;
+    private int selectedMaterialIndex = 0;
+    private string[] materialNames;
 
     public void Initialize(GL gl)
     {
-        //if (!TryLoadMaterial(ProgramArgs.FirstOrDefault()))
-        //    LoadDefaultMaterial();
+        loadedMaterials = new Dictionary<string, AdvancedMaterial>();
 
         var menuBar = new EditorMenuBar();
         menuBar.OnMenuItemClicked += MenuBar_MenuItemClicked;
@@ -72,44 +40,89 @@ internal class Program : IGameScreen
         entities = new List<IEntity> {
             menuBar
         };
+
+        camera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5), Locked = true };
+        mesh = Mesh.CreateSphere(1);
     }
 
-    //private bool TryLoadMaterial(string? path)
-    //{
-    //    if (path?.CompareTo(string.Empty) == 0) return false;
-    //    if (!File.Exists(path)) return false;
-
-    //    return true;
-    //}
-
-    //private void LoadDefaultMaterial()
-    //{
-    //    material = AdvancedMaterial.LoadFromZip("default.material");
-    //}
+    private void LoadDefaultMaterial()
+    {
+        //material = AdvancedMaterial.LoadFromZip("default.material");
+    }
 
     private void MenuBar_MenuItemClicked(EditorMenuBarItem item)
     {
-        //switch (item)
-        //{
-        //    case EditorMenuBarItem.Close:
-        //        CloseWindow(); break;
-        //    case EditorMenuBarItem.Save:
-        //        SaveMaterial(); break;
-        //}
+        switch (item)
+        {
+            case EditorMenuBarItem.Close:
+                Instance.Window.Close(); break;
+            case EditorMenuBarItem.Save:
+                SaveMaterial(); break;
+            case EditorMenuBarItem.OpenFile:
+                var fileDialog = new OpenFileDialog(".material");
+                
+                fileDialog.FileSelected += (path) => {
+                    entities.Remove(fileDialog);
+                    LoadMaterial(path);
+                }; 
+                
+                entities.Add(fileDialog); break;
+        }
     }
 
-    //private void SaveMaterial()
-    //{
-    //}
+    private void LoadMaterial(string path)
+    {
+        Instance.Logger.Log(Engine.Logging.LogLevel.Info, $"Loading material({path})...");
+        if (loadedMaterials.ContainsKey(path))
+        {
+            Instance.Logger.Log(Engine.Logging.LogLevel.Info, $"Material({path}) already loaded!");
+            return;
+        }
+
+        var material = AdvancedMaterial.LoadFromZip(path);
+        loadedMaterials.Add(path, material);
+        mesh.Material = material;
+
+        materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
+    }
+
+    private void SaveMaterial()
+    {
+        //if (material != null) material.Save(materialPath);
+    }
 
     public void Render(GL gl, float dt)
     {
-        entities.ForEach(e => e.Draw());
+        for (int i = 0; i < entities.Count; i++)
+            entities[i].Draw();
+
+        if (ImGui.Begin("Materials"))
+        {
+            if (materialNames != null && ImGui.ListBox("", ref selectedMaterialIndex, materialNames, loadedMaterials.Count))
+                mesh.Material = loadedMaterials.Values.ElementAt(selectedMaterialIndex);
+
+            if (ImGui.Button("Remove") & materialNames != null)
+            {
+                loadedMaterials.Remove(materialNames[selectedMaterialIndex]);
+                materialNames = loadedMaterials.Keys.ToArray();
+                if (selectedMaterialIndex >= materialNames.Length)
+                    selectedMaterialIndex = materialNames.Length - 1;
+            }
+            ImGui.End();
+        }
+
+        mesh.Draw(RenderOptions.Default with
+        {
+            Camera = camera
+        });
     }
 
     public void Update(float dt)
     {
-        entities.ForEach(e => e.Update(dt));
+        for (int i = 0; i < entities.Count; i++)
+            entities[i].Update(dt);
+
+        camera.Update(dt);
     }
 
     //private void CloseWindow()

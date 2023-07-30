@@ -15,10 +15,12 @@ namespace SkyBrigade.Engine.Rendering
             public string NormalsTexturePath { get; set; }
         }
 
+        private readonly string realPath;
         public AdvancedMaterialDescription MaterialDescription { get; set; }
 
-        public AdvancedMaterial()
+        public AdvancedMaterial(string path)
         {
+            this.realPath = path;
             Shader = GameManager.Instance.ContentManager.GetShader("material_advanced");
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
@@ -104,7 +106,7 @@ namespace SkyBrigade.Engine.Rendering
             // extract the zip file to a temporary directory
             string tempDirectory = System.IO.Path.GetTempPath() + System.IO.Path.GetRandomFileName();
             System.IO.Compression.ZipFile.ExtractToDirectory(path, tempDirectory);
-
+                
             var files = Directory.GetFiles(tempDirectory).Select(Path.GetFileName).ToArray();
             List<string> missingFiles = fileNames.Where(fileName => !files.Contains(fileName)).ToList();
 
@@ -125,7 +127,7 @@ namespace SkyBrigade.Engine.Rendering
         // loads all the textures in the directory and returns a material description
         public static AdvancedMaterial LoadFromDirectory(string realPath, string path)
         {
-            return new AdvancedMaterial()
+            return new AdvancedMaterial(realPath)
             {
                 MaterialDescription = new AdvancedMaterialDescription()
                 {
@@ -136,6 +138,19 @@ namespace SkyBrigade.Engine.Rendering
                     Normals = GameManager.Instance.ContentManager.GenerateNamedTexture($"{realPath}/normals.png", path + "/normals.png")
                 }
             };
+        }
+
+        public void Destroy()
+        {
+            var textureNames = new[] {
+                $"{realPath}/metallicness.png",
+                $"{realPath}/roughness.png",
+                $"{realPath}/ao.png",
+                $"{realPath}/albedo.png",
+                $"{realPath}/normals.png"
+            };
+            foreach (var item in textureNames)
+                GameManager.Instance.ContentManager.DeleteTexture(item);    
         }
     }
 }
