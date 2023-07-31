@@ -73,7 +73,12 @@ public class Camera
 
     private unsafe void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
     {
-        if (!GameManager.Instance.IsInputCaptured || Locked) return;
+        if (!GameManager.Instance.IsInputCaptured || Locked)
+        {
+            LastMousePosition = position;
+            return;
+        }
+        
 
         var lookSensitivity = 0.1f;
         if (LastMousePosition == default) { LastMousePosition = position; }

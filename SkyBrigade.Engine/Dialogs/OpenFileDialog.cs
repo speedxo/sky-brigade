@@ -70,6 +70,11 @@ public class OpenFileDialog : IEntity
             ImGui.Separator();
             if (currentDirectory != null)
             {
+                string fullName = currentDirectory.FullName;
+
+                // the fullName with the name concatanated towards the beginning
+                
+
                 ImGui.Text(currentDirectory.FullName);
                 ImGui.Separator();
             }

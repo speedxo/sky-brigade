@@ -1,4 +1,5 @@
-﻿using Silk.NET.Input;
+﻿using ImGuiNET;
+using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
@@ -133,6 +134,10 @@ public class GameManager
             Window, // Pass in our window
             Input = Window.CreateInput() // Create an input context
         );
+
+        // Enable docking for a more streamlined UI
+        ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+
         // Initialize the logger with both file and console outputs.
         Logger = new Logger(LogOutput.Both);
 

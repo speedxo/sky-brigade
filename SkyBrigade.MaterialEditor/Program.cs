@@ -107,7 +107,7 @@ internal class Program : IGameScreen
     {
         for (int i = 0; i < entities.Count; i++)
             entities[i].Draw();
-
+       
         if (ImGui.Begin("Materials"))
         {
             if (materialNames != null && ImGui.ListBox("", ref selectedMaterialIndex, materialNames, loadedMaterials.Count))

@@ -53,8 +53,6 @@ public class TestMenuGameScreen : IGameScreen
 
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
-    private bool showMemoryUsageWindow;
-    private bool showRenderOptionsWindow;
     private float gamma, ambientStrength;
     private string[] renderModes;
     private int renderModeIndex;
@@ -66,22 +64,19 @@ public class TestMenuGameScreen : IGameScreen
 
         if (ImGui.BeginMainMenuBar())
         {
-            if (ImGui.BeginMenu("Windows"))
+            if (ImGui.BeginMenu("File"))
             {
                 // Menu item for showing/hiding the Debug Information window.
-                if (ImGui.MenuItem("Debug Information", "", ref showDebugWindow))
-                {
-                }
+                if (ImGui.MenuItem("Close"))
+                    GameManager.Instance.Window.Close();
 
-                // Menu item for showing/hiding the Memory Usage window.
-                if (ImGui.MenuItem("Memory Usage", "", ref showMemoryUsageWindow))
-                {
-                }
+                ImGui.EndMenu();
+            }
 
-                // Menu item for showing/hiding the Render Options window.
-                if (ImGui.MenuItem("Render Options", "", ref showRenderOptionsWindow))
-                {
-                }
+            if (ImGui.BeginMenu("Debug"))
+            {
+                // Menu item for showing/hiding the Debug Information window.
+                ImGui.MenuItem("Show Debug Panel", "", ref showDebugWindow);
 
                 ImGui.EndMenu();
             }
@@ -89,41 +84,54 @@ public class TestMenuGameScreen : IGameScreen
             ImGui.EndMainMenuBar();
         }
 
-        if (showDebugWindow && ImGui.Begin("Debug Info"))
+        if (showDebugWindow)
         {
-            ImGui.Text($"Test: '{tests[index].Name}' ({index + 1}/{tests.Count})");
+            ImGui.SetNextWindowPos(new System.Numerics.Vector2(ImGui.GetIO().DisplaySize.X - 350, 0), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new System.Numerics.Vector2(350, ImGui.GetIO().DisplaySize.Y), ImGuiCond.Always);
 
-            if (ImGui.ArrowButton("Prev", ImGuiDir.Left))
-                index--;
-            ImGui.SameLine();
-            if (ImGui.ArrowButton("Next", ImGuiDir.Right))
-                index++;
+            if (ImGui.Begin("Sidebar", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove |
+                                    ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoSavedSettings |
+                                    ImGuiWindowFlags.MenuBar))
+            {
+                // Collapsible header for Debug Info window
+                if (ImGui.CollapsingHeader("Debug Info", ImGuiTreeNodeFlags.DefaultOpen))
+                {
+                    ImGui.Text($"Test: '{tests[index].Name}' ({index + 1}/{tests.Count})");
 
-            index = Math.Clamp(index, 0, tests.Count - 1);
+                    if (ImGui.ArrowButton("Prev", ImGuiDir.Left))
+                        index--;
+                    ImGui.SameLine();
+                    if (ImGui.ArrowButton("Next", ImGuiDir.Right))
+                        index++;
 
-            tests[index].RenderGui();
+                    index = Math.Clamp(index, 0, tests.Count - 1);
 
-            ImGui.End();
+                    tests[index].RenderGui();
+                }
+
+                // Collapsible header for Memory Usage window
+                if (ImGui.CollapsingHeader("Memory Usage", ImGuiTreeNodeFlags.DefaultOpen))
+                {
+                    ImGui.Text($"Memory Consumption: {float.Round((GC.GetTotalMemory(false) / 1024.0f) / 1024, 2)}MB");
+                    ImGui.Text($"Memory Delta: {memoryTracker.GetAverage()}KB");
+                    ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
+                }
+
+                // Collapsible header for Render Options window
+                if (ImGui.CollapsingHeader("Render Options", ImGuiTreeNodeFlags.DefaultOpen))
+                {
+                    ImGui.DragFloat("Gamma", ref gamma, 0.01f, 0.1f, 10.0f);
+                    ImGui.DragFloat("Ambient", ref ambientStrength, 0.01f, 0.0f, 10.0f);
+
+                    // Listbox to select the render mode.
+                    ImGui.Combo("Render Mode", ref renderModeIndex, renderModes, renderModes.Length);
+                }
+
+                // End the sidebar layout
+                ImGui.End();
+            }
         }
 
-        if (showMemoryUsageWindow && ImGui.Begin("Memory Usage"))
-        {
-            ImGui.Text($"Memory Consumption: {float.Round((GC.GetTotalMemory(false) / 1024.0f) / 1024, 2)}MB");
-            ImGui.Text($"Memory Delta: {memoryTracker.GetAverage()}KB");
-            ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
-            ImGui.End();
-        }
-
-        if (showRenderOptionsWindow && ImGui.Begin("Render Options"))
-        {
-            ImGui.DragFloat("Gamma", ref gamma, 0.01f, 0.1f, 10.0f);
-            ImGui.DragFloat("Ambient", ref ambientStrength, 0.01f, 0.0f, 10.0f);
-
-            // Listbox to select the render mode.
-            ImGui.Combo("Render Mode", ref renderModeIndex, renderModes, renderModes.Length);
-
-            ImGui.End();
-        }
 
         tests[index].Render(dt, gl, RenderOptions.Default with
         {
