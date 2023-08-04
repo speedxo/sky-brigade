@@ -1,14 +1,20 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Input;
-
-/* Following OOP principals i want to abstract this as much as possible
-* while retaining performance, hence the stack allocations.
-*/
-public struct MouseData
+namespace SkyBrigade.Engine.Input
 {
-    public Vector2 LookingAxis { get; set; }
+    /// <summary>
+    /// The MouseData struct represents input data from the mouse.
+    /// </summary>
+    public struct MouseData
+    {
+        /// <summary>
+        /// Gets or sets the looking axis input as a Vector2.
+        /// </summary>
+        public Vector2 LookingAxis { get; set; }
 
-    public VirtualAction Actions { get; set; }
+        /// <summary>
+        /// Gets or sets the VirtualAction representing various actions triggered by mouse input.
+        /// </summary>
+        public VirtualAction Actions { get; set; }
+    }
 }
-

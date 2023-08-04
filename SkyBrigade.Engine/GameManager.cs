@@ -71,7 +71,6 @@ public class GameManager
     public Logger Logger { get; private set; }
 
     #endregion Public Properties
-
     #region Private Properties
 
     private ImGuiController imguiController;

@@ -1,20 +1,28 @@
 ﻿using Silk.NET.Input;
+using System.Collections.Generic;
 
-namespace SkyBrigade.Engine.Input;
-
-/* The idea here is to allow for a serialisable and customisable way to 
-* hotswap multiple binding profiles.
-*/
-public struct KeyboardBindings
+namespace SkyBrigade.Engine.Input
 {
-    public Dictionary<Key, VirtualAction> KeyActionPairs { get; set; }
-
-    public static KeyboardBindings Default { get; } = new()
+    /// <summary>
+    /// The KeyboardBindings struct represents a serializable and customizable way to hotswap multiple binding profiles for keyboard input.
+    /// </summary>
+    public struct KeyboardBindings
     {
-        KeyActionPairs = new() {
-            { Key.E, VirtualAction.Interact },
-            { Key.Escape, VirtualAction.Pause }
-            }
-    };
-}
+        /// <summary>
+        /// Gets or sets the dictionary of Key and VirtualAction pairs representing key-to-action mappings.
+        /// </summary>
+        public Dictionary<Key, VirtualAction> KeyActionPairs { get; set; }
 
+        /// <summary>
+        /// Gets the default KeyboardBindings with some pre-defined key-to-action mappings.
+        /// </summary>
+        public static KeyboardBindings Default { get; } = new KeyboardBindings
+        {
+            KeyActionPairs = new Dictionary<Key, VirtualAction>
+            {
+                { Key.E, VirtualAction.Interact },
+                { Key.Escape, VirtualAction.Pause }
+            }
+        };
+    }
+}

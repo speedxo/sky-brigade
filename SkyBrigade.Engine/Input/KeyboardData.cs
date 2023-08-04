@@ -1,15 +1,25 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Input;
-
-/* Following OOP principals i want to abstract this as much as possible
-* while retaining performance, hence the stack allocations.
-*/
-public struct KeyboardData
+namespace SkyBrigade.Engine.Input
 {
-    public Vector2 MovementDirection { get; set; }
-    public Vector2 ViewingDirection { get; set; }
+    /// <summary>
+    /// The KeyboardData struct represents input data from the keyboard.
+    /// </summary>
+    public struct KeyboardData
+    {
+        /// <summary>
+        /// Gets or sets the movement direction input as a Vector2.
+        /// </summary>
+        public Vector2 MovementDirection { get; set; }
 
-    public VirtualAction Actions { get; set; }
+        /// <summary>
+        /// Gets or sets the viewing direction input as a Vector2.
+        /// </summary>
+        public Vector2 ViewingDirection { get; set; }
+
+        /// <summary>
+        /// Gets or sets the VirtualAction representing various actions triggered by keyboard input.
+        /// </summary>
+        public VirtualAction Actions { get; set; }
+    }
 }
-

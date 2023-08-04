@@ -3,15 +3,14 @@ using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Game.Player;
+using SkyBrigade.Engine.Prefabs.Character;
 
 namespace SkyBrigade.Game;
 
 internal class DemoGameScreen : GameScreen
 {
     private Plane rect;
-
-    CharacterController character;
+    private CharacterController character;
 
     public override void Initialize(GL gl)
     {
@@ -29,7 +28,6 @@ internal class DemoGameScreen : GameScreen
         };
         rect.Material.Texture = GameManager.Instance.ContentManager.GetTexture("white");
 
-        
         gl.Enable(EnableCap.DepthTest);
     }
 
@@ -50,7 +48,7 @@ internal class DemoGameScreen : GameScreen
             ImGui.Text($"Memory Consumption: {float.Round(GC.GetTotalMemory(false) / 1024.0f / 1024, 2)}MB");
             ImGui.Text($"Memory Delta: {memoryTracker.GetAverage()}KB");
             ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
-            ImGui.Text($"FPS: {1.0f / dt}");
+            ImGui.Text($"FPS: {MathF.Round(1.0f / dt)}");
             ImGui.End();
         }
 

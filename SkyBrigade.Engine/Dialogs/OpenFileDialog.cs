@@ -1,149 +1,196 @@
-namespace SkyBrigade.Engine.Dialogs;
-
 using ImGuiNET;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Rendering;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-public class OpenFileDialog : IEntity
+namespace SkyBrigade.Engine.Dialogs
 {
-    public string? FileName { get; set; }
-    public string? Filter { get; set; }
-    public bool Multiselect { get; set; }
-
-    private List<FileItem> files = new();
-    private DirectoryInfo? currentDirectory;
-    private string[] fileNames = Array.Empty<string>();
-    private string[] selectedFileNames = Array.Empty<string>();
-    private int index = 0, selectedFileIndex = 0;
-    private List<FileItem> selectedFiles = new();
-
-    public delegate void OnFileSelected(string path);
-
-    public event OnFileSelected? FileSelected;
-
-    public delegate void OnFilesSelected(FileItem[] files);
-
-    public event OnFilesSelected? FilesSelected;
-
-    private static string? prevDir;
-
-    public OpenFileDialog(string filter = "")
+    /// <summary>
+    /// Represents an open file dialog for selecting files and directories.
+    /// </summary>
+    public class OpenFileDialog : IEntity
     {
-        Filter = filter;
-        LoadFiles(prevDir ?? Directory.GetCurrentDirectory());
-    }
+        /// <summary>
+        /// Gets or sets the selected file's name with full path.
+        /// </summary>
+        public string? FileName { get; set; }
 
-    private void LoadFiles(string dir)
-    {
-        currentDirectory = new DirectoryInfo(dir);
+        /// <summary>
+        /// Gets or sets the file filter for restricting the file types shown in the dialog.
+        /// </summary>
+        public string? Filter { get; set; }
 
-        files.Clear();
+        /// <summary>
+        /// Gets or sets a value indicating whether multiple files can be selected.
+        /// </summary>
+        public bool Multiselect { get; set; }
 
-        files.Add(new FileItem("..", currentDirectory?.Parent?.FullName ?? "", FileItemType.Directory));
+        private List<FileItem> files = new();
+        private DirectoryInfo? currentDirectory;
+        private string[] fileNames = Array.Empty<string>();
+        private string[] selectedFileNames = Array.Empty<string>();
+        private int index = 0, selectedFileIndex = 0;
+        private List<FileItem> selectedFiles = new();
 
-        files.AddRange(from file in currentDirectory?.GetDirectories()
-                       select new FileItem(file.Name, file.FullName, FileItemType.Directory));
-        foreach (var (file, fileName) in from file in currentDirectory?.GetFiles()
-                                         let fileName = file.Name
-                                         select (file, fileName))
+        /// <summary>
+        /// Delegate for handling the file selection event.
+        /// </summary>
+        /// <param name="path">The selected file's full path.</param>
+        public delegate void OnFileSelected(string path);
+
+        /// <summary>
+        /// Event raised when a file is selected.
+        /// </summary>
+        public event OnFileSelected? FileSelected;
+
+        /// <summary>
+        /// Delegate for handling the multiple files selection event.
+        /// </summary>
+        /// <param name="files">An array of selected files.</param>
+        public delegate void OnFilesSelected(FileItem[] files);
+
+        /// <summary>
+        /// Event raised when multiple files are selected (if Multiselect is enabled).
+        /// </summary>
+        public event OnFilesSelected? FilesSelected;
+
+        private static string? prevDir;
+
+        /// <summary>
+        /// Initializes a new instance of the OpenFileDialog class.
+        /// </summary>
+        /// <param name="filter">File filter to restrict the displayed file types (optional).</param>
+        public OpenFileDialog(string filter = "")
         {
-            if (!string.IsNullOrEmpty(Filter))
-            {
-                var ext = Path.GetExtension(fileName);
-
-                if (ext != Filter)
-                    continue;
-            }
-
-            files.Add(new FileItem(file.Name, file.FullName, FileItemType.File));
+            Filter = filter;
+            LoadFiles(prevDir ?? Directory.GetCurrentDirectory());
         }
 
-        fileNames = files.Select(f => f.Name).ToArray();
-        prevDir = dir;
-    }
-
-    public bool ShowDialog()
-    {
-        if (ImGui.Begin("Open File"))
+        private void LoadFiles(string dir)
         {
-            ImGui.Text("Select a file to open.");
+            currentDirectory = new DirectoryInfo(dir);
+            files.Clear();
+            files.Add(new FileItem("..", currentDirectory?.Parent?.FullName ?? "", FileItemType.Directory));
+            files.AddRange(currentDirectory?.GetDirectories()?.Select(file => new FileItem(file.Name, file.FullName, FileItemType.Directory)) ?? Enumerable.Empty<FileItem>());
 
-            ImGui.Separator();
-            if (currentDirectory != null)
+            foreach (var (file, fileName) in (currentDirectory?.GetFiles() ?? Enumerable.Empty<FileInfo>())
+                                                .Select(file => (file, file.Name)))
             {
-                string fullName = currentDirectory.FullName;
-
-                // the fullName with the name concatanated towards the beginning
-                
-
-                ImGui.Text(currentDirectory.FullName);
-                ImGui.Separator();
-            }
-
-            if (fileNames != null && fileNames.Length > 0)
-            {
-                if (ImGui.ListBox("Files", ref index, fileNames, fileNames.Length))
+                if (!string.IsNullOrEmpty(Filter))
                 {
-                    var targetDir = files[index];
-                    if (targetDir.Type == FileItemType.Directory)
-                        LoadFiles(files[index].Path);
-                    else if (Multiselect && !selectedFiles.Contains(files[index]))
-                    {
-                        selectedFiles.Add(files[index]);
-                        selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
-                    }
-                    else if (!Multiselect)
-                    {
-                        selectedFiles.Clear();
-                        selectedFiles.Add(files[index]);
-                        selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
-                    }
+                    var ext = Path.GetExtension(fileName);
+
+                    if (ext != Filter)
+                        continue;
                 }
-                ImGui.Separator();
+
+                files.Add(new FileItem(file.Name, file.FullName, FileItemType.File));
             }
 
-            if (Multiselect)
+            fileNames = files.Select(f => f.Name).ToArray();
+            prevDir = dir;
+        }
+
+        /// <summary>
+        /// Shows the open file dialog.
+        /// </summary>
+        /// <returns>True if a file was selected and the dialog was closed; otherwise, false.</returns>
+        public bool ShowDialog()
+        {
+            if (ImGui.Begin("Open File"))
             {
-                if (selectedFileNames != null && selectedFileNames.Length > 0)
+                ImGui.Text("Select a file to open.");
+
+                ImGui.Separator();
+                if (currentDirectory != null)
                 {
-                    if (ImGui.ListBox("Selected Files", ref selectedFileIndex, selectedFileNames, selectedFileNames.Length))
+                    string fullName = currentDirectory.FullName;
+                    // the fullName with the name concatenated towards the beginning
+
+                    ImGui.Text(fullName);
+                    ImGui.Separator();
+                }
+
+                if (fileNames != null && fileNames.Length > 0)
+                {
+                    if (ImGui.ListBox("Files", ref index, fileNames, fileNames.Length))
                     {
-                        selectedFiles.RemoveAt(selectedFileIndex);
-                        selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                        var targetDir = files[index];
+                        if (targetDir.Type == FileItemType.Directory)
+                            LoadFiles(files[index].Path);
+                        else if (Multiselect && !selectedFiles.Contains(files[index]))
+                        {
+                            selectedFiles.Add(files[index]);
+                            selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                        }
+                        else if (!Multiselect)
+                        {
+                            selectedFiles.Clear();
+                            selectedFiles.Add(files[index]);
+                            selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                        }
                     }
                     ImGui.Separator();
                 }
-                if (ImGui.Button("Open"))
+
+                if (Multiselect)
                 {
-                    FilesSelected?.Invoke(selectedFiles.ToArray());
-                    return true;
-                }
-            }
-            else
-            {
-                if (ImGui.Button("Open"))
-                {
-                    if (files != null && files.Count > 0)
+                    if (selectedFileNames != null && selectedFileNames.Length > 0)
                     {
-                        FileName = files[index].Path;
-                        FileSelected?.Invoke(FileName);
+                        if (ImGui.ListBox("Selected Files", ref selectedFileIndex, selectedFileNames, selectedFileNames.Length))
+                        {
+                            selectedFiles.RemoveAt(selectedFileIndex);
+                            selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                        }
+                        ImGui.Separator();
+                    }
+
+                    if (ImGui.Button("Open"))
+                    {
+                        FilesSelected?.Invoke(selectedFiles.ToArray());
                         return true;
                     }
                 }
+                else
+                {
+                    if (ImGui.Button("Open"))
+                    {
+                        if (files != null && files.Count > 0)
+                        {
+                            FileName = files[index].Path;
+                            FileSelected?.Invoke(FileName);
+                            return true;
+                        }
+                    }
+                }
+
+                ImGui.End();
             }
 
-            ImGui.End();
+            return false;
         }
 
-        return false;
-    }
+        /// <summary>
+        /// Draws the open file dialog (IEntity implementation).
+        /// </summary>
+        /// <param name="dt">Time elapsed since the last update.</param>
+        /// <param name="renderOptions">Optional render options (unused in this implementation).</param>
+        public void Draw(float dt, RenderOptions? renderOptions = null)
+        {
+            // Show the open file dialog on the screen.
+            ShowDialog();
+        }
 
-    public void Draw(float dt, RenderOptions? renderOptions = null)
-    {
-        ShowDialog();
-    }
-
-    public void Update(float dt)
-    {
+        /// <summary>
+        /// Updates the OpenFileDialog instance (IEntity implementation, no update logic in this implementation).
+        /// </summary>
+        /// <param name="dt">Time elapsed since the last update.</param>
+        public void Update(float dt)
+        {
+            // No update logic for this dialog.
+        }
     }
 }

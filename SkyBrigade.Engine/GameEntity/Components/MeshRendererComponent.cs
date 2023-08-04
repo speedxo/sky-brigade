@@ -1,19 +1,20 @@
-﻿using SkyBrigade.Engine.Rendering;
+﻿using SkyBrigade.Engine.Data;
+using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.GameEntity.Components
 {
-    public class MeshRendererComponent : IGameComponent
+    public class MeshRendererComponent : Mesh, IGameComponent
     {
-        public Mesh? Mesh { get; set; }
+        public MeshRendererComponent(Func<(ReadOnlyMemory<Vertex>, ReadOnlyMemory<uint>)> loader, Material? mat = null) : base(loader, mat)
+        {
+
+        }
+
         public Entity Parent { get; set; }
 
         public void Initialize()
         {
-        }
 
-        public void Draw(float dt, RenderOptions? options = null)
-        {
-            Mesh?.Draw(dt, options);
         }
 
         public void Update(float dt)

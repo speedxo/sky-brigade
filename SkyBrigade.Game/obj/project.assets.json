@@ -842,6 +842,19 @@
         "runtime": {
           "bin/placeholder/SkyBrigade.Engine.dll": {}
         }
+      },
+      "SkyBrigade.Engine.Prefabs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "SkyBrigade.Engine": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/SkyBrigade.Engine.Prefabs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SkyBrigade.Engine.Prefabs.dll": {}
+        }
       }
     }
   },
@@ -2068,11 +2081,17 @@
       "type": "project",
       "path": "../SkyBrigade.Engine/SkyBrigade.Engine.csproj",
       "msbuildProject": "../SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+    },
+    "SkyBrigade.Engine.Prefabs/1.0.0": {
+      "type": "project",
+      "path": "../SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj",
+      "msbuildProject": "../SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "SkyBrigade.Engine >= 1.0.0"
+      "SkyBrigade.Engine >= 1.0.0",
+      "SkyBrigade.Engine.Prefabs >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -2101,6 +2120,9 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
+            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj": {
+              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj"
+            },
             "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj": {
               "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj"
             }

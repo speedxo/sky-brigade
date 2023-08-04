@@ -7,18 +7,33 @@ using SkyBrigade.Engine.Rendering;
 
 namespace SkyBrigade.Engine.GameEntity.Components
 {
-	public class CameraComponent : Camera, IGameComponent
+    /// <summary>
+    /// CameraComponent class represents a camera in the game.
+    /// </summary>
+    public class CameraComponent : Camera, IGameComponent
     {
+        /// <summary>
+        /// Gets or sets the parent entity of the camera.
+        /// </summary>
         public Entity Parent { get; set; }
 
-        public Vector3 Front { get; set; }
+        /// <summary>
+        /// Gets or sets the camera's front direction vector.
+        /// </summary>
+        public Vector3 Front { get; private set; }
 
-        public TransformComponent Transform { get; set; }
+        /// <summary>
+        /// Gets or sets the TransformComponent attached to the camera.
+        /// </summary>
+        public TransformComponent Transform { get; private set; }
 
         private float CameraYaw = -90f;
         private float CameraPitch = 0f;
 
 #pragma warning disable CS8601 // ooo woo im Roslyn sheesh fancy c# lexer
+        /// <summary>
+        /// Initializes the CameraComponent.
+        /// </summary>
         public void Initialize()
         {
             Locked = false;
@@ -28,7 +43,7 @@ namespace SkyBrigade.Engine.GameEntity.Components
         }
 #pragma warning restore CS8601 // SID, SHUT THE FUCK UP
 
-        float lookSensitivity = 0.1f;
+        private float lookSensitivity = 0.1f;
         private void UpdateMouse()
         {
             var controller = GameManager.Instance.InputManager.GetVirtualController();
@@ -36,11 +51,10 @@ namespace SkyBrigade.Engine.GameEntity.Components
             var xOffset = (controller.LookingAxis.X) * lookSensitivity;
             var yOffset = (controller.LookingAxis.Y) * lookSensitivity;
 
-
             CameraYaw += xOffset;
             CameraPitch -= yOffset;
 
-            //We don't want to be able to look behind us by going over our head or under our feet so make sure it stays within these bounds
+            // We don't want to be able to look behind us by going over our head or under our feet so make sure it stays within these bounds
             CameraPitch = Math.Clamp(CameraPitch, -89.0f, 89.0f);
 
             Transform.Rotation = new Vector3(
@@ -52,11 +66,16 @@ namespace SkyBrigade.Engine.GameEntity.Components
             Front = Vector3.Normalize(Transform.Rotation);
         }
 
+       
         public void Draw(float dt, RenderOptions? options = null)
         {
-
+            // Not used.
         }
 
+        /// <summary>
+        /// Updates the camera.
+        /// </summary>
+        /// <param name="dt">Delta time.</param>
         public override void Update(float dt)
         {
             if (!GameManager.Instance.IsInputCaptured) return;
@@ -67,4 +86,3 @@ namespace SkyBrigade.Engine.GameEntity.Components
         }
     }
 }
-

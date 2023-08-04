@@ -1,14 +1,17 @@
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
 
 namespace SkyBrigade.Engine.Logging
 {
+    /// <summary>
+    /// The Logger class is responsible for handling logging messages.
+    /// </summary>
     public class Logger : IDisposable
     {
-        // Define a private object for thread synchronization
         private readonly object locker = new();
-
-        // the different colors for each level of logging
         private static readonly Dictionary<LogLevel, ConsoleColor> Colors = new()
         {
             { LogLevel.Debug, ConsoleColor.Gray },
@@ -18,17 +21,15 @@ namespace SkyBrigade.Engine.Logging
             { LogLevel.Fatal, ConsoleColor.DarkRed }
         };
 
-        // the different prefixes for each level of logging
         private static readonly Dictionary<LogLevel, string> Prefixes = new()
         {
-            { LogLevel.Debug, $"[DEBUG] " },
+            { LogLevel.Debug, "[DEBUG] " },
             { LogLevel.Info, "[INFO] " },
             { LogLevel.Warning, "[WARNING] " },
             { LogLevel.Error, "[ERROR] " },
             { LogLevel.Fatal, "[FATAL] " }
         };
 
-        // the different suffixes for each level of logging
         private static readonly Dictionary<LogLevel, string> Suffixes = new()
         {
             { LogLevel.Debug, "" },
@@ -38,26 +39,37 @@ namespace SkyBrigade.Engine.Logging
             { LogLevel.Fatal, "" }
         };
 
+        /// <summary>
+        /// Gets or sets the output destination for the logs.
+        /// </summary>
         public LogOutput Output { get; private set; }
+
         private readonly TextWriter textWriter;
         private readonly ConcurrentQueue<LogEntry> logQueue = new();
         private bool isProcessingLogs = false;
 
+        /// <summary>
+        /// Initializes a new instance of the Logger class with the specified output destination.
+        /// </summary>
+        /// <param name="output">The output destination for the logs.</param>
         public Logger(LogOutput output = LogOutput.Console)
         {
             Output = output;
             if (output > 0)
                 textWriter = new StreamWriter("log.txt", true);
 
-            // Start a background thread to process logs from the queue
-            // (i ADORE discards)
             ThreadPool.QueueUserWorkItem(ProcessLogs);
         }
 
+        /// <summary>
+        /// Logs a message with the specified log level.
+        /// </summary>
+        /// <param name="level">The log level of the message.</param>
+        /// <param name="message">The message to log.</param>
         public void Log(LogLevel level, string message)
         {
-            // only log debug level events if we are in debug mode
-            if (level == LogLevel.Debug && !Debugger.IsAttached) return;
+            if (level == LogLevel.Debug && !Debugger.IsAttached)
+                return;
 
             string prefix = Prefixes[level];
             string suffix = Suffixes[level];
@@ -65,7 +77,6 @@ namespace SkyBrigade.Engine.Logging
 
             string log = $"{prefix}{message}{suffix}";
 
-            // Enqueue the log entry for processing
             logQueue.Enqueue(new LogEntry(log, color));
 
             if (level == LogLevel.Fatal)
@@ -77,13 +88,11 @@ namespace SkyBrigade.Engine.Logging
 
         private void ProcessLogs(object? state)
         {
-            // This method is executed on a background thread
             while (true)
             {
-                // If there are logs in the queue, process them
                 if (!logQueue.IsEmpty)
                 {
-                    lock (locker) // Ensure only one thread writes to the console or file
+                    lock (locker)
                     {
                         isProcessingLogs = true;
                         while (logQueue.TryDequeue(out LogEntry logEntry))
@@ -106,16 +115,16 @@ namespace SkyBrigade.Engine.Logging
                 }
                 else
                 {
-                    // If there are no logs to process, wait for a short duration
-                    // to prevent busy-waiting and excessive CPU usage
                     Thread.Sleep(10);
                 }
             }
         }
 
+        /// <summary>
+        /// Disposes the resources used by the Logger.
+        /// </summary>
         public void Dispose()
         {
-            // Wait for logs to finish processing before disposing the resources
             while (isProcessingLogs)
             {
                 Thread.Sleep(10);

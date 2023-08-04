@@ -399,3 +399,33 @@
 [INFO] Texture[2] loaded from file 'Assets/among.png'!
 [INFO] Texture[3] loaded from file 'Assets/gray.png'!
 [INFO] Texture[4] loaded from file 'Assets/white.png'!
+[DEBUG] Shader[4] created!
+[DEBUG] Shader[5] created!
+[DEBUG] Shader[6] created!
+[INFO] Texture[2] loaded from file 'Assets/among.png'!
+[INFO] Texture[3] loaded from file 'Assets/gray.png'!
+[INFO] Texture[4] loaded from file 'Assets/white.png'!
+[DEBUG] Shader[4] created!
+[DEBUG] Shader[5] created!
+[DEBUG] Shader[6] created!
+[INFO] Texture[2] loaded from file 'Assets/among.png'!
+[INFO] Texture[3] loaded from file 'Assets/gray.png'!
+[INFO] Texture[4] loaded from file 'Assets/white.png'!
+[DEBUG] Shader[4] created!
+[DEBUG] Shader[5] created!
+[DEBUG] Shader[6] created!
+[INFO] Texture[2] loaded from file 'Assets/among.png'!
+[INFO] Texture[3] loaded from file 'Assets/gray.png'!
+[INFO] Texture[4] loaded from file 'Assets/white.png'!
+[DEBUG] Shader[4] created!
+[DEBUG] Shader[5] created!
+[DEBUG] Shader[6] created!
+[INFO] Texture[2] loaded from file 'Assets/among.png'!
+[INFO] Texture[3] loaded from file 'Assets/gray.png'!
+[INFO] Texture[4] loaded from file 'Assets/white.png'!
+[DEBUG] Shader[4] created!
+[DEBUG] Shader[5] created!
+[DEBUG] Shader[6] created!
+[INFO] Texture[2] loaded from file 'Assets/among.png'!
+[INFO] Texture[3] loaded from file 'Assets/gray.png'!
+[INFO] Texture[4] loaded from file 'Assets/white.png'!

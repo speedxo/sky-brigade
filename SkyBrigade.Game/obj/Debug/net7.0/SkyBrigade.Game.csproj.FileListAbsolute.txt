@@ -249,3 +249,5 @@ C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0/SkyBrigade.Game.pdb
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0/SkyBrigade.Game.genruntimeconfig.cache
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/Debug/net7.0/ref/SkyBrigade.Game.dll
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/SkyBrigade.Engine.Prefabs.dll
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/SkyBrigade.Engine.Prefabs.pdb

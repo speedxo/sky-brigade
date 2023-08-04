@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v7.0": {
       "SkyBrigade.Game/1.0.0": {
         "dependencies": {
-          "SkyBrigade.Engine": "1.0.0"
+          "SkyBrigade.Engine": "1.0.0",
+          "SkyBrigade.Engine.Prefabs": "1.0.0"
         },
         "runtime": {
           "SkyBrigade.Game.dll": {}
@@ -570,6 +571,14 @@
         "runtime": {
           "SkyBrigade.Engine.dll": {}
         }
+      },
+      "SkyBrigade.Engine.Prefabs/1.0.0": {
+        "dependencies": {
+          "SkyBrigade.Engine": "1.0.0"
+        },
+        "runtime": {
+          "SkyBrigade.Engine.Prefabs.dll": {}
+        }
       }
     }
   },
@@ -909,6 +918,11 @@
       "hashPath": "ultz.native.sdl.2.24.3.1.nupkg.sha512"
     },
     "SkyBrigade.Engine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SkyBrigade.Engine.Prefabs/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
