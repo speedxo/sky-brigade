@@ -4,12 +4,12 @@ namespace SkyBrigade.Engine.GameEntity.Components
 {
     public interface IGameComponent
     {
-        public Entity Parent { get; internal set; }
+        public Entity Parent { get; set; }
 
         void Initialize();
 
         void Update(float dt);
 
-        void Draw(RenderOptions? options = null);
+        void Draw(float dt, RenderOptions? options = null);
     }
 }

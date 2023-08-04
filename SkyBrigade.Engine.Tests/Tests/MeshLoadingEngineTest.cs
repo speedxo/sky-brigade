@@ -99,10 +99,10 @@ namespace SkyBrigade.Engine.Tests.Tests
                     item.SetUniform("lightColors[" + v + "]", lightColors[v]);
 
                     lightMesh.Position = newPos;
-                    lightMesh.Draw(RenderOptions.Default with { Camera = options.Camera });
+                    lightMesh.Draw(dt, RenderOptions.Default with { Camera = options.Camera });
                 }
 
-                item.Draw(options);
+                item.Draw(dt, options);
             }
         }
 

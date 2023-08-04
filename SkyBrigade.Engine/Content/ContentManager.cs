@@ -112,11 +112,11 @@ namespace SkyBrigade.Engine.Content
             namedShaders.Clear();
 
             foreach (var item in namedTextures.Values)
-                item.Dispose();
+                ((IDisposable)item).Dispose();
             namedTextures.Clear();
 
             foreach (var item in unnamedTextures.Values)
-                item.Dispose();
+                ((IDisposable)item).Dispose();
             unnamedTextures.Clear();
 
             foreach (var item in unnamedShaders.Values)

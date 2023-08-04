@@ -41,9 +41,9 @@ public class OpenFileDialog : IEntity
 
         files.Add(new FileItem("..", currentDirectory?.Parent?.FullName ?? "", FileItemType.Directory));
 
-        files.AddRange(from file in currentDirectory.GetDirectories()
+        files.AddRange(from file in currentDirectory?.GetDirectories()
                        select new FileItem(file.Name, file.FullName, FileItemType.Directory));
-        foreach (var (file, fileName) in from file in currentDirectory.GetFiles()
+        foreach (var (file, fileName) in from file in currentDirectory?.GetFiles()
                                          let fileName = file.Name
                                          select (file, fileName))
         {
@@ -59,6 +59,7 @@ public class OpenFileDialog : IEntity
         }
 
         fileNames = files.Select(f => f.Name).ToArray();
+        prevDir = dir;
     }
 
     public bool ShowDialog()
@@ -88,6 +89,12 @@ public class OpenFileDialog : IEntity
                         LoadFiles(files[index].Path);
                     else if (Multiselect && !selectedFiles.Contains(files[index]))
                     {
+                        selectedFiles.Add(files[index]);
+                        selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
+                    }
+                    else if (!Multiselect)
+                    {
+                        selectedFiles.Clear();
                         selectedFiles.Add(files[index]);
                         selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();
                     }
@@ -131,7 +138,7 @@ public class OpenFileDialog : IEntity
         return false;
     }
 
-    public void Draw(RenderOptions? renderOptions = null)
+    public void Draw(float dt, RenderOptions? renderOptions = null)
     {
         ShowDialog();
     }

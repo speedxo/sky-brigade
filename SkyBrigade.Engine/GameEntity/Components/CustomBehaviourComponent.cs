@@ -8,7 +8,7 @@ namespace SkyBrigade.Engine.GameEntity.Components
 
         public delegate void OnUpdateDelegate(float dt);
 
-        public delegate void OnDrawDelegate(RenderOptions? options = null);
+        public delegate void OnDrawDelegate(float dt, RenderOptions? options = null);
 
         public event OnDrawDelegate? OnDraw;
 
@@ -23,9 +23,9 @@ namespace SkyBrigade.Engine.GameEntity.Components
             OnUpdate?.Invoke(dt);
         }
 
-        public void Draw(RenderOptions? options = null)
+        public void Draw(float dt, RenderOptions? options = null)
         {
-            OnDraw?.Invoke(options);
+            OnDraw?.Invoke(dt, options);
         }
     }
 }

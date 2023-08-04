@@ -18,7 +18,7 @@ internal class EditorMenuBar : IEntity
 
     // we will not be using renderOptions here as this entire
     // class is just a big wrapper around ImGui
-    public void Draw(RenderOptions? renderOptions = null)
+    public void Draw(float dt, RenderOptions? renderOptions = null)
     {
         if (ImGui.BeginMainMenuBar())
         {

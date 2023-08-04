@@ -33,6 +33,8 @@
     <None Remove="Assets\material_shader\advanced.frag" />
     <None Remove="Assets\material_shader\advanced.vert" />
     <None Remove="Primitives\" />
+    <None Remove="Input\" />
+    <None Remove="Input\Components\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -44,6 +46,8 @@
     <Folder Include="GameEntity\Components\" />
     <Folder Include="Assets\material_shader\" />
     <Folder Include="Primitives\" />
+    <Folder Include="Input\" />
+    <Folder Include="Input\Components\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />

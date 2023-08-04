@@ -2,6 +2,7 @@
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Data;
+using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Logging;
 using SkyBrigade.Engine.Rendering;
 using SkyBrigade.Engine.Tests.Tests;
@@ -13,7 +14,6 @@ namespace SkyBrigade.Engine.Tests;
 public class TestMenuGameScreen : IGameScreen
 {
     private int index = 0;
-    private IKeyboard prev;
     private Camera testCamera;
     private List<IEngineTest> tests;
 
@@ -56,6 +56,8 @@ public class TestMenuGameScreen : IGameScreen
     private float gamma, ambientStrength;
     private string[] renderModes;
     private int renderModeIndex;
+
+    public List<IEntity> Entities { get; set; }
 
     public void Render(GL gl, float dt)
     {
@@ -147,16 +149,7 @@ public class TestMenuGameScreen : IGameScreen
 
     public void Update(float dt)
     {
-        var current = GameManager.Instance.Input.Keyboards[0];
-
-        //if (current.IsKeyPressed(Key.Right) && prev.IsKeyPressed(Key.Right))
-        //    index++;
-        //if (current.IsKeyPressed(Key.Left) && prev.IsKeyPressed(Key.Left))
-        //    index--;
-
         testCamera.Update(dt);
         tests[index].Update(dt);
-
-        prev = current;
     }
 }

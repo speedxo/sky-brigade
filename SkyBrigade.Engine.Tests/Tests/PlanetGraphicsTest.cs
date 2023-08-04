@@ -70,7 +70,7 @@ namespace SkyBrigade.Engine.Tests.Tests
                 // The *100.0f is because we have HDR and tonemapping so can go big
                 planet.Mesh.Material.Shader.SetUniform("lightColors[0]", new Vector3(100.0f, 100.0f, 0.0f));
 
-                planet.Mesh.Draw(renderOptions);
+                planet.Mesh.Draw(dt, renderOptions);
             }
         }
 

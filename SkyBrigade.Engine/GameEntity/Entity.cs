@@ -15,6 +15,7 @@ public class Entity : IEntity
             // TODO: Handle error: Component of the same type already exists
         }
         component.Parent = this;
+        component.Initialize();
         return component;
     }
 
@@ -52,9 +53,9 @@ public class Entity : IEntity
             item.Update(dt);
     }
 
-    public virtual void Draw(RenderOptions? renderOptions = null)
+    public virtual void Draw(float dt, RenderOptions? renderOptions = null)
     {
         foreach (var item in Components.Values)
-            item.Draw(renderOptions);
+            item.Draw(dt, renderOptions);
     }
 }

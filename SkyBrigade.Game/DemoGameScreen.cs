@@ -3,16 +3,23 @@ using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
+using SkyBrigade.Game.Player;
 
 namespace SkyBrigade.Game;
 
-internal class DemoGameScreen : IGameScreen
+internal class DemoGameScreen : GameScreen
 {
     private Plane rect;
-    private Camera testCamera;
 
-    public void Initialize(GL gl)
+    CharacterController character;
+
+    public override void Initialize(GL gl)
     {
+        base.Initialize(gl);
+
+        character = new CharacterController();
+        AddEntity(character);
+
         gl.ClearColor(System.Drawing.Color.CornflowerBlue);
 
         rect = new()
@@ -22,19 +29,20 @@ internal class DemoGameScreen : IGameScreen
         };
         rect.Material.Texture = GameManager.Instance.ContentManager.GetTexture("white");
 
-        testCamera = new Camera() { Position = new System.Numerics.Vector3(0, 2, 5) };
-
+        
         gl.Enable(EnableCap.DepthTest);
     }
 
-    public void Render(GL gl, float dt)
+    public override void Render(GL gl, float dt)
     {
+        base.Render(gl, dt);
+
         gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
 
         rect.Draw(RenderOptions.Default with
         {
-            Camera = testCamera
+            Camera = character.Camera
         });
 
         if (ImGui.Begin("Debug"))
@@ -45,18 +53,27 @@ internal class DemoGameScreen : IGameScreen
             ImGui.Text($"FPS: {1.0f / dt}");
             ImGui.End();
         }
+
+        if (ImGui.Begin("Character Controller"))
+        {
+            ImGui.Text($"Position: {character.Position}");
+            ImGui.Text($"Rotation: {character.Rotation}");
+            ImGui.End();
+        }
     }
 
     private readonly DeltaTracker<float> memoryTracker = new((prev, current) => current - prev);
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
-        memoryTracker.Update(GC.GetTotalMemory(false) / 1024.0f);
+        base.Update(dt);
 
-        testCamera.Update(dt);
+        memoryTracker.Update(GC.GetTotalMemory(false) / 1024.0f);
     }
 
-    public void Dispose()
+
+    public override void Dispose()
     {
+
     }
 }

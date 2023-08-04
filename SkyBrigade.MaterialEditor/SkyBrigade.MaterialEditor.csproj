@@ -11,4 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SkyBrigade.Engine\SkyBrigade.Engine.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.editorconfig" />
+  </ItemGroup>
 </Project>

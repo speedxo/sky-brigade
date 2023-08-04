@@ -22,12 +22,13 @@ internal class Program : IGameScreen
     }
 
     private Camera camera;
-    private List<IEntity> entities;
     private Mesh mesh;
 
     private Dictionary<string, AdvancedMaterial> loadedMaterials;
     private int selectedMaterialIndex = 0;
     private string[] materialNames;
+
+    public List<IEntity> Entities { get; set; }
 
     public void Initialize(GL gl)
     {
@@ -36,7 +37,7 @@ internal class Program : IGameScreen
         var menuBar = new EditorMenuBar();
         menuBar.OnMenuItemClicked += MenuBar_MenuItemClicked;
 
-        entities = new List<IEntity> {
+        Entities = new List<IEntity> {
             menuBar
         };
 
@@ -66,24 +67,26 @@ internal class Program : IGameScreen
 
         fileDialog.FilesSelected += (files) =>
         {
-            entities.Remove(fileDialog);
+            Entities.Remove(fileDialog);
             LoadMaterials(files);
         };
 
-        entities.Add(fileDialog);
+        Entities.Add(fileDialog);
     }
 
+#pragma warning disable CS8601, CS8619 // Possible null reference assignment.
     private void LoadMaterials(FileItem[] files)
     {
         // safety check ensuring we dont try load directories!
         foreach (var path in (from file in files where file.Type == FileItemType.File select file.Path).Distinct())
             LoadMaterial(path);
 
-        if (loadedMaterials.Count < 1) return;
+        if (loadedMaterials == null || loadedMaterials.Count < 1) return;
 
         mesh.Material = loadedMaterials.Values.FirstOrDefault();
         materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
     }
+#pragma warning restore CS8601, CS8619 // Possible null reference assignment.
 
     private void LoadMaterial(string path)
     {
@@ -103,10 +106,11 @@ internal class Program : IGameScreen
         //if (material != null) material.Save(materialPath);
     }
 
+#pragma warning disable CS8619, CS8602 // Nullability of reference types in value doesn't match target type.
     public void Render(GL gl, float dt)
     {
-        for (int i = 0; i < entities.Count; i++)
-            entities[i].Draw();
+        for (int i = 0; i < Entities.Count; i++)
+            Entities[i].Draw(dt);
        
         if (ImGui.Begin("Materials"))
         {
@@ -125,16 +129,17 @@ internal class Program : IGameScreen
             ImGui.End();
         }
 
-        mesh.Draw(RenderOptions.Default with
+        mesh.Draw(dt, RenderOptions.Default with
         {
             Camera = camera
         });
     }
+#pragma warning restore CS8619, CS8602 // Nullability of reference types in value doesn't match target type.
 
     public void Update(float dt)
     {
-        for (int i = 0; i < entities.Count; i++)
-            entities[i].Update(dt);
+        for (int i = 0; i < Entities.Count; i++)
+            Entities[i].Update(dt);
 
         camera.Update(dt);
     }

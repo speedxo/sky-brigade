@@ -282,7 +282,7 @@ public class Mesh : IDisposable
         });
     }
 
-    public void Draw(RenderOptions? renderOptions = null)
+    public void Draw(float dt, RenderOptions? renderOptions = null)
     {
         //if (Indices == null || Indices.Length < 1) return; // Dont render if there is nothing to render. Precious performance mmmmm
 

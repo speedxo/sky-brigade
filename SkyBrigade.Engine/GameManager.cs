@@ -4,6 +4,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using SkyBrigade.Engine.Content;
+using SkyBrigade.Engine.Input;
 using SkyBrigade.Engine.Logging;
 
 // Namespace declaration for the GameManager class
@@ -48,6 +49,11 @@ public class GameManager
     /// Gets the input context used for handling user input.
     /// </summary>
     public IInputContext Input { get; private set; }
+
+    /// <summary>
+    /// Gets the new and improved unified input manager.
+    /// </summary>
+    public InputManager InputManager { get; private set; }
 
     /// <summary>
     /// Gets the total memory usage of the application in megabytes (MB).
@@ -151,6 +157,8 @@ public class GameManager
             Input.Keyboards[i].KeyDown += onKeyDown;
         }
 
+        InputManager = new InputManager();
+
         // Initialize the ContentManager responsible for loading assets.
         ContentManager = new ContentManager();
         LoadEssentialAssets();
@@ -201,7 +209,7 @@ public class GameManager
             oneSecondTimer = 0.0f;
             nonEssentialUpdate();
         }
-
+        InputManager.Update((float)delta);
         GameScreenManager.Update((float)delta);
     }
 
