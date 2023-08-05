@@ -1,61 +1,38 @@
 ﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.Rendering;
 using System;
 using System.Collections.Generic;
 
-namespace SkyBrigade.Engine
+namespace SkyBrigade.Engine;
+
+/// <summary>
+/// Represents an interface for a game screen in the application.
+/// </summary>
+public interface IGameScreen : IDisposable
 {
     /// <summary>
-    /// Interface for a game screen.
+    /// The list of entities present in the game screen.
     /// </summary>
-    public interface IGameScreen : IDisposable
-    {
-        List<IEntity> Entities { get; set; }
-        void Initialize(GL gl);
-        void Update(float dt);
-        void Render(GL gl, float dt);
-    }
+    List<IEntity> Entities { get; set; }
 
     /// <summary>
-    /// Abstract base class for a game screen. Provides higher level function than the IGameScreen interface.
+    /// Initializes the game screen with the OpenGL context (GL).
     /// </summary>
-    public abstract class GameScreen : IGameScreen
-    {
-        public List<IEntity> Entities { get; set; }
+    /// <param name="gl">The OpenGL context used for rendering.</param>
+    void Initialize(GL gl);
 
-        public virtual void Initialize(GL gl)
-        {
-            Entities = new List<IEntity>();
-        }
+    /// <summary>
+    /// Updates the game screen with the elapsed time (dt).
+    /// </summary>
+    /// <param name="dt">The elapsed time since the last update call.</param>
+    void Update(float dt);
 
-        public virtual void Render(GL gl, float dt)
-        {
-            for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Draw(dt);
-        }
-
-        public virtual void Update(float dt)
-        {
-            for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Update(dt);
-        }
-
-        public IEntity AddEntity(IEntity entity)
-        {
-            Entities.Add(entity);
-            return entity;
-        }
-
-        public void RemoveEntity(IEntity entity)
-        {
-            Entities.Remove(entity);
-        }
-
-        public void RemoveAt(int index)
-        {
-            Entities.RemoveAt(index);
-        }
-
-        public abstract void Dispose();
-    }
+    /// <summary>
+    /// Renders the game screen using the provided OpenGL context (GL) and render options.
+    /// </summary>
+    /// <param name="gl">The OpenGL context used for rendering.</param>
+    /// <param name="dt">The elapsed time since the last render call.</param>
+    /// <param name="renderOptions">Optional render options. If not provided, default options will be used.</param>
+    void Render(GL gl, float dt, RenderOptions? renderOptions = null);
 }

@@ -7,42 +7,43 @@ using SkyBrigade.Engine.Prefabs.Character;
 
 namespace SkyBrigade.Game;
 
-internal class DemoGameScreen : GameScreen
+internal class DemoGameScreen : Scene
 {
-    private Plane rect;
+    private Plane plane;
     private CharacterController character;
 
     public override void Initialize(GL gl)
     {
         base.Initialize(gl);
 
+        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
+        gl.Enable(EnableCap.DepthTest);
+
         character = new CharacterController();
         AddEntity(character);
 
-        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
+        plane = new Plane();
+        
+        plane.Transform.Scale = new System.Numerics.Vector3(10);
+        plane.Transform.Rotation = new System.Numerics.Vector3(90, 0, 0);
 
-        rect = new()
-        {
-            Rotation = new System.Numerics.Vector3(90, 0, 0),
-            Scale = new System.Numerics.Vector2(10)
-        };
-        rect.Material.Texture = GameManager.Instance.ContentManager.GetTexture("white");
+        plane.Material.Texture = GameManager.Instance.ContentManager.GetTexture("debug");
 
-        gl.Enable(EnableCap.DepthTest);
+        AddEntity(plane);
     }
 
-    public override void Render(GL gl, float dt)
+    public override void Render(GL gl, float dt, RenderOptions? renderOptions = null)
     {
-        base.Render(gl, dt);
-
         gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
 
-        rect.Draw(RenderOptions.Default with
+        var options = renderOptions ?? RenderOptions.Default with
         {
-            Camera = character.Camera
-        });
+              Camera = character.Camera
+        };
 
+        base.Render(gl, dt, options);
+        
         if (ImGui.Begin("Debug"))
         {
             ImGui.Text($"Memory Consumption: {float.Round(GC.GetTotalMemory(false) / 1024.0f / 1024, 2)}MB");

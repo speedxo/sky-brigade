@@ -10,6 +10,7 @@ namespace SkyBrigade.Engine.GameEntity.Components
     /// <summary>
     /// CameraComponent class represents a camera in the game.
     /// </summary>
+    [RequiresComponent(typeof(TransformComponent))]
     public class CameraComponent : Camera, IGameComponent
     {
         /// <summary>

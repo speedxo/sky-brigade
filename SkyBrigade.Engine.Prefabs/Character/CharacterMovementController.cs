@@ -9,6 +9,8 @@ namespace SkyBrigade.Engine.Prefabs.Character;
 
 public partial class CharacterController
 {
+    [RequiresComponent(typeof(TransformComponent))]
+    [RequiresComponent(typeof(CameraComponent))]
     public class CharacterMovementController : IGameComponent
     {
         public Entity Parent { get; set; }

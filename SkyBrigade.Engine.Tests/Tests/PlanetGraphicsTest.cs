@@ -42,7 +42,7 @@ namespace SkyBrigade.Engine.Tests.Tests
         {
             planets.Add(new Planet
             {
-                Mesh = Mesh.CreateSphere(size / 10.0f, mat: AdvancedMaterial.LoadFromZip(Path.Combine("Assets", "planets", $"{materialPath}.material"))),
+                Mesh = Rendering.MeshGenerators.CreateSphere(size / 10.0f, mat: AdvancedMaterial.LoadFromZip(Path.Combine("Assets", "planets", $"{materialPath}.material"))),
                 Size = size / 10.0f,
                 Index = planets.Count,
                 DriftOffset = (float)rand.NextDouble() * 2 * MathF.PI

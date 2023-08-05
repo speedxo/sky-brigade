@@ -23,7 +23,7 @@ public class Camera
     public Camera()
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.Window.FramebufferSize.X / (float)GameManager.Instance.Window.FramebufferSize.Y, 0.01f, 1000.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.Window.FramebufferSize.X / (float)GameManager.Instance.Window.FramebufferSize.Y, 0.1f, 100.0f);
     }
 
     public virtual void Update(float dt)

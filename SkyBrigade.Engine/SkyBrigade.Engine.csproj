@@ -42,7 +42,6 @@
     <Folder Include="Data\" />
     <Folder Include="Assets\basic_shader\" />
     <Folder Include="Collections\" />
-    <Folder Include="GameEntity\" />
     <Folder Include="GameEntity\Components\" />
     <Folder Include="Assets\material_shader\" />
     <Folder Include="Primitives\" />

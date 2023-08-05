@@ -15,10 +15,6 @@ namespace SkyBrigade.Engine.GameEntity
         /// </summary>
         public Dictionary<Type, IGameComponent> Components { get; internal set; } = new Dictionary<Type, IGameComponent>();
 
-        /// <summary>
-        /// Gets or sets the list of child entities.
-        /// </summary>
-        public List<IEntity> Entities { get; set; }
 
         /// <summary>
         /// Adds a component of type T to the entity.
@@ -32,6 +28,23 @@ namespace SkyBrigade.Engine.GameEntity
             {
                 // TODO: Handle error: Component of the same type already exists
             }
+
+            Type componentType = component.GetType();
+            RequiresComponentAttribute[] requiredAttributes = (RequiresComponentAttribute[])componentType.GetCustomAttributes(typeof(RequiresComponentAttribute), true);
+
+            // Check if the component has any RequiresComponentAttribute
+            if (requiredAttributes.Length > 0)
+            {
+                foreach (RequiresComponentAttribute requiredAttribute in requiredAttributes)
+                {
+                    Type requiredComponentType = requiredAttribute.ComponentType;
+
+                    // Check if the entity has the required component
+                    if (!HasComponent(requiredComponentType))
+                        GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'.");
+                }
+            }
+
             component.Parent = this;
             component.Initialize();
             return component;
@@ -83,6 +96,12 @@ namespace SkyBrigade.Engine.GameEntity
         {
             return Components.ContainsKey(typeof(T));
         }
+
+        private bool HasComponent(Type type)
+        {
+            return Components.ContainsKey(type);
+        }
+
 
         /// <summary>
         /// Updates the entity and its components.

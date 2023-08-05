@@ -5,6 +5,7 @@ using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Dialogs;
 using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.Prefabs;
 using SkyBrigade.Engine.Rendering;
 using static SkyBrigade.Engine.GameManager;
 
@@ -22,11 +23,12 @@ internal class Program : IGameScreen
     }
 
     private Camera camera;
-    private Mesh mesh;
+    private GameObject sphere;
 
     private Dictionary<string, AdvancedMaterial> loadedMaterials;
     private int selectedMaterialIndex = 0;
     private string[] materialNames;
+
 
     public List<IEntity> Entities { get; set; }
 
@@ -37,12 +39,15 @@ internal class Program : IGameScreen
         var menuBar = new EditorMenuBar();
         menuBar.OnMenuItemClicked += MenuBar_MenuItemClicked;
 
+        camera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5), Locked = true };
+        sphere = new GameObject();
+        sphere.Mesh.Load(MeshGenerators.CreateSphere(1));
+
         Entities = new List<IEntity> {
-            menuBar
+            menuBar,
+            sphere
         };
 
-        camera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5), Locked = true };
-        mesh = Mesh.CreateSphere(1);
     }
 
     private void MenuBar_MenuItemClicked(EditorMenuBarItem item)
@@ -83,7 +88,7 @@ internal class Program : IGameScreen
 
         if (loadedMaterials == null || loadedMaterials.Count < 1) return;
 
-        mesh.Material = loadedMaterials.Values.FirstOrDefault();
+        sphere.Material = loadedMaterials.Values.FirstOrDefault();
         materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
     }
 #pragma warning restore CS8601, CS8619 // Possible null reference assignment.
@@ -107,15 +112,12 @@ internal class Program : IGameScreen
     }
 
 #pragma warning disable CS8619, CS8602 // Nullability of reference types in value doesn't match target type.
-    public void Render(GL gl, float dt)
+    public void Render(GL gl, float dt, RenderOptions? renderOptions = null)
     {
-        for (int i = 0; i < Entities.Count; i++)
-            Entities[i].Draw(dt);
-       
         if (ImGui.Begin("Materials"))
         {
             if (materialNames != null && ImGui.ListBox("", ref selectedMaterialIndex, materialNames, loadedMaterials.Count))
-                mesh.Material = loadedMaterials.Values.ElementAt(selectedMaterialIndex);
+                sphere.Material = loadedMaterials.Values.ElementAt(selectedMaterialIndex);
 
             if (loadedMaterials.Count > 0 && ImGui.Button("Remove"))
             {
@@ -129,10 +131,12 @@ internal class Program : IGameScreen
             ImGui.End();
         }
 
-        mesh.Draw(dt, RenderOptions.Default with
-        {
+        var options = renderOptions ?? RenderOptions.Default with { 
             Camera = camera
-        });
+        };
+
+        for (int i = 0; i < Entities.Count; i++)
+            Entities[i].Draw(dt, options);
     }
 #pragma warning restore CS8619, CS8602 // Nullability of reference types in value doesn't match target type.
 

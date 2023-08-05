@@ -842,6 +842,19 @@
         "runtime": {
           "bin/placeholder/SkyBrigade.Engine.dll": {}
         }
+      },
+      "SkyBrigade.Engine.Prefabs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "SkyBrigade.Engine": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/SkyBrigade.Engine.Prefabs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SkyBrigade.Engine.Prefabs.dll": {}
+        }
       }
     }
   },
@@ -2068,41 +2081,57 @@
       "type": "project",
       "path": "../SkyBrigade.Engine/SkyBrigade.Engine.csproj",
       "msbuildProject": "../SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+    },
+    "SkyBrigade.Engine.Prefabs/1.0.0": {
+      "type": "project",
+      "path": "../SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj",
+      "msbuildProject": "../SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "SkyBrigade.Engine >= 1.0.0"
+      "SkyBrigade.Engine >= 1.0.0",
+      "SkyBrigade.Engine.Prefabs >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "/Users/bogz/.nuget/packages/": {}
+    "C:\\Users\\bogda\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj",
+      "projectUniqueName": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.MaterialEditor\\SkyBrigade.MaterialEditor.csproj",
       "projectName": "SkyBrigade.MaterialEditor",
-      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj",
-      "packagesPath": "/Users/bogz/.nuget/packages/",
-      "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/",
+      "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.MaterialEditor\\SkyBrigade.MaterialEditor.csproj",
+      "packagesPath": "C:\\Users\\bogda\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.MaterialEditor\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/bogz/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\bogda\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj": {
-              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+            "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine.Prefabs\\SkyBrigade.Engine.Prefabs.csproj": {
+              "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine.Prefabs\\SkyBrigade.Engine.Prefabs.csproj"
+            },
+            "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj": {
+              "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj"
             }
           }
         }
@@ -2132,7 +2161,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
       }
     }
   }
