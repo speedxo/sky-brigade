@@ -146,7 +146,6 @@ public class Shader : IDisposable
             // LogLevel of fatal throws an exception
             GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Error compiling shader of type {type}, failed with error {infoLog}");
         }
-        GC.Collect();
         return handle;
     }
 

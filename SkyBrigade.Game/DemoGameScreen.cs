@@ -13,12 +13,10 @@ internal class DemoGameScreen : Scene
     private Plane plane;
     private CharacterController character;
 
-    public override void Initialize(GL gl)
+    public DemoGameScreen()
     {
-        base.Initialize(gl);
-
-        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
-        gl.Enable(EnableCap.DepthTest);
+        GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
+        GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
 
         character = new CharacterController();
         AddEntity(character);

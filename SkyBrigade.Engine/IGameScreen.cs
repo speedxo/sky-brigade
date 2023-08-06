@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace SkyBrigade.Engine;
 
 /// <summary>
-/// Represents an interface for a game screen in the application.
+/// Represents a generalised interface for a game screen.
 /// </summary>
 public interface IGameScreen : IDisposable, IUpdateable, IDrawable
 {
@@ -16,10 +16,4 @@ public interface IGameScreen : IDisposable, IUpdateable, IDrawable
     /// The list of entities present in the game screen.
     /// </summary>  
     List<IEntity> Entities { get; set; }
-
-    /// <summary>
-    /// Initializes the game screen with the OpenGL context (GL).
-    /// </summary>
-    /// <param name="gl">The OpenGL context used for rendering.</param>
-    void Initialize(GL gl);
 }

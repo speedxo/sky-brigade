@@ -15,15 +15,6 @@ public abstract class Scene : IGameScreen
     public List<IEntity> Entities { get; set; } = new List<IEntity>();
 
     /// <summary>
-    /// Initializes the scene with the OpenGL context (GL).
-    /// </summary>
-    /// <param name="gl">The OpenGL context used for rendering.</param>
-    public virtual void Initialize(GL gl)
-    {
-
-    }
-
-    /// <summary>
     /// Renders the scene using the provided OpenGL context (GL) and render options.
     /// </summary>
     /// <param name="gl">The OpenGL context used for rendering.</param>

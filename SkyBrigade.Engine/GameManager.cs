@@ -175,7 +175,8 @@ public class GameManager : Scene
 
         // Initialize the GameScreenManager and set the initial game screen.
         GameScreenManager = AddEntity<GameScreenManager>();
-        GameScreenManager.ChangeGameScreen(initialGameScreen);
+        GameScreenManager.AddInstance<IGameScreen>((IGameScreen)Activator.CreateInstance(initialGameScreen));
+
 
         Gl.Enable(EnableCap.VertexArray);
     }
