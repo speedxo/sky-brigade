@@ -3,6 +3,7 @@ using Silk.NET.OpenGL;
 using SkyBrigade.Engine;
 using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
+using SkyBrigade.Engine.Rendering.Shapes;
 using SkyBrigade.Engine.Prefabs.Character;
 
 namespace SkyBrigade.Game;
@@ -30,6 +31,8 @@ internal class DemoGameScreen : Scene
         plane.Material.Texture = GameManager.Instance.ContentManager.GetTexture("debug");
 
         AddEntity(plane);
+
+        GameManager.Instance.Debugger.IsVisible = true;
     }
 
     public override void Render(GL gl, float dt, RenderOptions? renderOptions = null)
@@ -37,12 +40,12 @@ internal class DemoGameScreen : Scene
         gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
 
-        var options = renderOptions ?? RenderOptions.Default with
-        {
-              Camera = character.Camera
-        };
+        var options = renderOptions ?? RenderOptions.Default;
 
-        base.Render(gl, dt, options);
+        base.Render(gl, dt, options with
+        {
+            Camera = character.Camera
+        });
         
         if (ImGui.Begin("Debug"))
         {

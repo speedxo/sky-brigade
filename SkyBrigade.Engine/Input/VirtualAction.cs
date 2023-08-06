@@ -6,16 +6,18 @@
     [Flags]
     public enum VirtualAction
     {
-        MoveForwards = 0,   // W/JoystickUp
-        MoveBackwards = 1,  // S/JoystickDown
-        MoveLeft = 2,       // A/JoystickLeft
-        MoveRight = 4,      // D/JoystickRight
+        None = 0,
 
-        Interact = 8,       // E/X
-        Pause = 16,         // Escape/Menu
-        Back = 32,
+        MoveForwards = 1,   // W/JoystickUp
+        MoveBackwards = 2,  // S/JoystickDown
+        MoveLeft = 4,       // A/JoystickLeft
+        MoveRight = 8,      // D/JoystickRight
 
-        PrimaryAction = 64, // LeftClick/LeftTrigger
-        SecondaryAction = 128 // RightClick/RightTrigger
+        Interact = 16,       // E/X
+        Pause = 32,         // Escape/Menu
+        Back = 64,
+
+        PrimaryAction = 128, // LeftClick/LeftTrigger
+        SecondaryAction = 256 // RightClick/RightTrigger
     }
 }

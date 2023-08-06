@@ -33,7 +33,9 @@ namespace SkyBrigade.Engine.Input
         /// </summary>
         public JoystickInputManager JoystickManager { get; init; }
 
+
         private VirtualController VirtualController = default;
+        private VirtualController PreviousVirtualController = default;
 
         /// <summary>
         /// Initializes a new instance of the InputManager class with default values.
@@ -59,6 +61,8 @@ namespace SkyBrigade.Engine.Input
             var mouseData = MouseManager.GetData();
             var joystickData = JoystickManager.IsConnected ? JoystickManager.GetData() : JoystickData.Default;
 
+            PreviousVirtualController = VirtualController;
+
             VirtualController.Actions = keyboardData.Actions | mouseData.Actions | joystickData.Actions;
             VirtualController.MovementAxis = keyboardData.MovementDirection * (JoystickManager.IsConnected ? joystickData.PrimaryAxis : Vector2.One);
             VirtualController.LookingAxis = mouseData.LookingAxis * (JoystickManager.IsConnected ? joystickData.SecondaryAxis : Vector2.One);
@@ -69,6 +73,16 @@ namespace SkyBrigade.Engine.Input
         /// </summary>
         /// <returns>The VirtualController instance.</returns>
         public VirtualController GetVirtualController() => CaptureInput ? VirtualController : default;
+
+
+        /// <summary>
+        /// Gets the last frames VirtualController providing unified input data from various sources.
+        /// </summary>
+        /// <returns>The VirtualController instance.</returns>
+        public VirtualController GetPreviousVirtualController() => CaptureInput ? PreviousVirtualController : default;
+
+        public bool IsPressed(VirtualAction action) => GetVirtualController().IsPressed(action);
+        public bool WasPressed(VirtualAction action) => GetVirtualController().IsPressed(action) && !GetPreviousVirtualController().IsPressed(action);
 
         /// <summary>
         /// Disposes of any resources used by the InputManager.

@@ -42,20 +42,13 @@ public class TestMenuGameScreen : IGameScreen
         gl.Enable(EnableCap.DepthTest);
         gl.DepthFunc(DepthFunction.Lequal);
 
-        gamma = RenderOptions.Default.Gamma;
-        ambientStrength = RenderOptions.Default.AmbientLightingStrength;
-
-        // automatically generate the render modes from the DefferedRenderLayer enum
-        renderModes = Enum.GetNames(typeof(DefferedRenderLayer));
+      
 
         GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture constructor call count: {Texture.count}");
     }
 
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
-    private float gamma, ambientStrength;
-    private string[] renderModes;
-    private int renderModeIndex;
 
     public List<IEntity> Entities { get; set; }
 
@@ -119,32 +112,13 @@ public class TestMenuGameScreen : IGameScreen
                     ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
                 }
 
-                // Collapsible header for Render Options window
-                if (ImGui.CollapsingHeader("Render Options", ImGuiTreeNodeFlags.DefaultOpen))
-                {
-                    ImGui.DragFloat("Gamma", ref gamma, 0.01f, 0.1f, 10.0f);
-                    ImGui.DragFloat("Ambient", ref ambientStrength, 0.01f, 0.0f, 10.0f);
-
-                    // Listbox to select the render mode.
-                    ImGui.Combo("Render Mode", ref renderModeIndex, renderModes, renderModes.Length);
-                }
-
                 // End the sidebar layout
                 ImGui.End();
             }
         }
 
 
-        tests[index].Render(dt, gl, RenderOptions.Default with
-        {
-            Camera = testCamera,
-            AmbientLightingStrength = ambientStrength,
-            Gamma = gamma,
-            DebugOptions = DebugRenderOptions.Default with
-            {
-                DefferedLayer = (DefferedRenderLayer)renderModeIndex
-            }
-        });
+        tests[index].Render(dt, gl, );
     }
 
     public void Update(float dt)

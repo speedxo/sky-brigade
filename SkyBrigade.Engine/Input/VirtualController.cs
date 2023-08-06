@@ -21,5 +21,7 @@ namespace SkyBrigade.Engine.Input
         /// Gets or sets the VirtualAction representing various actions triggered by the input devices.
         /// </summary>
         public VirtualAction Actions { get; set; }
+
+        public bool IsPressed(VirtualAction action) => Actions.HasFlag(action);
     }
 }

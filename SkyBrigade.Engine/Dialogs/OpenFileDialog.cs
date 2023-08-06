@@ -27,6 +27,8 @@ namespace SkyBrigade.Engine.Dialogs
         /// Gets or sets a value indicating whether multiple files can be selected.
         /// </summary>
         public bool Multiselect { get; set; }
+        public IEntity? Parent { get; set; }
+        public List<IEntity> Entities { get; set; }
 
         private List<FileItem> files = new();
         private DirectoryInfo? currentDirectory;

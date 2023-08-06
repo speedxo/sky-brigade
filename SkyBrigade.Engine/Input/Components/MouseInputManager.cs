@@ -57,6 +57,8 @@ namespace SkyBrigade.Engine.Input.Components
         /// <param name="dt">The time elapsed since the last update.</param>
         public void Update(float dt)
         {
+            actions = VirtualAction.None;
+
             if (Mouse == null)
                 return;
 
@@ -68,7 +70,7 @@ namespace SkyBrigade.Engine.Input.Components
                 }
                 else
                 {
-                    actions ^= action;
+                    actions &= ~action;
                 }
             }
 

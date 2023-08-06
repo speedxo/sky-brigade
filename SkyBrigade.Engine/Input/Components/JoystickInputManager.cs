@@ -64,6 +64,8 @@ namespace SkyBrigade.Engine.Input.Components
         /// <param name="dt">The time elapsed since the last update.</param>
         public void Update(float dt)
         {
+            actions = VirtualAction.None;
+
             if (Joystick == null || !Joystick.IsConnected)
                 return;
 

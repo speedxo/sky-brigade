@@ -12,7 +12,7 @@ public abstract class Scene : IGameScreen
     /// <summary>
     /// The list of entities present in the scene.
     /// </summary>
-    public List<IEntity> Entities { get; set; }
+    public List<IEntity> Entities { get; set; } = new List<IEntity>();
 
     /// <summary>
     /// Initializes the scene with the OpenGL context (GL).
@@ -20,7 +20,7 @@ public abstract class Scene : IGameScreen
     /// <param name="gl">The OpenGL context used for rendering.</param>
     public virtual void Initialize(GL gl)
     {
-        Entities = new List<IEntity>();
+
     }
 
     /// <summary>
@@ -50,11 +50,19 @@ public abstract class Scene : IGameScreen
     /// </summary>
     /// <param name="entity">The entity to be added.</param>
     /// <returns>The added entity.</returns>
-    public IEntity AddEntity(IEntity entity)
+    public T AddEntity<T>(T entity) where T: IEntity
     {
         Entities.Add(entity);
+        entity.Parent = null;
         return entity;
     }
+
+    /// <summary>
+    /// Adds an entity to the scene and returns the added entity.
+    /// </summary>
+    /// <param name="entity">The entity to be added.</param>
+    /// <returns>The added entity.</returns>
+    public T AddEntity<T>() where T : IEntity => AddEntity(Activator.CreateInstance<T>());
 
     /// <summary>
     /// Removes an entity from the scene.

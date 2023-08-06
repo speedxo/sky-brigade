@@ -554,12 +554,12 @@
           "runtimes/win-arm64/native/SDL2.dll": {
             "rid": "win-arm64",
             "assetType": "native",
-            "fileVersion": "2.25.0.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/SDL2.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "2.0.14.0"
+            "fileVersion": "0.0.0.0"
           }
         }
       }

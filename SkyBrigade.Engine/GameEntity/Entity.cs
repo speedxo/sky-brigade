@@ -15,6 +15,15 @@ namespace SkyBrigade.Engine.GameEntity
         /// </summary>
         public Dictionary<Type, IGameComponent> Components { get; internal set; } = new Dictionary<Type, IGameComponent>();
 
+        /// <summary>
+        /// List containing the nested entities within this entity.
+        /// </summary>
+        public List<IEntity> Entities { get; set; } = new List<IEntity>();
+
+        /// <summary>
+        /// The parent entity (if there is one)
+        /// </summary>
+        public IEntity? Parent { get; set; }
 
         /// <summary>
         /// Adds a component of type T to the entity.
@@ -48,6 +57,43 @@ namespace SkyBrigade.Engine.GameEntity
             component.Parent = this;
             component.Initialize();
             return component;
+        }
+
+        /// <summary>
+        /// Adds an entity to the scene and returns the added entity.
+        /// </summary>
+        /// <param name="entity">The entity to be added.</param>
+        /// <returns>The added entity.</returns>
+        public T AddEntity<T>(T entity) where T : IEntity
+        {
+            Entities.Add(entity);
+            entity.Parent = this;
+            return entity;
+        }
+
+        /// <summary>
+        /// Adds an entity to the scene and returns the added entity.
+        /// </summary>
+        /// <param name="entity">The entity to be added.</param>
+        /// <returns>The added entity.</returns>
+        public T AddEntity<T>() where T : IEntity => AddEntity(Activator.CreateInstance<T>());
+
+        /// <summary>
+        /// Removes an entity from the scene.
+        /// </summary>
+        /// <param name="entity">The entity to be removed.</param>
+        public void RemoveEntity(IEntity entity)
+        {
+            Entities.Remove(entity);
+        }
+
+        /// <summary>
+        /// Removes the entity at the specified index from the scene.
+        /// </summary>
+        /// <param name="index">The index of the entity to be removed.</param>
+        public void RemoveAt(int index)
+        {
+            Entities.RemoveAt(index);
         }
 
         /// <summary>
@@ -111,6 +157,10 @@ namespace SkyBrigade.Engine.GameEntity
         {
             foreach (var item in Components.Values)
                 item.Update(dt);
+
+            for (int i = 0; i < Entities.Count; i++)            
+                Entities[i].Update(dt);
+            
         }
 
         /// <summary>
@@ -122,6 +172,9 @@ namespace SkyBrigade.Engine.GameEntity
         {
             foreach (var item in Components.Values)
                 item.Draw(dt, renderOptions);
+
+            for (int i = 0; i < Entities.Count; i++)
+                Entities[i].Draw(dt, renderOptions);
         }
     }
 }

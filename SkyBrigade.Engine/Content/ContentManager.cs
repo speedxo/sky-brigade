@@ -1,9 +1,10 @@
-﻿using SkyBrigade.Engine.Logging;
+﻿using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.Logging;
 using SkyBrigade.Engine.OpenGL;
 
 namespace SkyBrigade.Engine.Content
 {
-    public class ContentManager : IDisposable
+    public class ContentManager : Entity, IDisposable
     {
         private Dictionary<string, Texture> namedTextures;
         private Dictionary<string, Shader> namedShaders;

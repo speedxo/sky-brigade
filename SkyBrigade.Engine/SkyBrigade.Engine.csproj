@@ -35,6 +35,9 @@
     <None Remove="Primitives\" />
     <None Remove="Input\" />
     <None Remove="Input\Components\" />
+    <None Remove="Rendering\Shapes\" />
+    <None Remove="Debugging\" />
+    <None Remove="Debugging\Debuggers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -47,6 +50,9 @@
     <Folder Include="Primitives\" />
     <Folder Include="Input\" />
     <Folder Include="Input\Components\" />
+    <Folder Include="Rendering\Shapes\" />
+    <Folder Include="Debugging\" />
+    <Folder Include="Debugging\Debuggers\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />

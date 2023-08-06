@@ -13,7 +13,7 @@ public interface IGameScreen : IDisposable
 {
     /// <summary>
     /// The list of entities present in the game screen.
-    /// </summary>
+    /// </summary>  
     List<IEntity> Entities { get; set; }
 
     /// <summary>

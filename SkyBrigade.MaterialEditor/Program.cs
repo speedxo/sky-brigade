@@ -41,7 +41,7 @@ internal class Program : IGameScreen
 
         camera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5), Locked = true };
         sphere = new GameObject();
-        sphere.Mesh.Load(MeshGenerators.CreateSphere(1));
+        sphere.MeshRenderer.Load(MeshGenerators.CreateSphere(1));
 
         Entities = new List<IEntity> {
             menuBar,

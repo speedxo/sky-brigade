@@ -1,4 +1,7 @@
 ﻿using Silk.NET.OpenGL;
+using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.GameEntity.Components;
+using SkyBrigade.Engine.Rendering;
 using System;
 using System.Collections.Generic;
 
@@ -7,21 +10,11 @@ namespace SkyBrigade.Engine
     /// <summary>
     /// Manages the game screens and facilitates screen changes.
     /// </summary>
-    public class GameScreenManager : IDisposable
+    public class GameScreenManager : Entity, IDisposable
     {
-        private Dictionary<Type, IGameScreen> screens;
+        private readonly Dictionary<Type, IGameScreen> screens = new();
         private Type currentScreenType;
-        private GL gl;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameScreenManager"/> class.
-        /// </summary>
-        /// <param name="gl">The OpenGL context.</param>
-        public GameScreenManager(GL gl)
-        {
-            this.gl = gl;
-            screens = new Dictionary<Type, IGameScreen>();
-        }
 
         /// <summary>
         /// Adds a game screen to the manager.
@@ -60,7 +53,7 @@ namespace SkyBrigade.Engine
                 if (newScreen == null)
                     throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upset occurred??");
 
-                newScreen.Initialize(gl);
+                newScreen.Initialize(GameManager.Instance.Gl);
                 //newScreen.LoadContent();
 
                 currentScreenType = type;
@@ -83,8 +76,10 @@ namespace SkyBrigade.Engine
         /// Updates the current active game screen.
         /// </summary>
         /// <param name="dt">The time since the last update.</param>
-        public void Update(float dt)
+        public override void Update(float dt)
         {
+            base.Update(dt);
+
             if (screens.TryGetValue(currentScreenType, out var screen))
             {
                 screen.Update(dt);
@@ -96,11 +91,13 @@ namespace SkyBrigade.Engine
         /// </summary>
         /// <param name="gl">The OpenGL context.</param>
         /// <param name="dt">The time since the last render.</param>
-        public void Render(GL gl, float dt)
+        public override void Draw(float dt, RenderOptions? options = null)
         {
+            base.Draw(dt, options);
+
             if (screens.TryGetValue(currentScreenType, out var screen))
             {
-                screen.Render(gl, dt);
+                screen.Render(GameManager.Instance.Gl, dt, options);
             }
         }
 
@@ -109,6 +106,8 @@ namespace SkyBrigade.Engine
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
+
             foreach (var item in screens.Values)
                 item.Dispose();
         }

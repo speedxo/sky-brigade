@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Silk.NET.Input;
+using Silk.NET.Input.Extensions;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.GameEntity.Components;
 using SkyBrigade.Engine.Rendering;
@@ -16,6 +17,11 @@ namespace SkyBrigade.Engine.Input.Components
         /// Gets or sets the parent Entity that owns this KeyboardManager component.
         /// </summary>
         public Entity Parent { get; set; }
+
+        /// <summary>
+        /// The parent input manager
+        /// </summary>
+        public InputManager Manager { get; private set; }
 
         /// <summary>
         /// Gets the first connected keyboard, or null if none is connected.
@@ -36,6 +42,7 @@ namespace SkyBrigade.Engine.Input.Components
         public void Initialize()
         {
             Bindings = KeyboardBindings.Default;
+            Manager = Parent as InputManager;
         }
 
         /// <summary>
@@ -57,24 +64,33 @@ namespace SkyBrigade.Engine.Input.Components
         /// <param name="dt">The time elapsed since the last update.</param>
         public void Update(float dt)
         {
+            actions = VirtualAction.None;
+
             if (Keyboard == null)
+            {
+                direction = default;
+                actions = default;
+
                 return;
+            }
+
+            var state = Keyboard.CaptureState();
 
             foreach ((Key key, VirtualAction action) in Bindings.KeyActionPairs)
             {
-                if (Keyboard.IsKeyPressed(key))
+                if (state.IsKeyPressed(key))
                 {
                     actions |= action;
                 }
                 else
                 {
-                    actions ^= action;
+                    actions &= ~action;
                 }
             }
 
             direction = new Vector2(
-                Keyboard.IsKeyPressed(Key.D) ? 1 : Keyboard.IsKeyPressed(Key.A) ? -1 : 0,
-                Keyboard.IsKeyPressed(Key.S) ? -1 : Keyboard.IsKeyPressed(Key.W) ? 1 : 0
+                state.IsKeyPressed(Key.D) ? 1 : state.IsKeyPressed(Key.A) ? -1 : 0,
+                state.IsKeyPressed(Key.S) ? -1 : state.IsKeyPressed(Key.W) ? 1 : 0
             );
         }
 
