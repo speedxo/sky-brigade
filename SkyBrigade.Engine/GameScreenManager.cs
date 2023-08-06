@@ -97,7 +97,7 @@ namespace SkyBrigade.Engine
 
             if (screens.TryGetValue(currentScreenType, out var screen))
             {
-                screen.Render(GameManager.Instance.Gl, dt, options);
+                screen.Draw(dt, options);
             }
         }
 

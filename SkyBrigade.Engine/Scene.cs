@@ -29,7 +29,7 @@ public abstract class Scene : IGameScreen
     /// <param name="gl">The OpenGL context used for rendering.</param>
     /// <param name="dt">The elapsed time since the last render call.</param>
     /// <param name="renderOptions">Optional render options. If not provided, default options will be used.</param>
-    public virtual void Render(GL gl, float dt, RenderOptions? renderOptions = null)
+    public virtual void Draw(float dt, RenderOptions? renderOptions = null)
     {
         for (int i = 0; i < Entities.Count; i++)
             Entities[i].Draw(dt, renderOptions);

@@ -23,7 +23,7 @@ internal class DemoGameScreen : Scene
         character = new CharacterController();
         AddEntity(character);
 
-        plane = new Plane();
+        plane = new Plane(new BasicMaterial());
         
         plane.Transform.Scale = new System.Numerics.Vector3(10);
         plane.Transform.Rotation = new System.Numerics.Vector3(90, 0, 0);
@@ -35,14 +35,14 @@ internal class DemoGameScreen : Scene
         GameManager.Instance.Debugger.IsVisible = true;
     }
 
-    public override void Render(GL gl, float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
+        GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
 
         var options = renderOptions ?? RenderOptions.Default;
 
-        base.Render(gl, dt, options with
+        base.Draw(dt, options with
         {
             Camera = character.Camera
         });

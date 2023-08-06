@@ -121,7 +121,7 @@ public class GameManager : Scene
 
         // Register event handlers for the window.
         Window.Render += (delta) => {
-            Render(Gl, (float)delta, Debugger.RenderOptionsDebugger.RenderOptions);
+            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions);
         };
         Window.Update += (delta) => {
             Update((float)delta);
@@ -218,7 +218,7 @@ public class GameManager : Scene
         MemoryUsage = GC.GetTotalMemory(false) / 1000000;
     }
 
-    public override void Render(GL gl, float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
         // Make sure ImGui is up-to-date before rendering.
         imguiController.Update(dt);
@@ -227,7 +227,7 @@ public class GameManager : Scene
         Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         // Render all entities
-        base.Render(gl, dt, renderOptions);
+        base.Draw(dt, renderOptions);
 
         // Render ImGui UI on top of the game screen.
         imguiController.Render();

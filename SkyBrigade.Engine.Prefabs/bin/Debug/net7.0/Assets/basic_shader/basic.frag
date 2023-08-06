@@ -7,6 +7,7 @@ out vec4 FragColor;
 in vec2 texCoords;
 
 uniform bool useTexture;
+uniform vec3 camPos;
 
 void main()
 {

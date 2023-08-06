@@ -29,8 +29,12 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
         public RenderOptions RenderOptions { get; private set; }
 
+        public bool Visible = false;
+
         public void Draw(float dt, RenderOptions? options = null)
         {
+            if (!Visible) return;
+
             // Collapsible header for Render Options window
             if (ImGui.Begin("Render Options"))
             {
