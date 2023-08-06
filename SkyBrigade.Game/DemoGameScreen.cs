@@ -5,6 +5,7 @@ using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
 using SkyBrigade.Engine.Rendering.Shapes;
 using SkyBrigade.Engine.Prefabs.Character;
+using System.Numerics;
 
 namespace SkyBrigade.Game;
 
