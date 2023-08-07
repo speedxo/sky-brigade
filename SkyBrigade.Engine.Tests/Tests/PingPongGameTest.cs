@@ -2,7 +2,12 @@
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
-using System.Numerics;
+using SkyBrigade.Engine.Rendering.Shapes;
+
+
+using Vector4 = System.Numerics.Vector4;
+using Vector3 = System.Numerics.Vector3;
+using Vector2 = System.Numerics.Vector2;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
@@ -11,57 +16,57 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; set; } = "Ping Pong Test";
 
-        private Rendering.Plane playerPaddle, botPaddle, ball, topBar, bottomBar;
+        private Plane playerPaddle, botPaddle, ball, topBar, bottomBar;
         private Camera gameCamera;
         private Vector2 direction;
         private float speed = 5.0f;
         private bool isAutomatic = true;
 
-        public void LoadContent(GL gl)
+        public PingPongGameTest()
         {
             if (Loaded) return;
 
-            playerPaddle = new Rendering.Plane()
+            playerPaddle = new Plane()
             {
                 Size = new Vector2(0.1f, 1.0f),
                 Position = new Vector3(-5, 0, 0)
             };
 
-            topBar = new Rendering.Plane()
+            topBar = new Plane()
             {
                 Size = new Vector2(10, 0.1f),
                 Position = new Vector3(0, -4, 0)
             };
-            bottomBar = new Rendering.Plane()
+            bottomBar = new Plane()
             {
                 Size = new Vector2(10, 0.1f),
                 Position = new Vector3(0, 4, 0)
             };
 
-            botPaddle = new Rendering.Plane()
+            botPaddle = new Plane()
             {
                 Size = new Vector2(0.1f, 0.5f),
                 Position = new Vector3(5, 0, 0)
             };
 
-            ball = new Rendering.Plane()
+            ball = new Plane()
             {
-                Size = new Vector2(0.1f)
+                Size = new Vector2(0.1f, 0.1f)
             };
             gameCamera = new Camera() { Position = new Vector3(0, 0, 10), Locked = true };
 
             direction = new Vector2(-1);
         }
 
-        public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
+        public void Render(float dt, RenderOptions? renderOptions = null)
         {
-            var options = RenderOptions.Default with { Camera = gameCamera, Color = Vector4.One };
+            var options = renderOptions ?? RenderOptions.Default with { Camera = gameCamera, Color = Vector4.One };
 
-            playerPaddle.Draw(options);
-            botPaddle.Draw(options);
-            topBar.Draw(options);
-            bottomBar.Draw(options);
-            ball.Draw(options);
+            playerPaddle.Draw(dt, options);
+            botPaddle.Draw(dt, options);
+            topBar.Draw(dt, options);
+            bottomBar.Draw(dt, options);
+            ball.Draw(dt, options);
         }
 
         public void Update(float dt)

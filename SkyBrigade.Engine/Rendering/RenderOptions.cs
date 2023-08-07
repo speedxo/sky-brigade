@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Silk.NET.OpenGL;
 
 namespace SkyBrigade.Engine.Rendering;
 
@@ -13,6 +14,7 @@ public struct RenderOptions
 
     // Reference Properties
     public Camera Camera { get; set; }
+    public GL GL { get; set; }
 
     // Value Properties
     public Vector4 Color { get; set; }
@@ -25,6 +27,7 @@ public struct RenderOptions
         Color = Vector4.One,
         Gamma = 2.2f,
         AmbientLightingStrength = 0.03f,
-        DebugOptions = DebugRenderOptions.Default
+        DebugOptions = DebugRenderOptions.Default,
+        GL = GameManager.Instance.Gl
     };
 }

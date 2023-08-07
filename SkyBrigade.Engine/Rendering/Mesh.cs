@@ -31,7 +31,7 @@ public abstract class Mesh : IDisposable
     /// <summary>
     /// The vertex buffer object (VBO) used to store vertex data of the mesh.
     /// </summary>
-    private VertexBufferObject<Vertex> vbo;
+    public VertexBufferObject<Vertex> Vbo { get; private set; }
 
     /// <summary>
     /// Sets a uniform in the material's shader with a float value.
@@ -63,12 +63,12 @@ public abstract class Mesh : IDisposable
     /// </summary>
     public Mesh()
     {
-        vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
+        Vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
 
         // Telling the VAO object how to lay out the attribute pointers
-        vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
-        vbo.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 3 * sizeof(float));
-        vbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
+        Vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
+        Vbo.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 3 * sizeof(float));
+        Vbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public abstract class Mesh : IDisposable
     /// </summary>
     /// <param name="meshData">The mesh data containing vertices and elements of the mesh.</param>
     /// <param name="mat">The material to use for rendering the mesh. If null, the default material will be used.</param>
-    public void Load(MeshDataDelegate meshData, Material? mat = null) => Load(meshData(), mat);
+    public virtual void Load(MeshDataDelegate meshData, Material? mat = null) => Load(meshData(), mat);
 
     /// <summary>
     /// Loads the mesh with the given mesh data and material.
@@ -85,8 +85,8 @@ public abstract class Mesh : IDisposable
     /// <param name="mat">The material to use for rendering the mesh. If null, the default material will be used.</param>
     public virtual void Load(MeshData data, Material? mat = null)
     {
-        vbo.VertexBuffer.BufferData(data.Vertices.Span);
-        vbo.ElementBuffer.BufferData(data.Elements.Span);
+        Vbo.VertexBuffer.BufferData(data.Vertices.Span);
+        Vbo.ElementBuffer.BufferData(data.Elements.Span);
 
         ElementCount = (uint)data.Elements.Length;
 
@@ -119,7 +119,7 @@ public abstract class Mesh : IDisposable
 
         Use(options);
 
-        vbo.Bind();
+        Vbo.Bind();
 
         // Once again, I really don't want to make the whole method unsafe for one call.
         unsafe
@@ -127,7 +127,7 @@ public abstract class Mesh : IDisposable
             GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
         }
 
-        vbo.Unbind();
+        Vbo.Unbind();
 
         Material.End();
     }
@@ -137,6 +137,6 @@ public abstract class Mesh : IDisposable
     /// </summary>
     public virtual void Dispose()
     {
-        vbo.Dispose();
+        Vbo.Dispose();
     }
 }

@@ -8,12 +8,10 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; protected set; }
 
-        void Render(float dt, GL gl, RenderOptions? renderOptions = null);
+        void Render(float dt, RenderOptions? renderOptions = null);
 
         void Update(float dt);
 
         void RenderGui();
-
-        void LoadContent(GL gl);
     }
 }

@@ -1,7 +1,11 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
-using System.Numerics;
+using SkyBrigade.Engine.Rendering.Shapes;
+
+using Vector4 = System.Numerics.Vector4;
+using Vector3 = System.Numerics.Vector3;
+using Vector2 = System.Numerics.Vector2;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
@@ -10,23 +14,23 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; } = false;
         public string Name { get; set; } = "Render Rectangle Test";
 
-        private Rendering.Plane rect;
+        private Plane rect;
 
-        private Vector2 scale = Vector2.One;
+        private Vector3 scale = Vector3.One;
         private Vector3 rot = Vector3.Zero;
 
-        public void LoadContent(GL gl)
+        public PlaneEngineTest()
         {
             if (Loaded) return;
 
-            rect = new Rendering.Plane();
+            rect = new Plane();
 
             Loaded = true;
         }
 
-        public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
+        public void Render(float dt, RenderOptions? renderOptions = null)
         {
-            rect.Draw(renderOptions);
+            rect.Draw(dt, renderOptions);
         }
 
         public void Update(float dt)
@@ -46,7 +50,7 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void RenderGui()
         {
-            ImGui.DragFloat2("Scale", ref scale, 0.01f);
+            ImGui.DragFloat3("Scale", ref scale, 0.01f);
             ImGui.DragFloat3("Rotation", ref rot, 0.1f);
         }
     }

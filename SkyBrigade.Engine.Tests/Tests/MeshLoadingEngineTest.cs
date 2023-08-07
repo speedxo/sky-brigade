@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
+using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Rendering;
 using System.Numerics;
 using Mesh = SkyBrigade.Engine.Rendering.Mesh;
@@ -9,7 +10,7 @@ namespace SkyBrigade.Engine.Tests.Tests
     public class MeshLoadingEngineTest : IEngineTest
     {
         private Vector3[] lightColors;
-        private Mesh lightMesh;
+        private GameObject lightMesh;
 
         // lights
         private readonly Vector3[] lightPositions = new[] {
@@ -19,7 +20,7 @@ namespace SkyBrigade.Engine.Tests.Tests
             new Vector3( 10.0f, -10.0f, 10.0f)
         };
 
-        private List<Mesh> meshes;
+        private List<GameObject> objects;
         private readonly Random rand = new();
         private Vector3 rot = Vector3.Zero;
         private Vector3 scale = Vector3.One;
@@ -30,13 +31,11 @@ namespace SkyBrigade.Engine.Tests.Tests
         public void Dispose()
         {
             Loaded = false;
-            foreach (var m in meshes)
-                m.Dispose();
-
+            
             GC.SuppressFinalize(this);
         }
 
-        public void LoadContent(GL gl)
+        public MeshLoadingEngineTest()
         {
             if (Loaded) return;
 
@@ -55,48 +54,49 @@ namespace SkyBrigade.Engine.Tests.Tests
             };
 
             // dynamically create a mesh for each material, assinging the material to the mesh
-            meshes = new List<Mesh>(materials.Length);
-            for (int i = 0; i < materials.Length; i++)
-                meshes.Add(Rendering.MeshGenerators.CreateSphere(1, 50, materials[i]));
+            objects = new List<GameObject>(materials.Length);
 
-            lightMesh = Rendering.MeshGenerators.CreateSphere(1);
+            for (int i = 0; i < materials.Length; i++)
+                objects.Add(new GameObject(material: materials[i], meshData: MeshGenerators.CreateSphere()));
+
+            lightMesh = new GameObject(meshData: MeshGenerators.CreateSphere());
 
             int counter = 0;
             //meshes[2] = Mesh.FromObj("Assets/teapot.obj");
-            foreach (var mesh in meshes)
+            foreach (var mesh in objects)
             {
                 mesh.Position = new Vector3(counter * 2.5f, 0, 0);
                 counter++;
             }
 
-            gl.Enable(EnableCap.CullFace);
-            gl.Enable(EnableCap.DepthTest);
+            GameManager.Instance.Gl.Enable(EnableCap.CullFace);
+            GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
             Loaded = true;
         }
 
-        public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
+        public void Render(float dt, RenderOptions? renderOptions = null)
         {
             // Accumulate the time
             totalTime += dt;
             // Get the render options
             var options = renderOptions ?? RenderOptions.Default;
 
-            meshes.Sort((o1, o2) =>
+            objects.Sort((o1, o2) =>
             {
                 if (Vector3.Distance(options.Camera.Position, o1.Position) < Vector3.Distance(options.Camera.Position, o2.Position)) return 1;
                 return 0;
             });
 
-            foreach (var item in meshes)
+            foreach (var item in objects)
             {
-                item.Use();
+                item.Material.Use();
 
                 for (int v = 0; v < lightColors.Length; v++)
                 {
                     var newPos = lightPositions[v] + new Vector3(MathF.Sin(totalTime * 2.0f) * 100, 0.0f, MathF.Cos(totalTime * 2.0f) * 100);
 
-                    item.SetUniform("lightPositions[" + v + "]", newPos);
-                    item.SetUniform("lightColors[" + v + "]", lightColors[v]);
+                    item.MeshRenderer.SetUniform("lightPositions[" + v + "]", newPos);
+                    item.MeshRenderer.SetUniform("lightColors[" + v + "]", lightColors[v]);
 
                     lightMesh.Position = newPos;
                     lightMesh.Draw(dt, RenderOptions.Default with { Camera = options.Camera });
@@ -127,12 +127,12 @@ namespace SkyBrigade.Engine.Tests.Tests
         public void Update(float dt)
         {
             // Loop through all the meshes in the meshes array.
-            foreach (var mesh in meshes)
+            foreach (var mesh in objects)
             {
                 // Check if the mesh's scale matches the scale instance variable.
-                if (mesh.Scale != scale)
+                if (mesh.Transform.Scale != scale)
                     // If it doesn't, set the mesh's scale to the scale instance variable.
-                    mesh.Scale = scale;
+                    mesh.Transform.Scale = scale;
                 if (mesh.Rotation != rot)
                     mesh.Rotation = rot;
             }

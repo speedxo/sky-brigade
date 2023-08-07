@@ -1,7 +1,10 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Rendering;
-using System.Numerics;
+using Vector4 = System.Numerics.Vector4;
+using Vector3 = System.Numerics.Vector3;
+using Vector2 = System.Numerics.Vector2;
+using SkyBrigade.Engine.Rendering.Shapes;
 
 namespace SkyBrigade.Engine.Tests.Tests
 {
@@ -10,29 +13,40 @@ namespace SkyBrigade.Engine.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; set; } = "PID Controller Test";
 
-        private Rendering.Plane axisLine, marker, autoMarker;
+        private Plane axisLine, marker, autoMarker;
         private bool targetMouse = false;
 
-        public void LoadContent(GL gl)
+        public PIDTest()
         {
             Loaded = true;
 
-            axisLine = new Rendering.Plane(inPos: new Vector3(0, 1, 0), inSize: new Vector2(10, 0.1f));
-            marker = new Rendering.Plane(inPos: new Vector3(0, 1, 0), inSize: new Vector2(0.1f, 0.2f));
-            autoMarker = new Rendering.Plane(inPos: new Vector3(0, 1.5f, 0), inSize: new Vector2(0.1f, 0.2f));
+            axisLine = new Plane() {
+                Size = new Vector2(10, 0.1f),
+                Position = new Vector3(0, 1, 0)
+            };
+            marker = new Plane() {
+                Size = new Vector2(0.1f, 0.2f),
+                Position = new Vector3(0, 1, 0)
+            };
+            autoMarker = new Plane() {
+                Size = new Vector2(0.1f, 0.2f),
+                Position = new Vector3(0, 1.5f, 0)
+            };
         }
 
-        public void Render(float dt, GL gl, RenderOptions? renderOptions = null)
+        public void Render(float dt, RenderOptions? renderOptions = null)
         {
-            axisLine.Draw(RenderOptions.Default with
+            RenderOptions options = renderOptions ?? RenderOptions.Default;
+
+            axisLine.Draw(dt, options with
             {
                 Color = Vector4.One
             });
-            autoMarker.Draw(RenderOptions.Default with
+            autoMarker.Draw(dt, options with
             {
                 Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f)
             });
-            marker.Draw(RenderOptions.Default with
+            marker.Draw(dt, options with
             {
                 Color = new Vector4(0.0f, 1.0f, 0.0f, 0.0f)
             });

@@ -23,7 +23,7 @@ public class TestMenuGameScreen : IGameScreen
             tests[i].Dispose();
     }
 
-    public void Initialize(GL gl)
+    public TestMenuGameScreen()
     {
         testCamera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5) };
 
@@ -35,27 +35,23 @@ public class TestMenuGameScreen : IGameScreen
             new PIDTest()
         };
 
-        for (int i = 0; i < tests.Count; i++)
-            tests[i].LoadContent(gl);
-
-        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
-        gl.Enable(EnableCap.DepthTest);
-        gl.DepthFunc(DepthFunction.Lequal);
-
-      
+        GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
+        GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
+        GameManager.Instance.Gl.DepthFunc(DepthFunction.Lequal);
 
         GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture constructor call count: {Texture.count}");
     }
+
 
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
 
     public List<IEntity> Entities { get; set; }
-
-    public void Render(GL gl, float dt)
+    
+    public void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
-        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        renderOptions?.GL.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
+        renderOptions?.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         if (ImGui.BeginMainMenuBar())
         {
@@ -118,7 +114,7 @@ public class TestMenuGameScreen : IGameScreen
         }
 
 
-        tests[index].Render(dt, gl, );
+        tests[index].Render(dt, renderOptions);
     }
 
     public void Update(float dt)

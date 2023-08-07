@@ -121,7 +121,9 @@ public class GameManager : Scene
 
         // Register event handlers for the window.
         Window.Render += (delta) => {
-            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions);
+            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with {
+                GL = Gl
+            });
         };
         Window.Update += (delta) => {
             Update((float)delta);
