@@ -80,7 +80,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 object? value = property.GetValue(component);
 
                 // Check if the property is read-only
-                if (!property.CanWrite)
+                if (!property.CanWrite || value == null)
                 {
                     ImGui.Text($"{property.Name}: {value}");
                     continue;
@@ -89,13 +89,13 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 if (property.PropertyType == typeof(int))
                 {
                     int intValue = (int)value;
-                    if (ImGui.InputInt(property.Name, ref intValue))
+                    if (ImGui.DragInt(property.Name, ref intValue, 0.1f))
                         property.SetValue(component, intValue);
                 }
                 else if (property.PropertyType == typeof(float))
                 {
                     float floatValue = (float)value;
-                    if (ImGui.InputFloat(property.Name, ref floatValue))
+                    if (ImGui.DragFloat(property.Name, ref floatValue, 0.1f))
                     {
                         property.SetValue(component, floatValue);
                     }
@@ -103,7 +103,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 else if (property.PropertyType == typeof(Vector2))
                 {
                     Vector2 vectorValue = (Vector2)value;
-                    if (ImGui.InputFloat2(property.Name, ref vectorValue))
+                    if (ImGui.DragFloat2(property.Name, ref vectorValue, 0.1f))
                     {
                         property.SetValue(component, vectorValue);
                     }
@@ -111,7 +111,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 else if (property.PropertyType == typeof(Vector3))
                 {
                     Vector3 vectorValue = (Vector3)value;
-                    if (ImGui.InputFloat3(property.Name, ref vectorValue))
+                    if (ImGui.DragFloat3(property.Name, ref vectorValue, 0.1f))
                     {
                         property.SetValue(component, vectorValue);
                     }
