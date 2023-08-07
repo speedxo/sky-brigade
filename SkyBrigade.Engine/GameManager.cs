@@ -162,7 +162,7 @@ public class GameManager : Scene
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
         // Initialize the logger with both file and console outputs.
-        Logger = new Logger(LogOutput.Both);
+        Logger = new Logger(LogOutput.Console);
 
         // Check if at least one keyboard is available for input.
         if (Input.Keyboards.Count < 1)
