@@ -20,6 +20,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
         public Entity Parent { get; set; }
         private Debugger Debugger { get; set; }
 
+        // TODO: use string interns here because there are thousands of string allocations/second here
         public void Initialize()
         {
             Debugger = Parent as Debugger;
