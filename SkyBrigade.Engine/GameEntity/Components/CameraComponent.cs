@@ -13,6 +13,8 @@ namespace SkyBrigade.Engine.GameEntity.Components
     [RequiresComponent(typeof(TransformComponent))]
     public class CameraComponent : Camera, IGameComponent
     {
+        public string Name { get; set; }
+
         /// <summary>
         /// Gets or sets the parent entity of the camera.
         /// </summary>

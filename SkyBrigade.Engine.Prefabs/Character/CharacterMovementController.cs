@@ -13,6 +13,8 @@ public partial class CharacterController
     [RequiresComponent(typeof(CameraComponent))]
     public class CharacterMovementController : IGameComponent
     {
+        public string Name { get; set; }
+
         public Entity Parent { get; set; }
         public CharacterController Controller { get; private set; }
         public TransformComponent Transform { get; private set; }

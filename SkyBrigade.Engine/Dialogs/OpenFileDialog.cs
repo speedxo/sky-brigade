@@ -1,5 +1,7 @@
 using ImGuiNET;
 using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.GameEntity.Components;
+using SkyBrigade.Engine.Primitives;
 using SkyBrigade.Engine.Rendering;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,9 @@ namespace SkyBrigade.Engine.Dialogs
     /// </summary>
     public class OpenFileDialog : IEntity
     {
+        public int ID { get; set; }
+        public string Name { get; set; } = "Open File Dialog";
+
         /// <summary>
         /// Gets or sets the selected file's name with full path.
         /// </summary>
@@ -29,6 +34,7 @@ namespace SkyBrigade.Engine.Dialogs
         public bool Multiselect { get; set; }
         public IEntity? Parent { get; set; }
         public List<IEntity> Entities { get; set; }
+        public Dictionary<Type, IGameComponent> Components { get; set; } = new();
 
         private List<FileItem> files = new();
         private DirectoryInfo? currentDirectory;

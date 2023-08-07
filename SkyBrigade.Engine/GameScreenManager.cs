@@ -2,6 +2,7 @@
 using SkyBrigade.Engine.Collections;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.GameEntity.Components;
+using SkyBrigade.Engine.Primitives;
 using SkyBrigade.Engine.Rendering;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,11 @@ namespace SkyBrigade.Engine
     {
         public IEntity? Parent { get; set; }
         public List<IEntity> Entities { get; set; }
+        public Dictionary<Type, IGameComponent> Components { get; set; } = new();
+
+
+        public int ID { get; set; }
+        public string Name { get; set; } = "Scene Manager";
 
         public void Dispose()
         {

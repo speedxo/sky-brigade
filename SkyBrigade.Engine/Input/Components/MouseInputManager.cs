@@ -12,6 +12,8 @@ namespace SkyBrigade.Engine.Input.Components
     /// </summary>
     public class MouseInputManager : IGameComponent
     {
+        public string Name { get; set; }
+
         /// <summary>
         /// Gets or sets the parent Entity that owns this MouseInputManager component.
         /// </summary>

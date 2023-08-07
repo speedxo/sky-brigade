@@ -13,6 +13,8 @@ namespace SkyBrigade.Engine.Input.Components
     /// </summary>
     public class KeyboardManager : IGameComponent
     {
+        public string Name { get; set; }
+
         /// <summary>
         /// Gets or sets the parent Entity that owns this KeyboardManager component.
         /// </summary>

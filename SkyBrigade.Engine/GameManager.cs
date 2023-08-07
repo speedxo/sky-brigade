@@ -179,7 +179,6 @@ public class GameManager : Scene
         GameScreenManager = AddEntity<GameScreenManager>();
         GameScreenManager.AddInstance<IGameScreen>((IGameScreen)Activator.CreateInstance(initialGameScreen));
 
-
         Gl.Enable(EnableCap.VertexArray);
     }
 

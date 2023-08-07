@@ -1,4 +1,5 @@
 ﻿using SkyBrigade.Engine.GameEntity.Components;
+using SkyBrigade.Engine.Primitives;
 using SkyBrigade.Engine.Rendering;
 using System;
 using System.Collections.Generic;
@@ -11,19 +12,25 @@ namespace SkyBrigade.Engine.GameEntity
     public class Entity : IEntity
     {
         /// <summary>
-        /// Gets or sets the dictionary of components attached to the entity.
-        /// </summary>
-        public Dictionary<Type, IGameComponent> Components { get; internal set; } = new Dictionary<Type, IGameComponent>();
-
-        /// <summary>
         /// List containing the nested entities within this entity.
         /// </summary>
-        public List<IEntity> Entities { get; set; } = new List<IEntity>();
+        public virtual List<IEntity> Entities { get; set; } = new();
+
+        /// <summary>
+        /// The unique ID for this entity.
+        /// </summary>
+        public int ID { get; set; }
+
+        /// <summary>
+        /// Human readable name for this entity.
+        /// </summary>
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// The parent entity (if there is one)
         /// </summary>
         public IEntity? Parent { get; set; }
+        public Dictionary<Type, IGameComponent> Components { get; set; } = new();
 
         /// <summary>
         /// Adds a component of type T to the entity.
@@ -56,6 +63,9 @@ namespace SkyBrigade.Engine.GameEntity
 
             component.Parent = this;
             component.Initialize();
+
+            component.Name ??= component.GetType().Name;
+
             return component;
         }
 
@@ -68,6 +78,9 @@ namespace SkyBrigade.Engine.GameEntity
         {
             Entities.Add(entity);
             entity.Parent = this;
+
+            entity.Name ??= entity.GetType().Name;
+
             return entity;
         }
 

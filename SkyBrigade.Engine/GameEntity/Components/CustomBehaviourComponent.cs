@@ -4,6 +4,8 @@ namespace SkyBrigade.Engine.GameEntity.Components
 {
     public class CustomBehaviourComponent : IGameComponent
     {
+        public string Name { get; set; }
+
         public Entity Parent { get; set; }
 
         public delegate void OnUpdateDelegate(float dt);

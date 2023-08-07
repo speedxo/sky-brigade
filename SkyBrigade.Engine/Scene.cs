@@ -45,6 +45,7 @@ public abstract class Scene : IGameScreen
     {
         Entities.Add(entity);
         entity.Parent = null;
+        entity.Name ??= entity.GetType().Name;
         return entity;
     }
 

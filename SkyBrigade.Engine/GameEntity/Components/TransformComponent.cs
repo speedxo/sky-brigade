@@ -8,6 +8,8 @@ namespace SkyBrigade.Engine.GameEntity.Components
     /// </summary>
     public class TransformComponent : IGameComponent
     {
+        public string Name { get; set; }
+
         /// <summary>
         /// The position of the game entity in 3D space.
         /// </summary>

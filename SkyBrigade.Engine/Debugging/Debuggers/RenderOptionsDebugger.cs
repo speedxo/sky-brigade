@@ -8,6 +8,8 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 {
     public class RenderOptionsDebugger : IGameComponent
     {
+        public string Name { get; set; }
+
         public Entity Parent { get; set; }
         private Debugger Debugger { get; set; }
 

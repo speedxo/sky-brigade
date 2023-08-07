@@ -7,6 +7,8 @@ namespace SkyBrigade.Engine.GameEntity.Components
     [RequiresComponent(typeof(TransformComponent))]
     public class MeshRendererComponent : Mesh, IGameComponent
     {
+        public string Name { get; set; }
+
         public Entity Parent { get; set; }
         public TransformComponent Transform { get; private set; }
 

@@ -8,6 +8,11 @@ namespace SkyBrigade.Engine.GameEntity.Components
     public interface IGameComponent
     {
         /// <summary>
+        /// Gets or sets the human readable name for this component.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets or sets the parent entity of the game component.
         /// </summary>
         public Entity Parent { get; set; }
