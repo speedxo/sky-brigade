@@ -30,7 +30,7 @@ internal class DemoGameScreen : Scene
 
         AddEntity(plane);
 
-        GameManager.Instance.Debugger.IsVisible = true;
+        GameManager.Instance.Debugger.Enabled = true;
     }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)

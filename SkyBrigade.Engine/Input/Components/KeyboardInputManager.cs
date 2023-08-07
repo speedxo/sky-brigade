@@ -51,14 +51,7 @@ namespace SkyBrigade.Engine.Input.Components
         /// Retrieves the current KeyboardData containing input information from the keyboard.
         /// </summary>
         /// <returns>The KeyboardData containing the keyboard input.</returns>
-        public KeyboardData GetData()
-        {
-            return new KeyboardData
-            {
-                Actions = actions,
-                MovementDirection = direction
-            };
-        }
+        public KeyboardData Data { get; private set; } = default;
 
         /// <summary>
         /// Updates the KeyboardManager, processing input from the connected keyboard.
@@ -94,6 +87,11 @@ namespace SkyBrigade.Engine.Input.Components
                 state.IsKeyPressed(Key.D) ? 1 : state.IsKeyPressed(Key.A) ? -1 : 0,
                 state.IsKeyPressed(Key.S) ? -1 : state.IsKeyPressed(Key.W) ? 1 : 0
             );
+
+            Data = new() {
+                Actions = actions,
+                MovementDirection = direction
+            };
         }
 
         /// <summary>

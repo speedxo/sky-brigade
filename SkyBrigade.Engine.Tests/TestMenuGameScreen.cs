@@ -11,21 +11,18 @@ using Texture = SkyBrigade.Engine.OpenGL.Texture;
 
 namespace SkyBrigade.Engine.Tests;
 
-public class TestMenuGameScreen : IGameScreen
+public class TestMenuGameScreen : Scene
 {
     private int index = 0;
-    private Camera testCamera;
+    private SkyBrigade.Engine.Prefabs.Character.CharacterController character;
     private List<IEngineTest> tests;
-
-    public void Dispose()
-    {
-        for (int i = 0; i < tests.Count; i++)
-            tests[i].Dispose();
-    }
 
     public TestMenuGameScreen()
     {
-        testCamera = new Camera() { Position = new System.Numerics.Vector3(0, 0, 5) };
+        Entities.Add(character = new Prefabs.Character.CharacterController()
+        {
+            Position = new System.Numerics.Vector3(0, 0, 5)
+        });
 
         tests = new List<IEngineTest>() {
             new PlaneEngineTest(),
@@ -39,6 +36,8 @@ public class TestMenuGameScreen : IGameScreen
         GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
         GameManager.Instance.Gl.DepthFunc(DepthFunction.Lequal);
 
+        GameManager.Instance.Debugger.Enabled = true;
+
         GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture constructor call count: {Texture.count}");
     }
 
@@ -46,13 +45,9 @@ public class TestMenuGameScreen : IGameScreen
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
 
-    public List<IEntity> Entities { get; set; }
     
-    public void Draw(float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        renderOptions?.GL.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
-        renderOptions?.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
         if (ImGui.BeginMainMenuBar())
         {
             if (ImGui.BeginMenu("File"))
@@ -74,6 +69,17 @@ public class TestMenuGameScreen : IGameScreen
 
             ImGui.EndMainMenuBar();
         }
+
+        var options = (renderOptions ?? RenderOptions.Default) with
+        {
+            Camera = character.Camera
+        };
+
+        base.Draw(dt, options);
+
+        renderOptions?.GL.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
+        renderOptions?.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
 
         if (showDebugWindow)
         {
@@ -114,12 +120,21 @@ public class TestMenuGameScreen : IGameScreen
         }
 
 
-        tests[index].Render(dt, renderOptions);
+        tests[index].Render(dt, options);
     }
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
-        testCamera.Update(dt);
+        base.Update(dt);
+
         tests[index].Update(dt);
     }
+
+
+    public override void Dispose()
+    {
+        for (int i = 0; i < tests.Count; i++)
+            tests[i].Dispose();
+    }
+
 }

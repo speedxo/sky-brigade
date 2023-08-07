@@ -36,7 +36,10 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void Render(float dt, RenderOptions? renderOptions = null)
         {
-            RenderOptions options = renderOptions ?? RenderOptions.Default;
+            RenderOptions options = (renderOptions ?? RenderOptions.Default) with
+            {
+                Camera = RenderOptions.Default.Camera
+            };
 
             axisLine.Draw(dt, options with
             {

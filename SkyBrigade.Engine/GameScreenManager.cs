@@ -15,19 +15,18 @@ namespace SkyBrigade.Engine
     /// each object is unique to its type.
     /// This class implements <see cref="InstanceManager{IGameScreen}"/>.
     /// </summary>
-    public class GameScreenManager : InstanceManager<IGameScreen>, IEntity, IDisposable
+    public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     {
         public IEntity? Parent { get; set; }
-        public List<IEntity> Entities { get; set; }
+        public List<IEntity> Entities { get; set; } = new List<IEntity>();
         public Dictionary<Type, IGameComponent> Components { get; set; } = new();
-
 
         public int ID { get; set; }
         public string Name { get; set; } = "Scene Manager";
 
         public void Dispose()
         {
-            foreach (var (_, instance) in instances)
+            foreach (var (_, instance) in Instances)
                 instance.Dispose();
 
             GC.SuppressFinalize(this);

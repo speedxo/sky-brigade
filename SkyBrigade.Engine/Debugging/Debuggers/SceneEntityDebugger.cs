@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Numerics;
 using System.Reflection;
 using ImGuiNET;
+using Newtonsoft.Json.Linq;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.GameEntity.Components;
 using SkyBrigade.Engine.Rendering;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SkyBrigade.Engine.Debugging.Debuggers
 {
     public class SceneEntityDebugger : IGameComponent
     {
         public string Name { get; set; }
-
+        public bool DebugInstance = false;
 
         public Entity Parent { get; set; }
         private Debugger Debugger { get; set; }
@@ -32,7 +35,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
             {
                 if (ImGui.TreeNode("Scene"))
                 {
-                    GameManager.Instance.GameScreenManager.GetCurrentInstance().Entities.ForEach(DrawEntityTree);
+                    (DebugInstance ? GameManager.Instance.Entities : GameManager.Instance.GameScreenManager.GetCurrentInstance().Entities).ForEach(DrawEntityTree);
 
                     ImGui.TreePop();
                 }
@@ -45,17 +48,31 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
         {
             if (entity == null) return;
 
-            if (ImGui.TreeNode(entity.Name))
+            ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 20.0f);
+
+            if (ImGui.TreeNodeEx(entity.Name, ImGuiTreeNodeFlags.DefaultOpen))
             {
-                DrawProperties(entity);
+                ImGui.Columns(2, "EntityColumns", false);
+                ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+                ImGui.Text("Property");
+                ImGui.NextColumn();
+                ImGui.Text("Value");
+                ImGui.NextColumn();
+
+                ImGui.Separator();
+
+                DrawProperties(entity, 1);
+
+                ImGui.Columns(1);
 
                 foreach (IGameComponent? component in entity.Components.Values)
                 {
                     if (component == null) continue;
 
-                    if (ImGui.TreeNode(component.Name))
+                    if (ImGui.TreeNodeEx(component.Name))
                     {
-                        DrawProperties(component);
+                        DrawProperties(component, 1);
 
                         ImGui.TreePop();
                     }
@@ -64,14 +81,22 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 foreach (IEntity? child in entity.Entities)
                     DrawEntityTree(child);
 
-
                 ImGui.TreePop();
             }
+
+            ImGui.PopStyleVar();
             ImGui.NewLine();
         }
 
-        static void DrawProperties(object component)
+
+        static void DrawProperties(object component, int depth = 0, int maxDepth = 3)
         {
+            if (depth > maxDepth)
+            {
+                ImGui.Text("Depth Limit Reached.");
+                return;
+            }
+
             Type type = component.GetType();
             PropertyInfo[] properties = type.GetProperties();
 
@@ -79,18 +104,38 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
             {
                 object? value = property.GetValue(component);
 
-                // Check if the property is read-only
-                if (!property.CanWrite || value == null)
+                if (property.GetMethod?.IsStatic == true)
                 {
-                    ImGui.Text($"{property.Name}: {value}");
-                    continue;
+                    continue; // Skip static properties
                 }
 
-                if (property.PropertyType == typeof(int))
+                if (property.PropertyType.IsArray)
+                {
+                    DrawArrayProperty(property.Name, value as Array);
+                }
+                else if (property.PropertyType.IsGenericType &&
+                         property.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    DrawListProperty(property.Name, value);
+                }
+                else if (property.PropertyType.IsGenericType &&
+                         property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    DrawDictionaryProperty(property.Name, value);
+                }
+                else if (!property.CanWrite || value == null)
+                {
+                    DrawPropertyRow(property.Name, $"{value}");
+                }
+                else if (property.PropertyType == typeof(int))
                 {
                     int intValue = (int)value;
                     if (ImGui.DragInt(property.Name, ref intValue, 0.1f))
                         property.SetValue(component, intValue);
+                }
+                else if (property.PropertyType == typeof(string))
+                {
+                    DrawPropertyRow(property.Name, $"\"{value}\"");
                 }
                 else if (property.PropertyType == typeof(float))
                 {
@@ -116,6 +161,14 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                         property.SetValue(component, vectorValue);
                     }
                 }
+                else if (property.PropertyType == typeof(Vector4))
+                {
+                    Vector4 vectorValue = (Vector4)value;
+                    if (ImGui.DragFloat4(property.Name, ref vectorValue, 0.1f))
+                    {
+                        property.SetValue(component, vectorValue);
+                    }
+                }
                 else if (property.PropertyType == typeof(bool))
                 {
                     bool vectorValue = (bool)value;
@@ -124,13 +177,229 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                         property.SetValue(component, vectorValue);
                     }
                 }
-                // Add more property types as needed...
-
-                // You can handle other property types here using ImGui controls
+                else if (property.PropertyType.IsValueType && !property.PropertyType.Namespace.StartsWith("System"))
+                {
+                    if (ImGui.TreeNodeEx($"{property.Name} (Value Type)"))
+                    {
+                        DrawProperties(value, depth + 1);
+                        ImGui.TreePop();
+                    }
+                }
+                else
+                {
+                    DrawPropertyRow(property.Name, $"{GetFriendlyName(value)}");
+                }
             }
         }
 
+        static void DrawPropertyRow(string propertyName, string propertyValue)
+        {
+            ImGui.Columns(2, propertyName, false);
+            ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
 
+            ImGui.Text(propertyName);
+            ImGui.NextColumn();
+            ImGui.Text(propertyValue);
+            ImGui.NextColumn();
+
+            ImGui.Columns(1);
+        }
+
+
+        static void DrawListProperty(string name, object listObj)
+        {
+            if (listObj is IList list)
+            {
+                if (list.Count < 1) return;
+
+                ImGui.Columns(2, name, false);
+                ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+                ImGui.Text(name);
+                ImGui.NextColumn();
+                ImGui.Text("(List)");
+                ImGui.NextColumn();
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    object? element = list[i];
+
+                    if (element != null)
+                    {
+                        ImGui.Columns(2, $"Element {i}", false);
+                        ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+                        ImGui.Text($"Element {i}");
+                        ImGui.NextColumn();
+
+                        if (element is int intValue)
+                        {
+                            if (ImGui.DragInt("", ref intValue, 0.1f))
+                            {
+                                list[i] = intValue;
+                            }
+                        }
+                        else if (element is float floatValue)
+                        {
+                            if (ImGui.DragFloat("", ref floatValue, 0.1f))
+                            {
+                                list[i] = floatValue;
+                            }
+                        }
+                        else if (element is Vector2 vectorValue2)
+                        {
+                            if (ImGui.DragFloat2("", ref vectorValue2, 0.1f))
+                            {
+                                list[i] = vectorValue2;
+                            }
+                        }
+                        else if (element is Vector3 vectorValue3)
+                        {
+                            if (ImGui.DragFloat3("", ref vectorValue3, 0.1f))
+                            {
+                                list[i] = vectorValue3;
+                            }
+                        }
+                        else if (element is Vector4 vectorValue4)
+                        {
+                            if (ImGui.DragFloat4("", ref vectorValue4, 0.1f))
+                            {
+                                list[i] = vectorValue4;
+                            }
+                        }
+                        else if (element is bool boolValue)
+                        {
+                            if (ImGui.Checkbox("", ref boolValue))
+                            {
+                                list[i] = boolValue;
+                            }
+                        }
+                        else
+                        {
+                            ImGui.Text($"{GetFriendlyName(element)}");
+                        }
+
+                        ImGui.Columns(1);
+                    }
+                }
+                ImGui.Columns(1);
+            }
+        }
+
+        static void DrawArrayProperty(string name, Array array)
+        {
+            if (array.Length < 1) return;
+
+            ImGui.Columns(2, name, false);
+            ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+            ImGui.Text(name);
+            ImGui.NextColumn();
+            ImGui.Text("(Array)");
+            ImGui.NextColumn();
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                object? element = array.GetValue(i);
+
+                if (element != null)
+                {
+                    ImGui.Columns(2, $"Element {i}", false);
+                    ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+                    ImGui.Text($"Element {i}");
+                    ImGui.NextColumn();
+
+                    if (element is int intValue)
+                    {
+                        if (ImGui.DragInt("", ref intValue, 0.1f))
+                        {
+                            array.SetValue(intValue, i);
+                        }
+                    }
+                    else if (element is float floatValue)
+                    {
+                        if (ImGui.DragFloat("", ref floatValue, 0.1f))
+                        {
+                            array.SetValue(floatValue, i);
+                        }
+                    }
+                    else if (element is Vector2 vectorValue2)
+                    {
+                        if (ImGui.DragFloat2("", ref vectorValue2, 0.1f))
+                        {
+                            array.SetValue(vectorValue2, i);
+                        }
+                    }
+                    else if (element is Vector3 vectorValue3)
+                    {
+                        if (ImGui.DragFloat3("", ref vectorValue3, 0.1f))
+                        {
+                            array.SetValue(vectorValue3, i);
+                        }
+                    }
+                    else if (element is bool boolValue)
+                    {
+                        if (ImGui.Checkbox("", ref boolValue))
+                        {
+                            array.SetValue(boolValue, i);
+                        }
+                    }
+                    else ImGui.Text($"{GetFriendlyName(element)}");
+
+
+                    ImGui.Columns(1);
+                }
+            }
+
+            ImGui.Columns(1);
+        }
+        public static string GetFriendlyName(object? obj)
+        {
+            if (obj == null) return string.Empty;
+
+            var type = obj.GetType();
+
+            return $"{(type.IsClass ? type.Name : obj.ToString())}";
+        }
+        static void DrawDictionaryProperty(string name, object dictionaryObj)
+        {
+            if (dictionaryObj is IDictionary dictionary)
+            {
+                if (dictionary.Count < 1) return;
+
+                if (ImGui.TreeNodeEx($"{name} (Dictionary)"))
+                {
+                    ImGui.Columns(2, name, false);
+                    ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+                    ImGui.Text("Key");
+                    ImGui.NextColumn();
+                    ImGui.Text("Value");
+                    ImGui.NextColumn();
+
+                    ImGui.Separator();
+
+
+                    foreach (DictionaryEntry entry in dictionary)
+                    {
+                        ImGui.Columns(2, $"{entry.Key?.GetType().Name}", false);
+                        ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+
+                        ImGui.Text($"{GetFriendlyName(entry.Key)}");
+                        ImGui.NextColumn();
+
+                        ImGui.Text($"{GetFriendlyName(entry.Value)}");
+                        ImGui.NextColumn();
+
+                        ImGui.Columns(1);
+                    }
+
+
+                    ImGui.TreePop();
+                }
+            }
+        }
 
         public void Update(float dt)
         {

@@ -60,7 +60,11 @@ namespace SkyBrigade.Engine.Tests.Tests
 
         public void Render(float dt, RenderOptions? renderOptions = null)
         {
-            var options = renderOptions ?? RenderOptions.Default with { Camera = gameCamera, Color = Vector4.One };
+            var options = (renderOptions ?? RenderOptions.Default) with
+            {
+                Camera = gameCamera,
+                Color = Vector4.One
+            };
 
             playerPaddle.Draw(dt, options);
             botPaddle.Draw(dt, options);

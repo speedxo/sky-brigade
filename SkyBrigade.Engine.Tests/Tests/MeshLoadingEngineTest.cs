@@ -57,7 +57,7 @@ namespace SkyBrigade.Engine.Tests.Tests
             objects = new List<GameObject>(materials.Length);
 
             for (int i = 0; i < materials.Length; i++)
-                objects.Add(new GameObject(material: materials[i], meshData: MeshGenerators.CreateSphere()));
+                objects.Add(new GameObject(material: materials[i], meshData: MeshGenerators.CreateSphere(1, 50)));
 
             lightMesh = new GameObject(meshData: MeshGenerators.CreateSphere());
 

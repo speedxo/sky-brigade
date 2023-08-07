@@ -6,14 +6,14 @@
     /// <typeparam name="InstanceType">The base class that all instances have decsended from</typeparam>
     public class InstanceManager<InstanceType>
     {
-        protected readonly Dictionary<Type, InstanceType> instances = new();
+        public Dictionary<Type, InstanceType> Instances { get; } = new();
         protected Type key;
 
         /// <summary>
         /// Returns the currently selected active instance.
         /// </summary>
         /// <returns>The instance pointed to by the indexer.</returns>
-        public InstanceType GetCurrentInstance() => instances[key];
+        public InstanceType GetCurrentInstance() => Instances[key];
 
         /// <summary>
         /// Adds a instantiated instance to the manager.
@@ -22,7 +22,7 @@
         /// <param name="instance">The instance.</param>
         public void AddInstance<T>(InstanceType instance) where T: InstanceType
         {
-            instances[typeof(T)] = instance;
+            Instances[typeof(T)] = instance;
             if (key == null)
                 key = typeof(T);
         }
@@ -54,7 +54,7 @@
         /// <typeparam name="T"></typeparam>
         public void RemoveInstance<T>() where T: InstanceType
         {
-            instances.Remove(typeof(T));
+            Instances.Remove(typeof(T));
         }
 
         /// <summary>
@@ -63,7 +63,7 @@
         /// <param name="type">The type of the game screen to switch to.</param>
         public void ChangeInstance(Type type)
         {
-            if (!instances.ContainsKey(type))
+            if (!Instances.ContainsKey(type))
             {
                 var newScreen = (InstanceType) Activator.CreateInstance(type);
 
@@ -71,7 +71,7 @@
                     throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upset occurred??");
 
 
-                instances.Add(type, newScreen);
+                Instances.Add(type, newScreen);
             }
 
             key = type;

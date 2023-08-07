@@ -16,6 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkyBrigade.Engine\SkyBrigade.Engine.csproj" />
+    <ProjectReference Include="..\SkyBrigade.Engine.Prefabs\SkyBrigade.Engine.Prefabs.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Tests\" />

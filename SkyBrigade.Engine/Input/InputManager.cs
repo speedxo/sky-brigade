@@ -57,7 +57,8 @@ namespace SkyBrigade.Engine.Input
         {
             base.Update(dt);
 
-            var keyboardData = KeyboardManager.GetData();
+            var keyboardData = KeyboardManager.Data;
+
             var mouseData = MouseManager.GetData();
             var joystickData = JoystickManager.IsConnected ? JoystickManager.GetData() : JoystickData.Default;
 
