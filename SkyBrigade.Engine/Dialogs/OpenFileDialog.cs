@@ -19,6 +19,16 @@ namespace SkyBrigade.Engine.Dialogs
         public string Name { get; set; } = "Open File Dialog";
 
         /// <summary>
+        /// The total number of components.
+        /// </summary>
+        public int TotalComponents { get => Components.Count + Entities.Sum(e => e.TotalComponents); }
+
+        /// <summary>
+        /// The total sum of entities including their children.
+        /// </summary>
+        public int TotalEntities { get => Entities.Count + Entities.Sum(e => e.TotalEntities); }
+
+        /// <summary>
         /// Gets or sets the selected file's name with full path.
         /// </summary>
         public string? FileName { get; set; }
@@ -35,6 +45,7 @@ namespace SkyBrigade.Engine.Dialogs
         public IEntity? Parent { get; set; }
         public List<IEntity> Entities { get; set; }
         public Dictionary<Type, IGameComponent> Components { get; set; } = new();
+
 
         private List<FileItem> files = new();
         private DirectoryInfo? currentDirectory;

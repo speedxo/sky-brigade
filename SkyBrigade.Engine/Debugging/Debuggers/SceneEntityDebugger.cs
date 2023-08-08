@@ -33,25 +33,39 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
             if (ImGui.Begin("Scene Tree"))
             {
-                if (ImGui.TreeNode("Scene"))
-                {
-                    (DebugInstance ? GameManager.Instance.Entities : GameManager.Instance.GameScreenManager.GetCurrentInstance().Entities).ForEach(DrawEntityTree);
+                var mainNode = DebugInstance ? GameManager.Instance : GameManager.Instance.GameScreenManager.GetCurrentInstance();
 
-                    ImGui.TreePop();
-                }
+                ImGui.Text($"Total Entities: {mainNode.TotalEntities}");
+                ImGui.Text($"Total Components: {mainNode.TotalComponents}");
+
+                ImGui.Separator();
+                ImGui.NewLine();
+
+                DrawEntityTree(mainNode);
 
                 ImGui.End();
             }
         }
 
-        static void DrawEntityTree(IEntity? entity)
+        private void DrawEntityTree(IEntity? entity)
         {
             if (entity is null) return;
 
             ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 20.0f);
 
-            if (ImGui.TreeNodeEx(entity.Name, ImGuiTreeNodeFlags.DefaultOpen))
+            ImGui.OpenPopupOnItemClick($"EntityContextMenu_{entity.Name}{entity.ID}");
+
+            if (ImGui.TreeNodeEx(entity.Name ??= entity.GetType().Name, ImGuiTreeNodeFlags.DefaultOpen))
             {
+                if (ImGui.BeginPopupContextItem($"EntityContextMenu_{entity.Name}{entity.ID}"))
+                {
+                    if (ImGui.MenuItem("Remove Entity"))
+                    {
+                        entity?.Parent?.Entities.Remove(entity);
+                    }
+                    ImGui.EndPopup();
+                }
+
                 ImGui.Columns(2, "EntityColumns", false);
                 ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
 
@@ -70,7 +84,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 {
                     if (component == null) continue;
 
-                    if (ImGui.TreeNodeEx(component.Name))
+                    if (ImGui.TreeNodeEx(component.Name ??= component.GetType().Name))
                     {
                         DrawProperties(component, 1);
 
@@ -78,8 +92,8 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                     }
                 }
 
-                foreach (IEntity? child in entity.Entities)
-                    DrawEntityTree(child);
+                for (int i = 0; i < entity.Entities.Count; i++)
+                    DrawEntityTree(entity.Entities[i]);
 
                 ImGui.TreePop();
             }
@@ -89,9 +103,9 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
         }
 
 
-        static void DrawProperties(object component, int depth = 0, int maxDepth = 3)
+        static void DrawProperties(object? component, int depth = 0, int maxDepth = 3)
         {
-            if (depth > maxDepth)
+            if (component is null || depth > maxDepth)
             {
                 ImGui.Text("Depth Limit Reached.");
                 return;
@@ -206,77 +220,82 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
             {
                 if (list.Count < 1) return;
 
-                ImGui.Columns(2, name, false);
-                ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
-
-                ImGui.Text(name);
-                ImGui.NextColumn();
-                ImGui.Text("(List)");
-                ImGui.NextColumn();
-
-                for (int i = 0; i < list.Count; i++)
+                if (ImGui.TreeNode($"{name} (List)"))
                 {
-                    object? element = list[i];
+                    ImGui.Columns(2, name, false);
+                    ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
 
-                    if (element != null)
+                    ImGui.Text(name);
+                    ImGui.NextColumn();
+                    ImGui.Text("(List)");
+
+                    ImGui.NextColumn();
+
+                    for (int i = 0; i < list.Count; i++)
                     {
-                        ImGui.Columns(2, $"Element {i}", false);
-                        ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
+                        object? element = list[i];
 
-                        ImGui.Text($"Element {i}");
-                        ImGui.NextColumn();
+                        if (element != null)
+                        {
+                            ImGui.Columns(2, $"Element {i}", false);
+                            ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
 
-                        if (element is int intValue)
-                        {
-                            if (ImGui.DragInt("", ref intValue, 0.1f))
-                            {
-                                list[i] = intValue;
-                            }
-                        }
-                        else if (element is float floatValue)
-                        {
-                            if (ImGui.DragFloat("", ref floatValue, 0.1f))
-                            {
-                                list[i] = floatValue;
-                            }
-                        }
-                        else if (element is Vector2 vectorValue2)
-                        {
-                            if (ImGui.DragFloat2("", ref vectorValue2, 0.1f))
-                            {
-                                list[i] = vectorValue2;
-                            }
-                        }
-                        else if (element is Vector3 vectorValue3)
-                        {
-                            if (ImGui.DragFloat3("", ref vectorValue3, 0.1f))
-                            {
-                                list[i] = vectorValue3;
-                            }
-                        }
-                        else if (element is Vector4 vectorValue4)
-                        {
-                            if (ImGui.DragFloat4("", ref vectorValue4, 0.1f))
-                            {
-                                list[i] = vectorValue4;
-                            }
-                        }
-                        else if (element is bool boolValue)
-                        {
-                            if (ImGui.Checkbox("", ref boolValue))
-                            {
-                                list[i] = boolValue;
-                            }
-                        }
-                        else
-                        {
-                            ImGui.Text($"{GetFriendlyName(element)}");
-                        }
+                            ImGui.Text($"Element {i}");
+                            ImGui.NextColumn();
 
-                        ImGui.Columns(1);
+                            if (element is int intValue)
+                            {
+                                if (ImGui.DragInt("", ref intValue, 0.1f))
+                                {
+                                    list[i] = intValue;
+                                }
+                            }
+                            else if (element is float floatValue)
+                            {
+                                if (ImGui.DragFloat("", ref floatValue, 0.1f))
+                                {
+                                    list[i] = floatValue;
+                                }
+                            }
+                            else if (element is Vector2 vectorValue2)
+                            {
+                                if (ImGui.DragFloat2("", ref vectorValue2, 0.1f))
+                                {
+                                    list[i] = vectorValue2;
+                                }
+                            }
+                            else if (element is Vector3 vectorValue3)
+                            {
+                                if (ImGui.DragFloat3("", ref vectorValue3, 0.1f))
+                                {
+                                    list[i] = vectorValue3;
+                                }
+                            }
+                            else if (element is Vector4 vectorValue4)
+                            {
+                                if (ImGui.DragFloat4("", ref vectorValue4, 0.1f))
+                                {
+                                    list[i] = vectorValue4;
+                                }
+                            }
+                            else if (element is bool boolValue)
+                            {
+                                if (ImGui.Checkbox("", ref boolValue))
+                                {
+                                    list[i] = boolValue;
+                                }
+                            }
+                            else
+                            {
+                                ImGui.Text($"{GetFriendlyName(element)}");
+                            }
+
+                            ImGui.Columns(1);
+                        }
                     }
+                    ImGui.Columns(1);
+                    ImGui.TreePop();
                 }
-                ImGui.Columns(1);
             }
         }
 

@@ -19,12 +19,22 @@ namespace SkyBrigade.Engine.GameEntity
         /// <summary>
         /// The unique ID for this entity.
         /// </summary>
-        public int ID { get; set; }
+        public int ID { get; set; } 
 
         /// <summary>
         /// Human readable name for this entity.
         /// </summary>
         public virtual string Name { get; set; }
+
+        /// <summary>
+        /// The total number of components.
+        /// </summary>
+        public int TotalComponents { get => Components.Count + Entities.Sum(e => e.TotalComponents); }
+
+        /// <summary>
+        /// The total sum of entities including their children.
+        /// </summary>
+        public int TotalEntities { get => Entities.Count + Entities.Sum(e => e.TotalEntities); }
 
         /// <summary>
         /// The parent entity (if there is one)
@@ -79,6 +89,7 @@ namespace SkyBrigade.Engine.GameEntity
             Entities.Add(entity);
             entity.Parent = this;
 
+            entity.ID = ++IEntity._nextId;
             entity.Name ??= entity.GetType().Name;
 
             return entity;

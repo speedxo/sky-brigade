@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {
+    "net7.0": {
       "CjClutter.ObjLoader.Unofficial/1.1.0": {
         "type": "package",
         "compile": {
@@ -253,12 +253,6 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
-        }
-      },
-      "Microsoft.NET.ILLink.Tasks/8.0.0-preview.7.23375.6": {
-        "type": "package",
-        "build": {
-          "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
       },
       "Microsoft.Win32.SystemEvents/7.0.0": {
@@ -1217,49 +1211,6 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.NET.ILLink.Tasks/8.0.0-preview.7.23375.6": {
-      "sha512": "1R2t+58YDaruNGDqtgKct4PPPaTyYGQP3wsXo/TrfG5AoD9CP35468eSxFWt7iXyh1NDtrUwXFBFbyvuY5AzqQ==",
-      "type": "package",
-      "path": "microsoft.net.illink.tasks/8.0.0-preview.7.23375.6",
-      "hasTools": true,
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "LICENSE.TXT",
-        "Sdk/Sdk.props",
-        "THIRD-PARTY-NOTICES.TXT",
-        "analyzers/dotnet/cs/ILLink.CodeFixProvider.dll",
-        "analyzers/dotnet/cs/ILLink.RoslynAnalyzer.dll",
-        "build/Microsoft.NET.ILLink.Analyzers.props",
-        "build/Microsoft.NET.ILLink.Tasks.props",
-        "build/Microsoft.NET.ILLink.targets",
-        "microsoft.net.illink.tasks.8.0.0-preview.7.23375.6.nupkg.sha512",
-        "microsoft.net.illink.tasks.nuspec",
-        "tools/net472/ILLink.Tasks.dll",
-        "tools/net472/ILLink.Tasks.dll.config",
-        "tools/net472/Mono.Cecil.Mdb.dll",
-        "tools/net472/Mono.Cecil.Pdb.dll",
-        "tools/net472/Mono.Cecil.Rocks.dll",
-        "tools/net472/Mono.Cecil.dll",
-        "tools/net472/System.Buffers.dll",
-        "tools/net472/System.Collections.Immutable.dll",
-        "tools/net472/System.Memory.dll",
-        "tools/net472/System.Numerics.Vectors.dll",
-        "tools/net472/System.Reflection.Metadata.dll",
-        "tools/net472/System.Runtime.CompilerServices.Unsafe.dll",
-        "tools/net8.0/ILLink.Tasks.deps.json",
-        "tools/net8.0/ILLink.Tasks.dll",
-        "tools/net8.0/Mono.Cecil.Mdb.dll",
-        "tools/net8.0/Mono.Cecil.Pdb.dll",
-        "tools/net8.0/Mono.Cecil.Rocks.dll",
-        "tools/net8.0/Mono.Cecil.dll",
-        "tools/net8.0/illink.deps.json",
-        "tools/net8.0/illink.dll",
-        "tools/net8.0/illink.runtimeconfig.json",
-        "useSharedDesignerContext.txt"
-      ]
-    },
     "Microsoft.Win32.SystemEvents/7.0.0": {
       "sha512": "2nXPrhdAyAzir0gLl8Yy8S5Mnm/uBSQQA7jEsILOS1MTyS7DbmV1NgViMtvV1sfCD1ebITpNwb1NIinKeJgUVQ==",
       "type": "package",
@@ -2087,10 +2038,9 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net8.0": [
+    "net7.0": [
       "CjClutter.ObjLoader.Unofficial >= 1.1.0",
       "Karma.CoreOBJ >= 1.4.4",
-      "Microsoft.NET.ILLink.Tasks >= 8.0.0-preview.7.23375.6",
       "Newtonsoft.Json >= 13.0.3",
       "Silk.NET >= 2.17.1",
       "Silk.NET.Core >= 2.17.1",
@@ -2108,37 +2058,30 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\bogda\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/bogz/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj",
+      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
       "projectName": "SkyBrigade.Engine",
-      "projectPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj",
-      "packagesPath": "C:\\Users\\bogda\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\obj\\",
+      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
+      "packagesPath": "/Users/bogz/.nuget/packages/",
+      "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\bogda\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/bogz/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "net8.0"
+        "net7.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
+        "/usr/local/share/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "projectReferences": {}
         }
       },
@@ -2146,14 +2089,11 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "default"
       }
     },
     "frameworks": {
-      "net8.0": {
-        "targetAlias": "net8.0",
+      "net7.0": {
+        "targetAlias": "net7.0",
         "dependencies": {
           "CjClutter.ObjLoader.Unofficial": {
             "target": "Package",
@@ -2162,12 +2102,6 @@
           "Karma.CoreOBJ": {
             "target": "Package",
             "version": "[1.4.4, )"
-          },
-          "Microsoft.NET.ILLink.Tasks": {
-            "suppressParent": "All",
-            "target": "Package",
-            "version": "[8.0.0-preview.7.23375.6, )",
-            "autoReferenced": true
           },
           "Newtonsoft.Json": {
             "target": "Package",
@@ -2242,7 +2176,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100-preview.7.23376.3\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.307/RuntimeIdentifierGraph.json"
       }
     }
   }

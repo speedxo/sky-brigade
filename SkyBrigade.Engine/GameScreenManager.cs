@@ -17,6 +17,16 @@ namespace SkyBrigade.Engine
     /// </summary>
     public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     {
+        /// <summary>
+        /// The total number of components.
+        /// </summary>
+        public int TotalComponents { get => Components.Count + Instances.Values.Sum(e => e.TotalComponents); }
+
+        /// <summary>
+        /// The total sum of entities including their children.
+        /// </summary>
+        public int TotalEntities { get => Entities.Count + Instances.Values.Sum(e => e.TotalEntities); }
+
         public IEntity? Parent { get; set; }
         public List<IEntity> Entities { get; set; } = new List<IEntity>();
         public Dictionary<Type, IGameComponent> Components { get; set; } = new();
