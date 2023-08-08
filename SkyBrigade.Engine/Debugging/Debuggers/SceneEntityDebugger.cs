@@ -8,7 +8,6 @@ using Newtonsoft.Json.Linq;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.GameEntity.Components;
 using SkyBrigade.Engine.Rendering;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SkyBrigade.Engine.Debugging.Debuggers
 {

@@ -50,15 +50,6 @@ public class TestMenuGameScreen : Scene
     {
         if (ImGui.BeginMainMenuBar())
         {
-            if (ImGui.BeginMenu("File"))
-            {
-                // Menu item for showing/hiding the Debug Information window.
-                if (ImGui.MenuItem("Close"))
-                    GameManager.Instance.Window.Close();
-
-                ImGui.EndMenu();
-            }
-
             if (ImGui.BeginMenu("Debug"))
             {
                 // Menu item for showing/hiding the Debug Information window.

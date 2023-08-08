@@ -30,6 +30,13 @@ namespace SkyBrigade.Engine.Debugging
 
             if (ImGui.BeginMainMenuBar())
             {
+                if (ImGui.BeginMenu("Engine"))
+                {
+                    if (ImGui.MenuItem("Close"))
+                        GameManager.Instance.Window.Close();
+
+                    ImGui.EndMenu();
+                }
                 if (ImGui.BeginMenu("Rendering"))
                 {
                     ImGui.MenuItem("Rendering", "", ref RenderOptionsDebugger.Visible);
