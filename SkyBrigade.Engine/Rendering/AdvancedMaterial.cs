@@ -73,11 +73,11 @@ namespace SkyBrigade.Engine.Rendering
 
             AdvancedMaterialSerializable serializable = new()
             {
-                MetallicnessTexturePath = MaterialDescription.Metallicness.path,
-                RoughnessTexturePath = MaterialDescription.Roughness.path,
-                AmbientOcclusionTexturePath = MaterialDescription.AmbientOcclusion.path,
-                AlbedoTexturePath = MaterialDescription.Albedo.path,
-                NormalsTexturePath = MaterialDescription.Normals.path
+                MetallicnessTexturePath = MaterialDescription.Metallicness.Path,
+                RoughnessTexturePath = MaterialDescription.Roughness.Path,
+                AmbientOcclusionTexturePath = MaterialDescription.AmbientOcclusion.Path,
+                AlbedoTexturePath = MaterialDescription.Albedo.Path,
+                NormalsTexturePath = MaterialDescription.Normals.Path
             };
 
             // use the path to save the material description using json

@@ -23,6 +23,36 @@ namespace SkyBrigade.Engine.Content
             unnamedTextures = new ConcurrentDictionary<string, Texture>();
         }
 
+        public int TotalTextures { get => namedTextures.Count + unnamedTextures.Count; }
+        public int TotalShaders { get => namedShaders.Count + unnamedShaders.Count; }
+
+        public IEnumerable<Texture> GetTextures()
+        {
+            foreach (var texture in namedTextures.Values)
+            {
+                yield return texture;
+            }
+
+            foreach (var texture in unnamedTextures.Values)
+            {
+                yield return texture;
+            }
+        }
+
+        public IEnumerable<Shader> GetShaders()
+        {
+            foreach (var shader in namedShaders.Values)
+            {
+                yield return shader;
+            }
+
+            foreach (var shader in unnamedShaders.Values)
+            {
+                yield return shader;
+            }
+        }
+
+
 
         #region Textures
 
@@ -33,7 +63,7 @@ namespace SkyBrigade.Engine.Content
             if (!unnamedTextures.TryGetValue(internedPath, out var texture))
             {
                 texture = new Texture(GameManager.Instance.Gl, internedPath);
-                unnamedTextures.TryAdd(internedPath, texture);
+                unnamedTextures.TryAdd(texture.Path, texture);
             }
             else
             {

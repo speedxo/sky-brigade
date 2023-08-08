@@ -150,8 +150,6 @@ public class GameManager : Scene
     // Method called when the game is loaded, before the game loop starts.
     private void onLoad()
     {
-        Debugger = AddEntity<Debugger>();
-
         // Initialize ImGui controller for UI rendering.
         imguiController = new ImGuiController(
             Gl = Window.CreateOpenGL(), // Load OpenGL
@@ -178,6 +176,9 @@ public class GameManager : Scene
         // Initialize the ContentManager responsible for loading assets.
         ContentManager = AddEntity<ContentManager>();
         LoadEssentialAssets();
+
+        // Load the debugger.
+        Debugger = AddEntity<Debugger>();
 
         // Initialize the GameScreenManager and set the initial game screen.
         GameScreenManager = AddEntity<GameScreenManager>();

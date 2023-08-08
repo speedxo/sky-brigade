@@ -9,47 +9,61 @@ public class Texture : IDisposable
 {
     public uint Handle { get; }
     private GL _gl;
-    internal string path;
+    public string? Path { get; init; }
+
     public static int count = 0;
 
-        public unsafe Texture(GL gl, string path)
+    public int Width { get; init; }
+    public int Height { get; init; }
+
+    public unsafe Texture(GL gl, string path)
+    {
+        var fileName = System.IO.Path.GetFileName(path);
+        var lastFolder = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(path));
+
+        Path = System.IO.Path.Combine(lastFolder, fileName);
+
+        _gl = gl;
+
+        Handle = _gl.GenTexture();
+        Bind();
+
+        //Loading an image using imagesharp.
+        using (var img = Image.Load<Rgba32>(path))
         {
-            this.path = path;
-            _gl = gl;
+            Width = img.Width;
+            Height = img.Height;
 
-            Handle = _gl.GenTexture();
-            Bind();
+            //Reserve enough memory from the gpu for the whole image
+            gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
 
-            //Loading an image using imagesharp.
-            using (var img = Image.Load<Rgba32>(path))
+            int y = 0;
+            img.ProcessPixelRows(accessor =>
             {
-                //Reserve enough memory from the gpu for the whole image
-                gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
-
-                int y = 0;
-                img.ProcessPixelRows(accessor =>
+                //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
+                for (; y < accessor.Height; y++)
                 {
-                    //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
-                    for (; y < accessor.Height; y++)
+                    fixed (void* data = accessor.GetRowSpan(y))
                     {
-                        fixed (void* data = accessor.GetRowSpan(y))
-                        {
-                            //Loading the actual image.
-                            gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-                        }
+                        //Loading the actual image.
+                        gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                     }
-                });
-            }
-
-            count++;
-            SetParameters();
-
-            GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture[{Handle}] loaded from file '{path}'!");
+                }
+            });
         }
+
+        count++;
+        SetParameters();
+
+        GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture[{Handle}] loaded from file '{path}'!");
+    }
     public unsafe Texture(GL gl, Span<byte> data, uint width, uint height)
     {
         //Saving the gl instance.
         _gl = gl;
+
+        Width = (int)width;
+        Height = (int)height;
 
         //Generating the opengl handle;
         Handle = _gl.GenTexture();
