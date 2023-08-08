@@ -9,3 +9,5 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SkyBrigade.Engine
 build_property.ProjectDir = C:\Users\bogda\source\repos\speedxo\sky-brigade\SkyBrigade.Engine\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
