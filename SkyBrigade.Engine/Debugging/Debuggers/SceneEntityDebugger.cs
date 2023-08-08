@@ -123,66 +123,60 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 {
                     DrawDictionaryProperty(property.Name, value);
                 }
-                else if (!property.CanWrite || value == null)
-                {
-                    DrawPropertyRow(property.Name, $"{value}");
-                }
-                else if (property.PropertyType == typeof(int))
-                {
-                    int intValue = (int)value;
-                    if (ImGui.DragInt(property.Name, ref intValue, 0.1f))
-                        property.SetValue(component, intValue);
-                }
-                else if (property.PropertyType == typeof(string))
-                {
-                    DrawPropertyRow(property.Name, $"\"{value}\"");
-                }
-                else if (property.PropertyType == typeof(float))
-                {
-                    float floatValue = (float)value;
-                    if (ImGui.DragFloat(property.Name, ref floatValue, 0.1f))
-                    {
-                        property.SetValue(component, floatValue);
-                    }
-                }
-                else if (property.PropertyType == typeof(Vector2))
-                {
-                    Vector2 vectorValue = (Vector2)value;
-                    if (ImGui.DragFloat2(property.Name, ref vectorValue, 0.1f))
-                    {
-                        property.SetValue(component, vectorValue);
-                    }
-                }
-                else if (property.PropertyType == typeof(Vector3))
-                {
-                    Vector3 vectorValue = (Vector3)value;
-                    if (ImGui.DragFloat3(property.Name, ref vectorValue, 0.1f))
-                    {
-                        property.SetValue(component, vectorValue);
-                    }
-                }
-                else if (property.PropertyType == typeof(Vector4))
-                {
-                    Vector4 vectorValue = (Vector4)value;
-                    if (ImGui.DragFloat4(property.Name, ref vectorValue, 0.1f))
-                    {
-                        property.SetValue(component, vectorValue);
-                    }
-                }
-                else if (property.PropertyType == typeof(bool))
-                {
-                    bool vectorValue = (bool)value;
-                    if (ImGui.Checkbox(property.Name, ref vectorValue))
-                    {
-                        property.SetValue(component, vectorValue);
-                    }
-                }
                 else if (property.PropertyType.IsValueType && !property.PropertyType.Namespace.StartsWith("System"))
                 {
                     if (ImGui.TreeNodeEx($"{property.Name} (Value Type)"))
                     {
                         DrawProperties(value, depth + 1);
                         ImGui.TreePop();
+                    }
+                }
+                else if (!property.CanWrite || value == null)
+                {
+                    DrawPropertyRow(property.Name, $"{value}");
+                }
+                else if (value is int intValue)
+                {
+                    if (ImGui.DragInt(property.Name, ref intValue, 0.1f))
+                        property.SetValue(component, intValue);
+                }
+                else if (value is string stringValue)
+                {
+                    DrawPropertyRow(property.Name, $"\"{stringValue}\"");
+                }
+                else if (value is float floatValue)
+                {
+                    if (ImGui.DragFloat(property.Name, ref floatValue, 0.1f))
+                    {
+                        property.SetValue(component, floatValue);
+                    }
+                }
+                else if (value is Vector2 vector2Value)
+                {
+                    if (ImGui.DragFloat2(property.Name, ref vector2Value, 0.1f))
+                    {
+                        property.SetValue(component, vector2Value);
+                    }
+                }
+                else if (value is Vector3 vector3Value)
+                {
+                    if (ImGui.DragFloat3(property.Name, ref vector3Value, 0.1f))
+                    {
+                        property.SetValue(component, vector3Value);
+                    }
+                }
+                else if (value is Vector4 vector4Value)
+                {
+                    if (ImGui.DragFloat4(property.Name, ref vector4Value, 0.1f))
+                    {
+                        property.SetValue(component, vector4Value);
+                    }
+                }
+                else if (value is bool boolValue)
+                {
+                    if (ImGui.Checkbox(property.Name, ref boolValue))
+                    {
+                        property.SetValue(component, boolValue);
                     }
                 }
                 else

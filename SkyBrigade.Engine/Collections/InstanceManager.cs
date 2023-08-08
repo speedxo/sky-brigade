@@ -23,8 +23,8 @@
         public void AddInstance<T>(InstanceType instance) where T: InstanceType
         {
             Instances[typeof(T)] = instance;
-            if (key == null)
-                key = typeof(T);
+    
+            key ??= typeof(T);
         }
         /// <summary>
         /// Instansiates and adds an instance to the manager.
@@ -41,7 +41,7 @@
         {
             if (!typeof(InstanceType).IsAssignableFrom(type))
             {
-                throw new ArgumentException("The specified type must implement IGameScreen.");
+                GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"The specified type must implement {nameof(InstanceType)}.");
             }
 
             var instance = (InstanceType)Activator.CreateInstance(type);
@@ -65,12 +65,7 @@
         {
             if (!Instances.ContainsKey(type))
             {
-                var newScreen = (InstanceType) Activator.CreateInstance(type);
-
-                if (newScreen == null)
-                    throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upset occurred??");
-
-
+                var newScreen = (InstanceType) Activator.CreateInstance(type) ?? throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upset occurred??");
                 Instances.Add(type, newScreen);
             }
 
