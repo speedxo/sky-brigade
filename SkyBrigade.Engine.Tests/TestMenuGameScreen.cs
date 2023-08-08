@@ -19,10 +19,9 @@ public class TestMenuGameScreen : Scene
 
     public TestMenuGameScreen()
     {
-        Entities.Add(character = new Prefabs.Character.CharacterController()
-        {
+        character = AddEntity(new Prefabs.Character.CharacterController() {
             Position = new System.Numerics.Vector3(0, 0, 5)
-        });
+        }) ;
 
         tests = new List<IEngineTest>() {
             new PlaneEngineTest(),
@@ -45,7 +44,7 @@ public class TestMenuGameScreen : Scene
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
 
-    
+
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
         if (ImGui.BeginMainMenuBar())

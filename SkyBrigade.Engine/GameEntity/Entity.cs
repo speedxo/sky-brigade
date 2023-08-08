@@ -183,8 +183,8 @@ namespace SkyBrigade.Engine.GameEntity
         /// <param name="renderOptions">Render options (optional).</param>
         public virtual void Draw(float dt, RenderOptions? renderOptions = null)
         {
-            foreach (var item in Components.Values)
-                item.Draw(dt, renderOptions);
+            for (int i = 0; i < Components.Count; i++)
+                Components.Values.ElementAt(i).Draw(dt, renderOptions);
 
             for (int i = 0; i < Entities.Count; i++)
                 Entities[i].Draw(dt, renderOptions);

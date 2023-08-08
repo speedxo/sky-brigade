@@ -10,17 +10,17 @@ namespace SkyBrigade.Engine.Content
 {
     public class ContentManager : Entity, IDisposable
     {
-        private ConcurrentDictionary<string, Texture> namedTextures;
-        private ConcurrentDictionary<string, Shader> namedShaders;
-        private ConcurrentDictionary<string, Texture> unnamedTextures;
-        private ConcurrentDictionary<string, Shader> unnamedShaders;
+        private Dictionary<string, Texture> namedTextures;
+        private Dictionary<string, Shader> namedShaders;
+        private Dictionary<string, Texture> unnamedTextures;
+        private Dictionary<string, Shader> unnamedShaders;
 
         public ContentManager()
         {
-            namedTextures = new ConcurrentDictionary<string, Texture>();
-            namedShaders = new ConcurrentDictionary<string, Shader>();
-            unnamedShaders = new ConcurrentDictionary<string, Shader>();
-            unnamedTextures = new ConcurrentDictionary<string, Texture>();
+            namedTextures = new Dictionary<string, Texture>();
+            namedShaders = new Dictionary<string, Shader>();
+            unnamedShaders = new Dictionary<string, Shader>();
+            unnamedTextures = new Dictionary<string, Texture>();
         }
 
         public int TotalTextures { get => namedTextures.Count + unnamedTextures.Count; }
@@ -78,6 +78,7 @@ namespace SkyBrigade.Engine.Content
             string internedName = string.Intern(name);
 
             namedTextures.TryAdd(internedName, texture);
+            texture.Name = name;
 
             return texture;
         }
@@ -197,14 +198,16 @@ namespace SkyBrigade.Engine.Content
 
         public void DeleteTexture(string name)
         {
-            if (!namedTextures.TryRemove(name, out var _))
+            if (!namedTextures.Remove(name, out var texture))
                 GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Texture({name})");
+            else texture?.Dispose();
         }
 
         public void DeleteShader(string name)
         {
-            if (!namedShaders.TryRemove(name, out var _))
+            if (!namedShaders.Remove(name, out var shader))
                 GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Shader({name})");
+            else shader?.Dispose();
         }
     }
 }

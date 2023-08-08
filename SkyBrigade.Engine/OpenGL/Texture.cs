@@ -10,6 +10,7 @@ public class Texture : IDisposable
     public uint Handle { get; }
     private GL _gl;
     public string? Path { get; init; }
+    public string? Name { get; internal set; }
 
     public static int count = 0;
 

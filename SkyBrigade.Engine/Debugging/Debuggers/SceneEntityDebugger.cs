@@ -46,7 +46,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
         static void DrawEntityTree(IEntity? entity)
         {
-            if (entity == null) return;
+            if (entity is null) return;
 
             ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 20.0f);
 

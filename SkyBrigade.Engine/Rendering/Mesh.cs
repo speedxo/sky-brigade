@@ -103,7 +103,7 @@ public abstract class Mesh : IDisposable
 
         SetUniform("uView", options.Camera.View);
         SetUniform("uProjection", options.Camera.Projection);
-        SetUniform("camPos", options.Camera.Position);
+        //SetUniform("camPos", options.Camera.Position);
     }
 
     /// <summary>
