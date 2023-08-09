@@ -15,6 +15,7 @@ namespace SkyBrigade.Engine.Content
         private Dictionary<string, Texture> unnamedTextures;
         private Dictionary<string, Shader> unnamedShaders;
 
+
         public ContentManager()
         {
             namedTextures = new Dictionary<string, Texture>();
@@ -117,7 +118,7 @@ namespace SkyBrigade.Engine.Content
 
             if (!unnamedShaders.TryGetValue(uniqueKey, out var shader))
             {
-                shader = new Shader(GameManager.Instance.Gl, internedVertexPath, internedFragmentPath);
+                shader = Shader.CompileShader(internedVertexPath, internedFragmentPath);
                 unnamedShaders.TryAdd(uniqueKey, shader);
             }
             else
@@ -142,7 +143,8 @@ namespace SkyBrigade.Engine.Content
             string internedName = string.Intern(name);
             string internedVertexPath = string.Intern(vertexPath);
             string internedFragmentPath = string.Intern(fragmentPath);
-            return GenerateNamedShader(internedName, new Shader(GameManager.Instance.Gl, internedVertexPath, internedFragmentPath));
+
+            return GenerateNamedShader(internedName, Shader.CompileShader(internedVertexPath, internedFragmentPath));
         }
 
         public Shader GetShader(string name)

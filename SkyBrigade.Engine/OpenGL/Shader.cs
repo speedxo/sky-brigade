@@ -8,139 +8,96 @@ public class Shader : IDisposable
 {
     //Our handle and the GL instance this class will use, these are private because they have no reason to be public.
     //Most of the time you would want to abstract items to make things like this invisible.
-    private uint _handle;
+    public uint Handle { get; private init; }
 
-    private GL _gl;
     private Dictionary<string, int> uniformIndexes;
 
-    public Shader(GL gl, string vertexPath, string fragmentPath)
+    public Shader(uint handle)
     {
-        _gl = gl;
-
-        //Load the individual shaders.
-        uint vertex = LoadShader(ShaderType.VertexShader, vertexPath);
-        uint fragment = LoadShader(ShaderType.FragmentShader, fragmentPath);
-
-        //Create the shader program.
-        _handle = _gl.CreateProgram();
-
-        //Attach the individual shaders.
-        _gl.AttachShader(_handle, vertex);
-        _gl.AttachShader(_handle, fragment);
-        _gl.LinkProgram(_handle);
-
-        //Check for linking errors.
-        _gl.GetProgram(_handle, GLEnum.LinkStatus, out var status);
-        if (status == 0)
-            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Program failed to link with error: {_gl.GetProgramInfoLog(_handle)}");
-        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{_handle}] created!");
-
-        //Detach and delete the shaders
-        _gl.DetachShader(_handle, vertex);
-        _gl.DetachShader(_handle, fragment);
-        _gl.DeleteShader(vertex);
-        _gl.DeleteShader(fragment);
-
+        Handle = handle;
         uniformIndexes = new Dictionary<string, int>();
     }
 
     public void Use()
     {
         //Using the program
-        _gl.UseProgram(_handle);
+        GameManager.Instance.Gl.UseProgram(Handle);
     }
 
     private int GetUniformLocation(string name)
     {
         if (!uniformIndexes.ContainsKey(name))
-            uniformIndexes.Add(name, _gl.GetUniformLocation(_handle, name));
+            uniformIndexes.Add(name, GameManager.Instance.Gl.GetUniformLocation(Handle, name));
 
         return uniformIndexes[name];
     }
 
-    //Uniforms are properties that applies to the entire geometry
-    public void SetUniform(string name, int value)
-    {
-        //Setting a uniform on a shader using a name.
-        int location = _gl.GetUniformLocation(_handle, name);
-        if (location == -1) //If GetUniformLocation returns -1 the uniform is not found.
-        {
-            GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
-        }
-        _gl.Uniform1(location, value);
-    }
-
-    //Uniforms are properties that applies to the entire geometry
-    public void SetUniform(string name, uint value)
-    {
-        //Setting a uniform on a shader using a name.
-        int location = GetUniformLocation(name);
-        if (location == -1) //If GetUniformLocation returns -1 the uniform is not found.
-        {
-            GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
-        }
-        _gl.Uniform1(location, value);
-    }
-
-    public void SetUniform(string name, float value)
+    public unsafe void SetUniform(string name, object? value)
     {
         int location = GetUniformLocation(name);
-        if (location == -1)
+        if (location == -1) // If GetUniformLocation returns -1, the uniform is not found.
         {
             GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
+            return;
         }
-        _gl.Uniform1(location, value);
+
+        switch (value)
+        {
+            case int intValue:
+                GameManager.Instance.Gl.Uniform1(location, intValue);
+                break;
+
+            case float floatValue:
+                GameManager.Instance.Gl.Uniform1(location, floatValue);
+                break;
+
+            case uint uintValue:
+                GameManager.Instance.Gl.Uniform1(location, uintValue);
+                break;
+
+            case Vector2 vector2Value:
+                GameManager.Instance.Gl.Uniform2(location, vector2Value.X, vector2Value.Y);
+                break;
+
+            case Vector3 vector3Value:
+                GameManager.Instance.Gl.Uniform3(location, vector3Value.X, vector3Value.Y, vector3Value.Z);
+                break;
+
+            case Vector4 vector4Value:
+                GameManager.Instance.Gl.Uniform4(location, vector4Value.X, vector4Value.Y, vector4Value.Z, vector4Value.W);
+                break;
+
+            case Matrix4x4 matrixValue:
+                GameManager.Instance.Gl.UniformMatrix4(location, 1, false, (float*)&matrixValue);
+                break;
+
+            default:
+                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to upload uniform of unsupported data type {value.GetType()}.");
+                return;
+        }
     }
 
-    public void SetUniform(string name, Vector3 value)
-    {
-        int location = GetUniformLocation(name);
-        if (location == -1)
-        {
-            GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
-        }
-        _gl.Uniform3(location, value);
-    }
-
-    public void SetUniform(string name, Vector4 value)
-    {
-        int location = GetUniformLocation(name);
-        if (location == -1)
-        {
-            GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
-        }
-        _gl.Uniform4(location, value);
-    }
-
-    public unsafe void SetUniform(string name, Matrix4x4 value)
-    {
-        //A new overload has been created for setting a uniform so we can use the transform in our shader.
-        int location = GetUniformLocation(name);
-        if (location == -1)
-        {
-            GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
-        }
-        _gl.UniformMatrix4(location, 1, false, (float*)&value);
-    }
 
     public void Dispose()
     {
         // Remember to delete the program when we are done.
-        _gl.DeleteProgram(_handle);
-        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{_handle}] destroyed!");
+        GameManager.Instance.Gl.DeleteProgram(Handle);
+        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{Handle}] destroyed!");
     }
 
-    private uint LoadShader(ShaderType type, string path)
+    public void End() => GameManager.Instance.Gl.UseProgram(0);
+
+    private static uint LoadShader(ShaderType type, string path)
     {
         if (!File.Exists(path))
             GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Shader file not found at {path}");
 
         string src = File.ReadAllText(path);
 
-        uint handle = _gl.CreateShader(type);
-        _gl.ShaderSource(handle, src);
-        _gl.CompileShader(handle);
-        string infoLog = _gl.GetShaderInfoLog(handle);
+        uint handle = GameManager.Instance.Gl.CreateShader(type);
+        GameManager.Instance.Gl.ShaderSource(handle, src);
+        GameManager.Instance.Gl.CompileShader(handle);
+        string infoLog = GameManager.Instance.Gl.GetShaderInfoLog(handle);
         if (!string.IsNullOrWhiteSpace(infoLog))
         {
             // LogLevel of fatal throws an exception
@@ -149,5 +106,33 @@ public class Shader : IDisposable
         return handle;
     }
 
-    public void End() => GameManager.Instance.Gl.UseProgram(0);
+    public static Shader CompileShader(string vertexPath, string fragmentPath)
+    {
+        //Load the individual shaders.
+        uint vertex = LoadShader(ShaderType.VertexShader, vertexPath);
+        uint fragment = LoadShader(ShaderType.FragmentShader, fragmentPath);
+
+        //Create the shader program.
+        var handle = GameManager.Instance.Gl.CreateProgram();
+
+        //Attach the individual shaders.
+        GameManager.Instance.Gl.AttachShader(handle, vertex);
+        GameManager.Instance.Gl.AttachShader(handle, fragment);
+        GameManager.Instance.Gl.LinkProgram(handle);
+
+        //Check for linking errors.
+        GameManager.Instance.Gl.GetProgram(handle, GLEnum.LinkStatus, out var status);
+        if (status == 0)
+            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Program failed to link with error: {GameManager.Instance.Gl.GetProgramInfoLog(handle)}");
+        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{handle}] created!");
+
+        //Detach and delete the shaders
+        GameManager.Instance.Gl.DetachShader(handle, vertex);
+        GameManager.Instance.Gl.DetachShader(handle, fragment);
+        GameManager.Instance.Gl.DeleteShader(vertex);
+        GameManager.Instance.Gl.DeleteShader(fragment);
+
+        return new Shader(handle);
+    }
+
 }

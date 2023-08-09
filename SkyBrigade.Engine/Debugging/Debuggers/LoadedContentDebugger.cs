@@ -57,7 +57,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                     ImGui.BeginGroup();
 
                     ImGui.Image((IntPtr)texture.Handle, new Vector2(imageSideLength, imageSideLength));
-                    ImGui.TextWrapped(texture.Path.ToString());
+                    ImGui.TextWrapped(texture.Name ?? $"Texture({texture.Handle})");
 
                     ImGui.EndGroup();
 

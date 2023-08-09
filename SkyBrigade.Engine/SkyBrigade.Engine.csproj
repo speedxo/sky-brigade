@@ -42,6 +42,8 @@
     <None Remove="Rendering\Shapes\" />
     <None Remove="Debugging\" />
     <None Remove="Debugging\Debuggers\" />
+    <None Remove="Rendering\Effects\" />
+    <None Remove="Rendering\Effects\Components\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -57,6 +59,8 @@
     <Folder Include="Rendering\Shapes\" />
     <Folder Include="Debugging\" />
     <Folder Include="Debugging\Debuggers\" />
+    <Folder Include="Rendering\Effects\" />
+    <Folder Include="Rendering\Effects\Components\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />

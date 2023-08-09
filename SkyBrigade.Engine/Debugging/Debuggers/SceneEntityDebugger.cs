@@ -20,10 +20,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
         private Debugger Debugger { get; set; }
 
         // TODO: use string interns here because there are thousands of string allocations/second here
-        public void Initialize()
-        {
-            Debugger = Parent as Debugger;
-        }
+        public void Initialize() => Debugger = Parent as Debugger;
 
         public bool Visible = false;
 
