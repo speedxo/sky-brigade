@@ -11,29 +11,29 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
      * buffers to contruct.
      */
 
-    private BufferObject<T> vbo;
-    private BufferObject<uint> ebo;
-    private VertexArrayObject<T, uint> vao;
+    private BufferObject vbo;
+    private BufferObject ebo;
+    private VertexArrayObject vao;
 
-    public BufferObject<T> VertexBuffer { get => vbo; }
-    public BufferObject<uint> ElementBuffer { get => ebo; }
+    public BufferObject VertexBuffer { get => vbo; }
+    public BufferObject ElementBuffer { get => ebo; }
 
     public VertexBufferObject(GL gl)
     {
         /* The EBO (element buffer object) stores our element array
          * ie. the order in which to draw vertices.
          */
-        ebo = new BufferObject<uint>(gl, BufferTargetARB.ElementArrayBuffer);
+        ebo = new BufferObject( BufferTargetARB.ElementArrayBuffer);
 
         /* The Vertex Buffer Object stores the raw vertices data
          */
-        vbo = new BufferObject<T>(gl, BufferTargetARB.ArrayBuffer);
+        vbo = new BufferObject( BufferTargetARB.ArrayBuffer);
 
         /* The VBO and EBO would be useless without a way of understanding
          * the structure of the data, thats where the VAO comes in. It
          * stores the structure of the vertex data, how it is in RAM.
          */
-        vao = new VertexArrayObject<T, uint>(gl, vbo, ebo);
+        vao = new VertexArrayObject(gl, vbo, ebo);
     }
 
     /* Forwarding this method.

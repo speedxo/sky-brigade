@@ -100,7 +100,7 @@ namespace SkyBrigade.Engine.GameEntity
         /// </summary>
         /// <param name="entity">The entity to be added.</param>
         /// <returns>The added entity.</returns>
-        public T AddEntity<T>() where T : IEntity => AddEntity(Activator.CreateInstance<T>());
+        public T AddEntity<T>() where T : IEntity, new() => AddEntity(Activator.CreateInstance<T>());
 
         /// <summary>
         /// Removes an entity from the scene.

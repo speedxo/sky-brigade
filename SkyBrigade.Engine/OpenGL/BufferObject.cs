@@ -4,49 +4,45 @@ namespace SkyBrigade.Engine.OpenGL;
 
 /* This is an abstractation for a buffer object */
 
-public class BufferObject<TDataType> : IDisposable
-    where TDataType : unmanaged
+public class BufferObject : IDisposable
 {
     /* These are private because they have no reason to be public
      * Traditional OOP style principles break when you have to abstract
      */
-    private readonly uint _handle;
-    private readonly BufferTargetARB _bufferType;
-    private readonly GL _gl;
+    public uint Handle { get; init; }
 
-    public unsafe BufferObject(GL gl, BufferTargetARB bufferType)
+    private readonly BufferTargetARB _bufferType;
+
+    public unsafe BufferObject(BufferTargetARB bufferType)
     {
-        /* This OpenGL translation library unfortunatly
-         * requires us to copy around this loose reference to the GL class
-         */
-        _gl = gl;
         _bufferType = bufferType;
 
-        _handle = _gl.GenBuffer();
+        Handle = GameManager.Instance.Gl.GenBuffer();
     }
 
-    public unsafe void BufferData(ReadOnlySpan<TDataType> data)
+    public virtual unsafe void BufferData<TDataType>(ReadOnlySpan<TDataType> data)
+        where TDataType : unmanaged
     {
         Bind();
         fixed (void* d = data)
         {
-            _gl.BufferData(_bufferType, (nuint)(data.Length * sizeof(TDataType)), d, BufferUsageARB.StaticDraw);
+            GameManager.Instance.Gl.BufferData(_bufferType, (nuint)(data.Length * sizeof(TDataType)), d, BufferUsageARB.StaticDraw);
         }
-        _gl.BindBuffer(_bufferType, 0);
+        GameManager.Instance.Gl.BindBuffer(_bufferType, 0);
     }
 
-    public void Bind()
+    public virtual void Bind()
     {
         /* Binding the buffer object, with the correct buffer type.
          */
-        _gl.BindBuffer(_bufferType, _handle);
+        GameManager.Instance.Gl.BindBuffer(_bufferType, Handle);
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         try
         {
-            _gl.DeleteBuffer(_handle);
+            GameManager.Instance.Gl.DeleteBuffer(Handle);
         }
         catch
         {

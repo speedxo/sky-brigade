@@ -70,10 +70,10 @@ namespace SkyBrigade.Engine.Tests.Tests
                 planet.Object.Material.Use(options);
 
                 // Statically positioned sun
-                planet.Object.Material.Shader.SetUniform("lightPositions[0]", Vector3.Zero);
+                planet.Object.Material.Technique.SetUniform("lightPositions[0]", Vector3.Zero);
 
                 // The *100.0f is because we have HDR and tonemapping so can go big
-                planet.Object.Material.Shader.SetUniform("lightColors[0]", new Vector3(100.0f, 100.0f, 0.0f));
+                planet.Object.Material.Technique.SetUniform("lightColors[0]", new Vector3(100.0f, 100.0f, 0.0f));
 
                 planet.Object.Draw(dt, renderOptions);
             }

@@ -3,19 +3,17 @@
 namespace SkyBrigade.Engine.OpenGL;
 
 //The vertex array object abstraction.
-public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
-    where TVertexType : unmanaged
-    where TIndexType : unmanaged
+public class VertexArrayObject: IDisposable
 {
     //Our handle and the GL instance this class will use, these are private because they have no reason to be public.
     //Most of the time you would want to abstract items to make things like this invisible.
     private uint _handle;
 
     private GL _gl;
-    private BufferObject<TVertexType> vbo;
-    private BufferObject<TIndexType> ebo;
+    private BufferObject vbo;
+    private BufferObject ebo;
 
-    public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, BufferObject<TIndexType> ebo)
+    public VertexArrayObject(GL gl, BufferObject vbo, BufferObject ebo)
     {
         //Saving the GL instance.
         _gl = gl;

@@ -123,7 +123,7 @@ namespace SkyBrigade.Engine.Content
             }
             else
             {
-                GameManager.Instance.Logger.Log(LogLevel.Fatal, $"An attempt to load Shader({internedVertexPath}, {internedFragmentPath}) was made even though an instance of Shader({internedVertexPath}, {internedFragmentPath}) already exists, a reference to the already loaded shader will be returned.");
+                GameManager.Instance.Logger.Log(LogLevel.Error, $"An attempt to load Shader({internedVertexPath}, {internedFragmentPath}) was made even though an instance of Shader({internedVertexPath}, {internedFragmentPath}) already exists, a reference to the already loaded shader will be returned.");
             }
 
             return shader;

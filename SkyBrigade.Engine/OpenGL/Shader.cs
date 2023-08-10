@@ -1,6 +1,7 @@
 ﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Logging;
 using System.Numerics;
+using System.Text;
 
 namespace SkyBrigade.Engine.OpenGL;
 
@@ -18,11 +19,15 @@ public class Shader : IDisposable
         uniformIndexes = new Dictionary<string, int>();
     }
 
-    public void Use()
+    public uint GetUniformBlockIndex(string blockName)
     {
-        //Using the program
-        GameManager.Instance.Gl.UseProgram(Handle);
+        if (Handle == 0)
+            throw new InvalidOperationException("Shader program is not created.");
+
+        return GameManager.Instance.Gl.GetUniformBlockIndex(Handle, blockName);
     }
+
+    public virtual void Use() => GameManager.Instance.Gl.UseProgram(Handle);
 
     private int GetUniformLocation(string name)
     {
@@ -85,7 +90,7 @@ public class Shader : IDisposable
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{Handle}] destroyed!");
     }
 
-    public void End() => GameManager.Instance.Gl.UseProgram(0);
+    public virtual void End() => GameManager.Instance.Gl.UseProgram(0);
 
     private static uint LoadShader(ShaderType type, string path)
     {

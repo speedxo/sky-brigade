@@ -13,33 +13,26 @@ namespace SkyBrigade.Engine.Rendering
 
         public EmptyMaterial()
         {
-            Shader = GameManager.Instance.ContentManager.GetShader("basic");
+            Technique = AddEntity(new Technique("Assets/basic_shader", "basic"));
             Color = Vector4.One;
         }
 
-        public override void Load(string path)
-        {
-        }
-
-        public override void Save(string path)
-        {
-        }
 
         public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 
-            Shader.Use();
-            Shader.SetUniform("uColor", Color * options.Color);
+            Technique.Use();
+            Technique.SetUniform("uColor", Color * options.Color);
 
             if (Texture == null)
-                Shader.SetUniform("useTexture", 0);
+                Technique.SetUniform("useTexture", 0);
             else
             {
                 GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
                 GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, Texture.Handle);
-                Shader.SetUniform("uTexture", 0);
-                Shader.SetUniform("useTexture", 1);
+                Technique.SetUniform("uTexture", 0);
+                Technique.SetUniform("useTexture", 1);
             }
         }
     }

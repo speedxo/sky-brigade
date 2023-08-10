@@ -1,7 +1,6 @@
 #version 410 core
 
 uniform sampler2D uTexture;
-uniform vec4 uColor;
 
 out vec4 FragColor;
     
@@ -11,8 +10,14 @@ in vec3 fragPos;
 
 // physical parameters
 uniform vec3 camPos;
-uniform float uGamma = 2.2f;
-uniform float uAmbientStrength = 0.03f;
+
+layout(std140) uniform MaterialRenderOptions
+{
+    int DefferedRenderLayer;
+    float Gamma;
+    float AmbientStrength;
+    vec4 Color;
+} renderOptions;
 
 // material parameters
 uniform sampler2D uAlbedo;
@@ -20,8 +25,6 @@ uniform sampler2D uRoughness;
 uniform sampler2D uMetallicness;
 uniform sampler2D uAo;
 uniform sampler2D uNormals;
-
-uniform int uDebug_defferedRenderLayer = 0;
 
 // lights
 uniform vec3 lightPositions[4];
@@ -104,7 +107,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 vec4 renderDefferedLayer()
 {
-    switch (uDebug_defferedRenderLayer)
+    switch (renderOptions.DefferedRenderLayer)
     {
         case 1:
             return texture(uAlbedo, fTexCoords);
@@ -123,14 +126,14 @@ vec4 renderDefferedLayer()
 
 void main()
 {		
-    if (uDebug_defferedRenderLayer > 0) 
+    if (renderOptions.DefferedRenderLayer > 0) 
     {
         FragColor = renderDefferedLayer();
         return;
     }
 
     // gamma correct input
-    vec3 col = pow(texture(uAlbedo, fTexCoords).rgb, vec3(uGamma));
+    vec3 col = pow(texture(uAlbedo, fTexCoords).rgb, vec3(renderOptions.Gamma));
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(camPos - fragPos);
@@ -180,14 +183,14 @@ void main()
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(uAmbientStrength) * col.rgb * texture(uAo, fTexCoords).r;
+    vec3 ambient = vec3(renderOptions.AmbientStrength) * col.rgb * texture(uAo, fTexCoords).r;
 
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/uGamma)); 
+    color = pow(color, vec3(1.0/renderOptions.Gamma)); 
 
-    FragColor = vec4(color, 1.0) * uColor;
+    FragColor = vec4(color, 1.0) * renderOptions.Color;
 }

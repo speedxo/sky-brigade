@@ -5,20 +5,15 @@ using SkyBrigade.Engine.OpenGL;
 
 namespace SkyBrigade.Engine.Rendering.Effects.Components
 {
-    public class ShaderComponent : IGameComponent
+    public class ShaderComponent : Shader, IGameComponent
     {
-        private Shader shader;
-
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Entity Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        // Forward some shader properties
-        public uint Handle { get => shader.Handle; }
-        public void SetUniform(string name, object? value) => shader.SetUniform(name, value);
+        public string Name { get; set; }
+        public Entity Parent { get; set; }
 
         public ShaderComponent(string vertPath, string fragPath)
+            : base(GameManager.Instance.ContentManager.LoadShader(vertPath, fragPath).Handle)
         {
-            shader = GameManager.Instance.ContentManager.LoadShader(vertPath, fragPath);
+
         }
 
         public virtual void Initialize()

@@ -34,30 +34,11 @@ public abstract class Mesh : IDisposable
     public VertexBufferObject<Vertex> Vbo { get; private set; }
 
     /// <summary>
-    /// Sets a uniform in the material's shader with a float value.
+    /// Sets a uniform in the material's shader with a value.
     /// </summary>
-    public void SetUniform(string name, float value) => Material.Shader.SetUniform(name, value);
+    public void SetUniform(string name, object? value) => Material.Technique.SetUniform(name, value);
 
-    /// <summary>
-    /// Sets a uniform in the material's shader with an int value.
-    /// </summary>
-    public void SetUniform(string name, int value) => Material.Shader.SetUniform(name, value);
-
-    /// <summary>
-    /// Sets a uniform in the material's shader with a Vector3 value.
-    /// </summary>
-    public void SetUniform(string name, Vector3 value) => Material.Shader.SetUniform(name, value);
-
-    /// <summary>
-    /// Sets a uniform in the material's shader with a Matrix4x4 value.
-    /// </summary>
-    public void SetUniform(string name, Matrix4x4 value) => Material.Shader.SetUniform(name, value);
-
-    /// <summary>
-    /// Sets a uniform in the material's shader with a Vector4 value.
-    /// </summary>
-    public void SetUniform(string name, Vector4 value) => Material.Shader.SetUniform(name, value);
-
+  
     /// <summary>
     /// Creates a new instance of the Mesh class.
     /// </summary>
