@@ -76,7 +76,7 @@ namespace SkyBrigade.Engine.Rendering
         public void Use()
         {
             Shader.Use();
-            BufferManager.Use();
+            //BufferManager.Use();
         }
 
         public void End()

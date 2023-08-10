@@ -1,9 +1,11 @@
 ﻿using System.Numerics;
+using System.Runtime.InteropServices;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.OpenGL;
 
 namespace SkyBrigade.Engine.Rendering
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct MaterialRenderOptions
     {
         public int DefferedRenderLayer;
@@ -21,18 +23,18 @@ namespace SkyBrigade.Engine.Rendering
         {
             this.realPath = path;
             Technique = AddEntity(new Technique("Assets/material_shader", "advanced"));
-            
 
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
 
+        MaterialRenderOptions matOptions;
         public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 
             Technique.Use();
 
-            var matOptions = new MaterialRenderOptions
+            matOptions = new MaterialRenderOptions
             {
                 DefferedRenderLayer = (int)options.DebugOptions.DefferedLayer,
                 Gamma = options.Gamma,
@@ -40,10 +42,9 @@ namespace SkyBrigade.Engine.Rendering
                 Color = options.Color * Color
             };
 
-            var ubo = Technique.BufferManager.GetBuffer("renderOptions");
+            var ubo = Technique.BufferManager.GetBuffer("MaterialRenderOptions");
             ubo.BufferData(new ReadOnlySpan<MaterialRenderOptions>(matOptions));
             
-
             // Bind the albedo texture to texture unit 0
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Albedo.Handle);

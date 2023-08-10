@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Silk.NET.OpenGL;
 
 namespace SkyBrigade.Engine.OpenGL
@@ -11,11 +12,12 @@ namespace SkyBrigade.Engine.OpenGL
             : base(BufferTargetARB.UniformBuffer)
         {
             _bindingPoint = shader.GetUniformBlockIndex(point);
-            Console.WriteLine(_bindingPoint);
+            GameManager.Instance.Gl.UniformBlockBinding(shader.Handle, _bindingPoint, _bindingPoint);
         }
+
         public void BindToBindingPoint()
         {
-            GameManager.Instance.Gl.BindBufferBase(BufferTargetARB.UniformBuffer, (uint)_bindingPoint, Handle);
+            GameManager.Instance.Gl.BindBufferBase(BufferTargetARB.UniformBuffer, _bindingPoint, Handle);
         }
     }
 }

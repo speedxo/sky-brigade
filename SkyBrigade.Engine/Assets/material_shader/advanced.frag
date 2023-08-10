@@ -17,7 +17,8 @@ layout(std140) uniform MaterialRenderOptions
     float Gamma;
     float AmbientStrength;
     vec4 Color;
-} renderOptions;
+};
+
 
 // material parameters
 uniform sampler2D uAlbedo;
@@ -107,7 +108,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 vec4 renderDefferedLayer()
 {
-    switch (renderOptions.DefferedRenderLayer)
+    switch (DefferedRenderLayer)
     {
         case 1:
             return texture(uAlbedo, fTexCoords);
@@ -126,14 +127,14 @@ vec4 renderDefferedLayer()
 
 void main()
 {		
-    if (renderOptions.DefferedRenderLayer > 0) 
+    if (DefferedRenderLayer > 0) 
     {
         FragColor = renderDefferedLayer();
         return;
     }
 
     // gamma correct input
-    vec3 col = pow(texture(uAlbedo, fTexCoords).rgb, vec3(renderOptions.Gamma));
+    vec3 col = pow(texture(uAlbedo, fTexCoords).rgb, vec3(Gamma));
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(camPos - fragPos);
@@ -183,14 +184,14 @@ void main()
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(renderOptions.AmbientStrength) * col.rgb * texture(uAo, fTexCoords).r;
+    vec3 ambient = vec3(AmbientStrength) * col.rgb * texture(uAo, fTexCoords).r;
 
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/renderOptions.Gamma)); 
+    color = pow(color, vec3(1.0/Gamma)); 
 
-    FragColor = vec4(color, 1.0) * renderOptions.Color;
+    FragColor = vec4(color, 1.0) * Color;
 }
