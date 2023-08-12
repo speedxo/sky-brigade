@@ -1,19 +1,8 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 using SkyBrigade.Engine.OpenGL;
 
 namespace SkyBrigade.Engine.Rendering
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MaterialRenderOptions
-    {
-        public int DefferedRenderLayer;
-        public float Gamma;
-        public float AmbientStrength;
-        public Vector4 Color;
-    }
-
     public class AdvancedMaterial : Material
     {
         private readonly string realPath;
@@ -27,21 +16,20 @@ namespace SkyBrigade.Engine.Rendering
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
 
-        MaterialRenderOptions matOptions;
         public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 
             Technique.Use();
 
-            matOptions = new MaterialRenderOptions
+            var matOptions = new MaterialRenderOptions
             {
                 DefferedRenderLayer = (int)options.DebugOptions.DefferedLayer,
                 Gamma = options.Gamma,
                 AmbientStrength = options.AmbientLightingStrength,
                 Color = options.Color * Color
             };
-
+                
             var ubo = Technique.BufferManager.GetBuffer("MaterialRenderOptions");
             ubo.BufferData(new ReadOnlySpan<MaterialRenderOptions>(matOptions));
             

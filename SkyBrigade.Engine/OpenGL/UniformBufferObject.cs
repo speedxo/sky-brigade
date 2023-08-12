@@ -12,7 +12,6 @@ namespace SkyBrigade.Engine.OpenGL
             : base(BufferTargetARB.UniformBuffer)
         {
             _bindingPoint = shader.GetUniformBlockIndex(point);
-            GameManager.Instance.Gl.UniformBlockBinding(shader.Handle, _bindingPoint, _bindingPoint);
         }
 
         public void BindToBindingPoint()
