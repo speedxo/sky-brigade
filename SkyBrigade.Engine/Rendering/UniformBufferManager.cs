@@ -15,6 +15,10 @@ namespace SkyBrigade.Engine.Rendering
 
         public Shader Shader { get; private set; }
 
+        public UniformBufferManager()
+        {
+        }
+
         public UniformBufferManager(Shader shader)
         {
             this.Shader = shader;
@@ -22,6 +26,7 @@ namespace SkyBrigade.Engine.Rendering
 
         public void Initialize()
         {
+            Shader ??= Parent.GetComponent<ShaderComponent>();
             BufferObjects = new Dictionary<string, UniformBufferObject>();
         }
 

@@ -5,6 +5,8 @@ using SkyBrigade.Engine.Data;
 using SkyBrigade.Engine.Rendering;
 using SkyBrigade.Engine.Rendering.Shapes;
 using SkyBrigade.Engine.Prefabs.Character;
+using SkyBrigade.Engine.OpenGL;
+using SkyBrigade.Engine.Rendering.Effects;
 
 namespace SkyBrigade.Game;
 
@@ -31,6 +33,10 @@ internal class DemoGameScreen : Scene
         AddEntity(plane);
 
         GameManager.Instance.Debugger.Enabled = true;
+
+
+        EffectStack stack = new EffectStack(new Effect(File.ReadAllText("Assets/DemoEffectStack/stage0.frag")),
+            new Effect(File.ReadAllText("Assets/DemoEffectStack/stage1.frag")));
     }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)

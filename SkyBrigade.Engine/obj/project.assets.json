@@ -255,6 +255,18 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
+      "Microsoft.NET.ILLink.Analyzers/7.0.100-1.23211.1": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.NET.ILLink.Analyzers.props": {}
+        }
+      },
+      "Microsoft.NET.ILLink.Tasks/7.0.100-1.23211.1": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
       "Microsoft.Win32.SystemEvents/7.0.0": {
         "type": "package",
         "compile": {
@@ -442,6 +454,22 @@
         },
         "runtime": {
           "lib/net5.0/Silk.NET.OpenAL.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Silk.NET.OpenCL/2.17.1": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.17.1"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.OpenCL.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.OpenCL.dll": {
             "related": ".xml"
           }
         }
@@ -1211,6 +1239,53 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "Microsoft.NET.ILLink.Analyzers/7.0.100-1.23211.1": {
+      "sha512": "0GvbEgDGcUQA9KuWcQU1WwYHXt1tBzNr1Nls/M57rM7NA/AndFwCaCEoJpJkmxRY7xLlPDBnmGp8h5+FNqUngg==",
+      "type": "package",
+      "path": "microsoft.net.illink.analyzers/7.0.100-1.23211.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "analyzers/dotnet/cs/ILLink.CodeFixProvider.dll",
+        "analyzers/dotnet/cs/ILLink.RoslynAnalyzer.dll",
+        "build/Microsoft.NET.ILLink.Analyzers.props",
+        "microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
+        "microsoft.net.illink.analyzers.nuspec"
+      ]
+    },
+    "Microsoft.NET.ILLink.Tasks/7.0.100-1.23211.1": {
+      "sha512": "tvG8XZYLjT0o3WicCyKBZysVWo1jC9HdCFmNRmddx3WbAz0UCsd0qKZqpiEo99VLA8Re+FzWK51OcRldQPbt2Q==",
+      "type": "package",
+      "path": "microsoft.net.illink.tasks/7.0.100-1.23211.1",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "Sdk/Sdk.props",
+        "build/6.0_suppressions.xml",
+        "build/Microsoft.NET.ILLink.Tasks.props",
+        "build/Microsoft.NET.ILLink.targets",
+        "microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
+        "microsoft.net.illink.tasks.nuspec",
+        "tools/net472/ILLink.Tasks.dll",
+        "tools/net472/Mono.Cecil.dll",
+        "tools/net472/System.Buffers.dll",
+        "tools/net472/System.Collections.Immutable.dll",
+        "tools/net472/System.Memory.dll",
+        "tools/net472/System.Numerics.Vectors.dll",
+        "tools/net472/System.Reflection.Metadata.dll",
+        "tools/net472/System.Runtime.CompilerServices.Unsafe.dll",
+        "tools/net7.0/ILLink.Tasks.deps.json",
+        "tools/net7.0/ILLink.Tasks.dll",
+        "tools/net7.0/Mono.Cecil.Pdb.dll",
+        "tools/net7.0/Mono.Cecil.dll",
+        "tools/net7.0/illink.deps.json",
+        "tools/net7.0/illink.dll",
+        "tools/net7.0/illink.runtimeconfig.json"
+      ]
+    },
     "Microsoft.Win32.SystemEvents/7.0.0": {
       "sha512": "2nXPrhdAyAzir0gLl8Yy8S5Mnm/uBSQQA7jEsILOS1MTyS7DbmV1NgViMtvV1sfCD1ebITpNwb1NIinKeJgUVQ==",
       "type": "package",
@@ -1469,6 +1544,27 @@
         "lib/netstandard2.1/Silk.NET.OpenAL.xml",
         "silk.net.openal.2.17.1.nupkg.sha512",
         "silk.net.openal.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.OpenCL/2.17.1": {
+      "sha512": "R8R/Ltjy7EggcFzwCIK9jXqI2peyF+HGxDXSjXKA2DsG1sxUdKpRrN0NukM3JpbNny7/I9Spz9+Zr90iPZBjFg==",
+      "type": "package",
+      "path": "silk.net.opencl/2.17.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.OpenCL.dll",
+        "lib/net5.0/Silk.NET.OpenCL.xml",
+        "lib/netcoreapp3.1/Silk.NET.OpenCL.dll",
+        "lib/netcoreapp3.1/Silk.NET.OpenCL.xml",
+        "lib/netstandard2.0/Silk.NET.OpenCL.dll",
+        "lib/netstandard2.0/Silk.NET.OpenCL.xml",
+        "lib/netstandard2.1/Silk.NET.OpenCL.dll",
+        "lib/netstandard2.1/Silk.NET.OpenCL.xml",
+        "silk.net.opencl.2.17.1.nupkg.sha512",
+        "silk.net.opencl.nuspec",
         "silkdotnet_v3.png"
       ]
     },
@@ -2041,12 +2137,15 @@
     "net7.0": [
       "CjClutter.ObjLoader.Unofficial >= 1.1.0",
       "Karma.CoreOBJ >= 1.4.4",
+      "Microsoft.NET.ILLink.Analyzers >= 7.0.100-1.23211.1",
+      "Microsoft.NET.ILLink.Tasks >= 7.0.100-1.23211.1",
       "Newtonsoft.Json >= 13.0.3",
       "Silk.NET >= 2.17.1",
       "Silk.NET.Core >= 2.17.1",
       "Silk.NET.Input.Common >= 2.17.1",
       "Silk.NET.Input.Glfw >= 2.17.1",
       "Silk.NET.Maths >= 2.17.1",
+      "Silk.NET.OpenCL >= 2.17.1",
       "Silk.NET.OpenGL >= 2.17.1",
       "Silk.NET.OpenGL.Extensions.APPLE >= 2.17.1",
       "Silk.NET.OpenGL.Extensions.ImGui >= 2.17.1",
@@ -2089,6 +2188,9 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "default"
       }
     },
     "frameworks": {
@@ -2102,6 +2204,18 @@
           "Karma.CoreOBJ": {
             "target": "Package",
             "version": "[1.4.4, )"
+          },
+          "Microsoft.NET.ILLink.Analyzers": {
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[7.0.100-1.23211.1, )",
+            "autoReferenced": true
+          },
+          "Microsoft.NET.ILLink.Tasks": {
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[7.0.100-1.23211.1, )",
+            "autoReferenced": true
           },
           "Newtonsoft.Json": {
             "target": "Package",
@@ -2124,6 +2238,10 @@
             "version": "[2.17.1, )"
           },
           "Silk.NET.Maths": {
+            "target": "Package",
+            "version": "[2.17.1, )"
+          },
+          "Silk.NET.OpenCL": {
             "target": "Package",
             "version": "[2.17.1, )"
           },
@@ -2171,12 +2289,22 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[7.0.9, 7.0.9]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[7.0.9, 7.0.9]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.307/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.100-preview.7.23376.3/RuntimeIdentifierGraph.json"
       }
     }
   }

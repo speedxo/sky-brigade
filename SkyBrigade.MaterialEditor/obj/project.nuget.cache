@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Zd/ItmP1v/2hAq96yd9MNSCuJNeRv3yfNX5mnpagfF9rHp7LqfTVUy02XvMPI7am9mprZtkNgpcoN28bSkYLvg==",
+  "dgSpecHash": "qDOplBRIx1cK4rPHP6sC4NQhtbPBkBoN2hPyu8++U2kACGWiJ8PUNcHhaGhqmvPHZsjPyvVJn1QwlakzoaaNMA==",
   "success": true,
   "projectFilePath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj",
   "expectedPackageFiles": [
@@ -30,6 +30,7 @@
     "/Users/bogz/.nuget/packages/silk.net.input.sdl/2.17.1/silk.net.input.sdl.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.maths/2.17.1/silk.net.maths.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.openal/2.17.1/silk.net.openal.2.17.1.nupkg.sha512",
+    "/Users/bogz/.nuget/packages/silk.net.opencl/2.17.1/silk.net.opencl.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.opengl/2.17.1/silk.net.opengl.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.opengl.extensions.apple/2.17.1/silk.net.opengl.extensions.apple.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.opengl.extensions.imgui/2.17.1/silk.net.opengl.extensions.imgui.2.17.1.nupkg.sha512",

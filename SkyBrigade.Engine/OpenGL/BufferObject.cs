@@ -4,7 +4,8 @@ namespace SkyBrigade.Engine.OpenGL;
 
 /* This is an abstractation for a buffer object */
 
-public class BufferObject : IDisposable
+public class BufferObject<T> : IDisposable
+    where T: unmanaged
 {
     /* These are private because they have no reason to be public
      * Traditional OOP style principles break when you have to abstract
@@ -20,13 +21,12 @@ public class BufferObject : IDisposable
         Handle = GameManager.Instance.Gl.GenBuffer();
     }
 
-    public virtual unsafe void BufferData<TDataType>(ReadOnlySpan<TDataType> data)
-        where TDataType : unmanaged
+    public virtual unsafe void BufferData(ReadOnlySpan<T> data)
     {
         Bind();
         fixed (void* d = data)
         {
-            GameManager.Instance.Gl.BufferData(_bufferType, (nuint)(data.Length * sizeof(TDataType)), d, BufferUsageARB.StaticDraw);
+            GameManager.Instance.Gl.BufferData(_bufferType, (nuint)(data.Length * sizeof(T)), d, BufferUsageARB.StaticDraw);
         }
         GameManager.Instance.Gl.BindBuffer(_bufferType, 0);
     }

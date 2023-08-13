@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+sx2zzhgRTmWl90pucaFOMUu37kbZUh1h7GwCAnAm7P7PG3lwTNhEf+SWszvwDQASHq4gTtYEUNP4Zn1uc3xdA==",
+  "dgSpecHash": "0pYtSbqTAejhAWNoBYy+0weyJy52Stc4NUGNrimzTng9JskhP9xx6nmUThhWhOd0WDE3EVlYrSXK0w2mWVZhBw==",
   "success": true,
   "projectFilePath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj",
   "expectedPackageFiles": [
@@ -30,6 +30,7 @@
     "/Users/bogz/.nuget/packages/silk.net.input.sdl/2.17.1/silk.net.input.sdl.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.maths/2.17.1/silk.net.maths.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.openal/2.17.1/silk.net.openal.2.17.1.nupkg.sha512",
+    "/Users/bogz/.nuget/packages/silk.net.opencl/2.17.1/silk.net.opencl.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.opengl/2.17.1/silk.net.opengl.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.opengl.extensions.apple/2.17.1/silk.net.opengl.extensions.apple.2.17.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net.opengl.extensions.imgui/2.17.1/silk.net.opengl.extensions.imgui.2.17.1.nupkg.sha512",

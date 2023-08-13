@@ -110,7 +110,47 @@ public class Shader : IDisposable
         }
         return handle;
     }
+    private static uint LoadShaderFromSource(ShaderType type, string source)
+    {
+        uint handle = GameManager.Instance.Gl.CreateShader(type);
+        GameManager.Instance.Gl.ShaderSource(handle, source);
+        GameManager.Instance.Gl.CompileShader(handle);
+        string infoLog = GameManager.Instance.Gl.GetShaderInfoLog(handle);
+        if (!string.IsNullOrWhiteSpace(infoLog))
+        {
+            // LogLevel of fatal throws an exception
+            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Error compiling shader of type {type}, failed with error {infoLog}");
+        }
+        return handle;
+    }
+    public static Shader CompileShaderFromSource(string vertexSource, string fragmentSource)
+    {
+        //Load the individual shaders.
+        uint vertex = LoadShaderFromSource(ShaderType.VertexShader, vertexSource);
+        uint fragment = LoadShaderFromSource(ShaderType.FragmentShader, fragmentSource);
 
+        //Create the shader program.
+        var handle = GameManager.Instance.Gl.CreateProgram();
+
+        //Attach the individual shaders.
+        GameManager.Instance.Gl.AttachShader(handle, vertex);
+        GameManager.Instance.Gl.AttachShader(handle, fragment);
+        GameManager.Instance.Gl.LinkProgram(handle);
+
+        //Check for linking errors.
+        GameManager.Instance.Gl.GetProgram(handle, GLEnum.LinkStatus, out var status);
+        if (status == 0)
+            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Program failed to link with error: {GameManager.Instance.Gl.GetProgramInfoLog(handle)}");
+        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{handle}] created!");
+
+        //Detach and delete the shaders
+        GameManager.Instance.Gl.DetachShader(handle, vertex);
+        GameManager.Instance.Gl.DetachShader(handle, fragment);
+        GameManager.Instance.Gl.DeleteShader(vertex);
+        GameManager.Instance.Gl.DeleteShader(fragment);
+
+        return new Shader(handle);
+    }
     public static Shader CompileShader(string vertexPath, string fragmentPath)
     {
         //Load the individual shaders.

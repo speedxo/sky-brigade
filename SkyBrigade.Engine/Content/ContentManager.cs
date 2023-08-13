@@ -129,6 +129,23 @@ namespace SkyBrigade.Engine.Content
             return shader;
         }
 
+        public Shader LoadShaderFromSource(string vertSource, string fragSource)
+        {;
+            string uniqueKey = (vertSource.GetHashCode() + fragSource.GetHashCode()).ToString().GetHashCode().ToString();
+
+            if (!unnamedShaders.TryGetValue(uniqueKey, out var shader))
+            {
+                shader = Shader.CompileShaderFromSource(vertSource, fragSource);
+                unnamedShaders.TryAdd(uniqueKey, shader);
+            }
+            else
+            {
+                GameManager.Instance.Logger.Log(LogLevel.Error, $"Whoah partner, you just tried to compile the same shader twice?");
+            }
+
+            return shader;
+        }
+
         public Shader GenerateNamedShader(string name, Shader shader)
         {
             string internedName = string.Intern(name);

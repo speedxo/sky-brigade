@@ -129,6 +129,10 @@
               "target": "Package",
               "version": "[2.17.1, )"
             },
+            "Silk.NET.OpenCL": {
+              "target": "Package",
+              "version": "[2.17.1, )"
+            },
             "Silk.NET.OpenGL": {
               "target": "Package",
               "version": "[2.17.1, )"

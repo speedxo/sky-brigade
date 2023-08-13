@@ -70,3 +70,5 @@ C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Engine/obj/Debug/net7
 C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/refint/SkyBrigade.Engine.dll
 C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/SkyBrigade.Engine.pdb
 C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Engine/obj/Debug/net7.0/ref/SkyBrigade.Engine.dll
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/DemoEffectStack/stage0.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/bin/Debug/net7.0/Assets/DemoEffectStack/stage1.frag
