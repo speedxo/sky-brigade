@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Microsoft.Extensions.Options;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.Data;
@@ -38,14 +39,26 @@ public class TestMenuGameScreen : Scene
         GameManager.Instance.Debugger.Enabled = true;
 
         GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture constructor call count: {Texture.count}");
+
+        InitializeRenderingPipeline();
     }
 
 
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
 
+    public override void RenderScene(float dt, RenderOptions? renderOptions = null)
+    {
+        var options = (renderOptions ?? RenderOptions.Default) with
+        {
+            Camera = character.Camera
+        };
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+        base.RenderScene(dt, options);
+        tests[index].Render(dt, options);
+    }
+
+    public override void DrawGui(float dt)
     {
         if (ImGui.BeginMainMenuBar())
         {
@@ -59,17 +72,6 @@ public class TestMenuGameScreen : Scene
 
             ImGui.EndMainMenuBar();
         }
-
-        var options = (renderOptions ?? RenderOptions.Default) with
-        {
-            Camera = character.Camera
-        };
-
-        base.Draw(dt, options);
-
-        renderOptions?.GL.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
-        renderOptions?.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
 
         if (showDebugWindow)
         {
@@ -108,9 +110,6 @@ public class TestMenuGameScreen : Scene
                 ImGui.End();
             }
         }
-
-
-        tests[index].Render(dt, options);
     }
 
     public override void Update(float dt)

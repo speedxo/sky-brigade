@@ -2,13 +2,8 @@
 {
     float FlashingStage_iTime;
 };
-/* This is added when the effect stage is loaded.
-struct ShaderData {
-	vec4 FragColor;
-};
-*/
 
 ShaderData ShaderStage(ShaderData data)
 {
-    return ShaderData(data.FragColor * vec4(sin(FlashingStage_iTime), 1, 1, 1));
+    return ShaderData(data.FragColor * vec4(abs(sin(FlashingStage_iTime * 10.0f) * 2.0f), 1.0f, 1.0f, 1.0f), data.DepthComponent);
 }

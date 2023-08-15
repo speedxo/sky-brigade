@@ -31,7 +31,7 @@ namespace SkyBrigade.Engine.Rendering
             };
                 
             var ubo = Technique.BufferManager.GetBuffer("MaterialRenderOptions");
-            ubo.BufferData(new ReadOnlySpan<MaterialRenderOptions>(matOptions));
+            ubo.BufferSingleData(matOptions);
             
             // Bind the albedo texture to texture unit 0
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);

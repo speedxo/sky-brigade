@@ -44,7 +44,7 @@ namespace SkyBrigade.Engine.Rendering.Effects.Components
 
         public virtual void Draw(float dt, RenderOptions? options = null)
         {
-
+            
         }
     }
 }

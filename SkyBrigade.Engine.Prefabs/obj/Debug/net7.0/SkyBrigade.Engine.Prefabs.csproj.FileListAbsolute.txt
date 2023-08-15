@@ -54,3 +54,8 @@ C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Engine.Prefabs/obj/De
 C:/Users/bogda/source/repos/speedxo/sky-brigade/SkyBrigade.Engine.Prefabs/obj/Debug/net7.0/ref/SkyBrigade.Engine.Prefabs.dll
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/DemoEffectStack/stage0.frag
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/DemoEffectStack/stage1.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/fbo_shader/basic.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/fbo_shader/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/DemoEffectStack/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/effects/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/bin/Debug/net7.0/Assets/effects/basicStage.frag

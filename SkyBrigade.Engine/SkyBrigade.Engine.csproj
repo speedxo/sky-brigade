@@ -46,6 +46,13 @@
     <None Remove="Rendering\Effects\Components\" />
     <None Remove="Assets\DemoEffectStack\" />
     <None Remove="Assets\DemoEffectStack\stage1.frag" />
+    <None Remove="Assets\fbo_shader\" />
+    <None Remove="Assets\fbo_shader\basic.frag" />
+    <None Remove="Assets\fbo_shader\basic.vert" />
+    <None Remove="Assets\DemoEffectStack\basic.vert" />
+    <None Remove="Assets\effects\" />
+    <None Remove="Assets\effects\basicStage.frag" />
+    <None Remove="Assets\effects\basic.vert" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -64,6 +71,8 @@
     <Folder Include="Rendering\Effects\" />
     <Folder Include="Rendering\Effects\Components\" />
     <Folder Include="Assets\DemoEffectStack\" />
+    <Folder Include="Assets\fbo_shader\" />
+    <Folder Include="Assets\effects\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />
@@ -115,9 +124,27 @@
     <Content Include="Assets\DemoEffectStack\stage1.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\fbo_shader\basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\fbo_shader\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\DemoEffectStack\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\effects\basicStage.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\effects\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\DemoEffectStack\stage0.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\effects\basic.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

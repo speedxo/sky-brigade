@@ -19,6 +19,11 @@ namespace SkyBrigade.Engine.Dialogs
         public string Name { get; set; } = "Open File Dialog";
 
         /// <summary>
+        /// Gets or sets this entities enable flag.
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
         /// The total number of components.
         /// </summary>
         public int TotalComponents { get => Components.Count + Entities.Sum(e => e.TotalComponents); }

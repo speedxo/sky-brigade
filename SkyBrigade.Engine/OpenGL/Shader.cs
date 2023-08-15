@@ -42,7 +42,7 @@ public class Shader : IDisposable
         int location = GetUniformLocation(name);
         if (location == -1) // If GetUniformLocation returns -1, the uniform is not found.
         {
-            GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
+            //GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
             return;
         }
 

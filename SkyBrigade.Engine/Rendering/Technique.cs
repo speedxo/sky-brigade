@@ -1,12 +1,13 @@
 ﻿using System;
 using SkyBrigade.Engine.GameEntity;
+using SkyBrigade.Engine.OpenGL;
 using SkyBrigade.Engine.Rendering.Effects.Components;
 
 namespace SkyBrigade.Engine.Rendering
 {
     public class Technique : Entity
 	{
-        public ShaderComponent Shader { get; init; }
+        public ShaderComponent Shader { get; set; }
         public UniformBufferManager BufferManager { get; init; }
 
         public void SetUniform(string name, object? value) => Shader.SetUniform(name, value);
@@ -19,11 +20,16 @@ namespace SkyBrigade.Engine.Rendering
             ));
             BufferManager = AddComponent(new UniformBufferManager(Shader));
         }
+        public Technique(Shader shader)
+        {
+            Shader = AddComponent(new ShaderComponent(shader));
+            BufferManager = AddComponent(new UniformBufferManager(Shader));
+        }
 
         public void Use()
         {
             Shader.Use();
-            //BufferManager.Use();
+            BufferManager.Use();
         }
 
         public void End()

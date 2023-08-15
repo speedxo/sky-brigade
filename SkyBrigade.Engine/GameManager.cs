@@ -9,6 +9,7 @@ using SkyBrigade.Engine.Debugging;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.Input;
 using SkyBrigade.Engine.Logging;
+using SkyBrigade.Engine.OpenGL;
 using SkyBrigade.Engine.Rendering;
 
 // Namespace declaration for the GameManager class
@@ -18,7 +19,7 @@ namespace SkyBrigade.Engine;
 /// <summary>
 /// The GameManager class manages the main game loop and essential components for a game.
 /// </summary>
-public class GameManager : Scene
+public class GameManager : Entity, IDisposable
 {
     // Singleton pattern: Lazy initialization of a single instance of the GameManager class
     private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
@@ -39,6 +40,11 @@ public class GameManager : Scene
     /// Gets the unified debugger class for debugging game elements.
     /// </summary>
     public Debugger Debugger { get; private set; }
+
+    /// <summary>
+    /// The viewport size.
+    /// </summary>
+    public Vector2 ViewportSize { get; private set; }
 
     /// <summary>
     /// Gets the OpenGL context used for rendering.
@@ -131,8 +137,15 @@ public class GameManager : Scene
         };
         Window.Load += onLoad;
         Window.Closing += Window_Closing;
+        Window.Resize += Window_Resize;
 
         return this;
+    }
+
+    private void Window_Resize(Silk.NET.Maths.Vector2D<int> obj)
+    {
+        ViewportSize = new Vector2(obj.X, obj.Y);
+        FrameBufferManager.ResizeAll(obj.X, obj.Y);
     }
 
     public void Run()
@@ -180,11 +193,14 @@ public class GameManager : Scene
         // Load the debugger.
         Debugger = AddEntity<Debugger>();
 
+        ViewportSize = new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y);
+
         // Initialize the GameScreenManager and set the initial game screen.
         GameScreenManager = AddEntity<GameScreenManager>();
         GameScreenManager.AddInstance<Scene>((Scene)Activator.CreateInstance(initialGameScreen));
 
         Gl.Enable(EnableCap.VertexArray);
+
     }
 
     private void LoadImGuiStyle()
@@ -284,7 +300,7 @@ public class GameManager : Scene
         imguiController.Render();
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
         ContentManager.Dispose();
         GameScreenManager.Dispose();

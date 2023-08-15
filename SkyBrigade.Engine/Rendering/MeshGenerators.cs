@@ -73,15 +73,15 @@ namespace SkyBrigade.Engine.Rendering
             return new MeshData
             {
                 Vertices = new Vertex[] {
-                    new Vertex(-1, -1, 0, 0, 1),
-                    new Vertex(1, -1, 0, 1, 1),
-                    new Vertex(1, 1, 0, 1, 0),
-                    new Vertex(-1, 1, 0, 0, 0)
+                    new Vertex(-1, -1, 0, 0, 0),
+                    new Vertex(1, -1, 0, 1, 0),
+                    new Vertex(1, 1, 0, 1, 1),
+                    new Vertex(-1, 1, 0, 0, 1)
                     },
                 Elements = new uint[] {
                     0, 1, 3,
                     1, 2, 3
-                    }
+                }
             };
         }
 

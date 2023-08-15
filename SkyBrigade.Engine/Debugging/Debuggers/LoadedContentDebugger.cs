@@ -52,7 +52,9 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
                 foreach (var texture in ContentManager.GetTextures())
                 {
-                    if (texture.Name is null) continue;
+                    texture.Name ??= texture.Handle.ToString();
+
+                    //if (texture.Name is null) continue;
 
                     ImGui.BeginGroup();
 

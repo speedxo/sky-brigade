@@ -1,6 +1,6 @@
-﻿layout(std140) uniform WaveStage
+﻿layout(std140) uniform BasicStage
 {
-    float WaveStage_iTime;
+    float iTime;
 };
 
 ShaderData ShaderStage(ShaderData data)

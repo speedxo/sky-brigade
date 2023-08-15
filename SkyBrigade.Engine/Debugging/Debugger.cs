@@ -16,12 +16,14 @@ namespace SkyBrigade.Engine.Debugging
         public RenderOptionsDebugger RenderOptionsDebugger { get; init; }
         public SceneEntityDebugger SceneEntityDebugger { get; init; }
         public LoadedContentDebugger LoadedContentDebugger { get; init; }
+        public DockedGameContainerDebugger GameContainerDebugger { get; init; }
 
         public Debugger()
         {
             RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>();
             SceneEntityDebugger = AddComponent<SceneEntityDebugger>();
             LoadedContentDebugger = AddComponent<LoadedContentDebugger>();
+            GameContainerDebugger = AddComponent<DockedGameContainerDebugger>();
         }
 
         public override void Draw(float dt, RenderOptions? renderOptions = null)

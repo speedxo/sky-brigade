@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.GameEntity.Components;
 using SkyBrigade.Engine.Rendering;
+using SkyBrigade.Engine.Rendering.Effects;
 
 namespace SkyBrigade.Engine.Debugging.Debuggers
 {
@@ -30,7 +31,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
             if (ImGui.Begin("Scene Tree"))
             {
-                var mainNode = DebugInstance ? GameManager.Instance : GameManager.Instance.GameScreenManager.GetCurrentInstance();
+                Entity mainNode = DebugInstance ? GameManager.Instance : GameManager.Instance.GameScreenManager.GetCurrentInstance();
 
                 ImGui.Text($"Total Entities: {mainNode.TotalEntities}");
                 ImGui.Text($"Total Components: {mainNode.TotalComponents}");

@@ -8,7 +8,6 @@ namespace SkyBrigade.Engine.OpenGL;
 public class Texture : IDisposable
 {
     public uint Handle { get; }
-    private GL _gl;
     public string? Path { get; init; }
     public string? Name { get; internal set; }
 
@@ -17,16 +16,14 @@ public class Texture : IDisposable
     public int Width { get; init; }
     public int Height { get; init; }
 
-    public unsafe Texture(GL gl, string path)
+    public unsafe Texture(string path)
     {
         var fileName = System.IO.Path.GetFileName(path);
         var lastFolder = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(path));
 
         Path = System.IO.Path.Combine(lastFolder, fileName);
 
-        _gl = gl;
-
-        Handle = _gl.GenTexture();
+        Handle = GameManager.Instance.Gl.GenTexture();
         Bind();
 
         //Loading an image using imagesharp.
@@ -36,7 +33,7 @@ public class Texture : IDisposable
             Height = img.Height;
 
             //Reserve enough memory from the gpu for the whole image
-            gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+            GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
 
             int y = 0;
             img.ProcessPixelRows(accessor =>
@@ -47,7 +44,7 @@ public class Texture : IDisposable
                     fixed (void* data = accessor.GetRowSpan(y))
                     {
                         //Loading the actual image.
-                        gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                        GameManager.Instance.Gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
                     }
                 }
             });
@@ -58,23 +55,36 @@ public class Texture : IDisposable
 
         GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture[{Handle}] loaded from file '{path}'!");
     }
-    public unsafe Texture(GL gl, Span<byte> data, uint width, uint height)
-    {
-        //Saving the gl instance.
-        _gl = gl;
 
+    public Texture(uint handle)
+    {
+        this.Handle = handle;
+        this.Path = "";
+
+        Bind();
+        int textureWidth, textureHeight;
+        GameManager.Instance.Gl.GetTexLevelParameter(TextureTarget.Texture2D, 0, GetTextureParameter.TextureWidth, out textureWidth);
+        GameManager.Instance.Gl.GetTexLevelParameter(TextureTarget.Texture2D, 0, GetTextureParameter.TextureHeight, out textureHeight);
+        UnBind();
+
+        this.Width = textureWidth;
+        this.Height = textureHeight;
+    }
+
+    public unsafe Texture(Span<byte> data, uint width, uint height)
+    {
         Width = (int)width;
         Height = (int)height;
 
         //Generating the opengl handle;
-        Handle = _gl.GenTexture();
+        Handle = GameManager.Instance.Gl.GenTexture();
         Bind();
 
         //We want the ability to create a texture using data generated from code aswell.
         fixed (void* d = &data[0])
         {
             //Setting the data of a texture.
-            _gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
+            GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
             SetParameters();
         }
     }
@@ -82,27 +92,32 @@ public class Texture : IDisposable
     private void SetParameters()
     {
         //Setting some texture perameters so the texture behaves as expected.
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.NearestMipmapNearest);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
+        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
+        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
+        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.NearestMipmapNearest);
+        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
+        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
         //Generating mipmaps.
-        _gl.GenerateMipmap(TextureTarget.Texture2D);
+        GameManager.Instance.Gl.GenerateMipmap(TextureTarget.Texture2D);
     }
 
     public void Bind(TextureUnit textureSlot = TextureUnit.Texture0)
     {
         //When we bind a texture we can choose which textureslot we can bind it to.
-        _gl.ActiveTexture(textureSlot);
-        _gl.BindTexture(TextureTarget.Texture2D, Handle);
+        GameManager.Instance.Gl.ActiveTexture(textureSlot);
+        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, Handle);
+    }
+
+    public void UnBind()
+    {
+        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, 0);
     }
 
     public void Dispose()
     {
         //In order to dispose we need to delete the opengl handle for the texure.
-        _gl.DeleteTexture(Handle);
+        GameManager.Instance.Gl.DeleteTexture(Handle);
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Texture[{Handle}] destroyed!");
         GC.SuppressFinalize(this);
     }

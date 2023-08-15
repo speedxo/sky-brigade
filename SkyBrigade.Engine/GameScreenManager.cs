@@ -23,6 +23,11 @@ namespace SkyBrigade.Engine
         public int TotalComponents { get => Components.Count + Instances.Values.Sum(e => e.TotalComponents); }
 
         /// <summary>
+        /// Gets or sets this entities enable flag.
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
         /// The total sum of entities including their children.
         /// </summary>
         public int TotalEntities { get => Entities.Count + Instances.Values.Sum(e => e.TotalEntities); }

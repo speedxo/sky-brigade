@@ -14,17 +14,20 @@ namespace SkyBrigade.Engine.Content
         private Dictionary<string, Shader> namedShaders;
         private Dictionary<string, Texture> unnamedTextures;
         private Dictionary<string, Shader> unnamedShaders;
-
+        private List<Texture> unmanagedTextures;
 
         public ContentManager()
         {
             namedTextures = new Dictionary<string, Texture>();
             namedShaders = new Dictionary<string, Shader>();
+
             unnamedShaders = new Dictionary<string, Shader>();
             unnamedTextures = new Dictionary<string, Texture>();
+
+            unmanagedTextures = new List<Texture>();
         }
 
-        public int TotalTextures { get => namedTextures.Count + unnamedTextures.Count; }
+        public int TotalTextures { get => namedTextures.Count + unnamedTextures.Count + unmanagedTextures.Count; }
         public int TotalShaders { get => namedShaders.Count + unnamedShaders.Count; }
 
         public IEnumerable<Texture> GetTextures()
@@ -35,6 +38,11 @@ namespace SkyBrigade.Engine.Content
             }
 
             foreach (var texture in unnamedTextures.Values)
+            {
+                yield return texture;
+            }
+
+            foreach (var texture in unmanagedTextures)
             {
                 yield return texture;
             }
@@ -63,7 +71,7 @@ namespace SkyBrigade.Engine.Content
 
             if (!unnamedTextures.TryGetValue(internedPath, out var texture))
             {
-                texture = new Texture(GameManager.Instance.Gl, internedPath);
+                texture = new Texture(internedPath);
                 unnamedTextures.TryAdd(texture.Path, texture);
             }
             else
@@ -90,7 +98,7 @@ namespace SkyBrigade.Engine.Content
             string internedPath = string.Intern(path);
 
             if (File.Exists(internedPath))
-                return GenerateNamedTexture(internedName, new Texture(GameManager.Instance.Gl, internedPath));
+                return GenerateNamedTexture(internedName, new Texture(internedPath));
 
             return GenerateNamedTexture(internedName, GetTexture("debug"));
         }
@@ -98,7 +106,7 @@ namespace SkyBrigade.Engine.Content
         public Texture GenerateNamedTexture(string name, Span<byte> data, uint w, uint h)
         {
             string internedName = string.Intern(name);
-            return GenerateNamedTexture(internedName, new Texture(GameManager.Instance.Gl, data, w, h));
+            return GenerateNamedTexture(internedName, new Texture(data, w, h));
         }
 
         public Texture GetTexture(string name)
@@ -197,6 +205,10 @@ namespace SkyBrigade.Engine.Content
                     foreach (var item in unnamedShaders.Values)
                         item.Dispose();
                     unnamedShaders.Clear();
+
+                    foreach (var item in unmanagedTextures)
+                        item.Dispose();
+                    unmanagedTextures.Clear();
                 }
 
                 disposed = true;
@@ -227,6 +239,19 @@ namespace SkyBrigade.Engine.Content
             if (!namedShaders.Remove(name, out var shader))
                 GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Shader({name})");
             else shader?.Dispose();
+        }
+
+        public Texture AddUnmanagedTexture(uint texture)
+        {
+            unmanagedTextures.Add(new Texture(texture));
+
+            return unmanagedTextures.Last();
+        }
+
+        public Texture AddTexture(Texture texture)
+        {
+            unnamedTextures.TryAdd(texture.Handle.ToString(), texture);
+            return unnamedTextures[texture.Handle.ToString()];
         }
     }
 }

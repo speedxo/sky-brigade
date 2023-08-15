@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6FzNY4ZA52KN60kGPWVw0s3VJwmK/F5Nyp9mcU0E71iFuZxFjUaRleLETbqmKB8jkk5GLJowIG+iy/Ov/ROxhQ==",
+  "dgSpecHash": "xFjL3/yxNsSz9g9VF3jrkkw9MSbnnQoZ00TVPtMu9INRt0o5YwrOi+SfeWM5S0UYuECV7Jsub4eT6WaW4Q0nOg==",
   "success": true,
   "projectFilePath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
   "expectedPackageFiles": [
@@ -18,8 +18,6 @@
     "/Users/bogz/.nuget/packages/microsoft.extensions.logging.abstractions/7.0.0-preview.1.22076.8/microsoft.extensions.logging.abstractions.7.0.0-preview.1.22076.8.nupkg.sha512",
     "/Users/bogz/.nuget/packages/microsoft.extensions.options/7.0.0-preview.1.22076.8/microsoft.extensions.options.7.0.0-preview.1.22076.8.nupkg.sha512",
     "/Users/bogz/.nuget/packages/microsoft.extensions.primitives/7.0.0-preview.1.22076.8/microsoft.extensions.primitives.7.0.0-preview.1.22076.8.nupkg.sha512",
-    "/Users/bogz/.nuget/packages/microsoft.net.illink.analyzers/7.0.100-1.23211.1/microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
-    "/Users/bogz/.nuget/packages/microsoft.net.illink.tasks/7.0.100-1.23211.1/microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
     "/Users/bogz/.nuget/packages/microsoft.win32.systemevents/7.0.0/microsoft.win32.systemevents.7.0.0.nupkg.sha512",
     "/Users/bogz/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
     "/Users/bogz/.nuget/packages/silk.net/2.17.1/silk.net.2.17.1.nupkg.sha512",
@@ -53,9 +51,7 @@
     "/Users/bogz/.nuget/packages/system.text.encodings.web/7.0.0/system.text.encodings.web.7.0.0.nupkg.sha512",
     "/Users/bogz/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512",
     "/Users/bogz/.nuget/packages/ultz.native.glfw/3.3.9.1/ultz.native.glfw.3.3.9.1.nupkg.sha512",
-    "/Users/bogz/.nuget/packages/ultz.native.sdl/2.24.3.1/ultz.native.sdl.2.24.3.1.nupkg.sha512",
-    "/Users/bogz/.nuget/packages/microsoft.netcore.app.ref/7.0.9/microsoft.netcore.app.ref.7.0.9.nupkg.sha512",
-    "/Users/bogz/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.9/microsoft.aspnetcore.app.ref.7.0.9.nupkg.sha512"
+    "/Users/bogz/.nuget/packages/ultz.native.sdl/2.24.3.1/ultz.native.sdl.2.24.3.1.nupkg.sha512"
   ],
   "logs": []
 }

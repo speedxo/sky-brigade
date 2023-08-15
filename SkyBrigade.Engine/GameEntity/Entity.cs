@@ -19,7 +19,12 @@ namespace SkyBrigade.Engine.GameEntity
         /// <summary>
         /// The unique ID for this entity.
         /// </summary>
-        public int ID { get; set; } 
+        public int ID { get; set; }
+
+        /// <summary>
+        /// Gets or sets this entities enable flag.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// Human readable name for this entity.
@@ -179,12 +184,13 @@ namespace SkyBrigade.Engine.GameEntity
         /// <param name="dt">Delta time.</param>
         public virtual void Update(float dt)
         {
+            if (!Enabled) return;
+
             foreach (var item in Components.Values)
                 item.Update(dt);
 
             for (int i = 0; i < Entities.Count; i++)            
                 Entities[i].Update(dt);
-            
         }
 
         /// <summary>
@@ -194,6 +200,8 @@ namespace SkyBrigade.Engine.GameEntity
         /// <param name="renderOptions">Render options (optional).</param>
         public virtual void Draw(float dt, RenderOptions? renderOptions = null)
         {
+            if (!Enabled) return;
+
             for (int i = 0; i < Components.Count; i++)
                 Components.Values.ElementAt(i).Draw(dt, renderOptions);
 

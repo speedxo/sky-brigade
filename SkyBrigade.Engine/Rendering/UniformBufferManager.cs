@@ -2,18 +2,19 @@
 using SkyBrigade.Engine.GameEntity.Components;
 using SkyBrigade.Engine.OpenGL;
 using SkyBrigade.Engine.Rendering.Effects.Components;
+using System.Collections.Generic;
 
 namespace SkyBrigade.Engine.Rendering
 {
     [RequiresComponent(typeof(ShaderComponent))]
     public class UniformBufferManager : IGameComponent
     {
-        public Dictionary<string, UniformBufferObject> BufferObjects { get; private set; }
+        private readonly Dictionary<string, UniformBufferObject> _bufferObjects = new Dictionary<string, UniformBufferObject>();
 
         public string Name { get; set; }
         public Entity Parent { get; set; }
 
-        public Shader Shader { get; private set; }
+        public Shader Shader { get; set; }
 
         public UniformBufferManager()
         {
@@ -21,47 +22,47 @@ namespace SkyBrigade.Engine.Rendering
 
         public UniformBufferManager(Shader shader)
         {
-            this.Shader = shader;
+            Shader = shader;
         }
 
         public void Initialize()
         {
             Shader ??= Parent.GetComponent<ShaderComponent>();
-            BufferObjects = new Dictionary<string, UniformBufferObject>();
         }
 
         public UniformBufferObject GetBuffer(string bindingPoint)
         {
-            if (BufferObjects.ContainsKey(bindingPoint))
-                return BufferObjects[bindingPoint];
+            if (_bufferObjects.TryGetValue(bindingPoint, out var buffer))
+            {
+                return buffer;
+            }
 
-            // TODO: something better
-            var buffer = new UniformBufferObject(Shader, bindingPoint);
-
+            buffer = new UniformBufferObject(Shader, bindingPoint);
             Shader.Use();
             buffer.BindToBindingPoint();
             Shader.End();
 
-            BufferObjects.Add(bindingPoint, buffer);
+            _bufferObjects.Add(bindingPoint, buffer);
 
             return buffer;
         }
 
         public void Use()
         {
-            foreach (var (_, item) in BufferObjects)
+            foreach (var item in _bufferObjects.Values)
+            {
                 item.BindToBindingPoint();
+            }
         }
 
         public void Update(float dt)
         {
-
+            // Update logic here if needed
         }
 
         public void Draw(float dt, RenderOptions? options = null)
         {
-            
+            // Drawing logic here if needed
         }
     }
 }
-

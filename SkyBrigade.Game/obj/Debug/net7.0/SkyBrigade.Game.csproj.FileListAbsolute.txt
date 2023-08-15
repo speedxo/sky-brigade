@@ -169,3 +169,8 @@ C:/Dev/sky-brigade/SkyBrigade/SkyBrigade.Game/obj/Debug/net7.0/ref/SkyBrigade.Ga
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Silk.NET.OpenCL.dll
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/DemoEffectStack/stage0.frag
 /Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/DemoEffectStack/stage1.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/fbo_shader/basic.frag
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/fbo_shader/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/DemoEffectStack/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/effects/basic.vert
+/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/bin/Debug/net7.0/Assets/effects/basicStage.frag

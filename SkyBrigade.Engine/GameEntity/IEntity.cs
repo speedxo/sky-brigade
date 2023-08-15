@@ -11,6 +11,7 @@ public interface IEntity : IDrawable, IUpdateable
     public string Name { get; set; }
     public int TotalEntities { get; }
     public int TotalComponents { get; }
+    public bool Enabled { get; set; }
 
     public IEntity? Parent { get; set; }
     public List<IEntity> Entities { get; set; }

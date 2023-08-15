@@ -7,6 +7,7 @@ using SkyBrigade.Engine.Rendering.Shapes;
 using SkyBrigade.Engine.Prefabs.Character;
 using SkyBrigade.Engine.OpenGL;
 using SkyBrigade.Engine.Rendering.Effects;
+using SkyBrigade.Engine.Rendering.Effects.Components;
 
 namespace SkyBrigade.Game;
 
@@ -16,7 +17,10 @@ internal class DemoGameScreen : Scene
     private CharacterController character;
 
     public DemoGameScreen()
+        :base()
     {
+        InitializeRenderingPipeline();
+
         GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
         GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
 
@@ -34,23 +38,25 @@ internal class DemoGameScreen : Scene
 
         GameManager.Instance.Debugger.Enabled = true;
 
+    }
 
-        EffectStack stack = new EffectStack(new Effect(File.ReadAllText("Assets/DemoEffectStack/stage0.frag")),
-            new Effect(File.ReadAllText("Assets/DemoEffectStack/stage1.frag")));
+    protected override Effect[] GeneratePostProccessingEffects()
+    {
+        return new[] { new FlashingEffect() };
     }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.Window.FramebufferSize.X, (uint)GameManager.Instance.Window.FramebufferSize.Y);
-
-        var options = renderOptions ?? RenderOptions.Default;
-
-        base.Draw(dt, options with
+        var options = (renderOptions ?? RenderOptions.Default) with
         {
             Camera = character.Camera
-        });
-        
+        };
+
+        base.Draw(dt, options);
+    }
+
+    public override void DrawGui(float dt)
+    {
         if (ImGui.Begin("Debug"))
         {
             ImGui.Text($"Memory Consumption: {float.Round(GC.GetTotalMemory(false) / 1024.0f / 1024, 2)}MB");
@@ -74,7 +80,10 @@ internal class DemoGameScreen : Scene
     {
         base.Update(dt);
 
-        memoryTracker.Update(GC.GetTotalMemory(false) / 1024.0f);
+        memoryTracker.Update(GC.GetTotalMemory(false) / 1024.0f / 1024.0f);
+
+        if (GameManager.Instance.InputManager.WasPressed(Engine.Input.VirtualAction.Interact))
+            GameManager.Instance.Debugger.Enabled = !GameManager.Instance.Debugger.Enabled;
     }
 
 
