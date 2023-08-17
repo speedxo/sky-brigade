@@ -84,10 +84,23 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
                     if (ImGui.TreeNodeEx(component.Name ??= component.GetType().Name))
                     {
-                        DrawProperties(component, 1);
+                        if (ImGui.BeginPopupContextItem($"{component.Name}"))
+                        {
+                            if (ImGui.MenuItem("Delete"))
+                            {
+                                entity.Components.Remove(component.GetType());
+                                // TODO: some kind of disposing.
 
+                                ImGui.CloseCurrentPopup();
+                            }
+
+                            ImGui.EndPopup();
+                        }
+
+                        DrawProperties(component, 1);
                         ImGui.TreePop();
                     }
+                   
                 }
 
                 for (int i = 0; i < entity.Entities.Count; i++)

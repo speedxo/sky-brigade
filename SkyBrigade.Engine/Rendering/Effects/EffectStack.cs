@@ -13,7 +13,9 @@ namespace SkyBrigade.Engine.Rendering.Effects
         public List<Effect> Effects { get; private init; }
 
         public UniformBufferManager BufferManager => Technique.BufferManager;
-        public Technique Technique { get; private init; }
+
+        public Technique Technique { get; init; }
+
 
         private static readonly string ShaderStageData = @"
 struct ShaderData {
@@ -32,17 +34,32 @@ uniform sampler2D uDepth;
         private static string FinalFragmentMethod(int finalIndex)
         {
             var sb = new StringBuilder();
-            for (var i = finalIndex; i >= 0; i--)
-            {
-                sb.Append($"ShaderStage_{i}(");
-            }
-            sb.Append("ShaderData(texture(uAlbedo, texCoords), texture(uDepth, texCoords))");
-            for (var i = 0; i <= finalIndex; i++)
-            {
-                sb.Append(')');
-            }
 
-            return $@"
+            if (finalIndex < 0)
+            {
+                GameManager.Instance.Logger.Log(Logging.LogLevel.Warning, "An empty EffectStack was created!");
+                return $@"
+out vec4 FinalFragColor;
+
+void main()
+{{
+    FinalFragColor = texture(uAlbedo, texCoords);
+}}
+";
+            }
+            else
+            {
+                for (var i = finalIndex; i >= 0; i--)
+                {
+                    sb.Append($"ShaderStage_{i}(");
+                }
+                sb.Append("ShaderData(texture(uAlbedo, texCoords), texture(uDepth, texCoords))");
+                for (var i = 0; i <= finalIndex; i++)
+                {
+                    sb.Append(')');
+                }
+
+                return $@"
 out vec4 FinalFragColor;
 
 void main()
@@ -50,13 +67,14 @@ void main()
     FinalFragColor = {sb}.FragColor;
 }}
 ";
+            }
         }
 
         public EffectStack(string vertexPath = "", params Effect[] effects)
         {
+            // Default state is empty
             Enabled = effects != null && effects.Length > 0;
-
-            Effects = new List<Effect>(effects);
+            Effects = new List<Effect>(effects ?? Array.Empty<Effect>());
 
             var fragmentSource = GenerateShader();
             File.WriteAllText("shader.frag", fragmentSource);
@@ -85,8 +103,8 @@ layout (location = 0) in vec3 vPos;
 layout (location = 1) in vec3 vNorm;
 layout (location = 2) in vec2 vTexCoords;
 
-uniform mat4 uView;
-uniform mat4 uProjection;
+//uniform mat4 uView;
+//uniform mat4 uProjection;
 uniform mat4 uModel;
 
 out vec2 texCoords;
@@ -96,7 +114,7 @@ void main()
     texCoords = vTexCoords;
 
     // Trying to understand the universe through vertex manipulation!
-    gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
+    gl_Position = /*uProjection * uView */ uModel * vec4(vPos, 1.0);
 }";
         }
 

@@ -12,6 +12,8 @@ namespace SkyBrigade.Engine.Rendering
 
         public void SetUniform(string name, object? value) => Shader.SetUniform(name, value);
 
+        public static Technique Default { get; private set; } = new Technique(OpenGL.Shader.Default);
+
 		public Technique(string path, string name)
 		{
             Shader = AddComponent(new ShaderComponent(

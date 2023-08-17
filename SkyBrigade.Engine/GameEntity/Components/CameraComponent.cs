@@ -85,7 +85,7 @@ namespace SkyBrigade.Engine.GameEntity.Components
 
             UpdateMouse();
             View = Matrix4x4.CreateLookAt(Transform.Position, Transform.Position + Transform.Front, CameraUp);
-            Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.Window.FramebufferSize.X / (float)GameManager.Instance.Window.FramebufferSize.Y, 0.1f, 100.0f);
+            Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.ViewportSize.X / (float)GameManager.Instance.ViewportSize.Y, 0.1f, 100.0f);
         }
     }
 }

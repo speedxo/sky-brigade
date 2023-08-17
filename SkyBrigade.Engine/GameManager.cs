@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Runtime.InteropServices;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
@@ -47,6 +48,11 @@ public class GameManager : Entity, IDisposable
     public Vector2 ViewportSize { get; private set; }
 
     /// <summary>
+    /// The window size.
+    /// </summary>
+    public Vector2 WindowSize { get; private set; }
+
+    /// <summary>
     /// Gets the OpenGL context used for rendering.
     /// </summary>
     public GL Gl { get; private set; }
@@ -86,6 +92,21 @@ public class GameManager : Entity, IDisposable
     /// </summary>
     public Logger Logger { get; private set; }
 
+    /// <summary>
+    /// The current operating system information.
+    /// </summary>
+    public static class OperatingSystem
+    {
+        public static bool IsWindows() =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+        public static bool IsMacOS() =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+
+        public static bool IsLinux() =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+    }
+
     #endregion Public Properties
     #region Private Properties
 
@@ -93,7 +114,6 @@ public class GameManager : Entity, IDisposable
     private Type initialGameScreen;
     private float oneSecondTimer;
     private List<Entity> entities;
-
     #endregion Private Properties
 
     /// <summary>
@@ -127,12 +147,15 @@ public class GameManager : Entity, IDisposable
         this.Window = Silk.NET.Windowing.Window.Create(options);
 
         // Register event handlers for the window.
-        Window.Render += (delta) => {
-            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with {
+        Window.Render += (delta) =>
+        {
+            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with
+            {
                 GL = Gl
             });
         };
-        Window.Update += (delta) => {
+        Window.Update += (delta) =>
+        {
             Update((float)delta);
         };
         Window.Load += onLoad;
@@ -144,8 +167,7 @@ public class GameManager : Entity, IDisposable
 
     private void Window_Resize(Silk.NET.Maths.Vector2D<int> obj)
     {
-        ViewportSize = new Vector2(obj.X, obj.Y);
-        FrameBufferManager.ResizeAll(obj.X, obj.Y);
+        FrameBufferManager.ResizeAll((int)ViewportSize.X, (int)ViewportSize.Y);
     }
 
     public void Run()
@@ -193,16 +215,22 @@ public class GameManager : Entity, IDisposable
         // Load the debugger.
         Debugger = AddEntity<Debugger>();
 
-        ViewportSize = new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y);
+        UpdateViewport();
 
         // Initialize the GameScreenManager and set the initial game screen.
         GameScreenManager = AddEntity<GameScreenManager>();
         GameScreenManager.AddInstance<Scene>((Scene)Activator.CreateInstance(initialGameScreen));
 
         Gl.Enable(EnableCap.VertexArray);
+        for (int i = 0; i < Input.Mice.Count; i++)
+            Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
 
     }
-
+    private void UpdateViewport()
+    {
+        WindowSize = new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y);
+        ViewportSize = (Debugger.Enabled && Debugger.GameContainerDebugger.Visible) ? new Vector2(Debugger.GameContainerDebugger.FrameBuffer.Width, Debugger.GameContainerDebugger.FrameBuffer.Height) : (new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y));
+    }
     private void LoadImGuiStyle()
     {
         ImGuiStylePtr style = ImGui.GetStyle();
@@ -250,6 +278,36 @@ public class GameManager : Entity, IDisposable
     // Method to load essential assets required for the game.
     private void LoadEssentialAssets()
     {
+        ContentManager.GenerateNamedShader("default", OpenGL.Shader.CompileShaderFromSource(@"#version 410 core
+
+layout (location = 0) in vec3 vPos;
+layout (location = 1) in vec3 vNorm;
+layout (location = 2) in vec2 vTexCoords;
+
+uniform mat4 uView;
+uniform mat4 uProjection;
+uniform mat4 uModel;
+
+out vec2 texCoords;
+
+void main()
+{
+    texCoords = vTexCoords;
+
+    // Trying to understand the universe through vertex manipulation!
+    gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
+}", @"#version 410 core
+out vec4 FinalFragColor;
+
+in vec2 texCoords;
+
+uniform sampler2D uAlbedo;
+
+void main()
+{{
+    FinalFragColor = texture(uAlbedo, texCoords);
+}}
+"));
         ContentManager.GenerateNamedShader("material_basic", "Assets/material_shader/basic.vert", "Assets/material_shader/basic.frag");
         ContentManager.GenerateNamedShader("basic", "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag");
         ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
@@ -262,7 +320,7 @@ public class GameManager : Entity, IDisposable
     // Variables and method used for non-essential updates that run once per second.
     public override void Update(float dt)
     {
-        base.Update(dt);
+        Debugger.PerformanceDebugger.UpdateStart();
 
         if (InputManager.WasPressed(VirtualAction.Pause))
         {
@@ -277,6 +335,11 @@ public class GameManager : Entity, IDisposable
             oneSecondTimer = 0.0f;
             nonEssentialUpdate();
         }
+
+        UpdateViewport();
+
+        base.Update(dt);
+        Debugger.PerformanceDebugger.UpdateEnd();
     }
 
     // Update method for non-essential tasks, such as measuring memory usage.
@@ -287,6 +350,8 @@ public class GameManager : Entity, IDisposable
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
+        Debugger.PerformanceDebugger.RenderStart();
+
         // Make sure ImGui is up-to-date before rendering.
         imguiController.Update(dt);
 
@@ -298,6 +363,7 @@ public class GameManager : Entity, IDisposable
 
         // Render ImGui UI on top of the game screen.
         imguiController.Render();
+        Debugger.PerformanceDebugger.RenderEnd();
     }
 
     public void Dispose()

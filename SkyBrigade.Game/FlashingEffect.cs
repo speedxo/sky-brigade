@@ -10,7 +10,6 @@ internal class FlashingEffect : Effect
         public float FlashingStage_iTime { get; set; }
     }
 
-    private float iTime = 0.0f;
     private FlashingStage data = default;
 
     public FlashingEffect() :

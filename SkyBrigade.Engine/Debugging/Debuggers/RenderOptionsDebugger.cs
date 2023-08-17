@@ -16,6 +16,7 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
         private float gamma, ambientStrength;
         private string[] renderModes;
         private int renderModeIndex;
+        private bool isPostProcessingEnabled;
 
         public void Initialize()
         {
@@ -25,6 +26,8 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
 
             // automatically generate the render modes from the DefferedRenderLayer enum
             renderModes = Enum.GetNames(typeof(DefferedRenderLayer));
+
+            isPostProcessingEnabled = RenderOptions.Default.IsPostProcessingEnabled;
 
             Debugger = Parent as Debugger;
         }
@@ -46,6 +49,8 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 // Listbox to select the render mode.
                 ImGui.Combo("Render Mode", ref renderModeIndex, renderModes, renderModes.Length);
 
+                ImGui.Checkbox("Post Processing", ref isPostProcessingEnabled);
+
                 ImGui.End();
             }
         }
@@ -59,7 +64,8 @@ namespace SkyBrigade.Engine.Debugging.Debuggers
                 DebugOptions = DebugRenderOptions.Default with
                 {
                     DefferedLayer = (DefferedRenderLayer)renderModeIndex
-                }
+                },
+                IsPostProcessingEnabled = isPostProcessingEnabled
             };
         }
     }

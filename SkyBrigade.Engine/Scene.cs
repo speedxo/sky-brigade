@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Diagnostics;
+using System.Xml.Linq;
 using Silk.NET.OpenGL;
 using SkyBrigade.Engine.GameEntity;
 using SkyBrigade.Engine.GameEntity.Components;
@@ -15,6 +16,9 @@ namespace SkyBrigade.Engine;
 /// </summary>
 public abstract class Scene : Entity, IDisposable
 {
+    // again, this is trashy. TODO: fix
+    private static RenderRectangle? defaultSceneRect=null;
+
     public EffectStack PostEffects { get; protected set; }
     public RenderRectangle SceneRect { get; protected set; }
     public FrameBufferObject FrameBuffer { get; protected set; }
@@ -40,6 +44,8 @@ public abstract class Scene : Entity, IDisposable
 
     protected virtual bool InitializeRenderFrame()
     {
+        // yes this is trashy.
+        defaultSceneRect ??= new RenderRectangle(new EffectStack().Technique, FrameBuffer);
         SceneRect = new RenderRectangle(PostEffects.Technique.Shader, FrameBuffer);
         return true;
     }
@@ -67,28 +73,36 @@ public abstract class Scene : Entity, IDisposable
         if (!hasRenderPipelineBeenInitialized)
             GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, "The scenes render pipeline has not been initialized!");
 
-        FrameBuffer.Bind();
-
-        GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
-
         RenderScene(dt, renderOptions);
-
-        FrameBuffer.Unbind();
-
         RenderPost(dt, renderOptions);
-
 
         DrawGui(dt);
     }
 
     public virtual void RenderScene(float dt, RenderOptions? renderOptions = null)
     {
+        //if (options.IsPostProcessingEnabled)
+        //{
+            FrameBuffer.Bind();
+
+            GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GameManager.Instance.Gl.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
+        //}
+        //else
+        //{
+        //    GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+        //    GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        //    GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
+        //}
         for (int i = 0; i < Components.Count; i++)
             Components.Values.ElementAt(i).Draw(dt, renderOptions);
 
         for (int i = 0; i < Entities.Count; i++)
             Entities[i].Draw(dt, renderOptions);
+
+        //if (options.IsPostProcessingEnabled)
+            FrameBuffer.Unbind();
     }
 
     public virtual void RenderPost(float dt, RenderOptions? renderOptions = null)
@@ -97,17 +111,17 @@ public abstract class Scene : Entity, IDisposable
             GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Bind();
 
         GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        if (GameManager.Instance.Debugger.Enabled)
-            GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Width, (uint)GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Height);
-        else
-            GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.ViewportSize.X, (uint)GameManager.Instance.ViewportSize.Y);
+        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.ViewportSize.X, (uint)GameManager.Instance.ViewportSize.Y);
 
-        SceneRect.RenderScene(dt);
+        var options = renderOptions ?? RenderOptions.Default;
+        if (options.IsPostProcessingEnabled)
+            SceneRect.RenderScene(dt);
+        else defaultSceneRect.RenderScene(dt);
 
         if (GameManager.Instance.Debugger.Enabled)
             GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Unbind();
 
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.Window.Size.X * 2, (uint)GameManager.Instance.Window.Size.Y * 2);
+        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
     }
     public virtual void DrawGui(float dt)
     {

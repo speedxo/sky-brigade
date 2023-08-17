@@ -9,7 +9,7 @@ public struct RenderOptions
 {
     // Primative Properties
     public float Gamma { get; set; }
-
+    public bool IsPostProcessingEnabled { get; set; }
     public float AmbientLightingStrength { get; set; }
 
     // Reference Properties
@@ -28,6 +28,7 @@ public struct RenderOptions
         Gamma = 2.2f,
         AmbientLightingStrength = 0.03f,
         DebugOptions = DebugRenderOptions.Default,
+        IsPostProcessingEnabled = true,
         GL = GameManager.Instance.Gl
     };
 }

@@ -12,45 +12,54 @@ namespace SkyBrigade.Engine.Rendering
 	public class RenderRectangle : Entity
 	{
 		public MeshRendererComponent Mesh { get; init; }
-		public ShaderComponent ScreenShader { get; init; }
+		public Technique Technique { get; set; }
 		public FrameBufferObject FrameBuffer { get; init; }
 
 		protected TransformComponent Transform { get; init; }
-		protected Camera Camera;
 
-		public RenderRectangle(Shader screenShader, FrameBufferObject fbo)
+		public RenderRectangle(Technique technique, FrameBufferObject fbo)
 		{
 			FrameBuffer = fbo;
-			ScreenShader = AddComponent(new ShaderComponent(screenShader));
+			Technique = AddEntity(technique);
 
 			Transform = AddComponent<TransformComponent>();
 
 			Mesh = AddComponent<MeshRendererComponent>();
-			Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(ScreenShader));
+			Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(technique));
+        }
+        public RenderRectangle(Shader shader, FrameBufferObject fbo)
+        {
+            FrameBuffer = fbo;
+            Technique = AddEntity(new Technique(shader));
+
+            Transform = AddComponent<TransformComponent>();
+
+            Mesh = AddComponent<MeshRendererComponent>();
+            Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(shader));
         }
 
-		public void RenderScene(float dt)
+        public void RenderScene(float dt)
 		{
-			ScreenShader.Use();
+			Technique.Use();
 
 			if (FrameBuffer.Attachments.TryGetValue(FramebufferAttachment.ColorAttachment0, out uint albedo))
 			{
                 GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
                 GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, albedo);
-                ScreenShader.SetUniform("uAlbedo", 0);
+                Technique.SetUniform("uAlbedo", 0);
             }
 
             if (FrameBuffer.Attachments.TryGetValue(FramebufferAttachment.DepthAttachment, out uint depth))
             {
                 GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture1);
                 GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, depth);
-                ScreenShader.SetUniform("uDepth", 1);
+                Technique.SetUniform("uDepth", 1);
             }
 
             Mesh.Use(RenderOptions.Default);
 			Mesh.Draw(dt);
 
-			ScreenShader.End();
+            Technique.End();
 		}
 
         public override void Draw(float dt, RenderOptions? renderOptions = null)

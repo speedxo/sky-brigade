@@ -6,35 +6,38 @@
 
 public class CircularBuffer<T>
 {
-    public T[] Buffer;
+    private T[] buffer;
     private int startIndex;
-    private int endIndex;
+
+    public int Index { get; private set; }
 
     public int Length { get; private set; }
 
     public CircularBuffer(int capacity)
     {
-        Buffer = new T[capacity];
+        buffer = new T[capacity];
         startIndex = 0;
-        endIndex = -1;
+        Index = -1;
         Length = 0;
     }
 
     public void Append(T value)
     {
-        if (Length == Buffer.Length)
+        if (Length == buffer.Length)
         {
             startIndex = (startIndex + 1) % Buffer.Length;
         }
 
-        endIndex = (endIndex + 1) % Buffer.Length;
-        Buffer[endIndex] = value;
+        Index = (Index + 1) % buffer.Length;
+        buffer[Index] = value;
 
-        if (Length < Buffer.Length)
+        if (Length < buffer.Length)
         {
             Length++;
         }
     }
+
+    public T[] Buffer { get => buffer; }
 
     public T[] ToArray()
     {
@@ -42,14 +45,14 @@ public class CircularBuffer<T>
 
         if (Length > 0)
         {
-            if (startIndex <= endIndex)
+            if (startIndex <= Index)
             {
-                Array.Copy(Buffer, startIndex, result, 0, Length);
+                Array.Copy(buffer, startIndex, result, 0, Length);
             }
             else
             {
-                Array.Copy(Buffer, startIndex, result, 0, Buffer.Length - startIndex);
-                Array.Copy(Buffer, 0, result, Buffer.Length - startIndex, endIndex + 1);
+                Array.Copy(buffer, startIndex, result, 0, buffer.Length - startIndex);
+                Array.Copy(buffer, 0, result, buffer.Length - startIndex, Index + 1);
             }
         }
 

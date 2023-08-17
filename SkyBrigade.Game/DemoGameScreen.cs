@@ -37,12 +37,12 @@ internal class DemoGameScreen : Scene
         AddEntity(plane);
 
         GameManager.Instance.Debugger.Enabled = true;
-
     }
 
     protected override Effect[] GeneratePostProccessingEffects()
     {
-        return new[] { new FlashingEffect() };
+        //return Array.Empty<Effect>();
+        return new[] {  new FlashingEffect() }; 
     }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
@@ -57,15 +57,6 @@ internal class DemoGameScreen : Scene
 
     public override void DrawGui(float dt)
     {
-        if (ImGui.Begin("Debug"))
-        {
-            ImGui.Text($"Memory Consumption: {float.Round(GC.GetTotalMemory(false) / 1024.0f / 1024, 2)}MB");
-            ImGui.Text($"Memory Delta: {memoryTracker.GetAverage()}KB");
-            ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
-            ImGui.Text($"FPS: {MathF.Round(1.0f / dt)}");
-            ImGui.End();
-        }
-
         if (ImGui.Begin("Character Controller"))
         {
             ImGui.Text($"Position: {character.Position}");
@@ -74,13 +65,9 @@ internal class DemoGameScreen : Scene
         }
     }
 
-    private readonly DeltaTracker<float> memoryTracker = new((prev, current) => current - prev);
-
     public override void Update(float dt)
     {
         base.Update(dt);
-
-        memoryTracker.Update(GC.GetTotalMemory(false) / 1024.0f / 1024.0f);
 
         if (GameManager.Instance.InputManager.WasPressed(Engine.Input.VirtualAction.Interact))
             GameManager.Instance.Debugger.Enabled = !GameManager.Instance.Debugger.Enabled;

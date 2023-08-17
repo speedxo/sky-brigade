@@ -17,6 +17,9 @@ namespace SkyBrigade.Engine.Debugging
         public SceneEntityDebugger SceneEntityDebugger { get; init; }
         public LoadedContentDebugger LoadedContentDebugger { get; init; }
         public DockedGameContainerDebugger GameContainerDebugger { get; init; }
+        public PerformanceProfilerDebugger PerformanceDebugger { get; init; }
+
+        public bool RenderToConatiner { get; private set; }
 
         public Debugger()
         {
@@ -24,10 +27,13 @@ namespace SkyBrigade.Engine.Debugging
             SceneEntityDebugger = AddComponent<SceneEntityDebugger>();
             LoadedContentDebugger = AddComponent<LoadedContentDebugger>();
             GameContainerDebugger = AddComponent<DockedGameContainerDebugger>();
+            PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>();
         }
 
         public override void Draw(float dt, RenderOptions? renderOptions = null)
         {
+            RenderToConatiner = Enabled && GameContainerDebugger.Visible;
+
             if (!Enabled) return;
 
             if (ImGui.BeginMainMenuBar())
@@ -42,6 +48,11 @@ namespace SkyBrigade.Engine.Debugging
                 if (ImGui.BeginMenu("Rendering"))
                 {
                     ImGui.MenuItem("Rendering", "", ref RenderOptionsDebugger.Visible);
+                    ImGui.EndMenu();
+                }
+                if (ImGui.BeginMenu("Performance"))
+                {
+                    ImGui.MenuItem("Profiler", "", ref PerformanceDebugger.Visible);
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu("Scene"))

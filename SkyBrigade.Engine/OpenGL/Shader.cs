@@ -11,6 +11,8 @@ public class Shader : IDisposable
     //Most of the time you would want to abstract items to make things like this invisible.
     public uint Handle { get; private init; }
 
+    public static Shader Default { get => GameManager.Instance.ContentManager.GetShader("default"); }
+
     private Dictionary<string, int> uniformIndexes;
 
     public Shader(uint handle)

@@ -9,7 +9,10 @@ namespace SkyBrigade.Engine.Rendering
 		{
 			this.Technique = new Technique(shader);
 		}
-
+        public CustomMaterial(Technique technique)
+        {
+            this.Technique = technique;
+        }
         public override void Use(RenderOptions? options = null)
         {
 
