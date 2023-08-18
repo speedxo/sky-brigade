@@ -1,8 +1,8 @@
-﻿using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.OpenGL;
+﻿using Horizon.Data;
+using Horizon.GameEntity;
+using Horizon.OpenGL;
 using System.Numerics;
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     public abstract class Material : Entity
     {

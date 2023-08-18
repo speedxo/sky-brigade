@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Input
+namespace Horizon.Input
 {
     /// <summary>
     /// The JoystickData struct represents input data from a joystick/gamepad.

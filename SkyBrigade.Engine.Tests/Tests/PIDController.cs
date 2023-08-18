@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Tests.Tests
+﻿namespace Horizon.Tests.Tests
 {
     internal class PIDController
     {

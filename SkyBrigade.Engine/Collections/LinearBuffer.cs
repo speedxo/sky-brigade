@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Collections;
+﻿namespace Horizon.Collections;
 
 /* The reason this implementation is so primative and sloppy but i need it to
  * be fast

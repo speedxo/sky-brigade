@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Xml.Linq;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Primitives;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Rendering.Effects;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
+using Horizon.Primitives;
+using Horizon.Rendering;
+using Horizon.Rendering.Effects;
 
-namespace SkyBrigade.Engine;
+namespace Horizon;
 
 /// <summary>
 /// Abstract base class for a game screen, based off <see cref="Entity"/>.
@@ -95,6 +95,9 @@ public abstract class Scene : Entity, IDisposable
         //    GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         //    GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
         //}
+
+        DrawOther(dt, renderOptions);
+
         for (int i = 0; i < Components.Count; i++)
             Components.Values.ElementAt(i).Draw(dt, renderOptions);
 
@@ -105,6 +108,8 @@ public abstract class Scene : Entity, IDisposable
             FrameBuffer.Unbind();
     }
 
+    public abstract void DrawOther(float dt, RenderOptions? renderOptions = null);
+    
     public virtual void RenderPost(float dt, RenderOptions? renderOptions = null)
     {
         if (GameManager.Instance.Debugger.Enabled)
@@ -123,10 +128,12 @@ public abstract class Scene : Entity, IDisposable
 
         GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
     }
-    public virtual void DrawGui(float dt)
-    {
 
-    }
+    /// <summary>
+    /// (WIP) Here is where all the UI magic will happen.
+    /// </summary>
+    /// <param name="dt">Deltatime between the last two frames.</param>
+    public abstract void DrawGui(float dt);
 
     /// <summary>
     /// Disposes of the scene and its resources.

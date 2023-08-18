@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.OpenGL;
+using Horizon.Data;
+using Horizon.OpenGL;
 using System.Globalization;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Rendering;
+namespace Horizon.Rendering;
 
 /// <summary>
 /// Represents an abstract class for handling meshes used in rendering.

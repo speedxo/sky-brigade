@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.OpenGL;
+﻿namespace Horizon.OpenGL;
 
 public static class FrameBufferManager
 {

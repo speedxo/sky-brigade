@@ -1,7 +1,7 @@
 ﻿using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Data;
+using Horizon.Data;
 
-namespace SkyBrigade.Engine.OpenGL;
+namespace Horizon.OpenGL;
 
 //The vertex array object abstraction.
 public class VertexArrayObject<TVertexType, TIndexType> : IDisposable

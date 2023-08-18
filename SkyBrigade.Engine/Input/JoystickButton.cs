@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Input
+﻿namespace Horizon.Input
 {
     /// <summary>
     /// The JoystickButton enum represents the available buttons on a joystick/gamepad.

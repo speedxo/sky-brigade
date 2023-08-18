@@ -5,16 +5,16 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using SkyBrigade.Engine.Content;
-using SkyBrigade.Engine.Debugging;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Input;
-using SkyBrigade.Engine.Logging;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Content;
+using Horizon.Debugging;
+using Horizon.GameEntity;
+using Horizon.Input;
+using Horizon.Logging;
+using Horizon.OpenGL;
+using Horizon.Rendering;
 
 // Namespace declaration for the GameManager class
-namespace SkyBrigade.Engine;
+namespace Horizon;
 
 
 /// <summary>

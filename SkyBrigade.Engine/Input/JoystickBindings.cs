@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Input
+﻿namespace Horizon.Input
 {
     /// <summary>
     /// The JoystickBindings struct represents a serializable and customizable way to hotswap multiple binding profiles for joysticks.

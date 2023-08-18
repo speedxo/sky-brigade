@@ -1,7 +1,7 @@
 ﻿using System;
-using SkyBrigade.Engine.OpenGL;
+using Horizon.OpenGL;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
 	public class CustomMaterial : Material
 	{

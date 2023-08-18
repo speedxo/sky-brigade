@@ -1,11 +1,11 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.Rendering;
 using System.Numerics;
-using Mesh = SkyBrigade.Engine.Rendering.Mesh;
+using Mesh = Horizon.Rendering.Mesh;
 
-namespace SkyBrigade.Engine.Tests.Tests
+namespace Horizon.Tests.Tests
 {
     public class MeshLoadingEngineTest : IEngineTest
     {

@@ -1,7 +1,7 @@
 ﻿using Silk.NET.Input;
 using System.Collections.Generic;
 
-namespace SkyBrigade.Engine.Input
+namespace Horizon.Input
 {
     /// <summary>
     /// The MouseBindings struct represents a serializable and customizable way to hotswap multiple binding profiles for mouse input.

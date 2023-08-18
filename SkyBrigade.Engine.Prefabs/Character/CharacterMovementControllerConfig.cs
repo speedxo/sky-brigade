@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Prefabs.Character; 
+﻿namespace Horizon.Prefabs.Character; 
 
 public partial class CharacterController
 {

@@ -1,7 +1,7 @@
-﻿using SkyBrigade.Engine.Rendering;
+﻿using Horizon.Rendering;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.GameEntity.Components
+namespace Horizon.GameEntity.Components
 {
     /// <summary>
     /// Represents a component that handles the transformation of a game entity.

@@ -1,6 +1,6 @@
 using ObjLoader.Loader.Data;
 
-namespace SkyBrigade.Engine.Data.MaterialSerialiser;
+namespace Horizon.Data.MaterialSerialiser;
 
 public class MaterialSerialiser
 {

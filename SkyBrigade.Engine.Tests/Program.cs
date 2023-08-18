@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Tests;
+namespace Horizon.Tests;
 
 internal class Program
 {

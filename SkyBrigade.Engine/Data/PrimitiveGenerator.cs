@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Data;
+﻿namespace Horizon.Data;
 
 public class PrimitiveGenerator
 {

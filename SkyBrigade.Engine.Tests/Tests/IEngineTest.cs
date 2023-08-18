@@ -1,7 +1,7 @@
 ﻿using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Tests.Tests
+namespace Horizon.Tests.Tests
 {
     public interface IEngineTest : IDisposable
     {

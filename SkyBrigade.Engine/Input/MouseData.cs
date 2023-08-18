@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Input
+namespace Horizon.Input
 {
     /// <summary>
     /// The MouseData struct represents input data from the mouse.

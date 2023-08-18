@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Logging;
+﻿namespace Horizon.Logging;
 
 // the different levels of logging
 public enum LogLevel

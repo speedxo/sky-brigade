@@ -1,6 +1,6 @@
-﻿using SkyBrigade.Engine.Collections;
+﻿using Horizon.Collections;
 
-namespace SkyBrigade.Engine.Data;
+namespace Horizon.Data;
 
 public class DeltaTracker<T>
 {

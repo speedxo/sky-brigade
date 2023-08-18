@@ -1,7 +1,7 @@
-﻿using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering.Effects;
+﻿using Horizon.OpenGL;
+using Horizon.Rendering.Effects;
 
-namespace SkyBrigade.Game;
+namespace SkyBrigade;
 
 internal class FlashingEffect : Effect
 {

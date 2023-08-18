@@ -1,6 +1,6 @@
-﻿using SkyBrigade.Engine;
+﻿using Horizon;
 
-namespace SkyBrigade.Game;
+namespace SkyBrigade;
 
 internal class Program
 {

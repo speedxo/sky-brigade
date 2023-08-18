@@ -3,9 +3,9 @@ using System.Net.Sockets;
 using System.Numerics;
 using Silk.NET.Input;
 using Silk.NET.Windowing;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.GameEntity.Components
+namespace Horizon.GameEntity.Components
 {
     /// <summary>
     /// CameraComponent class represents a camera in the game.

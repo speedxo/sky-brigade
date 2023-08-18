@@ -1,11 +1,11 @@
 ﻿using Silk.NET.Input;
-using SkyBrigade.Engine;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
+using Horizon;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Prefabs.Character;
+namespace Horizon.Prefabs.Character;
 
 public partial class CharacterController
 {

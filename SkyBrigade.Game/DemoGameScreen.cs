@@ -1,15 +1,15 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine;
-using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Rendering.Shapes;
-using SkyBrigade.Engine.Prefabs.Character;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering.Effects;
-using SkyBrigade.Engine.Rendering.Effects.Components;
+using Horizon;
+using Horizon.Data;
+using Horizon.Rendering;
+using Horizon.Rendering.Shapes;
+using Horizon.Prefabs.Character;
+using Horizon.OpenGL;
+using Horizon.Rendering.Effects;
+using Horizon.Rendering.Effects.Components;
 
-namespace SkyBrigade.Game;
+namespace SkyBrigade;
 
 internal class DemoGameScreen : Scene
 {
@@ -17,31 +17,38 @@ internal class DemoGameScreen : Scene
     private CharacterController character;
 
     public DemoGameScreen()
-        :base()
     {
         InitializeRenderingPipeline();
 
+        /* need to consoldiate OpenGL calls into profiles, perhaps a call to 
+         * GameManager.Instance.InitializeGL(GLProfile); maybe predefined calls
+         * ie. GLProfile.Realtime3D can setup depth testing and GLProfile.Flat
+         * can be 2D orientated?                                              */
         GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
         GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
+
 
         character = new CharacterController();
         AddEntity(character);
 
+        /* We cannot use property initialisation here due to the fact that each
+         * component is instantiated using reflection and it monitored by the
+         * entity class.                                                     */
+
         plane = new Plane(new BasicMaterial());
-        
         plane.Transform.Scale = new System.Numerics.Vector3(10);
         plane.Transform.Rotation = new System.Numerics.Vector3(90, 0, 0);
-
         plane.Material.Texture = GameManager.Instance.ContentManager.GetTexture("debug");
-
         AddEntity(plane);
 
+        // yea this single boolean enables or disables the debugging interface
         GameManager.Instance.Debugger.Enabled = true;
     }
 
+    /* The reason i opted to have an overidable method is for safety, while its
+     * not in the slightest ellegant, what it is is foolproof and simple.     */
     protected override Effect[] GeneratePostProccessingEffects()
     {
-        //return Array.Empty<Effect>();
         return new[] {  new FlashingEffect() }; 
     }
 
@@ -69,12 +76,17 @@ internal class DemoGameScreen : Scene
     {
         base.Update(dt);
 
-        if (GameManager.Instance.InputManager.WasPressed(Engine.Input.VirtualAction.Interact))
+        if (GameManager.Instance.InputManager.WasPressed(Horizon.Input.VirtualAction.Interact))
             GameManager.Instance.Debugger.Enabled = !GameManager.Instance.Debugger.Enabled;
     }
 
 
     public override void Dispose()
+    {
+
+    }
+
+    public override void DrawOther(float dt, RenderOptions? renderOptions = null)
     {
 
     }

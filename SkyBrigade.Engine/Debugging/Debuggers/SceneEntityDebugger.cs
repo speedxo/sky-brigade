@@ -5,12 +5,12 @@ using System.Numerics;
 using System.Reflection;
 using ImGuiNET;
 using Newtonsoft.Json.Linq;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Rendering.Effects;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
+using Horizon.Rendering.Effects;
 
-namespace SkyBrigade.Engine.Debugging.Debuggers
+namespace Horizon.Debugging.Debuggers
 {
     public class SceneEntityDebugger : IGameComponent
     {

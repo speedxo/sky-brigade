@@ -2101,9 +2101,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
-      "projectName": "SkyBrigade.Engine",
-      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj",
+      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/Horizon.csproj",
+      "projectName": "Horizon",
+      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/Horizon.csproj",
       "packagesPath": "/Users/bogz/.nuget/packages/",
       "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/obj/",
       "projectStyle": "PackageReference",

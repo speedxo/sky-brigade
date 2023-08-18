@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Input
+namespace Horizon.Input
 {
     /// <summary>
     /// The KeyboardData struct represents input data from the keyboard.

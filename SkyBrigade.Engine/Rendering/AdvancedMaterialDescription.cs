@@ -1,6 +1,6 @@
-﻿using Texture = SkyBrigade.Engine.OpenGL.Texture;
+﻿using Texture = Horizon.OpenGL.Texture;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     public struct AdvancedMaterialDescription
     {

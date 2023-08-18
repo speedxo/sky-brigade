@@ -17,10 +17,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SkyBrigade.Engine\SkyBrigade.Engine.csproj" />
-    <ProjectReference Include="..\SkyBrigade.Engine.Prefabs\SkyBrigade.Engine.Prefabs.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Assets\" />
     <None Remove="Assets\Red.png" />
     <None Remove="Assets\among.png" />
@@ -44,5 +40,9 @@
     <Content Include="Assets\shaders\basic\basic.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SkyBrigade.Engine.Prefabs\Horizon.Prefabs.csproj" />
+    <ProjectReference Include="..\SkyBrigade.Engine\Horizon.csproj" />
   </ItemGroup>
 </Project>

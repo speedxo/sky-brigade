@@ -1,8 +1,8 @@
 namespace SkyBrigade.MaterialEditor;
 
 using ImGuiNET;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.Rendering;
 
 // The general entity primitive is perfect for stuff like this
 // where we need an object to have properties or functions but

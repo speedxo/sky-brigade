@@ -1,9 +1,9 @@
 ﻿using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Logging;
+using Horizon.Logging;
 using Image = SixLabors.ImageSharp.Image;
 using PixelFormat = Silk.NET.OpenGL.PixelFormat;
 
-namespace SkyBrigade.Engine.OpenGL;
+namespace Horizon.OpenGL;
 
 public class Texture : IDisposable
 {

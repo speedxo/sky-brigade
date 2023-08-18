@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Silk.NET.OpenGL;
 
-namespace SkyBrigade.Engine.OpenGL
+namespace Horizon.OpenGL
 {
     public class UniformBufferObject : IDisposable
     {

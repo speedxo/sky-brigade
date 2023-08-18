@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Numerics;
 using ImGuiNET;
-using SkyBrigade.Engine.Content;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Content;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Debugging.Debuggers
+namespace Horizon.Debugging.Debuggers
 {
 	public class LoadedContentDebugger : IGameComponent
 	{

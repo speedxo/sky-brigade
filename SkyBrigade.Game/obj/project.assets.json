@@ -831,7 +831,7 @@
           }
         }
       },
-      "SkyBrigade.Engine/1.0.0": {
+      "Horizon/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
@@ -854,23 +854,23 @@
           "System.Drawing.Common": "7.0.0"
         },
         "compile": {
-          "bin/placeholder/SkyBrigade.Engine.dll": {}
+          "bin/placeholder/Horizon.dll": {}
         },
         "runtime": {
-          "bin/placeholder/SkyBrigade.Engine.dll": {}
+          "bin/placeholder/Horizon.dll": {}
         }
       },
-      "SkyBrigade.Engine.Prefabs/1.0.0": {
+      "Horizon.Prefabs/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
-          "SkyBrigade.Engine": "1.0.0"
+          "Horizon": "1.0.0"
         },
         "compile": {
-          "bin/placeholder/SkyBrigade.Engine.Prefabs.dll": {}
+          "bin/placeholder/Horizon.Prefabs.dll": {}
         },
         "runtime": {
-          "bin/placeholder/SkyBrigade.Engine.Prefabs.dll": {}
+          "bin/placeholder/Horizon.Prefabs.dll": {}
         }
       }
     }
@@ -2115,21 +2115,21 @@
         "ultz.native.sdl.nuspec"
       ]
     },
-    "SkyBrigade.Engine/1.0.0": {
+    "Horizon/1.0.0": {
       "type": "project",
-      "path": "../SkyBrigade.Engine/SkyBrigade.Engine.csproj",
-      "msbuildProject": "../SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+      "path": "../SkyBrigade.Engine/Horizon.csproj",
+      "msbuildProject": "../SkyBrigade.Engine/Horizon.csproj"
     },
-    "SkyBrigade.Engine.Prefabs/1.0.0": {
+    "Horizon.Prefabs/1.0.0": {
       "type": "project",
-      "path": "../SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj",
-      "msbuildProject": "../SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj"
+      "path": "../SkyBrigade.Engine.Prefabs/Horizon.Prefabs.csproj",
+      "msbuildProject": "../SkyBrigade.Engine.Prefabs/Horizon.Prefabs.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "SkyBrigade.Engine >= 1.0.0",
-      "SkyBrigade.Engine.Prefabs >= 1.0.0"
+      "Horizon >= 1.0.0",
+      "Horizon.Prefabs >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -2138,9 +2138,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj",
-      "projectName": "SkyBrigade.Game",
-      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.Game.csproj",
+      "projectUniqueName": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.csproj",
+      "projectName": "SkyBrigade",
+      "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/SkyBrigade.csproj",
       "packagesPath": "/Users/bogz/.nuget/packages/",
       "outputPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Game/obj/",
       "projectStyle": "PackageReference",
@@ -2158,11 +2158,11 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj": {
-              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj"
+            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/Horizon.Prefabs.csproj": {
+              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/Horizon.Prefabs.csproj"
             },
-            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj": {
-              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/SkyBrigade.Engine.csproj"
+            "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/Horizon.csproj": {
+              "projectPath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine/Horizon.csproj"
             }
           }
         }

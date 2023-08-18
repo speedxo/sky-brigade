@@ -1,6 +1,6 @@
-﻿using SkyBrigade.Engine.Data;
+﻿using Horizon.Data;
 
-namespace SkyBrigade.Engine.Rendering;
+namespace Horizon.Rendering;
 
 public readonly struct MeshData
 {

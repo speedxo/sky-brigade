@@ -1,6 +1,6 @@
 ﻿using Silk.NET.OpenGL;
 
-namespace SkyBrigade.Engine.OpenGL;
+namespace Horizon.OpenGL;
 
 /* This is an abstractation for a buffer object */
 

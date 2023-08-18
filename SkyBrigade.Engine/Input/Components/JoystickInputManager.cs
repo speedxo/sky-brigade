@@ -1,11 +1,11 @@
 ﻿using System;
 using Silk.NET.Input;
 using System.Numerics;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Input.Components
+namespace Horizon.Input.Components
 {
     /// <summary>
     /// The JoystickInputManager class is responsible for handling input from a joystick/gamepad.

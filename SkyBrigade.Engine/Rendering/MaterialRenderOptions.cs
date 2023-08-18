@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct MaterialRenderOptions

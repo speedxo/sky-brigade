@@ -1,10 +1,10 @@
 ﻿using System;
 using ImGuiNET;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Debugging.Debuggers
+namespace Horizon.Debugging.Debuggers
 {
     public class RenderOptionsDebugger : IGameComponent
     {

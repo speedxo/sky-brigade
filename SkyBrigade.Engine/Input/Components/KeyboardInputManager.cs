@@ -2,11 +2,11 @@
 using System.Numerics;
 using Silk.NET.Input;
 using Silk.NET.Input.Extensions;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Input.Components
+namespace Horizon.Input.Components
 {
     /// <summary>
     /// The KeyboardManager class is responsible for handling input from the keyboard.

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Input
+namespace Horizon.Input
 {
     /// <summary>
     /// The VirtualController struct represents the main virtualized controller that aggregates input data from various sources.

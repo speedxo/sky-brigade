@@ -1,12 +1,12 @@
-﻿using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Logging;
-using SkyBrigade.Engine.OpenGL;
+﻿using Horizon.GameEntity;
+using Horizon.Logging;
+using Horizon.OpenGL;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SkyBrigade.Engine.Content
+namespace Horizon.Content
 {
     public class ContentManager : Entity, IDisposable
     {

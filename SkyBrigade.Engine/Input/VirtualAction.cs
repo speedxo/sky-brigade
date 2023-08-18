@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Input
+﻿namespace Horizon.Input
 {
     /// <summary>
     /// The VirtualAction enum represents various virtual actions that can be triggered by input devices.

@@ -1,6 +1,6 @@
-﻿using SkyBrigade.Engine.Rendering;
+﻿using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.GameEntity.Components
+namespace Horizon.GameEntity.Components
 {
     public class CustomBehaviourComponent : IGameComponent
     {

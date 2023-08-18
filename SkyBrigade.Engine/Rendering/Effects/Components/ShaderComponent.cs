@@ -1,9 +1,9 @@
 ﻿using System;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
 
-namespace SkyBrigade.Engine.Rendering.Effects.Components
+namespace Horizon.Rendering.Effects.Components
 {
     public class ShaderComponent : Shader, IGameComponent
     {

@@ -1,11 +1,11 @@
 ﻿using System;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Input.Components;
+using Horizon.GameEntity;
+using Horizon.Rendering;
+using Horizon.Input.Components;
 using Silk.NET.SDL;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Input
+namespace Horizon.Input
 {
     /// <summary>
     /// The InputManager class is responsible for managing input from various sources (keyboard, mouse, joystick)

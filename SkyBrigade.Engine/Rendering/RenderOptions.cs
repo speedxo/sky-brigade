@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Silk.NET.OpenGL;
 
-namespace SkyBrigade.Engine.Rendering;
+namespace Horizon.Rendering;
 
 // This is about to be bad
 

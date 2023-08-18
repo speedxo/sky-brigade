@@ -1,9 +1,9 @@
 ﻿using System;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering.Effects.Components;
+using Horizon.GameEntity;
+using Horizon.OpenGL;
+using Horizon.Rendering.Effects.Components;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     public class Technique : Entity
 	{

@@ -1,14 +1,14 @@
 using ImGuiNET;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Primitives;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Primitives;
+using Horizon.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SkyBrigade.Engine.Dialogs
+namespace Horizon.Dialogs
 {
     /// <summary>
     /// Represents an open file dialog for selecting files and directories.

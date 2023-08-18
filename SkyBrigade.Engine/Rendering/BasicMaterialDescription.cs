@@ -1,7 +1,7 @@
-﻿using SkyBrigade.Engine.OpenGL;
+﻿using Horizon.OpenGL;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     public struct BasicMaterialDescription
     {

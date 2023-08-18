@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Net.Mail;
 
-namespace SkyBrigade.Engine.OpenGL;
+namespace Horizon.OpenGL;
 public class FrameBufferObject : IDisposable
 {
     public Dictionary<FramebufferAttachment, uint> Attachments { get; init; }

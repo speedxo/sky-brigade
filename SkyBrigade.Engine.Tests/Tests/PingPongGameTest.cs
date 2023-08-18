@@ -1,15 +1,15 @@
 ﻿using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Rendering.Shapes;
+using Horizon.Rendering;
+using Horizon.Rendering.Shapes;
 
 
 using Vector4 = System.Numerics.Vector4;
 using Vector3 = System.Numerics.Vector3;
 using Vector2 = System.Numerics.Vector2;
 
-namespace SkyBrigade.Engine.Tests.Tests
+namespace Horizon.Tests.Tests
 {
     public class PingPongGameTest : IEngineTest
     {

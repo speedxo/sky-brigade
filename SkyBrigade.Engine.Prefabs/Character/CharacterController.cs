@@ -1,9 +1,9 @@
-﻿using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Input;
+﻿using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Input;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Prefabs.Character;
+namespace Horizon.Prefabs.Character;
 
 public partial class CharacterController : Entity
 {

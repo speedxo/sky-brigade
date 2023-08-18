@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.OpenGL;
+using Horizon.OpenGL;
 using System.Numerics;
-using Texture = SkyBrigade.Engine.OpenGL.Texture;
+using Texture = Horizon.OpenGL.Texture;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     public class BasicMaterial : Material
     {

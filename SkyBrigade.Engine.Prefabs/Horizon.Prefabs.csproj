@@ -11,12 +11,14 @@
 	</PropertyGroup>
 	
   <ItemGroup>
-    <ProjectReference Include="..\SkyBrigade.Engine\SkyBrigade.Engine.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Character\" />
+    <None Remove="Effects\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Character\" />
+    <Folder Include="Effects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SkyBrigade.Engine\Horizon.csproj" />
   </ItemGroup>
 </Project>

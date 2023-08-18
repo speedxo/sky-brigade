@@ -1,11 +1,11 @@
 ﻿using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
+using Horizon.Data;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Rendering.Shapes;
+namespace Horizon.Rendering.Shapes;
 
 /// <summary>
 /// Represents a plane entity in the game world.

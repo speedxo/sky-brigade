@@ -1,9 +1,9 @@
-﻿using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
+﻿using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.GameEntity;
+namespace Horizon.GameEntity;
 
 /// <summary>
 /// Represents a game object in the game world with custom behavior.

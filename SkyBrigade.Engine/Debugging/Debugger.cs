@@ -1,10 +1,10 @@
 ﻿using System;
 using ImGuiNET;
-using SkyBrigade.Engine.Debugging.Debuggers;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Debugging.Debuggers;
+using Horizon.GameEntity;
+using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Debugging
+namespace Horizon.Debugging
 {
     public class Debugger : Entity
     {

@@ -1,8 +1,8 @@
-﻿using SkyBrigade.Engine.Data;
+﻿using Horizon.Data;
 using System.Globalization;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     public static class MeshGenerators
     {

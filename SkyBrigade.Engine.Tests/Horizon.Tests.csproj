@@ -20,10 +20,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SkyBrigade.Engine\SkyBrigade.Engine.csproj" />
-    <ProjectReference Include="..\SkyBrigade.Engine.Prefabs\SkyBrigade.Engine.Prefabs.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Tests\" />
     <None Remove="Assets\" />
     <None Remove="Assets\teapot.obj" />
@@ -69,5 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ImGui.NET.Docking" Version="1.75.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SkyBrigade.Engine.Prefabs\Horizon.Prefabs.csproj" />
+    <ProjectReference Include="..\SkyBrigade.Engine\Horizon.csproj" />
   </ItemGroup>
 </Project>

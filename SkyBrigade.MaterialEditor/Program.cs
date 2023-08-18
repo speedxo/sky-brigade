@@ -2,12 +2,12 @@
 
 using ImGuiNET;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine;
-using SkyBrigade.Engine.Dialogs;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Prefabs;
-using SkyBrigade.Engine.Rendering;
-using static SkyBrigade.Engine.GameManager;
+using Horizon;
+using Horizon.Dialogs;
+using Horizon.GameEntity;
+using Horizon.Prefabs;
+using Horizon.Rendering;
+using static Horizon.GameManager;
 
 internal class Program : IGameScreen
 {

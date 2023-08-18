@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace SkyBrigade.Engine.Logging
+namespace Horizon.Logging
 {
     /// <summary>
     /// The Logger class is responsible for handling logging messages.

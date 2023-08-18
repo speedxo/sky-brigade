@@ -1,15 +1,15 @@
 ﻿using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Collections;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Primitives;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Collections;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
+using Horizon.Primitives;
+using Horizon.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace SkyBrigade.Engine;
+namespace Horizon;
 
 /// <summary>
 /// A class that manages instances of any class implementing <see cref="IGameScreen"/>,

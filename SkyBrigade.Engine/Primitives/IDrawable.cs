@@ -1,6 +1,6 @@
-﻿using SkyBrigade.Engine.Rendering;
+﻿using Horizon.Rendering;
 
-namespace SkyBrigade.Engine.Primitives;
+namespace Horizon.Primitives;
 
 public interface IDrawable
 {

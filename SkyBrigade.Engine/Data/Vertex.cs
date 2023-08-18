@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine.Data;
+namespace Horizon.Data;
 
 /*  The vertex data type is the most common in rendering engines
  *  it holds basic but neccessary information required to render

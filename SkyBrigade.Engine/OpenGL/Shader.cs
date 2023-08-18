@@ -1,9 +1,9 @@
 ﻿using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Logging;
+using Horizon.Logging;
 using System.Numerics;
 using System.Text;
 
-namespace SkyBrigade.Engine.OpenGL;
+namespace Horizon.OpenGL;
 
 public class Shader : IDisposable
 {

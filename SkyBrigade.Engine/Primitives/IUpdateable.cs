@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Primitives;
+﻿namespace Horizon.Primitives;
 
 public interface IUpdateable
 {

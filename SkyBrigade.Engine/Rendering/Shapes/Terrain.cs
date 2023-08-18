@@ -1,8 +1,8 @@
 ﻿using System;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
 
-namespace SkyBrigade.Engine.Rendering.Shapes
+namespace Horizon.Rendering.Shapes
 {
 	public class Terrain : Entity
 	{

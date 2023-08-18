@@ -1,8 +1,8 @@
-﻿using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.Rendering;
+﻿using Horizon.Data;
+using Horizon.Rendering;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.GameEntity.Components
+namespace Horizon.GameEntity.Components
 {
     [RequiresComponent(typeof(TransformComponent))]
     public class MeshRendererComponent : Mesh, IGameComponent

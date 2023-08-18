@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UDbJ3nSAgzsjdvrxZ5tiZtPlbdZ40lLuJu/6PcwS/lR4ispIrhKJ3w59aXF7vLq3vpx+PAR3appp/VW+Q/rcUA==",
+  "dgSpecHash": "yfbipMsC925sKlcmF72+mPV3988Hr5Ax9DAqMyha+c3Ib1OVn3L33cL2FBj3acq/3dutQ8uKPsx47UJs+8faNA==",
   "success": true,
-  "projectFilePath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/SkyBrigade.Engine.Prefabs.csproj",
+  "projectFilePath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.Engine.Prefabs/Horizon.Prefabs.csproj",
   "expectedPackageFiles": [
     "/Users/bogz/.nuget/packages/cjclutter.objloader.unofficial/1.1.0/cjclutter.objloader.unofficial.1.1.0.nupkg.sha512",
     "/Users/bogz/.nuget/packages/imgui.net/1.88.0/imgui.net.1.88.0.nupkg.sha512",

@@ -1,13 +1,13 @@
 ﻿using System;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering.Effects.Components;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
+using Horizon.Rendering.Effects.Components;
 
-using Shader = SkyBrigade.Engine.OpenGL.Shader;
+using Shader = Horizon.OpenGL.Shader;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
 	public class RenderRectangle : Entity
 	{

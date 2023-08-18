@@ -1,7 +1,7 @@
 ﻿using System;
 using Silk.NET.OpenGL;
 
-namespace SkyBrigade.Engine.OpenGL;
+namespace Horizon.OpenGL;
 
 /// <summary>
 /// this class doesnt work :/ We are stuck with ogl4.1

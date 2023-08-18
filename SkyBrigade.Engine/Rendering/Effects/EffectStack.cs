@@ -3,10 +3,10 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Text;
 using Silk.NET.SDL;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Rendering.Effects.Components;
+using Horizon.GameEntity;
+using Horizon.Rendering.Effects.Components;
 
-namespace SkyBrigade.Engine.Rendering.Effects
+namespace Horizon.Rendering.Effects
 {
     public class EffectStack : Entity
     {

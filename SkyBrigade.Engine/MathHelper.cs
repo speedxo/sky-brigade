@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine;
+﻿namespace Horizon;
 
 public static class MathHelper
 {

@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Collections;
+﻿namespace Horizon.Collections;
 
 /// <summary>
 /// A niche class that specialises in managing object instances that all decsend from a parent class.

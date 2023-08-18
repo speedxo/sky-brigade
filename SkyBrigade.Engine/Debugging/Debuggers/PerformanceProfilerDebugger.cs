@@ -1,17 +1,18 @@
 ﻿using System;
 using ImGuiNET;
-using SkyBrigade.Engine.Content;
+using Horizon.Content;
 using System.Numerics;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Rendering;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.Rendering;
 using Silk.NET.Windowing;
 using System.Diagnostics;
 using Silk.NET.SDL;
 using Monitor = System.Threading.Monitor;
-using SkyBrigade.Engine.Collections;
+using Horizon.Collections;
+using System.Diagnostics.Contracts;
 
-namespace SkyBrigade.Engine.Debugging.Debuggers;
+namespace Horizon.Debugging.Debuggers;
 
 public class PerformanceProfilerDebugger : IGameComponent
 {
@@ -26,25 +27,28 @@ public class PerformanceProfilerDebugger : IGameComponent
     private LinearBuffer<float> _updateFrameTimes;
     private LinearBuffer<float> _renderFrameTimes;
 
+
     private long _prevTimestamp;
     private float _cpuUsage;
     private long _prevCpuTime;
     private float _memoryUsage;
 
-    private object _updateLock = new object();
-    private object _renderLock = new object();
+    private readonly object _updateLock = new object();
+    private readonly object _renderLock = new object();
 
     public bool Visible = false;
 
     public void Initialize()
     {
+#pragma warning disable CS8601 // SID, SHIT THE FUCK UP
         Debugger = Parent as Debugger;
+#pragma warning restore CS8601 // SID, SHIT THE FUCK UP
 
         _renderStopwatch = new Stopwatch();
         _updateStopwatch = new Stopwatch();
 
-        _updateFrameTimes = new(100);
-        _renderFrameTimes = new(100);
+        _updateFrameTimes = new(500);
+        _renderFrameTimes = new(500);
 
         _prevTimestamp = Stopwatch.GetTimestamp();
         _prevCpuTime = Process.GetCurrentProcess().TotalProcessorTime.Ticks;
@@ -95,37 +99,42 @@ public class PerformanceProfilerDebugger : IGameComponent
     {
         if (!Visible) return;
 
+        ImGui.SetNextWindowSize(new Vector2(400, 300), ImGuiCond.FirstUseEver);
+
         if (ImGui.Begin("Performance Profiler"))
         {
             float maxUpdateFrameTime, maxRenderFrameTime;
-            lock (_updateLock)
-            {
-                maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
-            }
-            lock (_renderLock)
-            {
-                maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
-            }
+            lock (_updateLock) maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
+            lock (_renderLock) maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
 
             ImGui.Text($"Max Update Frame Time: {maxUpdateFrameTime:0.00} ms");
             ImGui.Text($"Max Render Frame Time: {maxRenderFrameTime:0.00} ms");
             ImGui.Text($"CPU Usage: {_cpuUsage:0.00}%");
             ImGui.Text($"Memory Usage: {_memoryUsage:0.00} MB");
 
-            // Plot the update frame times history
-            lock (_updateLock)
-            {
-                ImGui.PlotLines("", ref _updateFrameTimes.Buffer[0], _updateFrameTimes.Length, _updateFrameTimes.Index, $"CPU(frametime) Avg: {_updateFrameTimes.Buffer.Average():0.00} ms", 0.0f, maxUpdateFrameTime * 1.2f, new System.Numerics.Vector2(0, 80));
-            }
-
-            // Plot the render frame times history
-            lock (_renderLock)
-            {
-                ImGui.PlotLines("", ref _renderFrameTimes.Buffer[0], _renderFrameTimes.Length, _renderFrameTimes.Index, $"GPU(frametime) Avg: {_renderFrameTimes.Buffer.Average():0.00} ms", 0.0f, maxRenderFrameTime * 1.2f, new System.Numerics.Vector2(0, 80));
-            }
+            PlotFrameTimes("Update Frame Times", _updateFrameTimes, maxUpdateFrameTime);
+            PlotFrameTimes("Render Frame Times", _renderFrameTimes, maxRenderFrameTime);
 
             ImGui.End();
         }
+    }
+
+    [Pure]
+    private static void PlotFrameTimes(string label, LinearBuffer<float> frameTimes, float maxValue)
+    {
+        float windowWidth = ImGui.GetContentRegionAvail().X;
+        float averageFrameTime = frameTimes.Buffer.Average();
+
+        ImGui.PlotLines(
+            "",
+            ref frameTimes.Buffer[0],
+            frameTimes.Length,
+            frameTimes.Index,
+            $"{label} - avg: {averageFrameTime:0.00} ms",
+            0.0f,
+            maxValue * 1.2f,
+            new Vector2(windowWidth, 80)
+        );
     }
 
 
@@ -144,8 +153,8 @@ public class PerformanceProfilerDebugger : IGameComponent
         return cpuUsage;
     }
 
-
-    private float GetMemoryUsage()
+    [Pure]
+    private static float GetMemoryUsage()
     {
         return (float)(GC.GetTotalMemory(false) / (1024.0 * 1024.0)); // in MB
     }

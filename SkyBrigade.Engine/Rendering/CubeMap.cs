@@ -1,1 +1,1 @@
-namespace SkyBrigade.Engine.Rendering;
+namespace Horizon.Rendering;

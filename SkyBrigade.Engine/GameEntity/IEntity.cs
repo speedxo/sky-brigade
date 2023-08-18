@@ -1,7 +1,7 @@
-﻿using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Primitives;
+﻿using Horizon.GameEntity.Components;
+using Horizon.Primitives;
 
-namespace SkyBrigade.Engine.GameEntity;
+namespace Horizon.GameEntity;
 
 public interface IEntity : IDrawable, IUpdateable
 {

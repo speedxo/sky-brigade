@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
 
-namespace SkyBrigade.Engine.Rendering.Effects
+namespace Horizon.Rendering.Effects
 {
     public class Effect
     {
@@ -22,6 +22,11 @@ namespace SkyBrigade.Engine.Rendering.Effects
             return Source.Replace("ShaderStage", $"ShaderStage_{index}");
         }
 
+        /// <summary>
+        /// Uses basic string manipulation to extract the uniform block name.
+        /// </summary>
+        /// <returns>The uniform block name of the current effect.</returns>
+        /// <exception cref="InvalidOperationException">The shader is formatted incorrectly.</exception>
         protected virtual string GetUniformBlockName()
         {
             var stringLines = Source.Split(Environment.NewLine);

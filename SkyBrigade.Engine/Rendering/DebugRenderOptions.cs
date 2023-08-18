@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Rendering;
+﻿namespace Horizon.Rendering;
 
 public struct DebugRenderOptions
 {

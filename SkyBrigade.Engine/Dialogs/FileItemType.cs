@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Dialogs;
+﻿namespace Horizon.Dialogs;
 
 public enum FileItemType
 {

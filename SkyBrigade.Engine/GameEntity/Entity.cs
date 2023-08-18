@@ -1,10 +1,10 @@
-﻿using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.Primitives;
-using SkyBrigade.Engine.Rendering;
+﻿using Horizon.GameEntity.Components;
+using Horizon.Primitives;
+using Horizon.Rendering;
 using System;
 using System.Collections.Generic;
 
-namespace SkyBrigade.Engine.GameEntity
+namespace Horizon.GameEntity
 {
     /// <summary>
     /// Entity class represents a game entity.

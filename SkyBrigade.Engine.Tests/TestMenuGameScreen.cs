@@ -2,20 +2,20 @@
 using Microsoft.Extensions.Options;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Data;
-using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.Logging;
-using SkyBrigade.Engine.Rendering;
-using SkyBrigade.Engine.Tests.Tests;
+using Horizon.Data;
+using Horizon.GameEntity;
+using Horizon.Logging;
+using Horizon.Rendering;
+using Horizon.Tests.Tests;
 
-using Texture = SkyBrigade.Engine.OpenGL.Texture;
+using Texture = Horizon.OpenGL.Texture;
 
-namespace SkyBrigade.Engine.Tests;
+namespace Horizon.Tests;
 
 public class TestMenuGameScreen : Scene
 {
     private int index = 0;
-    private SkyBrigade.Engine.Prefabs.Character.CharacterController character;
+    private Horizon.Prefabs.Character.CharacterController character;
     private List<IEngineTest> tests;
 
     public TestMenuGameScreen()
@@ -47,16 +47,7 @@ public class TestMenuGameScreen : Scene
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
 
-    public override void RenderScene(float dt, RenderOptions? renderOptions = null)
-    {
-        var options = (renderOptions ?? RenderOptions.Default) with
-        {
-            Camera = character.Camera
-        };
 
-        base.RenderScene(dt, options);
-        tests[index].Render(dt, options);
-    }
 
     public override void DrawGui(float dt)
     {
@@ -126,4 +117,13 @@ public class TestMenuGameScreen : Scene
             tests[i].Dispose();
     }
 
+    public override void DrawOther(float dt, RenderOptions? renderOptions = null)
+    {
+        var options = (renderOptions ?? RenderOptions.Default) with
+        {
+            Camera = character.Camera
+        };
+
+        tests[index].Render(dt, options);
+    }
 }

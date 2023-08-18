@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Engine", "SkyBrigade.Engine\SkyBrigade.Engine.csproj", "{ACE08932-A62F-42EA-AC50-D64EF79743A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon", "SkyBrigade.Engine\Horizon.csproj", "{ACE08932-A62F-42EA-AC50-D64EF79743A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Game", "SkyBrigade.Game\SkyBrigade.Game.csproj", "{3B9BB5AA-11C0-4151-BED3-A1B021464754}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade", "SkyBrigade.Game\SkyBrigade.csproj", "{3B9BB5AA-11C0-4151-BED3-A1B021464754}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Engine.Tests", "SkyBrigade.Engine.Tests\SkyBrigade.Engine.Tests.csproj", "{1A5C7370-CBD9-41A9-8131-05890AF31469}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Tests", "SkyBrigade.Engine.Tests\Horizon.Tests.csproj", "{1A5C7370-CBD9-41A9-8131-05890AF31469}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.MaterialEditor", "SkyBrigade.MaterialEditor\SkyBrigade.MaterialEditor.csproj", "{3F07F3C9-FA6C-4093-98FC-F5843CBC88D1}"
 EndProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade.Engine.Prefabs", "SkyBrigade.Engine.Prefabs\SkyBrigade.Engine.Prefabs.csproj", "{2D827CF8-E648-438C-8AF7-3592BA534F40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Prefabs", "SkyBrigade.Engine.Prefabs\Horizon.Prefabs.csproj", "{2D827CF8-E648-438C-8AF7-3592BA534F40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

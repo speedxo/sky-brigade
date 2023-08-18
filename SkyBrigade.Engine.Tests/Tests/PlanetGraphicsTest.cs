@@ -1,14 +1,14 @@
 ﻿using ImGuiNET;
 using Silk.NET.OpenGL;
-using SkyBrigade.Engine.Rendering;
+using Horizon.Rendering;
 using System.Numerics;
 
 using Vector4 = System.Numerics.Vector4;
 using Vector3 = System.Numerics.Vector3;
 using Vector2 = System.Numerics.Vector2;
-using SkyBrigade.Engine.GameEntity;
+using Horizon.GameEntity;
 
-namespace SkyBrigade.Engine.Tests.Tests
+namespace Horizon.Tests.Tests
 {
     public class PlanetGraphicsTest : IEngineTest
     {

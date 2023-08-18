@@ -1,10 +1,10 @@
-﻿using SkyBrigade.Engine.GameEntity;
-using SkyBrigade.Engine.GameEntity.Components;
-using SkyBrigade.Engine.OpenGL;
-using SkyBrigade.Engine.Rendering.Effects.Components;
+﻿using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
+using Horizon.Rendering.Effects.Components;
 using System.Collections.Generic;
 
-namespace SkyBrigade.Engine.Rendering
+namespace Horizon.Rendering
 {
     [RequiresComponent(typeof(ShaderComponent))]
     public class UniformBufferManager : IGameComponent

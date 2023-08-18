@@ -1,4 +1,4 @@
-﻿namespace SkyBrigade.Engine.Logging;
+﻿namespace Horizon.Logging;
 
 public enum LogOutput
 {

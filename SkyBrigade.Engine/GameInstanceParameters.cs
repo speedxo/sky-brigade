@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SkyBrigade.Engine
+namespace Horizon
 {
     public struct GameInstanceParameters
     {

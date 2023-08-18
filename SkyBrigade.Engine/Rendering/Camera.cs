@@ -1,7 +1,7 @@
 ﻿using Silk.NET.Input;
 using System.Numerics;
 
-namespace SkyBrigade.Engine.Rendering;
+namespace Horizon.Rendering;
 
 public class Camera
 {
