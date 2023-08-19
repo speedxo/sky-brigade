@@ -1,0 +1,125 @@
+﻿using System;
+using System.IO;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
+using Horizon.GameEntity;
+using Horizon.GameEntity.Components;
+using Horizon.OpenGL;
+using Horizon.Rendering.Effects.Components;
+using Horizon.Rendering.Spriting.Data;
+using Silk.NET.OpenGL;
+
+namespace Horizon.Rendering.Spriting.Components;
+
+public class SpriteBatchMesh
+{
+    private static int count = 0;
+    public static readonly int MAX_SPRITES = 750;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct SpriteData
+    {
+        public Matrix4x4 modelMatrix;
+        public int spriteOffset;
+        public int spriteId;
+
+        private int _padding2;
+        private int _padding3;
+    }
+
+    private SpriteData[] data = new SpriteData[MAX_SPRITES];
+
+    public ShaderComponent Shader { get; init; }
+    public UniformBufferObject UniformBuffer { get; init; }
+
+    public bool ShouldUniformBufferUpdate { get; set; }
+
+    public uint ElementCount { get; private set; }
+    public VertexBufferObject<Vertex2D> Vbo { get; private set; }
+
+    public SpriteBatchMesh(ShaderComponent shader)
+    {
+        this.Shader = shader;
+        UniformBuffer = new UniformBufferObject(GameManager.Instance.Gl.GetUniformBlockIndex(shader.Handle, "SpriteUniforms"));
+
+        Vbo = new(GameManager.Instance.Gl);
+
+        Vbo.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 0);
+        Vbo.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 2 * sizeof(float));
+        Vbo.VertexAttributePointer(2, 1, VertexAttribPointerType.Int, (uint)Vertex2D.SizeInBytes, 4 * sizeof(float));
+
+        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("SpriteBatch Triangles", $"({count}) Element Count", () => ElementCount / 3);
+        count++;
+    }
+
+    public void Upload(Vertex2D[] vertices, uint[] elements)
+    {
+        Vbo.VertexBuffer.BufferData(vertices);
+        Vbo.ElementBuffer.BufferData(elements);
+
+        ElementCount = (uint)elements.Length;
+    }
+
+    public void Draw(Spritesheet sheet, Matrix4x4 modelMatrix, IEnumerable<Sprite> sprites, RenderOptions? renderOptions = null)
+    {
+        if (ElementCount < 1) return; // Don't render if there is nothing to render to improve performance.
+
+        var options = renderOptions ?? RenderOptions.Default;
+
+        Shader.Use();
+
+        GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
+        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, sheet.Texture.Handle);
+        Shader.SetUniform("uTexture", 0);
+
+        if (ShouldUniformBufferUpdate)
+        {
+            ShouldUniformBufferUpdate = false;
+
+        }
+
+        //UniformBuffer.BufferData(new ReadOnlySpan<SpriteData>(AggregateSpriteData(sprites)));
+        UniformBuffer.BufferSingleData(AggregateSpriteData(sprites));
+        UniformBuffer.BindToUniformBlockBindingPoint();
+
+        Shader.SetUniform("uView", options.Camera.View);
+        Shader.SetUniform("uProjection", options.Camera.Projection);
+        Shader.SetUniform("uModel", modelMatrix);
+        Shader.SetUniform("uSingleFrameSize", sheet.SpriteSize / sheet.Texture.Size);
+
+        Vbo.Bind();
+
+        // Once again, I really don't want to make the whole method unsafe for one call.
+        unsafe
+        {
+            GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+        }
+
+        Vbo.Unbind();
+
+        Shader.End();
+    }
+
+    private SpriteData[] AggregateSpriteData(IEnumerable<Sprite> sprites)
+    {
+        //var matrices = new Matrix4x4[sprites.Count()];
+        //var offsets = new int[sprites.Count()];
+
+        int i = 0;
+        foreach (var sprite in sprites)
+        {
+            data[i] = new SpriteData
+            {
+                modelMatrix = sprite.Transform.ModelMatrix,
+                spriteOffset = sprite.GetFrameOffset(),
+                spriteId = sprite.ID
+            };
+
+            //matrices[i] = (sprite.Transform.ModelMatrix);
+            i++;
+        }
+        return data;
+    }
+}
+

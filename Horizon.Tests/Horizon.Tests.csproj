@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>CS8618</NoWarn>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<IsAotCompatible>true</IsAotCompatible>
+		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+	</PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Tests\" />
+    <None Remove="Assets\" />
+    <None Remove="Assets\teapot.obj" />
+    <None Remove="Assets\pbr_textures\metal_ball.material" />
+    <None Remove="Assets\pbr_textures\black_tiles.material" />
+    <None Remove="Assets\pbr_textures\bricks_mortar.material" />
+    <None Remove="Assets\planets\" />
+    <None Remove="Assets\planets\metal_planet.material" />
+    <None Remove="Assets\planets\rock_planet.material" />
+    <None Remove="Assets\planets\star.material" />
+    <None Remove="Assets\planets\star2.material" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tests\" />
+    <Folder Include="Assets\" />
+    <Folder Include="Assets\planets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\teapot.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\metal_ball.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\black_tiles.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\pbr_textures\bricks_mortar.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\planets\metal_planet.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\planets\rock_planet.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\planets\star.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\planets\star2.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ImGui.NET.Docking" Version="1.75.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Horizon.Prefabs\Horizon.Prefabs.csproj" />
+    <ProjectReference Include="..\Horizon\Horizon.csproj" />
+  </ItemGroup>
+</Project>
