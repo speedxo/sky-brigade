@@ -82,17 +82,16 @@ public class TileMesh : Entity
         Vector2[] uv = tile.Sheet.GetTextureCoordinates(tile.RenderingData.FrameName);
 
         int id = Sheet.GetNewSpriteId();
-        float offset = (float)slice * TileMapChunk.WIDTH * Tile.TILE_WIDTH;
 
         return new Vertex2D[] {
-                new Vertex2D(-Tile.TILE_WIDTH / 2.0f + offset + tile.Position.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f- tile.Position.Y* Tile.TILE_HEIGHT, uv[0].X, uv[0].Y, id),
-                new Vertex2D(Tile.TILE_WIDTH / 2.0f + offset+ tile.Position.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f- tile.Position.Y* Tile.TILE_HEIGHT, uv[1].X, uv[1].Y, id),
-                new Vertex2D(Tile.TILE_WIDTH / 2.0f + offset+ tile.Position.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f- tile.Position.Y* Tile.TILE_HEIGHT, uv[2].X, uv[2].Y, id),
-                new Vertex2D(-Tile.TILE_WIDTH / 2.0f + offset+ tile.Position.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f- tile.Position.Y* Tile.TILE_HEIGHT, uv[3].X, uv[3].Y, id)
+                new Vertex2D(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[0].X, uv[0].Y, id),
+                new Vertex2D(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[1].X, uv[1].Y, id),
+                new Vertex2D(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[2].X, uv[2].Y, id),
+                new Vertex2D(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[3].X, uv[3].Y, id)
             };
     }
 
-    public void EndMeshGeneration()
+    public void EndMeshGeneration() 
     {
         Upload(_vertices.ToArray(), _indices.ToArray());
 

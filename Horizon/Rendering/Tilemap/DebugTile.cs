@@ -1,9 +1,11 @@
-﻿namespace Horizon.Rendering.Tilemap;
+﻿using System.Numerics;
+
+namespace Horizon.Rendering.Tilemap;
 
 public class DebugTile : Tile
 {
-    public DebugTile(Tilemap map, System.Numerics.Vector2 pos)
-        : base(map, pos)
+    public DebugTile(Tilemap map, Vector2 local, Vector2 global)
+        : base(map, local, global)
     {
         ID = -1;
         Sheet = map.Sheets["default"];

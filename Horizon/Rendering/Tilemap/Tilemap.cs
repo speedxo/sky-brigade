@@ -24,6 +24,14 @@ public class Tilemap : Entity
         ChunkManager = AddComponent<TilemapChunkManager>();
     }
 
+    public Tile this[int x, int y]
+    {
+        get
+        {
+            return ChunkManager.Chunks[x / WIDTH].Tiles[x % TileMapChunk.WIDTH, y];
+        }
+    }
+
     public Spritesheet AddSpritesheet(string name, Spritesheet sheet)
     {
         Sheets.Add(name, sheet);
@@ -35,7 +43,7 @@ public class Tilemap : Entity
         ChunkManager.GenerateMeshes();
     }
 
-    public void GenerateTiles(Func<int, int, Tile> generateTileFunc)
+    public void GenerateTiles(Func<Vector2, Vector2, Tile> generateTileFunc)
     {
         ChunkManager.GenerateTiles(generateTileFunc);
     }

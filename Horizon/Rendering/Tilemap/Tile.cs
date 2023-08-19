@@ -18,16 +18,19 @@ public abstract class Tile : IUpdateable, IDrawable
             FrameName = "debug"
         };
     }
-    public Vector2 Position { get; private set; }
+    public Vector2 LocalPosition { get; private set; }
+    public Vector2 GlobalPosition { get; private set; }
+
     public TileRenderingData RenderingData { get; protected set; }
     public Spritesheet Sheet { get; set; }
     public int ID { get; protected set; }
     public Tilemap Map { get; set; }
 
-    public Tile(Tilemap map, Vector2 pos)
+    public Tile(Tilemap map, Vector2 local, Vector2 global)
     {
         this.Map = map;
-        this.Position = pos;
+        this.LocalPosition = local;
+        this.GlobalPosition = global;
         this.RenderingData = TileRenderingData.Default;
     }
 

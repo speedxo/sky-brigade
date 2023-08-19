@@ -1,4 +1,5 @@
-﻿using Horizon.GameEntity;
+﻿using System.Numerics;
+using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Microsoft.Extensions.Options;
 
@@ -30,34 +31,27 @@ public class TilemapChunkManager : IGameComponent
     public void Draw(float dt, RenderOptions? options = null)
     {
         for (int i = 0; i < Chunks.Length; i++)
-        {
             Chunks[i].Draw(dt, options);
-        }
     }
 
     public void GenerateMeshes()
     {
         for (int i = 0; i < Chunks.Length; i++)
-        {
             Chunks[i].GenerateMesh();
-        }
     }
 
-    public void GenerateTiles(Func<int, int, Tile> generateTileFunc)
+    public void GenerateTiles(Func<Vector2, Vector2, Tile> generateTileFunc)
     {
         foreach (var chunk in Chunks)
-        {
             chunk.Generate(generateTileFunc);
-        }
+
         PostGenerateTiles();
     }
 
     private void PostGenerateTiles()
     {
         foreach (var chunk in Chunks)
-        {
             chunk.PostGenerate();
-        }
     }
 }
 

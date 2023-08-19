@@ -28,7 +28,7 @@ public class TileMapChunk
         this.Renderer = new(this);
     }
 
-    public void Draw(float dt, RenderOptions? renderOptions=null)
+    public void Draw(float dt, RenderOptions? renderOptions = null)
     {
         Renderer.Draw(dt, renderOptions);
     }
@@ -65,15 +65,15 @@ public class TileMapChunk
         tempPairs.Clear();
     }
 
-    public void Generate(Func<int, int, Tile> generateTileFunc)
+    public void Generate(Func<Vector2, Vector2, Tile> generateTileFunc)
     {
-        for (int x = 0; x < Tiles.GetLength(0); x++)
+        Parallel.For(0, Tiles.GetLength(0), x =>
         {
             for (int y = 0; y < Tiles.GetLength(1); y++)
             {
-                Tiles[x, y] = generateTileFunc(x, y);
+                Tiles[x, y] = generateTileFunc(new Vector2(x, y), new Vector2(x + Slice * WIDTH, y));
             }
-        }
+        });
     }
     public void PostGenerate()
     {
