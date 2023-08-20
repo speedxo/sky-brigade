@@ -2,22 +2,41 @@
 using Horizon;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
-using Horizon.Rendering.Tilemap;
 using Silk.NET.OpenGL;
+using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
 
 namespace Game2D;
 
 public class GameScene : Scene
 {
+    public enum TileID
+    {
+        Dirt = 1
+    }
+
+    public enum TileTextureID
+    {
+        Dirt = 1,
+        Grass = 2
+    }
+
     Sprite flame;
     SpriteBatch spriteBatch;
     Camera cam;
-
-    Tilemap tilemap;
+    TileMap tilemap;
 
     public GameScene()
     {
         InitializeGl();
+        AddEntity(tilemap = new ());
+
+        var sheet = tilemap.AddTileSet("tileset", new (GameManager.Instance.ContentManager.LoadTexture("content/tileset.png"), new Vector2(16)));
+        sheet.RegisterTile(TileTextureID.Grass, new Vector2(16, 0));
+        sheet.RegisterTile(TileTextureID.Dirt, new Vector2(16, 16));
+
+        //tilemap.GenerateTiles(GenerateTile);
+        tilemap.PopulateTiles(PopulateTiles);
+        tilemap.GenerateMeshes();
 
         var sprSheet1 = AddEntity(new Spritesheet(GameManager.Instance.ContentManager.LoadTexture("content/burning_loop_2.png"), new Vector2(24, 32)));
         sprSheet1.AddAnimation("flame", Vector2.Zero, 8);
@@ -31,21 +50,24 @@ public class GameScene : Scene
             Position = new Vector3(0, 0, 1)
         };
 
-        AddEntity(tilemap = new Tilemap());
-
-        var sheet = tilemap.AddSpritesheet("tileset", new Spritesheet(GameManager.Instance.ContentManager.LoadTexture("content/tileset.png"), new Vector2(16)));
-        sheet.AddSprite("grass", new Vector2(16, 0));
-        sheet.AddSprite("dirt", new Vector2(16, 16));
-
-        tilemap.GenerateTiles(GenerateTile);
-        tilemap.GenerateMeshes();
 
         InitializeRenderingPipeline();
     }
 
-    public Tile GenerateTile(Vector2 local, Vector2 global)
+    private void PopulateTiles(Tile?[,] tiles, TileMapChunk chunk)
     {
-        return new DirtTile(tilemap, local, global);
+        for (int x = 0; x < tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < tiles.GetLength(1); y++)
+            {
+
+            }
+        }
+    }
+
+    public Tile GenerateTile(TileMapChunk chunk, Vector2 local)
+    {
+        return new DirtTile(chunk, local);
     }
 
     private static void InitializeGl()
@@ -68,9 +90,8 @@ public class GameScene : Scene
         {
             cam.Position += new Vector3(0, 0, -dt);
         }
-        
 
-        cam.Position += new Vector3(GameManager.Instance.InputManager.GetVirtualController().MovementAxis * dt * 2.0f * cam.Position.Z, 0.0f);
+        cam.Position += new Vector3(GameManager.Instance.InputManager.GetVirtualController().MovementAxis * dt * cam.Position.Z, 0.0f);
         flame.Transform.Position = cam.Position * new Vector3(1, 1, 0);
         cam.Update(dt);
     }

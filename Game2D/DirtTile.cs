@@ -1,31 +1,23 @@
 ﻿using System.Numerics;
 using Horizon.Rendering;
-using Horizon.Rendering.Tilemap;
+using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
 
 namespace Game2D;
 
 public class DirtTile : Tile
 {
-    public DirtTile(Tilemap map, Vector2 local, Vector2 global)
-        : base(map, local, global)
+    public DirtTile(TileMapChunk chunk, Vector2 local)
+        : base(chunk, local)
     {
-        Sheet = map.Sheets["tileset"];
+        RenderingData.TextureID = GameScene.TileTextureID.Dirt;
     }
 
     public override void PostGeneration(int x, int y)
     {
-        if (y == 0) RenderingData = RenderingData with { FrameName = "grass" };
-        else RenderingData = RenderingData with { FrameName = "dirt" };
-    }
+        if (y == 0) RenderingData.TextureID = GameScene.TileTextureID.Grass;
+        else RenderingData.TextureID = GameScene.TileTextureID.Dirt;
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
-    {
-
-    }
-
-    public override void Update(float dt)
-    {
-
+        ShouldUpdateMesh = true;
     }
 }
 

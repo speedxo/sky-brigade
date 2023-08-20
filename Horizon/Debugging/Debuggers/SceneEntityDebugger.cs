@@ -15,8 +15,6 @@ namespace Horizon.Debugging.Debuggers
     public class SceneEntityDebugger : DebuggerComponent
     {
         public bool DebugInstance = false;
-
-        public Entity Parent { get; set; }
         
         // TODO: use string interns here because there are thousands of string allocations/second here
         public override void Initialize()

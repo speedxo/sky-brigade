@@ -62,10 +62,10 @@
     <None Remove="Rendering\Spriting\Components\" />
     <None Remove="Assets\sprite_shaders\sprites.frag" />
     <None Remove="Assets\sprite_shaders\sprites.vert" />
-    <None Remove="Rendering\Tilemap\" />
     <None Remove="Assets\tilemap_shaders\" />
     <None Remove="Assets\tilemap_shaders\sprites.frag" />
     <None Remove="Assets\tilemap_shaders\sprites.vert" />
+    <None Remove="Rendering\Tiles\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -90,8 +90,8 @@
     <Folder Include="Rendering\Spriting\Data\" />
     <Folder Include="Assets\sprite_shaders\" />
     <Folder Include="Rendering\Spriting\Components\" />
-    <Folder Include="Rendering\Tilemap\" />
     <Folder Include="Assets\tilemap_shaders\" />
+    <Folder Include="Rendering\Tiles\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />
