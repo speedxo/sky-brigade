@@ -13,7 +13,7 @@ namespace Horizon.Debugging.Debuggers
         private float gamma, ambientStrength;
         private string[] renderModes;
         private int renderModeIndex;
-        private bool isPostProcessingEnabled;
+        private bool isPostProcessingEnabled, isWireframeEnabled;
 
         public override void Initialize()
         {
@@ -25,6 +25,7 @@ namespace Horizon.Debugging.Debuggers
             renderModes = Enum.GetNames(typeof(DefferedRenderLayer));
 
             isPostProcessingEnabled = RenderOptions.Default.IsPostProcessingEnabled;
+            isWireframeEnabled = RenderOptions.Default.IsWireframeEnabled;
 
             Debugger = Parent as SkylineDebugger;
 
@@ -47,6 +48,7 @@ namespace Horizon.Debugging.Debuggers
                 ImGui.Combo("Render Mode", ref renderModeIndex, renderModes, renderModes.Length);
 
                 ImGui.Checkbox("Post Processing", ref isPostProcessingEnabled);
+                ImGui.Checkbox("Wireframe Mode", ref isWireframeEnabled);
 
                 ImGui.End();
             }
@@ -62,7 +64,8 @@ namespace Horizon.Debugging.Debuggers
                 {
                     DefferedLayer = (DefferedRenderLayer)renderModeIndex
                 },
-                IsPostProcessingEnabled = isPostProcessingEnabled
+                IsPostProcessingEnabled = isPostProcessingEnabled,
+                IsWireframeEnabled = isWireframeEnabled
             };
         }
     }

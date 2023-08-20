@@ -11,6 +11,8 @@ in vec3 fragPos;
 // physical parameters
 uniform vec3 camPos;
 
+uniform bool uWireframeEnabled;
+
 layout(std140) uniform MaterialRenderOptions
 {
     int DefferedRenderLayer;
@@ -126,7 +128,12 @@ vec4 renderDefferedLayer()
 }
 
 void main()
-{		
+{
+    if (uWireframeEnabled)
+    {
+        FragColor = vec4(1.0f);
+        return;
+    }	
     if (DefferedRenderLayer > 0) 
     {
         FragColor = renderDefferedLayer();

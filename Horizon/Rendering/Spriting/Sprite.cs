@@ -13,6 +13,7 @@ namespace Horizon.Rendering.Spriting
         public Spritesheet Spritesheet { get; init; }
 
         public bool ShouldDraw { get; set; } = true;
+        public bool Flipped { get; set; } = false;
         internal bool ShouldUpdateVbo { get; private set; }
 
         public Vector2 Size { get; set; } = Vector2.One;
@@ -46,11 +47,12 @@ namespace Horizon.Rendering.Spriting
             };
         }
 
-        public int GetFrameOffset()
+        public Vector2 GetFrameOffset()
         {
             if (IsAnimated)
-                return Spritesheet.AnimationManager.GetFrame(FrameName).index;
-            return 0;
+                return new Vector2(Spritesheet.AnimationManager.GetFrame(FrameName).index, Spritesheet.AnimationManager.GetFrame(FrameName).definition.Position.Y);
+
+            return Vector2.Zero;
         }
     }
 }

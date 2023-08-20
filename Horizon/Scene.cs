@@ -17,10 +17,10 @@ namespace Horizon;
 public abstract class Scene : Entity, IDisposable
 {
     // again, this is trashy. TODO: fix
-    private static RenderRectangle? defaultSceneRect=null;
+    private static SceneRenderRect? defaultSceneRect=null;
 
     public EffectStack PostEffects { get; protected set; }
-    public RenderRectangle SceneRect { get; protected set; }
+    public SceneRenderRect SceneRect { get; protected set; }
     public FrameBufferObject FrameBuffer { get; protected set; }
 
     private bool hasRenderPipelineBeenInitialized = false;
@@ -45,8 +45,8 @@ public abstract class Scene : Entity, IDisposable
     protected virtual bool InitializeRenderFrame()
     {
         // yes this is trashy.
-        defaultSceneRect ??= new RenderRectangle(new EffectStack().Technique, FrameBuffer);
-        SceneRect = new RenderRectangle(PostEffects.Technique.Shader, FrameBuffer);
+        defaultSceneRect ??= new SceneRenderRect(new EffectStack().Technique, FrameBuffer);
+        SceneRect = new SceneRenderRect(PostEffects.Technique.Shader, FrameBuffer);
         return true;
     }
 

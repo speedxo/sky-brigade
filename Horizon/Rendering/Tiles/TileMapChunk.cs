@@ -28,6 +28,22 @@ public abstract partial class Tiling<TTileID, TTextureID>
             this.Renderer = new(this);
         }
 
+        public bool IsEmpty(int x, int y)
+        {
+            return this[x, y] == null;
+        }
+
+        public Tile? this[int x, int y]
+        {
+            get
+            {
+                if (x / WIDTH > WIDTH - 1) return null;
+                if (x < 0 || y < 0 || x > WIDTH - 1 || y > HEIGHT - 1) return null;
+
+                return Tiles[x, y];
+            }
+        }
+
         public void Draw(float dt, RenderOptions? renderOptions = null)
         {
             Renderer.Draw(dt, renderOptions);

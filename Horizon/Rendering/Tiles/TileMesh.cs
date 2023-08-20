@@ -135,6 +135,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
             Shader.SetUniform("uView", options.Camera.View);
             Shader.SetUniform("uProjection", options.Camera.Projection);
+            Shader.SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
 
             Vbo.Bind();
 
@@ -142,13 +143,13 @@ public abstract partial class Tiling<TTileID, TTextureID>
             unsafe
             {
                 // Turn on wireframe mode
-                //GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
                 //GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
                 GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
 
                 // Turn off wireframe mode
-                //GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
             }
 
             Vbo.Unbind();

@@ -84,6 +84,7 @@ public abstract class Mesh : IDisposable
 
         SetUniform("uView", options.Camera.View);
         SetUniform("uProjection", options.Camera.Projection);
+        SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
         //SetUniform("camPos", options.Camera.Position);
     }
 
@@ -105,7 +106,13 @@ public abstract class Mesh : IDisposable
         // Once again, I really don't want to make the whole method unsafe for one call.
         unsafe
         {
+            // Turn on wireframe mode
+            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+
             GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+
+            // Turn off wireframe mode
+            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
         Vbo.Unbind();

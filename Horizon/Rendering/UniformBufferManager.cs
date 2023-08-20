@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Horizon.Rendering
 {
     [RequiresComponent(typeof(ShaderComponent))]
-    public class UniformBufferManager : IGameComponent
+    public class UniformBufferManager : IGameComponent, IDisposable
     {
         private readonly Dictionary<uint, UniformBufferObject> _bufferObjects = new ();
 
@@ -26,15 +26,16 @@ namespace Horizon.Rendering
             Shader ??= Parent.GetComponent<ShaderComponent>();
         }
 
-        public void AddUniformBuffer(uint bindingPoint)
+        public UniformBufferObject AddUniformBuffer(uint bindingPoint)
         {
-            if (_bufferObjects.ContainsKey(bindingPoint)) return;
+            if (_bufferObjects.ContainsKey(bindingPoint)) return _bufferObjects[bindingPoint];
 
             var buffer = new UniformBufferObject(bindingPoint);
             buffer.Bind();
             buffer.BindToUniformBlockBindingPoint();
             buffer.Unbind();
             _bufferObjects[bindingPoint] = buffer;
+            return buffer;
         }
 
         public UniformBufferObject GetBuffer(uint bindingPoint)
@@ -60,6 +61,14 @@ namespace Horizon.Rendering
         public void Draw(float dt, RenderOptions? options = null)
         {
             // Drawing logic here if needed
+        }
+
+        public void Dispose()
+        {
+            foreach ((_, var buffer) in _bufferObjects)
+            {
+                buffer.Dispose();
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
 {
     public class TileMap : Entity
     {
-        public const int WIDTH = 1;
+        public const int WIDTH = 4;
 
         public TilemapChunkManager ChunkManager { get; init; }
 
@@ -21,21 +21,21 @@ public abstract partial class Tiling<TTileID, TTextureID>
             Tilesets = new();
             ChunkManager = AddComponent<TilemapChunkManager>();
         }
-        public bool IsEmpty(int x, int y)
-        {
-            return this[x, y] == null;
-        }
-
-        public Tile? this[int x, int y]
-        {
-            get
+            public bool IsEmpty(int x, int y)
             {
-                if (x / WIDTH > WIDTH - 3) return null;
-                if (x < 0 || y < 0 || x > TileMapChunk.WIDTH - 1 || y > TileMapChunk.HEIGHT - 1) return null;
-
-                return ChunkManager.Chunks[x / WIDTH].Tiles[x % TileMapChunk.WIDTH, y];
+                return this[x, y] == null;
             }
-        }
+
+            public Tile? this[int x, int y]
+            {
+                get
+                {
+                    if (x / WIDTH > WIDTH - 1) return null;
+                    if (x < 0 || y < 0 || x > WIDTH * TileMapChunk.WIDTH - 1 || y > TileMapChunk.HEIGHT - 1) return null;
+
+                    return ChunkManager.Chunks[x / WIDTH].Tiles[x % TileMapChunk.WIDTH, y];
+                }
+            }
 
         public TileSet AddTileSet(string name, TileSet set)
         {

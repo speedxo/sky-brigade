@@ -5,7 +5,7 @@ using Horizon.Rendering.Effects.Components;
 
 namespace Horizon.Rendering
 {
-    public class Technique : Entity
+    public class Technique : Entity, IDisposable
 	{
         public ShaderComponent Shader { get; set; }
         public UniformBufferManager BufferManager { get; init; }
@@ -44,6 +44,15 @@ namespace Horizon.Rendering
         public override void Draw(float dt, RenderOptions? renderOptions = null)
         {
             
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            BufferManager.Dispose();
+            Shader.Dispose();
+            GameManager.Instance.Gl.DeleteProgram(Handle);
         }
     }
 }

@@ -21,11 +21,9 @@ public class SpriteBatchMesh
     private struct SpriteData
     {
         public Matrix4x4 modelMatrix;
-        public int spriteOffset;
+        public Vector2 spriteOffset;
         public int spriteId;
-
-        private int _padding2;
-        private int _padding3;
+        public bool isFlipped;
     }
 
     private SpriteData[] data = new SpriteData[MAX_SPRITES];
@@ -43,6 +41,10 @@ public class SpriteBatchMesh
         this.Shader = shader;
         UniformBuffer = new UniformBufferObject(GameManager.Instance.Gl.GetUniformBlockIndex(shader.Handle, "SpriteUniforms"));
 
+        unsafe
+        {
+            Console.WriteLine(sizeof(SpriteData) % 16 == 0);
+        }
         Vbo = new(GameManager.Instance.Gl);
 
         Vbo.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 0);
@@ -87,13 +89,20 @@ public class SpriteBatchMesh
         Shader.SetUniform("uProjection", options.Camera.Projection);
         Shader.SetUniform("uModel", modelMatrix);
         Shader.SetUniform("uSingleFrameSize", sheet.SpriteSize / sheet.Texture.Size);
+        Shader.SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
 
         Vbo.Bind();
 
         // Once again, I really don't want to make the whole method unsafe for one call.
         unsafe
         {
+            // Turn on wireframe mode
+            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+
             GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+
+            // Turn off wireframe mode
+            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
         Vbo.Unbind();
@@ -113,7 +122,8 @@ public class SpriteBatchMesh
             {
                 modelMatrix = sprite.Transform.ModelMatrix,
                 spriteOffset = sprite.GetFrameOffset(),
-                spriteId = sprite.ID
+                spriteId = sprite.ID,
+                isFlipped = sprite.Flipped
             };
 
             //matrices[i] = (sprite.Transform.ModelMatrix);

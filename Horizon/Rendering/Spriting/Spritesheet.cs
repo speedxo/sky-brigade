@@ -44,7 +44,7 @@ namespace Horizon.Rendering.Spriting
                 return;
             }
 
-            this.Sprites.Add(name, new SpriteDefinition { Position = pos, Size = size ?? SpriteSize });
+            this.Sprites.Add(name, new SpriteDefinition { Position = pos * (size ?? SpriteSize), Size = size ?? SpriteSize });
         }
 
         public Vector2[] GetAnimatedTextureCoordinates(string name)
