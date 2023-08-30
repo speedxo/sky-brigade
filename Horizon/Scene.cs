@@ -17,10 +17,10 @@ namespace Horizon;
 public abstract class Scene : Entity, IDisposable
 {
     // again, this is trashy. TODO: fix
-    private static SceneRenderRect? defaultSceneRect=null;
+    private static RenderRectangle? defaultSceneRect=null;
 
     public EffectStack PostEffects { get; protected set; }
-    public SceneRenderRect SceneRect { get; protected set; }
+    public RenderRectangle SceneRect { get; protected set; }
     public FrameBufferObject FrameBuffer { get; protected set; }
 
     private bool hasRenderPipelineBeenInitialized = false;
@@ -45,8 +45,8 @@ public abstract class Scene : Entity, IDisposable
     protected virtual bool InitializeRenderFrame()
     {
         // yes this is trashy.
-        defaultSceneRect ??= new SceneRenderRect(new EffectStack().Technique, FrameBuffer);
-        SceneRect = new SceneRenderRect(PostEffects.Technique.Shader, FrameBuffer);
+        defaultSceneRect ??= new RenderRectangle(new EffectStack().Technique, FrameBuffer);
+        SceneRect = new RenderRectangle(PostEffects.Technique.Shader, FrameBuffer);
         return true;
     }
 
@@ -97,7 +97,6 @@ public abstract class Scene : Entity, IDisposable
         //    GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
         //}
 
-        DrawOther(dt, renderOptions);
 
         for (int i = 0; i < Components.Count; i++)
             Components.Values.ElementAt(i).Draw(dt, renderOptions);
@@ -105,8 +104,10 @@ public abstract class Scene : Entity, IDisposable
         for (int i = 0; i < Entities.Count; i++)
             Entities[i].Draw(dt, renderOptions);
 
+        DrawOther(dt, renderOptions);
+
         //if (options.IsPostProcessingEnabled)
-            FrameBuffer.Unbind();
+        FrameBuffer.Unbind();
     }
 
     public abstract void DrawOther(float dt, RenderOptions? renderOptions = null);
@@ -117,7 +118,7 @@ public abstract class Scene : Entity, IDisposable
             GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Bind();
 
         GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.ViewportSize.X, (uint)GameManager.Instance.ViewportSize.Y);
+        GameManager.Instance.Gl.Viewport(0, 0, (uint)(GameManager.Instance.ViewportSize.X), (uint)GameManager.Instance.ViewportSize.Y);
 
         var options = renderOptions ?? RenderOptions.Default;
         if (options.IsPostProcessingEnabled)
@@ -126,8 +127,6 @@ public abstract class Scene : Entity, IDisposable
 
         if (GameManager.Instance.Debugger.GameContainerDebugger.Visible)
             GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Unbind();
-
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
     }
 
     /// <summary>

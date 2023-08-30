@@ -40,6 +40,21 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     public int ID { get; set; }
     public string Name { get; set; } = "Scene Manager";
 
+    public T AddComponent<T>(T component) where T : IGameComponent
+    {
+        throw new NotImplementedException();
+    }
+
+    public T AddComponent<T>() where T : IGameComponent, new()
+    {
+        throw new NotImplementedException();
+    }
+
+    public T AddEntity<T>() where T : IEntity, new()
+    {
+        throw new NotImplementedException();
+    }
+
     public void Dispose()
     {
         foreach (var (_, instance) in Instances)
@@ -57,6 +72,31 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     {
         if (!Enabled) return;
         GetCurrentInstance().Draw(dt, renderOptions);
+    }
+
+    public T? GetComponent<T>() where T : IGameComponent
+    {
+        return default;
+    }
+
+    public bool HasComponent<T>() where T : IGameComponent
+    {
+        return default;
+    }
+
+    public bool HasComponent(Type type)
+    {
+        return default;
+    }
+
+    public void Initialize()
+    {
+
+    }
+
+    public void RemoveComponent<T>() where T : IGameComponent
+    {
+
     }
 
     public void Update(float dt)

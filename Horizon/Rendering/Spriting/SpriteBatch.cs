@@ -1,7 +1,5 @@
-﻿using System;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using Horizon.OpenGL;
 using Horizon.Rendering.Effects.Components;
 using Horizon.Rendering.Spriting.Components;
 using Horizon.Rendering.Spriting.Data;
@@ -31,11 +29,15 @@ public class SpriteBatch : Entity
     public void AddSprite(Sprite sprite)
     {
         if (Sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
-            GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"You are attemping to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit, please create another spritebatch.");
+        {
+            GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"You are attempting to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit. Please create another sprite batch.");
+        }
 
-        if (!Spritesheets.ContainsKey(sprite.Spritesheet))
-            Spritesheets.Add(sprite.Spritesheet, new SpriteBatchMesh(Shader));
-
+        if (!Spritesheets.TryGetValue(sprite.Spritesheet, out var spriteBatchMesh))
+        {
+            spriteBatchMesh = new SpriteBatchMesh(Shader);
+            Spritesheets.Add(sprite.Spritesheet, spriteBatchMesh);
+        }
 
         Sprites.Add(sprite);
     }

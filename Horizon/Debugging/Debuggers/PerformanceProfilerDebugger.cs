@@ -29,16 +29,18 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     private LinearBuffer<float> _updateFrameTimes;
     private LinearBuffer<float> _renderFrameTimes;
+    private LinearBuffer<float> _memoryUsage;
     private LinearBuffer<float> _frameTimers;
 
 
     private long _prevTimestamp;
     private float _cpuUsage;
     private long _prevCpuTime;
-    private float _memoryUsage;
+    private float _memoryFootprint;
 
     private readonly object _updateLock = new object();
     private readonly object _renderLock = new object();
+    private readonly object _memoryLock = new object();
 
     private float _updateTimer;
     private float _renderTimer;
@@ -58,6 +60,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         _updateFrameTimes = new(100);
         _renderFrameTimes = new(100);
         _frameTimers = new(100);
+        _memoryUsage = new(100);
 
         _prevTimestamp = Stopwatch.GetTimestamp();
         _prevCpuTime = Process.GetCurrentProcess().TotalProcessorTime.Ticks;
@@ -84,11 +87,15 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         _updateStopwatch.Stop();
 
         _cpuUsage = CalculateCPUUsage();
-        _memoryUsage = GetMemoryUsage();
+        _memoryFootprint = GetMemoryUsage();
 
         lock (_updateLock)
         {
             _updateFrameTimes.Append((float)_updateStopwatch.Elapsed.TotalMilliseconds);
+        }
+        lock (_memoryLock)
+        {
+            _memoryUsage.Append(_memoryFootprint);
         }
     }
 
@@ -124,26 +131,29 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
         if (ImGui.Begin(Name))
         {
-            float maxUpdateFrameTime, maxRenderFrameTime;
+            float maxUpdateFrameTime, maxRenderFrameTime, maxMemoryUsage;
             lock (_updateLock) maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
             lock (_renderLock) maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
+            lock (_memoryLock) maxMemoryUsage = _memoryUsage.Buffer.Max();
+
 
             ImGui.Text($"Max Update Frame Time: {maxUpdateFrameTime:0.00} ms");
             ImGui.Text($"Max Render Frame Time: {maxRenderFrameTime:0.00} ms");
             ImGui.Text($"CPU Usage: {_cpuUsage:0.00}%");
-            ImGui.Text($"Memory Usage: {_memoryUsage:0.00} MB");
+            ImGui.Text($"Memory Usage: {_memoryFootprint:0.00} MB");
 
             ImGui.Text($"{1.0f / _frameTimers.Buffer.Average():0}FPS");
 
             PlotFrameTimes("Update Frame Times", _updateFrameTimes, maxUpdateFrameTime);
             PlotFrameTimes("Render Frame Times", _renderFrameTimes, maxRenderFrameTime);
+            PlotFrameTimes("Memory Usage", _memoryUsage, maxMemoryUsage, "MB");
 
             ImGui.End();
         }
     }
 
     [Pure]
-    private static void PlotFrameTimes(string label, LinearBuffer<float> frameTimes, float maxValue)
+    private static void PlotFrameTimes(string label, LinearBuffer<float> frameTimes, float maxValue, string unit="ms")
     {
         float windowWidth = ImGui.GetContentRegionAvail().X;
         float averageFrameTime = frameTimes.Buffer.Average();
@@ -153,7 +163,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
             ref frameTimes.Buffer[0],
             frameTimes.Length,
             frameTimes.Index,
-            $"{label} - avg: {averageFrameTime:0.00} ms",
+            $"{label} - avg: {averageFrameTime:0.00} {unit}",
             0.0f,
             maxValue * 1.2f,
             new Vector2(windowWidth, 80)

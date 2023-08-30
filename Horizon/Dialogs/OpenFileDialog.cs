@@ -13,7 +13,7 @@ namespace Horizon.Dialogs
     /// <summary>
     /// Represents an open file dialog for selecting files and directories.
     /// </summary>
-    public class OpenFileDialog : IEntity
+    public class OpenFileDialog : Entity
     {
         public int ID { get; set; }
         public string Name { get; set; } = "Open File Dialog";

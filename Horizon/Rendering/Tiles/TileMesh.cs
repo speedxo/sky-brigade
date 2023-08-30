@@ -1,12 +1,9 @@
 ﻿using System.Numerics;
+using System.Xml.Linq;
 using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Horizon.Rendering.Effects.Components;
-using Horizon.Rendering.Spriting;
-using Horizon.Rendering.Spriting.Data;
-using ImGuiNET;
 using Silk.NET.OpenGL;
-using Silk.NET.SDL;
 
 namespace Horizon.Rendering;
 
@@ -18,17 +15,18 @@ public abstract partial class Tiling<TTileID, TTextureID>
         {
             public Vector2 Position { get; set; }
             public Vector2 TexCoords { get; set; }
+            public Vector3 Color { get; set; }
 
-            public TileVertex(float x, float y, float uvX, float uvY)
+            public TileVertex(float x, float y, float uvX, float uvY, System.Drawing.Color color)
             {
-                this.TexCoords = new Vector2(uvX, uvY);
-                this.Position = new Vector2(x, y);
+                Color = new Vector3(color.R / 255.0f, color.G / 255.0f, color.G / 255.0f);
+                TexCoords = new Vector2(uvX, uvY);
+                Position = new Vector2(x, y);
             }
 
-            public static readonly unsafe int SizeInBytes = (sizeof(Vector2) * 2);
+            public static readonly int SizeInBytes = sizeof(float) * 7;
         }
 
-        private static int count = 0;
         public uint ElementCount { get; private set; }
 
         public ShaderComponent Shader { get; init; }
@@ -38,19 +36,19 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         private List<TileVertex> _vertices;
         private List<uint> _indices;
-
         private uint _vertexCounter;
 
         public TileMesh(ShaderComponent shader, TileSet set, TileMap map)
         {
-            this.Set = set;
-            this.Shader = shader;
-            this.Map = map;
+            Set = set;
+            Shader = shader;
+            Map = map;
 
-            Vbo = new(GameManager.Instance.Gl);
+            Vbo = new();
 
             Vbo.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, (uint)TileVertex.SizeInBytes, 0);
             Vbo.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)TileVertex.SizeInBytes, 2 * sizeof(float));
+            Vbo.VertexAttributePointer(2, 3, VertexAttribPointerType.Float, (uint)TileVertex.SizeInBytes, 4 * sizeof(float));
 
             _indices = new();
             _vertices = new();
@@ -67,7 +65,11 @@ public abstract partial class Tiling<TTileID, TTextureID>
         public void BeginMeshGeneration()
         {
             _vertexCounter = 0;
+            _cache.Clear();
         }
+
+        private Dictionary<Vector2, uint> _cache = new();
+
         public void AddTiles(Tile[,] tiles, int slice)
         {
             int width = tiles.GetLength(0);
@@ -77,26 +79,27 @@ public abstract partial class Tiling<TTileID, TTextureID>
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (tiles[x, y] == null) continue;
-                    AddTile(tiles[x, y], slice);
+                    if (tiles[x, height - 1 - y] != null)
+                    {
+                        AddTile(tiles[x, height - 1 - y]);
+                    }
                 }
             }
         }
 
 
-        private void AddTile(Tile tile, int slice)
+        private void AddTile(Tile tile)
         {
-            uint[] getElements()
+            uint[] getElements(uint _offset)
             {
                 return new uint[] {
-                _vertexCounter, _vertexCounter + 1, _vertexCounter + 2,
-                _vertexCounter, _vertexCounter + 2, _vertexCounter + 3
-            };
+                    _offset, _offset + 1, _offset + 2,
+                    _offset, _offset + 2, _offset + 3
+                };
             }
 
             _vertices.AddRange(GetVertices(tile));
-            _indices.AddRange(getElements());
-
+            _indices.AddRange(getElements(_vertexCounter));
             _vertexCounter += 4;
         }
 
@@ -105,10 +108,10 @@ public abstract partial class Tiling<TTileID, TTextureID>
             Vector2[] uv = tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID);
 
             return new[] {
-                new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[0].X, uv[0].Y),
-                new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[1].X, uv[1].Y),
-                new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[2].X, uv[2].Y),
-                new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f- tile.GlobalPosition.Y* Tile.TILE_HEIGHT, uv[3].X, uv[3].Y)
+                new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[0].X, uv[0].Y, tile.RenderingData.Color),
+                new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[1].X, uv[1].Y, tile.RenderingData.Color),
+                new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[2].X, uv[2].Y, tile.RenderingData.Color),
+                new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[3].X, uv[3].Y, tile.RenderingData.Color)
             };
         }
 
@@ -122,10 +125,12 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         public override void Draw(float dt, RenderOptions? renderOptions = null)
         {
-            if (ElementCount < 1) return; // Don't render if there is nothing to render to improve performance.
+            if (ElementCount < 1)
+            {
+                return;
+            }
 
             var options = renderOptions ?? RenderOptions.Default;
-
 
             Shader.Use();
 
@@ -139,24 +144,23 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
             Vbo.Bind();
 
-            // Once again, I really don't want to make the whole method unsafe for one call.
-            unsafe
+            if (options.IsWireframeEnabled)
             {
-                // Turn on wireframe mode
-                if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+            }
 
-                //GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+            unsafe // dont wanna make the whole methud unsafe just for this
+            {
                 GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+            }
 
-                // Turn off wireframe mode
-                if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+            if (options.IsWireframeEnabled)
+            {
+                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
             }
 
             Vbo.Unbind();
-
             Shader.End();
         }
-
     }
-
 }

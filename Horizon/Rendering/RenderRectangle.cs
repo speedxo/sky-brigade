@@ -11,6 +11,53 @@ using Silk.NET.Vulkan;
 
 namespace Horizon.Rendering;
 
+public class RenderTarget : Entity
+{
+    public MeshRendererComponent Mesh { get; init; }
+    public Technique Technique { get; set; }
+
+    protected TransformComponent Transform { get; init; }
+
+    public RenderTarget(Technique technique)
+    {
+        Technique = AddEntity(technique);
+
+        Transform = AddComponent<TransformComponent>();
+
+        Mesh = AddComponent<MeshRendererComponent>();
+        Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(technique));
+    }
+    public RenderTarget(Shader shader)
+    {
+        Technique = AddEntity(new Technique(shader));
+
+        Transform = AddComponent<TransformComponent>();
+
+        Mesh = AddComponent<MeshRendererComponent>();
+        Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
+    }
+
+    public void RenderScene(float dt)
+    {
+        
+    }
+
+    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    {
+        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.ViewportSize.X, (uint)GameManager.Instance.ViewportSize.Y);
+        Technique.Use();
+
+        Mesh.Draw(dt);
+
+        Technique.End();
+    }
+
+    public override void Update(float dt)
+    {
+
+    }
+}
+
 public class RenderRectangle : Entity
 {
     public MeshRendererComponent Mesh { get; init; }
@@ -50,70 +97,7 @@ public class RenderRectangle : Entity
         Mesh = AddComponent<MeshRendererComponent>();
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
     }
-
-    public void RenderScene(float dt)
-    {
-        FrameBuffer.Bind();
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
-        Technique.Use();
-
-        Mesh.Draw(dt);
-
-        Technique.End();
-        FrameBuffer.Unbind();
-    }
-
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
-    {
-
-    }
-
-    public override void Update(float dt)
-    {
-
-    }
-}
-
-public class SceneRenderRect : Entity
-{
-    public MeshRendererComponent Mesh { get; init; }
-    public Technique Technique { get; set; }
-    public FrameBufferObject FrameBuffer { get; init; }
-
-    protected TransformComponent Transform { get; init; }
-
-    public SceneRenderRect(Technique technique, int width = 0, int height = 0)
-    {
-        FrameBuffer = new FrameBufferObject(width == 0 ? (int)GameManager.Instance.ViewportSize.X : width, height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height);
-        Technique = AddEntity(technique);
-
-        Transform = AddComponent<TransformComponent>();
-
-        Mesh = AddComponent<MeshRendererComponent>();
-        Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(technique));
-    }
-    public SceneRenderRect(Shader shader, int width = 0, int height = 0)
-    {
-        FrameBuffer = new FrameBufferObject(width == 0 ? (int)GameManager.Instance.ViewportSize.X : width, height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height);
-        Technique = AddEntity(new Technique(shader));
-
-        Transform = AddComponent<TransformComponent>();
-
-        Mesh = AddComponent<MeshRendererComponent>();
-        Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
-    }
-
-    public SceneRenderRect(Shader shader, FrameBufferObject fbo)
-    {
-        FrameBuffer = fbo;
-        Technique = AddEntity(new Technique(shader));
-
-        Transform = AddComponent<TransformComponent>();
-
-        Mesh = AddComponent<MeshRendererComponent>();
-        Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
-    }
-    public SceneRenderRect(Technique technique, FrameBufferObject fbo)
+    public RenderRectangle(Technique technique, FrameBufferObject fbo)
     {
         FrameBuffer = fbo;
         Technique = AddEntity(technique);

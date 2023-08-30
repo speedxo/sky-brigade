@@ -66,6 +66,11 @@
     <None Remove="Assets\tilemap_shaders\sprites.frag" />
     <None Remove="Assets\tilemap_shaders\sprites.vert" />
     <None Remove="Rendering\Tiles\" />
+    <None Remove="GameEntity\Components\Physics2D\" />
+    <None Remove="Assets\line_shader\" />
+    <None Remove="Assets\line_shader\basic.frag" />
+    <None Remove="Assets\line_shader\basic.vert" />
+    <None Remove="Extentions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OpenGL\" />
@@ -92,6 +97,9 @@
     <Folder Include="Rendering\Spriting\Components\" />
     <Folder Include="Assets\tilemap_shaders\" />
     <Folder Include="Rendering\Tiles\" />
+    <Folder Include="GameEntity\Components\Physics2D\" />
+    <Folder Include="Assets\line_shader\" />
+    <Folder Include="Extentions\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET" Version="2.17.1" />
@@ -103,7 +111,7 @@
     <PackageReference Include="Silk.NET.Windowing" Version="2.17.1" />
     <PackageReference Include="Silk.NET.Input.Glfw" Version="2.17.1" />
     <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.17.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
     <PackageReference Include="Karma.CoreOBJ" Version="1.4.4" />
     <PackageReference Include="CjClutter.ObjLoader.Unofficial" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -111,6 +119,7 @@
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="Silk.NET.OpenCL" Version="2.17.1" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.17.1" />
+    <PackageReference Include="Box2D.NetStandard" Version="2.4.7-alpha" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\basic_shader\basic.frag">
@@ -168,6 +177,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\tilemap_shaders\tiles.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\line_shader\lines.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\line_shader\lines.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

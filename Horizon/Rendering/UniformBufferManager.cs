@@ -3,6 +3,7 @@ using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Horizon.Rendering.Effects.Components;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Horizon.Rendering
 {
@@ -37,6 +38,10 @@ namespace Horizon.Rendering
             _bufferObjects[bindingPoint] = buffer;
             return buffer;
         }
+        public UniformBufferObject AddUniformBuffer(string name)
+        {
+            return AddUniformBuffer(Shader.GetUniformBlockIndex(name));
+        }
 
         public UniformBufferObject GetBuffer(uint bindingPoint)
         {
@@ -44,7 +49,10 @@ namespace Horizon.Rendering
                 return buffer;
             throw new DirectoryNotFoundException($"Cannot find a UBO with the bindingPoint{bindingPoint}!");
         }
-
+        public UniformBufferObject GetBuffer(string name)
+        {
+            return GetBuffer(Shader.GetUniformBlockIndex(name));
+        }
         //public void Use()
         //{
         //    foreach (var item in _bufferObjects.Values)

@@ -15,7 +15,6 @@ namespace Horizon.Rendering
             Technique.BufferManager.AddUniformBuffer(0);
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
-
         public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;

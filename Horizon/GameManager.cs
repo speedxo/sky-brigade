@@ -38,6 +38,11 @@ public class GameManager : Entity, IDisposable
     public ContentManager ContentManager { get; private set; }
 
     /// <summary>
+    /// The screen aspect ratio (w/h)
+    /// </summary>
+    public float AspectRatio { get; private set; }
+
+    /// <summary>
     /// Gets the unified debugger class for debugging game elements.
     /// </summary>
     public SkylineDebugger Debugger { get; private set; }
@@ -230,6 +235,7 @@ public class GameManager : Entity, IDisposable
     {
         WindowSize = new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y);
         ViewportSize = (Debugger.Enabled && Debugger.GameContainerDebugger.Visible) ? new Vector2(Debugger.GameContainerDebugger.FrameBuffer.Width, Debugger.GameContainerDebugger.FrameBuffer.Height) : (new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y));
+        AspectRatio = WindowSize.X / WindowSize.Y;
     }
     private void LoadImGuiStyle()
     {
@@ -296,7 +302,9 @@ void main()
 
     // Trying to understand the universe through vertex manipulation!
     gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
-}", @"#version 410 core
+}",
+
+@"#version 410 core
 out vec4 FinalFragColor;
 
 in vec2 texCoords;

@@ -25,7 +25,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         public void GenerateMeshes(int slice)
         {
-            var sheets = Chunk.TileTileSetPairs.Keys;
+            var sheets = Chunk.TileSetPairs.Keys;
 
             foreach (var sheet in sheets)
             {
@@ -35,7 +35,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 TileSetMeshes[sheet].BeginMeshGeneration();
             }
 
-            foreach ((TileSet set, Tile[,] tiles) in Chunk.TileTileSetPairs)
+            foreach ((TileSet set, Tile[,] tiles) in Chunk.TileSetPairs)
             {
                 TileSetMeshes[set].AddTiles(tiles, slice);
             }

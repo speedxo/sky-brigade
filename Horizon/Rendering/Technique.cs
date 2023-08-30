@@ -41,11 +41,6 @@ namespace Horizon.Rendering
             Shader.End();
         }
 
-        public override void Draw(float dt, RenderOptions? renderOptions = null)
-        {
-            
-        }
-
         public void Dispose()
         {
             GC.SuppressFinalize(this);

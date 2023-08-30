@@ -14,11 +14,13 @@ public class Shader : IDisposable
     public static Shader Default { get => GameManager.Instance.ContentManager.GetShader("default"); }
 
     private Dictionary<string, int> uniformIndexes;
+    private Dictionary<string, uint> uniformBlockIndexes;
 
     public Shader(uint handle)
     {
         Handle = handle;
-        uniformIndexes = new Dictionary<string, int>();
+        uniformIndexes = new ();
+        uniformBlockIndexes = new();
     }
 
     public uint GetUniformBlockIndex(string blockName)
@@ -26,7 +28,10 @@ public class Shader : IDisposable
         if (Handle == 0)
             throw new InvalidOperationException("Shader program is not created.");
 
-        return GameManager.Instance.Gl.GetUniformBlockIndex(Handle, blockName);
+        if (!uniformBlockIndexes.ContainsKey(blockName))
+            uniformBlockIndexes.Add(blockName, GameManager.Instance.Gl.GetUniformBlockIndex(Handle, blockName));
+
+        return uniformBlockIndexes[blockName];
     }
 
     public virtual void Use() => GameManager.Instance.Gl.UseProgram(Handle);
@@ -39,10 +44,10 @@ public class Shader : IDisposable
         return uniformIndexes[name];
     }
 
-    public unsafe void SetUniform(string name, object? value)
+    public unsafe void SetUniform(string name, in object? value)
     {
         int location = GetUniformLocation(name);
-        if (location == -1) // If GetUniformLocation returns -1, the uniform is not found.
+        if (location == -1 || value is null) // If GetUniformLocation returns -1, the uniform is not found.
         {
             //GameManager.Instance.Logger.Log(LogLevel.Error, $"{name} uniform not found on shader.");
             return;
@@ -78,8 +83,12 @@ public class Shader : IDisposable
                 GameManager.Instance.Gl.UniformMatrix4(location, 1, false, (float*)&matrixValue);
                 break;
 
+            case bool boolValue:
+                GameManager.Instance.Gl.Uniform1(location, boolValue ? 1 : 0);
+                break;
+
             default:
-                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to upload uniform of unsupported data type {value.GetType()}.");
+                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to upload uniform of unsupported data type {value!.GetType()}.");
                 return;
         }
     }
@@ -153,11 +162,14 @@ public class Shader : IDisposable
 
         return new Shader(handle);
     }
-    public static Shader CompileShader(string vertexPath, string fragmentPath)
+    public static Shader CompileShader(string vertexPath, string fragmentPath, string geometryPath = "")
     {
+        bool generateGeometry = !string.IsNullOrEmpty(geometryPath);
+
         //Load the individual shaders.
         uint vertex = LoadShader(ShaderType.VertexShader, vertexPath);
         uint fragment = LoadShader(ShaderType.FragmentShader, fragmentPath);
+        uint? geometry = generateGeometry ? LoadShader(ShaderType.GeometryShader, geometryPath) : null;
 
         //Create the shader program.
         var handle = GameManager.Instance.Gl.CreateProgram();
@@ -165,6 +177,8 @@ public class Shader : IDisposable
         //Attach the individual shaders.
         GameManager.Instance.Gl.AttachShader(handle, vertex);
         GameManager.Instance.Gl.AttachShader(handle, fragment);
+        if (generateGeometry)
+            GameManager.Instance.Gl.AttachShader(handle, geometry!.Value);
         GameManager.Instance.Gl.LinkProgram(handle);
 
         //Check for linking errors.
@@ -176,8 +190,13 @@ public class Shader : IDisposable
         //Detach and delete the shaders
         GameManager.Instance.Gl.DetachShader(handle, vertex);
         GameManager.Instance.Gl.DetachShader(handle, fragment);
+        if (generateGeometry)
+            GameManager.Instance.Gl.DetachShader(handle, geometry!.Value);
+
         GameManager.Instance.Gl.DeleteShader(vertex);
         GameManager.Instance.Gl.DeleteShader(fragment);
+        if (generateGeometry)
+            GameManager.Instance.Gl.DeleteShader(geometry!.Value);
 
         return new Shader(handle);
     }

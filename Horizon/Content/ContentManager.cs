@@ -16,7 +16,7 @@ namespace Horizon.Content
         private Dictionary<string, Shader> unnamedShaders;
         private List<Texture> unmanagedTextures;
 
-        public ContentManager()
+        public override void Initialize()
         {
             namedTextures = new Dictionary<string, Texture>();
             namedShaders = new Dictionary<string, Shader>();

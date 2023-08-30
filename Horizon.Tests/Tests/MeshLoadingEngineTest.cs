@@ -83,7 +83,9 @@ namespace Horizon.Tests.Tests
 
             objects.Sort((o1, o2) =>
             {
-                if (Vector3.Distance(options.Camera.Position, o1.Position) < Vector3.Distance(options.Camera.Position, o2.Position)) return 1;
+                // TODO: expensive square root operation.
+                // EDIT: nevermind there is a DistanceSquared method for that
+                if (Vector3.DistanceSquared(options.Camera.Position, o1.Position) < Vector3.DistanceSquared(options.Camera.Position, o2.Position)) return 1;
                 return 0;
             });
 

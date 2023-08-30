@@ -9,7 +9,7 @@ namespace Horizon.GameEntity
     /// <summary>
     /// Entity class represents a game entity.
     /// </summary>
-    public class Entity : IEntity
+    public abstract class Entity : IEntity
     {
         /// <summary>
         /// List containing the nested entities within this entity.
@@ -46,6 +46,14 @@ namespace Horizon.GameEntity
         /// </summary>
         public IEntity? Parent { get; set; }
         public Dictionary<Type, IGameComponent> Components { get; set; } = new();
+
+        /// <summary>
+        /// This method is called after the parent entity is set.
+        /// </summary>
+        public virtual void Initialize()
+        {
+
+        }
 
         /// <summary>
         /// Adds a component of type T to the entity.
@@ -96,6 +104,7 @@ namespace Horizon.GameEntity
 
             entity.ID = ++IEntity._nextId;
             entity.Name ??= entity.GetType().Name;
+            entity.Initialize();
 
             return entity;
         }
@@ -172,7 +181,7 @@ namespace Horizon.GameEntity
             return Components.ContainsKey(typeof(T));
         }
 
-        private bool HasComponent(Type type)
+        public bool HasComponent(Type type)
         {
             return Components.ContainsKey(type);
         }

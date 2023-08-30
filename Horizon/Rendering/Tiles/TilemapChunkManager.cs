@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
+using Box2D.NetStandard.Dynamics.World;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Microsoft.Extensions.Options;
@@ -29,7 +30,8 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         public void Update(float dt)
         {
-
+            for (int i = 0; i < Chunks.Length; i++)
+                Chunks[i].Update(dt);
         }
 
         public void Draw(float dt, RenderOptions? options = null)

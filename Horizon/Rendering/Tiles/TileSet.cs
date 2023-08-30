@@ -1,5 +1,4 @@
-﻿using System;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Rendering.Spriting;
 using System.Numerics;
 using Horizon.OpenGL;
@@ -12,14 +11,13 @@ public abstract partial class Tiling<TTileID, TTextureID>
     {
         public Texture Texture { get; init; }
         public Dictionary<TTextureID, SpriteDefinition> Tiles { get; init; }
-
         public Vector2 TileSize { get; init; }
+
         public TileSet(Texture texture, Vector2 spriteSize)
-            : base()
         {
-            this.Texture = texture;
-            this.TileSize = spriteSize;
-            this.Tiles = new();
+            Texture = texture;
+            TileSize = spriteSize;
+            Tiles = new();
         }
 
         public void RegisterTile(TTextureID key, Vector2 pos, Vector2? size = null)
@@ -30,7 +28,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 return;
             }
 
-            this.Tiles.Add(key, new SpriteDefinition { Position = pos, Size = size ?? TileSize });
+            Tiles.Add(key, new SpriteDefinition { Position = pos, Size = size ?? TileSize });
         }
 
         public Vector2[] GetTextureCoordinates(TTextureID key)
@@ -55,7 +53,8 @@ public abstract partial class Tiling<TTileID, TTextureID>
         }
 
         public bool ContainsTextureID(TTextureID textureID)
-            => Tiles.ContainsKey(textureID);
+        {
+            return Tiles.ContainsKey(textureID);
+        }
     }
-
 }

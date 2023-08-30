@@ -4,7 +4,7 @@ using System.Numerics;
 namespace Horizon.GameEntity.Components
 {
     /// <summary>
-    /// Represents a component that handles the transformation of a game entity.
+    /// Represents a component that handles the 3D transformation of a game entity.
     /// </summary>
     public class TransformComponent : IGameComponent
     {

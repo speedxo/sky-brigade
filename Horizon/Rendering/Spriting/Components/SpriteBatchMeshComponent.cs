@@ -45,7 +45,7 @@ public class SpriteBatchMesh
         {
             Console.WriteLine(sizeof(SpriteData) % 16 == 0);
         }
-        Vbo = new(GameManager.Instance.Gl);
+        Vbo = new();
 
         Vbo.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 0);
         Vbo.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 2 * sizeof(float));

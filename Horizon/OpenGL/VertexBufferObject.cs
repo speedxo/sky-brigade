@@ -18,7 +18,7 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
     public BufferObject<T> VertexBuffer { get => vbo; }
     public BufferObject<uint> ElementBuffer { get => ebo; }
 
-    public VertexBufferObject(GL gl)
+    public VertexBufferObject()
     {
         /* The EBO (element buffer object) stores our element array
          * ie. the order in which to draw vertices.
@@ -33,7 +33,7 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
          * the structure of the data, thats where the VAO comes in. It
          * stores the structure of the vertex data, how it is in RAM.
          */
-        vao = new(gl, vbo, ebo);
+        vao = new(GameManager.Instance.Gl, vbo, ebo);
     }
 
     /* Forwarding this method.

@@ -51,11 +51,11 @@ public struct Vertex
     /// <param name="z">The z-coordinate of the vertex position.</param>
     /// <param name="uvX">The x-coordinate of the texture coordinates (UV).</param>
     /// <param name="uvY">The y-coordinate of the texture coordinates (UV).</param>
-    public Vertex(float x, float y, float z, float uvX, float uvY)
+    public Vertex(float x, float y, float z, float uvX, float uvY, float normX=0, float normY = 0, float normZ = 0)
     {
         this.TexCoords = new Vector2(uvX, uvY);
         this.Position = new Vector3(x, y, z);
-        this.Normal = new Vector3();
+        this.Normal = new Vector3(normX, normY, normZ);
     }
 
     /// <summary>

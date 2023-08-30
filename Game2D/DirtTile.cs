@@ -14,9 +14,7 @@ public class DirtTile : Tile
 
     public override void PostGeneration(int x, int y)
     {
-        if (Chunk.IsEmpty(x, y - 1)) RenderingData.TextureID = GameScene.TileTextureID.Grass;
-        else RenderingData.TextureID = GameScene.TileTextureID.Dirt;
-
+        RenderingData.TextureID = Chunk.IsEmpty(x, y + 1) ? GameScene.TileTextureID.Grass : GameScene.TileTextureID.Dirt;
         ShouldUpdateMesh = true;
     }
 }

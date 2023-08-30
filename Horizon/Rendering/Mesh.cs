@@ -10,7 +10,7 @@ namespace Horizon.Rendering;
 /// <summary>
 /// Represents an abstract class for handling meshes used in rendering.
 /// </summary>
-public abstract class Mesh : IDisposable
+public class Mesh : IDisposable
 {
     /// <summary>
     /// Delegate used to obtain mesh data for the mesh.
@@ -44,7 +44,7 @@ public abstract class Mesh : IDisposable
     /// </summary>
     public Mesh()
     {
-        Vbo = new VertexBufferObject<Vertex>(GameManager.Instance.Gl);
+        Vbo = new ();
 
         // Telling the VAO object how to lay out the attribute pointers
         Vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
