@@ -1,10 +1,6 @@
-﻿using System.Numerics;
-using Box2D.NetStandard.Collision.Shapes;
-using Box2D.NetStandard.Dynamics.Bodies;
-using Box2D.NetStandard.Dynamics.World;
-using Horizon.GameEntity.Components.Physics2D;
+﻿using Box2D.NetStandard.Dynamics.Bodies;
 using Horizon.Primitives;
-using Horizon.Rendering.Spriting;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -36,7 +32,8 @@ public abstract partial class Tiling<TTileID, TTextureID>
             Position = pos;
 
             if (map.World is not null)
-                Body = map.World.CreateBody(new BodyDef {
+                Body = map.World.CreateBody(new BodyDef
+                {
                     type = BodyType.Static
                 });
 
@@ -94,7 +91,6 @@ public abstract partial class Tiling<TTileID, TTextureID>
             Renderer.GenerateMeshes();
             ShouldUpdate = false;
         }
-
 
         private void UpdateTileSetPairs()
         {

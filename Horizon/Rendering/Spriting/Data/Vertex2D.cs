@@ -1,10 +1,9 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Horizon.Rendering.Spriting.Data
 {
-	public struct Vertex2D
-	{
+    public struct Vertex2D
+    {
         /// <summary>
         /// Gets or sets the position of the vertex in 2D world space.
         /// </summary>
@@ -14,7 +13,9 @@ namespace Horizon.Rendering.Spriting.Data
         /// Gets or sets the texture coordinates (UV) of the vertex, used for texture mapping.
         /// </summary>
         public Vector2 TexCoords { get; set; }
+
         public int Id { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the Vertex struct.
         /// </summary>
@@ -47,4 +48,3 @@ namespace Horizon.Rendering.Spriting.Data
         public static readonly unsafe int SizeInBytes = (sizeof(Vector2) * 2 + sizeof(int));
     }
 }
-

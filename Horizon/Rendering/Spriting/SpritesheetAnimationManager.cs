@@ -1,7 +1,6 @@
-﻿using System.Numerics;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using Silk.NET.Input;
+using System.Numerics;
 
 namespace Horizon.Rendering.Spriting;
 
@@ -83,4 +82,3 @@ public class SpritesheetAnimationManager : IGameComponent
         }
     }
 }
-

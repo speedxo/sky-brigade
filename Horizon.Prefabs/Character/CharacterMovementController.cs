@@ -1,6 +1,4 @@
-﻿using Silk.NET.Input;
-using Horizon;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
 using System.Numerics;
@@ -26,6 +24,7 @@ public partial class CharacterController
         public Vector3 Front { get => Transform.Front; }
 
 #pragma warning disable CS8601, CS8602 // shut UP.
+
         public void Initialize()
         {
             Config = CharacterMovementControllerConfig.Default;
@@ -35,6 +34,7 @@ public partial class CharacterController
             Transform = Parent.GetComponent<TransformComponent>();
             Transform.Position = new Vector3(0, 5, -2);
         }
+
 #pragma warning restore CS8601, CS8602 // SHUT UP
 
         public void Update(float dt)
@@ -48,7 +48,6 @@ public partial class CharacterController
 
             var virtualController = GameManager.Instance.InputManager.GetVirtualController();
 
-
             Position += Vector3.Normalize(Vector3.Cross(Front, Vector3.UnitY)) * moveSpeed * virtualController.MovementAxis.X;
             Position += moveSpeed * Front * virtualController.MovementAxis.Y;
 
@@ -60,7 +59,6 @@ public partial class CharacterController
 
         public void Draw(float dt, RenderOptions? options = null)
         {
-
         }
     }
 }

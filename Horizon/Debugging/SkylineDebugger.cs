@@ -1,9 +1,7 @@
-﻿using System;
-using ImGuiNET;
-using Horizon.Debugging.Debuggers;
+﻿using Horizon.Debugging.Debuggers;
 using Horizon.GameEntity;
 using Horizon.Rendering;
-using Horizon.Logging;
+using ImGuiNET;
 
 namespace Horizon.Debugging
 {
@@ -83,4 +81,3 @@ namespace Horizon.Debugging
         }
     }
 }
-

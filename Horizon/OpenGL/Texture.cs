@@ -1,8 +1,8 @@
-﻿using Silk.NET.OpenGL;
-using Horizon.Logging;
+﻿using Horizon.Logging;
+using Silk.NET.OpenGL;
+using System.Numerics;
 using Image = SixLabors.ImageSharp.Image;
 using PixelFormat = Silk.NET.OpenGL.PixelFormat;
-using System.Numerics;
 
 namespace Horizon.OpenGL;
 

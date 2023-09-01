@@ -1,7 +1,6 @@
-﻿using Silk.NET.OpenGL;
-using Horizon.Logging;
+﻿using Horizon.Logging;
+using Silk.NET.OpenGL;
 using System.Numerics;
-using System.Text;
 
 namespace Horizon.OpenGL;
 
@@ -19,7 +18,7 @@ public class Shader : IDisposable
     public Shader(uint handle)
     {
         Handle = handle;
-        uniformIndexes = new ();
+        uniformIndexes = new();
         uniformBlockIndexes = new();
     }
 
@@ -93,7 +92,6 @@ public class Shader : IDisposable
         }
     }
 
-
     public void Dispose()
     {
         // Remember to delete the program when we are done.
@@ -121,6 +119,7 @@ public class Shader : IDisposable
         }
         return handle;
     }
+
     private static uint LoadShaderFromSource(ShaderType type, string source)
     {
         uint handle = GameManager.Instance.Gl.CreateShader(type);
@@ -134,6 +133,7 @@ public class Shader : IDisposable
         }
         return handle;
     }
+
     public static Shader CompileShaderFromSource(string vertexSource, string fragmentSource)
     {
         //Load the individual shaders.
@@ -162,6 +162,7 @@ public class Shader : IDisposable
 
         return new Shader(handle);
     }
+
     public static Shader CompileShader(string vertexPath, string fragmentPath, string geometryPath = "")
     {
         bool generateGeometry = !string.IsNullOrEmpty(geometryPath);
@@ -200,5 +201,4 @@ public class Shader : IDisposable
 
         return new Shader(handle);
     }
-
 }

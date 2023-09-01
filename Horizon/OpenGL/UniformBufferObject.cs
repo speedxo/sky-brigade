@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL
 {
@@ -40,6 +38,7 @@ namespace Horizon.OpenGL
 
             Unbind();
         }
+
         public unsafe void BufferSingleData<T>(T[] data)
             where T : unmanaged
         {

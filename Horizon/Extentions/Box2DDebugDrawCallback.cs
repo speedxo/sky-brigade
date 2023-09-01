@@ -1,14 +1,13 @@
 ﻿using Box2D.NetStandard.Dynamics.World.Callbacks;
+using Horizon.Data;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Horizon.Primitives;
 using Horizon.Rendering;
-using System.Numerics;
-using Horizon.Data;
 using Silk.NET.OpenGL;
+using System.Numerics;
 using Color = Box2D.NetStandard.Dynamics.World.Color;
-using Box2D.NetStandard.Common;
 
 namespace Horizon.Extentions;
 
@@ -90,18 +89,15 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         circleMesh = new(PrimitiveType.TriangleFan);
         polygonMesh = new(PrimitiveType.Triangles);
 
-
         technique = new Technique(GameManager.Instance.ContentManager.GetShader("basic"));
     }
 
     public void Initialize()
     {
-
     }
 
     public void Update(float dt)
     {
-
     }
 
     public void Draw(float dt, RenderOptions? renderOptions = null)
@@ -114,7 +110,6 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         technique.SetUniform("uView", options.Camera.View);
         technique.SetUniform("uModel", Matrix4x4.Identity);
         technique.SetUniform("useNormalAsColor", true);
-
 
         polygonMesh.Draw(dt, options);
         circleMesh.Draw(dt, options);
@@ -135,7 +130,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         AddCircle(position, size, color);
     }
 
-    public void DrawRectangleF(in   RectangleF rect, in Color color)
+    public void DrawRectangleF(in RectangleF rect, in Color color)
     {
         polygonMesh.Vertices.AddRange(new Vertex[] {
                 new Vertex(rect.X, rect.Y, 0, 0, 0, color.R, color.G, color.B),
@@ -199,7 +194,6 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         AddPolygon(vertices, vertexCount, color);
     }
 
-
     private void AddPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
     {
         if (vertexCount != 4)
@@ -212,12 +206,8 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         polygonMeshIndexCount += 4;
     }
 
-
-
-
     public override void DrawTransform(in Box2D.NetStandard.Common.Transform xf)
     {
-
     }
 
     public void Dispose()

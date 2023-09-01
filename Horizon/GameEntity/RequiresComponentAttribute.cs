@@ -1,11 +1,4 @@
-﻿using Horizon.GameEntity.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Horizon.GameEntity;
+﻿namespace Horizon.GameEntity;
 
 /// <summary>
 /// Specifies that a class requires the presence of a specific component type to be added.

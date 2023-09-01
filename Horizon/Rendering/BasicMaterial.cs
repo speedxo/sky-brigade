@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Silk.NET.OpenGL;
-using Horizon.OpenGL;
+﻿using Silk.NET.OpenGL;
 using System.Numerics;
 using Texture = Horizon.OpenGL.Texture;
 

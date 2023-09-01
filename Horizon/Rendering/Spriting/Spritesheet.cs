@@ -1,6 +1,6 @@
-﻿    using System.Numerics;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
+using System.Numerics;
 
 namespace Horizon.Rendering.Spriting
 {
@@ -22,7 +22,7 @@ namespace Horizon.Rendering.Spriting
         public SpritesheetAnimationManager AnimationManager { get; init; }
 
         public Spritesheet(Texture texture, Vector2 spriteSize)
-            :base()
+            : base()
         {
             this.ID = _idCounter++;
 
@@ -95,4 +95,3 @@ namespace Horizon.Rendering.Spriting
         }
     }
 }
-

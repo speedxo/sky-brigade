@@ -17,7 +17,6 @@ namespace Horizon.Rendering
             Color = Vector4.One;
         }
 
-
         public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;

@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using Silk.NET.OpenGL;
-using Horizon.Data;
+﻿using Horizon.Data;
 using Horizon.OpenGL;
-using System.Globalization;
-using System.Numerics;
+using Silk.NET.OpenGL;
 
 namespace Horizon.Rendering;
 
@@ -38,13 +35,12 @@ public class Mesh : IDisposable
     /// </summary>
     public void SetUniform(string name, object? value) => Material.Technique.SetUniform(name, value);
 
-  
     /// <summary>
     /// Creates a new instance of the Mesh class.
     /// </summary>
     public Mesh()
     {
-        Vbo = new ();
+        Vbo = new();
 
         // Telling the VAO object how to lay out the attribute pointers
         Vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);

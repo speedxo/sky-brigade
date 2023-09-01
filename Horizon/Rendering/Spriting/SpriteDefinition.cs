@@ -8,4 +8,3 @@ namespace Horizon.Rendering.Spriting
         public Vector2 Size { get; set; }
     }
 }
-

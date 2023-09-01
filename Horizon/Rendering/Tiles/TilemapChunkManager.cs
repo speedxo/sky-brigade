@@ -1,10 +1,6 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
-using Box2D.NetStandard.Dynamics.World;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using Microsoft.Extensions.Options;
-using Silk.NET.SDL;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -49,6 +45,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 for (int y = 0; y < TileMap.HEIGHT; y++)
                     Chunks[x, y].GenerateMesh();
         }
+
         /// <summary>
         /// This method accepts a generator function that is called for each position in the tilemap.
         /// </summary>
@@ -81,5 +78,4 @@ public abstract partial class Tiling<TTileID, TTextureID>
                     Chunks[x, y].PostGenerate();
         }
     }
-
 }

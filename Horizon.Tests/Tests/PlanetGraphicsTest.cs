@@ -1,12 +1,8 @@
-﻿using ImGuiNET;
-using Silk.NET.OpenGL;
+﻿using Horizon.GameEntity;
 using Horizon.Rendering;
-using System.Numerics;
-
-using Vector4 = System.Numerics.Vector4;
+using ImGuiNET;
 using Vector3 = System.Numerics.Vector3;
-using Vector2 = System.Numerics.Vector2;
-using Horizon.GameEntity;
+using Vector4 = System.Numerics.Vector4;
 
 namespace Horizon.Tests.Tests
 {

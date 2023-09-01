@@ -1,5 +1,4 @@
 ﻿using Silk.NET.Input;
-using System.Collections.Generic;
 
 namespace Horizon.Input
 {

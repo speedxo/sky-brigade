@@ -1,6 +1,6 @@
-﻿using System.Numerics;
-using Box2D.NetStandard.Collision.Shapes;
+﻿using Box2D.NetStandard.Collision.Shapes;
 using Horizon.Primitives;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -77,17 +77,14 @@ public partial class Tiling<TTileID, TTextureID>
 
         public virtual void Draw(float dt, RenderOptions? renderOptions = null)
         {
-
         }
+
         public virtual void Update(float dt)
         {
-
         }
 
         public virtual void PostGeneration(int x, int y)
         {
-
         }
     }
 }
-

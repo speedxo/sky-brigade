@@ -1,16 +1,13 @@
-﻿using System;
-using System.Numerics;
-using ImGuiNET;
-using Horizon.Content;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
+﻿using Horizon.Content;
 using Horizon.OpenGL;
 using Horizon.Rendering;
+using ImGuiNET;
+using System.Numerics;
 
 namespace Horizon.Debugging.Debuggers
 {
-	public class LoadedContentDebugger : DebuggerComponent
-	{
+    public class LoadedContentDebugger : DebuggerComponent
+    {
         private SkylineDebugger Debugger { get; set; }
         public ContentManager ContentManager { get; private set; }
 
@@ -96,12 +93,8 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-
-
         public override void Update(float dt)
         {
-            
         }
     }
 }
-

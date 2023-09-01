@@ -42,7 +42,6 @@ namespace Horizon.GameEntity.Components
                           Matrix4x4.CreateTranslation(pos.X, pos.Y, 0.0f);
         }
 
-
         /// <summary>
         /// The model matrix representing the transformation of the game entity.
         /// </summary>
@@ -107,5 +106,4 @@ namespace Horizon.GameEntity.Components
             // TODO: Implement draw logic, if needed.
         }
     }
-
 }

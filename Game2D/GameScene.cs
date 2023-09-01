@@ -1,26 +1,16 @@
-﻿using System.Numerics;
-using Box2D.NetStandard.Collision.Shapes;
-using Box2D.NetStandard.Dynamics.Bodies;
-using Box2D.NetStandard.Dynamics.Fixtures;
-using Box2D.NetStandard.Dynamics.World;
+﻿using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
 using Horizon;
-using Horizon.Data;
 using Horizon.Extentions;
-using Horizon.GameEntity.Components;
 using Horizon.GameEntity.Components.Physics2D;
-using Horizon.OpenGL;
-using Horizon.Primitives;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
 using ImGuiNET;
-using Microsoft.Extensions.Options;
-using Silk.NET.Input;
 using Silk.NET.OpenGL;
+using System.Numerics;
 using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
 
 namespace Game2D;
-
 
 public class GameScene : Scene
 {
@@ -67,7 +57,6 @@ public class GameScene : Scene
         spriteBatch.AddSprite(player);
         spriteBatch.UpdateVBO();
 
-
         cam = new Camera()
         {
             Position = new Vector3(0, 0, 10)
@@ -75,6 +64,7 @@ public class GameScene : Scene
 
         InitializeRenderingPipeline();
     }
+
     private void PopulateTiles(Tile?[,] tiles, TileMapChunk chunk)
     {
         for (int x = 0; x < tiles.GetLength(0) - 1; x++)
@@ -94,7 +84,8 @@ public class GameScene : Scene
         GameManager.Instance.Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    float cameraMovement = 10;
+    private float cameraMovement = 10;
+
     public override void Update(float dt)
     {
         base.Update(dt);
@@ -112,6 +103,7 @@ public class GameScene : Scene
 
         cam.Update(dt);
     }
+
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
         world.DrawDebugData();
@@ -127,6 +119,7 @@ public class GameScene : Scene
     {
         debugDrawCallback.Draw(dt, renderOptions);
     }
+
     public override void Dispose()
     {
         debugDrawCallback.Dispose();
@@ -137,6 +130,4 @@ public class GameScene : Scene
         ImGui.Text(player.Position.ToString());
         //ImGui.Text(tilemap[0, 0].GlobalPosition.ToString());
     }
-
 }
-

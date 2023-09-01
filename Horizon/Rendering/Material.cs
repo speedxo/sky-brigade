@@ -1,7 +1,7 @@
-﻿using Horizon.Data;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using System.Numerics;
+
 namespace Horizon.Rendering
 {
     public abstract class Material : Entity

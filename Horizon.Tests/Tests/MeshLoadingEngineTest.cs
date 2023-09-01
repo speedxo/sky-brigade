@@ -1,9 +1,8 @@
-﻿using ImGuiNET;
-using Silk.NET.OpenGL;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Rendering;
+using ImGuiNET;
+using Silk.NET.OpenGL;
 using System.Numerics;
-using Mesh = Horizon.Rendering.Mesh;
 
 namespace Horizon.Tests.Tests
 {
@@ -31,7 +30,7 @@ namespace Horizon.Tests.Tests
         public void Dispose()
         {
             Loaded = false;
-            
+
             GC.SuppressFinalize(this);
         }
 

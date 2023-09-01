@@ -5,7 +5,7 @@ namespace Horizon.OpenGL;
 /* This is an abstractation for a buffer object */
 
 public class BufferObject<T> : IDisposable
-    where T: unmanaged
+    where T : unmanaged
 {
     /* These are private because they have no reason to be public
      * Traditional OOP style principles break when you have to abstract

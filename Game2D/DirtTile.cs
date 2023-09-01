@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Horizon.Rendering;
 using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
 
 namespace Game2D;
@@ -19,4 +18,3 @@ public class DirtTile : Tile
         Chunk.FlagForMeshRegeneration();
     }
 }
-

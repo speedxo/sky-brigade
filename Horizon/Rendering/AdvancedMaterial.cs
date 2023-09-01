@@ -1,5 +1,4 @@
 ﻿using Silk.NET.OpenGL;
-using Horizon.OpenGL;
 
 namespace Horizon.Rendering
 {
@@ -15,6 +14,7 @@ namespace Horizon.Rendering
             Technique.BufferManager.AddUniformBuffer(0);
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
+
         public override void Use(RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
@@ -28,10 +28,10 @@ namespace Horizon.Rendering
                 AmbientStrength = options.AmbientLightingStrength,
                 Color = options.Color * Color
             };
-                
+
             var ubo = Technique.BufferManager.GetBuffer(0);
             ubo.BufferSingleData(matOptions);
-            
+
             // Bind the albedo texture to texture unit 0
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, MaterialDescription.Albedo.Handle);

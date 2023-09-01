@@ -1,14 +1,11 @@
-﻿using System;
-using ImGuiNET;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using Horizon.OpenGL;
+﻿using Horizon.OpenGL;
 using Horizon.Rendering;
+using ImGuiNET;
 
 namespace Horizon.Debugging.Debuggers
 {
     public class DockedGameContainerDebugger : DebuggerComponent
-	{
+    {
         public FrameBufferObject FrameBuffer { get; set; }
 
         public override void Initialize()
@@ -22,7 +19,6 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Update(float dt)
         {
-
         }
 
         public override void Draw(float dt, RenderOptions? options = null)
@@ -36,4 +32,3 @@ namespace Horizon.Debugging.Debuggers
         }
     }
 }
-

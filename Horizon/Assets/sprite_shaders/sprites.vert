@@ -10,14 +10,14 @@ uniform mat4 uView;
 uniform mat4 uProjection;
 uniform vec2 uSingleFrameSize;
 
-layout(std140) struct SpriteData {
+struct SpriteData {
     mat4 modelMatrix;
     vec2 spriteOffset;
     int spriteId;
     bool isFlipped;
 };
 
-layout(std140) uniform SpriteUniforms {
+uniform SpriteUniforms {
     SpriteData data[MAX_SPRITES];
 } spriteData;
 

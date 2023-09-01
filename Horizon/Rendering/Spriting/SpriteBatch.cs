@@ -104,4 +104,3 @@ public class SpriteBatch : Entity
         mesh.Upload(vertices.ToArray(), elements.ToArray());
     }
 }
-

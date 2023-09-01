@@ -26,6 +26,7 @@ public class InstanceManager<InstanceType>
 
         key ??= typeof(T);
     }
+
     /// <summary>
     /// Instansiates and adds an instance to the manager.
     /// </summary>

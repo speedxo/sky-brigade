@@ -4,7 +4,7 @@ using Horizon.Rendering.Effects;
 namespace Horizon.Prefabs.Effects
 {
     public class VingetteEffect : Effect
-	{
+    {
         public float Intensity { get => data.Intensity; set => data.Intensity = value; }
 
         private struct VignetteStage
@@ -15,7 +15,9 @@ namespace Horizon.Prefabs.Effects
             {
                 Intensity = 1.0f;
             }
-        } private VignetteStage data = new VignetteStage();
+        }
+
+        private VignetteStage data = new VignetteStage();
 
         public VingetteEffect() : base(@"layout(std140) uniform VignetteStageData
 {
@@ -27,7 +29,7 @@ ShaderData ShaderStage(ShaderData data)
     // Calculate the distance from the center of the screen
     vec2 center = vec2(0.5, 0.5); // Assuming normalized coordinates
     float distance = length(texCoords - center);
-    
+
     // Calculate the vignette intensity using a smooth curve
     float vignetteIntensity = smoothstep(0.4, 1.0, distance);
 
@@ -50,4 +52,3 @@ ShaderData ShaderStage(ShaderData data)
         }
     }
 }
-

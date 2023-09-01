@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.IO;
-using System.Text;
-using Silk.NET.SDL;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Rendering.Effects.Components;
+using System.Diagnostics.Contracts;
+using System.Text;
 
 namespace Horizon.Rendering.Effects
 {
@@ -15,7 +12,6 @@ namespace Horizon.Rendering.Effects
         public UniformBufferManager BufferManager => Technique.BufferManager;
 
         public Technique Technique { get; init; }
-
 
         private static readonly string ShaderStageData = @"
 struct ShaderData {
@@ -83,7 +79,7 @@ void main()
 
             SetBindingPoints();
         }
-        
+
         /// <summary>
         /// Helper function to get binding points from uniform buffer names
         /// </summary>
@@ -91,7 +87,7 @@ void main()
         {
             static string getUniformBufferName(string source)
                 => source.TrimStart().Split(Environment.NewLine).First().Split(' ')[2];
-            
+
             Technique.Use();
             foreach (var effect in Effects)
             {
@@ -100,7 +96,6 @@ void main()
             }
             Technique.End();
         }
-
 
         // TODO: Optimize the universe while we're at it
         public override void Update(float dt)
@@ -131,6 +126,7 @@ void main()
     gl_Position = /*uProjection * uView */ uModel * vec4(vPos, 1.0);
 }";
         }
+
         public void PreDraw(float dt)
         {
             foreach (var effect in Effects)
@@ -146,11 +142,12 @@ void main()
                 }
             }
         }
+
         protected virtual string GenerateShader()
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("#version 410 core"); // Shader version 
+            sb.AppendLine("#version 410 core"); // Shader version
             sb.AppendLine(ShaderStageData);
 
             for (var i = 0; i < Effects.Count; i++)

@@ -1,5 +1,4 @@
-﻿using Silk.NET.Input;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Horizon.Rendering;
 

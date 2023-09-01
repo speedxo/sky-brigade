@@ -1,8 +1,7 @@
-﻿using System.Numerics;
-using Box2D.NetStandard.Dynamics.World;
+﻿using Box2D.NetStandard.Dynamics.World;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components.Physics2D;
-using Horizon.Rendering.Spriting;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 

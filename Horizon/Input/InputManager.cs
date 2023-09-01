@@ -1,8 +1,5 @@
-﻿using System;
-using Horizon.GameEntity;
-using Horizon.Rendering;
+﻿using Horizon.GameEntity;
 using Horizon.Input.Components;
-using Silk.NET.SDL;
 using System.Numerics;
 
 namespace Horizon.Input
@@ -32,7 +29,6 @@ namespace Horizon.Input
         /// Gets the JoystickInputManager responsible for handling joystick input.
         /// </summary>
         public JoystickInputManager JoystickManager { get; init; }
-
 
         private VirtualController VirtualController = default;
         private VirtualController PreviousVirtualController = default;
@@ -75,7 +71,6 @@ namespace Horizon.Input
         /// <returns>The VirtualController instance.</returns>
         public VirtualController GetVirtualController() => CaptureInput ? VirtualController : default;
 
-
         /// <summary>
         /// Gets the last frames VirtualController providing unified input data from various sources.
         /// </summary>
@@ -83,6 +78,7 @@ namespace Horizon.Input
         public VirtualController GetPreviousVirtualController() => CaptureInput ? PreviousVirtualController : default;
 
         public bool IsPressed(VirtualAction action) => GetVirtualController().IsPressed(action);
+
         public bool WasPressed(VirtualAction action) => GetVirtualController().IsPressed(action) && !GetPreviousVirtualController().IsPressed(action);
 
         /// <summary>

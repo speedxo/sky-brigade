@@ -1,8 +1,30 @@
 {
   "version": 2,
-  "dgSpecHash": "4k4273LC/O650l8brcFNpLMrqHTYIl2TLtNvCdjWyTejhUNVvnAPgkDJcWOTKbsV+CPvSwtJQPPFbTI+ewajBg==",
-  "success": true,
-  "projectFilePath": "/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj",
-  "expectedPackageFiles": [],
-  "logs": []
+  "dgSpecHash": "eRw8YkmoJB0BIcts4DEIlNVAw2KlddkJhybONEu7L7e/GF19jTDsZCgbr94pY4YWlmEbcHLembvJOWXqJu/JAw==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.MaterialEditor\\SkyBrigade.MaterialEditor.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\bogda\\.nuget\\packages\\microsoft.net.illink.analyzers\\7.0.100-1.23211.1\\microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
+    "C:\\Users\\bogda\\.nuget\\packages\\microsoft.net.illink.tasks\\7.0.100-1.23211.1\\microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine\\SkyBrigade.Engine.csproj",
+      "targetGraphs": [
+        "net7.0"
+      ]
+    },
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine.Prefabs\\SkyBrigade.Engine.Prefabs.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\bogda\\source\\repos\\speedxo\\sky-brigade\\SkyBrigade.Engine.Prefabs\\SkyBrigade.Engine.Prefabs.csproj",
+      "targetGraphs": [
+        "net7.0"
+      ]
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 ﻿using Horizon.GameEntity;
+using Horizon.OpenGL;
 using Horizon.Rendering.Spriting;
 using System.Numerics;
-using Horizon.OpenGL;
 
 namespace Horizon.Rendering;
 

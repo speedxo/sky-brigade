@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
-using System.Threading;
 
 namespace Horizon.Logging
 {
@@ -12,6 +9,7 @@ namespace Horizon.Logging
     public class Logger : IDisposable
     {
         private readonly object locker = new();
+
         private static readonly Dictionary<LogLevel, ConsoleColor> Colors = new()
         {
             { LogLevel.Debug, ConsoleColor.Gray },

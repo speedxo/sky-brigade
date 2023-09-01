@@ -1,9 +1,5 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using Horizon.Rendering;
 using System.Numerics;
-using Silk.NET.Input;
-using Silk.NET.Windowing;
-using Horizon.Rendering;
 
 namespace Horizon.GameEntity.Components
 {
@@ -34,6 +30,7 @@ namespace Horizon.GameEntity.Components
         private float CameraPitch = 0f;
 
 #pragma warning disable CS8601 // ooo woo im Roslyn sheesh fancy c# lexer
+
         /// <summary>
         /// Initializes the CameraComponent.
         /// </summary>
@@ -44,9 +41,11 @@ namespace Horizon.GameEntity.Components
             // again we can do this (see Entity.cs lines 17 & 18)
             Transform = Parent.GetComponent<TransformComponent>();
         }
+
 #pragma warning restore CS8601 // SID, SHUT THE FUCK UP
 
         private float lookSensitivity = 0.1f;
+
         private void UpdateMouse()
         {
             var controller = GameManager.Instance.InputManager.GetVirtualController();
@@ -69,7 +68,6 @@ namespace Horizon.GameEntity.Components
             Front = Vector3.Normalize(Transform.Rotation);
         }
 
-       
         public void Draw(float dt, RenderOptions? options = null)
         {
             // Not used.

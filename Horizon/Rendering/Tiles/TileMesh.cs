@@ -1,9 +1,8 @@
-﻿using System.Numerics;
-using System.Xml.Linq;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Horizon.Rendering.Effects.Components;
 using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -86,7 +85,6 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 }
             }
         }
-
 
         private void AddTile(Tile tile)
         {

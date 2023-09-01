@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Numerics;
-using System.Reflection;
-using ImGuiNET;
-using Newtonsoft.Json.Linq;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
-using Horizon.Rendering.Effects;
+using ImGuiNET;
+using System.Collections;
+using System.Numerics;
+using System.Reflection;
 
 namespace Horizon.Debugging.Debuggers
 {
     public class SceneEntityDebugger : DebuggerComponent
     {
         public bool DebugInstance = false;
-        
+
         // TODO: use string interns here because there are thousands of string allocations/second here
         public override void Initialize()
         {
@@ -97,7 +93,6 @@ namespace Horizon.Debugging.Debuggers
                         DrawProperties(component, 1);
                         ImGui.TreePop();
                     }
-                   
                 }
 
                 for (int i = 0; i < entity.Entities.Count; i++)
@@ -109,7 +104,6 @@ namespace Horizon.Debugging.Debuggers
             ImGui.PopStyleVar();
             ImGui.NewLine();
         }
-
 
         public static void DrawProperties(object? component, int depth = 0, int maxDepth = 3)
         {
@@ -208,7 +202,7 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        static void DrawPropertyRow(string propertyName, string propertyValue)
+        private static void DrawPropertyRow(string propertyName, string propertyValue)
         {
             ImGui.Columns(2, propertyName, false);
             ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
@@ -221,8 +215,7 @@ namespace Horizon.Debugging.Debuggers
             ImGui.Columns(1);
         }
 
-
-        static void DrawListProperty(string name, object listObj)
+        private static void DrawListProperty(string name, object listObj)
         {
             if (listObj is IList list)
             {
@@ -307,7 +300,7 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        static void DrawArrayProperty(string name, Array array)
+        private static void DrawArrayProperty(string name, Array array)
         {
             if (array.Length < 1) return;
 
@@ -368,13 +361,13 @@ namespace Horizon.Debugging.Debuggers
                     }
                     else ImGui.Text($"{GetFriendlyName(element)}");
 
-
                     ImGui.Columns(1);
                 }
             }
 
             ImGui.Columns(1);
         }
+
         public static string GetFriendlyName(object? obj)
         {
             if (obj == null) return string.Empty;
@@ -383,7 +376,8 @@ namespace Horizon.Debugging.Debuggers
 
             return $"{(type.IsClass ? type.Name : obj.ToString())}";
         }
-        static void DrawDictionaryProperty(string name, object dictionaryObj)
+
+        private static void DrawDictionaryProperty(string name, object dictionaryObj)
         {
             if (dictionaryObj is IDictionary dictionary)
             {
@@ -401,7 +395,6 @@ namespace Horizon.Debugging.Debuggers
 
                     ImGui.Separator();
 
-
                     foreach (DictionaryEntry entry in dictionary)
                     {
                         ImGui.Columns(2, $"{entry.Key?.GetType().Name}", false);
@@ -416,7 +409,6 @@ namespace Horizon.Debugging.Debuggers
                         ImGui.Columns(1);
                     }
 
-
                     ImGui.TreePop();
                 }
             }
@@ -424,8 +416,6 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Update(float dt)
         {
-
         }
     }
 }
-

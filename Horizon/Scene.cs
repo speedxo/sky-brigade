@@ -1,12 +1,8 @@
-﻿using System.Diagnostics;
-using System.Xml.Linq;
-using Silk.NET.OpenGL;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
+﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
-using Horizon.Primitives;
 using Horizon.Rendering;
 using Horizon.Rendering.Effects;
+using Silk.NET.OpenGL;
 
 namespace Horizon;
 
@@ -17,7 +13,7 @@ namespace Horizon;
 public abstract class Scene : Entity, IDisposable
 {
     // again, this is trashy. TODO: fix
-    private static RenderRectangle? defaultSceneRect=null;
+    private static RenderRectangle? defaultSceneRect = null;
 
     public EffectStack PostEffects { get; protected set; }
     public RenderRectangle SceneRect { get; protected set; }
@@ -84,10 +80,10 @@ public abstract class Scene : Entity, IDisposable
     {
         //if (options.IsPostProcessingEnabled)
         //{
-            FrameBuffer.Bind();
+        FrameBuffer.Bind();
 
-            GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GameManager.Instance.Gl.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
+        GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GameManager.Instance.Gl.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
         //}
         //else
         //{
@@ -96,7 +92,6 @@ public abstract class Scene : Entity, IDisposable
         //    GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         //    GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
         //}
-
 
         for (int i = 0; i < Components.Count; i++)
             Components.Values.ElementAt(i).Draw(dt, renderOptions);
@@ -111,7 +106,7 @@ public abstract class Scene : Entity, IDisposable
     }
 
     public abstract void DrawOther(float dt, RenderOptions? renderOptions = null);
-    
+
     public virtual void RenderPost(float dt, RenderOptions? renderOptions = null)
     {
         if (GameManager.Instance.Debugger.GameContainerDebugger.Visible)

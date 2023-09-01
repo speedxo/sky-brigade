@@ -1,21 +1,20 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
-using ImGuiNET;
-using Silk.NET.Input;
-using Silk.NET.OpenGL;
-using Silk.NET.OpenGL.Extensions.ImGui;
-using Silk.NET.Windowing;
-using Horizon.Content;
+﻿using Horizon.Content;
 using Horizon.Debugging;
 using Horizon.GameEntity;
 using Horizon.Input;
 using Horizon.Logging;
 using Horizon.OpenGL;
 using Horizon.Rendering;
+using ImGuiNET;
+using Silk.NET.Input;
+using Silk.NET.OpenGL;
+using Silk.NET.OpenGL.Extensions.ImGui;
+using Silk.NET.Windowing;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 // Namespace declaration for the GameManager class
 namespace Horizon;
-
 
 /// <summary>
 /// The GameManager class manages the main game loop and essential components for a game.
@@ -113,12 +112,14 @@ public class GameManager : Entity, IDisposable
     }
 
     #endregion Public Properties
+
     #region Private Properties
 
     private ImGuiController imguiController;
     private Type initialGameScreen;
     private float oneSecondTimer;
     private List<Entity> entities;
+
     #endregion Private Properties
 
     /// <summary>
@@ -229,14 +230,15 @@ public class GameManager : Entity, IDisposable
         Gl.Enable(EnableCap.VertexArray);
         for (int i = 0; i < Input.Mice.Count; i++)
             Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
-
     }
+
     private void UpdateViewport()
     {
         WindowSize = new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y);
         ViewportSize = (Debugger.Enabled && Debugger.GameContainerDebugger.Visible) ? new Vector2(Debugger.GameContainerDebugger.FrameBuffer.Width, Debugger.GameContainerDebugger.FrameBuffer.Height) : (new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y));
         AspectRatio = WindowSize.X / WindowSize.Y;
     }
+
     private void LoadImGuiStyle()
     {
         ImGuiStylePtr style = ImGui.GetStyle();
@@ -278,7 +280,6 @@ public class GameManager : Entity, IDisposable
         style.Colors[(int)ImGuiCol.PlotHistogram] = new Vector4(0.90f, 0.70f, 0.00f, 1.00f);
         style.Colors[(int)ImGuiCol.PlotHistogramHovered] = new Vector4(1.00f, 0.60f, 0.00f, 1.00f);
         style.Colors[(int)ImGuiCol.TextSelectedBg] = new Vector4(0.00f, 0.00f, 1.00f, 0.35f);
-
     }
 
     // Method to load essential assets required for the game.

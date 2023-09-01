@@ -1,7 +1,5 @@
-﻿using System;
-using Box2D.NetStandard.Dynamics.Bodies;
+﻿using Box2D.NetStandard.Dynamics.Bodies;
 using Horizon.Rendering;
-using Horizon.Rendering.Spriting;
 
 namespace Horizon.GameEntity.Components.Physics2D
 {
@@ -27,7 +25,6 @@ namespace Horizon.GameEntity.Components.Physics2D
 
         public void Draw(float dt, RenderOptions? options = null)
         {
-
         }
 
         public void Update(float dt)
@@ -37,4 +34,3 @@ namespace Horizon.GameEntity.Components.Physics2D
         }
     }
 }
-

@@ -10,4 +10,3 @@
         public SpriteDefinition FirstFrame { get; set; }
     }
 }
-

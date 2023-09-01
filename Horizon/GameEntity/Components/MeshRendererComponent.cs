@@ -1,6 +1,4 @@
-﻿using Horizon.Data;
-using Horizon.Rendering;
-using System.Numerics;
+﻿using Horizon.Rendering;
 
 namespace Horizon.GameEntity.Components
 {

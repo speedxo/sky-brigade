@@ -1,4 +1,4 @@
-﻿namespace Horizon.Prefabs.Character; 
+﻿namespace Horizon.Prefabs.Character;
 
 public partial class CharacterController
 {

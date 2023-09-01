@@ -12,4 +12,3 @@ public abstract partial class Tiling<TTileID, TTextureID> where TTileID : Enum
         public float Distance;
     }
 }
-

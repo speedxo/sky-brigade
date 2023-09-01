@@ -1,14 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using Horizon.OpenGL;
+﻿using Horizon.OpenGL;
 using Horizon.Rendering.Effects.Components;
 using Horizon.Rendering.Spriting.Data;
 using Silk.NET.OpenGL;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Horizon.Rendering.Spriting.Components;
 
@@ -78,7 +73,6 @@ public class SpriteBatchMesh
         if (ShouldUniformBufferUpdate)
         {
             ShouldUniformBufferUpdate = false;
-
         }
 
         //UniformBuffer.BufferData(new ReadOnlySpan<SpriteData>(AggregateSpriteData(sprites)));
@@ -132,4 +126,3 @@ public class SpriteBatchMesh
         return data;
     }
 }
-

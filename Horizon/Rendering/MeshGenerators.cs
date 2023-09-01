@@ -1,5 +1,4 @@
 ﻿using Horizon.Data;
-using System.Globalization;
 using System.Numerics;
 
 namespace Horizon.Rendering
@@ -67,7 +66,6 @@ namespace Horizon.Rendering
             };
         }
 
-
         public static MeshData CreateRectangle()
         {
             return new MeshData
@@ -84,7 +82,6 @@ namespace Horizon.Rendering
                 }
             };
         }
-
 
         // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
         public static MeshData CreateSphere(float radius = 1.0f, int vertexCount = 10)
@@ -128,7 +125,6 @@ namespace Horizon.Rendering
                 Elements = indices
             };
         }
-
 
         //// dont even bother
         //public static Mesh FromObj(string path)

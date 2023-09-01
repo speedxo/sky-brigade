@@ -1,16 +1,10 @@
-﻿using System;
-using ImGuiNET;
-using Horizon.Content;
-using System.Numerics;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
+﻿using Horizon.Collections;
 using Horizon.Rendering;
-using Silk.NET.Windowing;
+using ImGuiNET;
 using System.Diagnostics;
-using Silk.NET.SDL;
-using Monitor = System.Threading.Monitor;
-using Horizon.Collections;
 using System.Diagnostics.Contracts;
+using System.Numerics;
+using Monitor = System.Threading.Monitor;
 
 namespace Horizon.Debugging.Debuggers;
 
@@ -20,6 +14,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     /// How many times/s metrics are collected.
     /// </summary>
     public int UpdateRate { get => (int)(1 / _updateRate); set => _updateRate = 1.0f / value; }
+
     private float _updateRate = 1.0f / 50.0f;
 
     private SkylineDebugger Debugger { get; set; }
@@ -31,7 +26,6 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     private LinearBuffer<float> _renderFrameTimes;
     private LinearBuffer<float> _memoryUsage;
     private LinearBuffer<float> _frameTimers;
-
 
     private long _prevTimestamp;
     private float _cpuUsage;
@@ -73,7 +67,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         if (!Visible) return;
         _updateTimer += dt;
 
-        if (_pauseUpdateMetrics = (_updateTimer < _updateRate)) return; 
+        if (_pauseUpdateMetrics = (_updateTimer < _updateRate)) return;
 
         _updateTimer = 0.0f;
         Monitor.Enter(_updateLock);
@@ -104,7 +98,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         if (!Visible) return;
         _renderTimer += dt;
 
-        if (_pauseRenderMetrics = _renderTimer < _updateRate) return; 
+        if (_pauseRenderMetrics = _renderTimer < _updateRate) return;
         _renderTimer = 0.0f;
 
         Monitor.Enter(_renderLock);
@@ -121,6 +115,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
             _renderFrameTimes.Append((float)_renderStopwatch.Elapsed.TotalMilliseconds);
         }
     }
+
     public override void Draw(float dt, RenderOptions? options = null)
     {
         if (!Visible) return;
@@ -135,7 +130,6 @@ public class PerformanceProfilerDebugger : DebuggerComponent
             lock (_updateLock) maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
             lock (_renderLock) maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
             lock (_memoryLock) maxMemoryUsage = _memoryUsage.Buffer.Max();
-
 
             ImGui.Text($"Max Update Frame Time: {maxUpdateFrameTime:0.00} ms");
             ImGui.Text($"Max Render Frame Time: {maxRenderFrameTime:0.00} ms");
@@ -153,7 +147,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     }
 
     [Pure]
-    private static void PlotFrameTimes(string label, LinearBuffer<float> frameTimes, float maxValue, string unit="ms")
+    private static void PlotFrameTimes(string label, LinearBuffer<float> frameTimes, float maxValue, string unit = "ms")
     {
         float windowWidth = ImGui.GetContentRegionAvail().X;
         float averageFrameTime = frameTimes.Buffer.Average();
@@ -169,7 +163,6 @@ public class PerformanceProfilerDebugger : DebuggerComponent
             new Vector2(windowWidth, 80)
         );
     }
-
 
     private float CalculateCPUUsage()
     {
@@ -194,7 +187,5 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public override void Update(float dt)
     {
-
     }
 }
-

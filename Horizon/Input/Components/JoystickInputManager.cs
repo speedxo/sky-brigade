@@ -1,9 +1,8 @@
-﻿using System;
-using Silk.NET.Input;
-using System.Numerics;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
+using Silk.NET.Input;
+using System.Numerics;
 
 namespace Horizon.Input.Components
 {

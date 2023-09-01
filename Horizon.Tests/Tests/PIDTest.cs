@@ -1,10 +1,9 @@
-﻿using ImGuiNET;
-using Silk.NET.OpenGL;
-using Horizon.Rendering;
-using Vector4 = System.Numerics.Vector4;
-using Vector3 = System.Numerics.Vector3;
-using Vector2 = System.Numerics.Vector2;
+﻿using Horizon.Rendering;
 using Horizon.Rendering.Shapes;
+using ImGuiNET;
+using Vector2 = System.Numerics.Vector2;
+using Vector3 = System.Numerics.Vector3;
+using Vector4 = System.Numerics.Vector4;
 
 namespace Horizon.Tests.Tests
 {
@@ -20,15 +19,18 @@ namespace Horizon.Tests.Tests
         {
             Loaded = true;
 
-            axisLine = new Plane() {
+            axisLine = new Plane()
+            {
                 Size = new Vector2(10, 0.1f),
                 Position = new Vector3(0, 1, 0)
             };
-            marker = new Plane() {
+            marker = new Plane()
+            {
                 Size = new Vector2(0.1f, 0.2f),
                 Position = new Vector3(0, 1, 0)
             };
-            autoMarker = new Plane() {
+            autoMarker = new Plane()
+            {
                 Size = new Vector2(0.1f, 0.2f),
                 Position = new Vector3(0, 1.5f, 0)
             };

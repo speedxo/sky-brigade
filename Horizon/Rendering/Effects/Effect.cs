@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Horizon.GameEntity.Components;
-using Horizon.OpenGL;
+﻿using Horizon.OpenGL;
 using Horizon.Primitives;
 
 namespace Horizon.Rendering.Effects
@@ -12,7 +8,7 @@ namespace Horizon.Rendering.Effects
         public string Source { get; init; }
         public uint BindingPoint { get; internal set; }
         public bool RequiresUpdate { get; set; }
-        
+
         public Effect(string source)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
@@ -46,4 +42,3 @@ namespace Horizon.Rendering.Effects
         public abstract void Update(float dt);
     }
 }
-    

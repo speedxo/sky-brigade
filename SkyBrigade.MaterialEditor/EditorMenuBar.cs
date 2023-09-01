@@ -1,9 +1,5 @@
 namespace SkyBrigade.MaterialEditor;
 
-using ImGuiNET;
-using Horizon.GameEntity;
-using Horizon.Rendering;
-
 // The general entity primitive is perfect for stuff like this
 // where we need an object to have properties or functions but
 // no implmentation, hence why we have both an IEntity interface,

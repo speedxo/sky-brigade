@@ -1,13 +1,9 @@
-﻿using ImGuiNET;
-using Microsoft.Extensions.Options;
-using Silk.NET.Input;
-using Silk.NET.OpenGL;
-using Horizon.Data;
-using Horizon.GameEntity;
+﻿using Horizon.Data;
 using Horizon.Logging;
 using Horizon.Rendering;
 using Horizon.Tests.Tests;
-
+using ImGuiNET;
+using Silk.NET.OpenGL;
 using Texture = Horizon.OpenGL.Texture;
 
 namespace Horizon.Tests;
@@ -20,9 +16,10 @@ public class TestMenuGameScreen : Scene
 
     public TestMenuGameScreen()
     {
-        character = AddEntity(new Prefabs.Character.CharacterController() {
+        character = AddEntity(new Prefabs.Character.CharacterController()
+        {
             Position = new System.Numerics.Vector3(0, 0, 5)
-        }) ;
+        });
 
         tests = new List<IEngineTest>() {
             new PlaneEngineTest(),
@@ -43,11 +40,8 @@ public class TestMenuGameScreen : Scene
         InitializeRenderingPipeline();
     }
 
-
     private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
     private bool showDebugWindow = true;
-
-
 
     public override void DrawGui(float dt)
     {
@@ -109,7 +103,6 @@ public class TestMenuGameScreen : Scene
 
         tests[index].Update(dt);
     }
-
 
     public override void Dispose()
     {

@@ -1,8 +1,5 @@
 ﻿using Horizon.GameEntity.Components;
-using Horizon.Primitives;
 using Horizon.Rendering;
-using System;
-using System.Collections.Generic;
 
 namespace Horizon.GameEntity
 {
@@ -45,6 +42,7 @@ namespace Horizon.GameEntity
         /// The parent entity (if there is one)
         /// </summary>
         public IEntity? Parent { get; set; }
+
         public Dictionary<Type, IGameComponent> Components { get; set; } = new();
 
         /// <summary>
@@ -52,7 +50,6 @@ namespace Horizon.GameEntity
         /// </summary>
         public virtual void Initialize()
         {
-
         }
 
         /// <summary>
@@ -186,7 +183,6 @@ namespace Horizon.GameEntity
             return Components.ContainsKey(type);
         }
 
-
         /// <summary>
         /// Updates the entity and its components.
         /// </summary>
@@ -198,7 +194,7 @@ namespace Horizon.GameEntity
             foreach (var item in Components.Values)
                 item.Update(dt);
 
-            for (int i = 0; i < Entities.Count; i++)            
+            for (int i = 0; i < Entities.Count; i++)
                 Entities[i].Update(dt);
         }
 

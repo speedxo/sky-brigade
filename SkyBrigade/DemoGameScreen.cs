@@ -1,15 +1,12 @@
-﻿using ImGuiNET;
-using Silk.NET.OpenGL;
-using Horizon;
-using Horizon.Data;
-using Horizon.Rendering;
-using Horizon.Rendering.Shapes;
-using Horizon.Prefabs.Character;
-using Horizon.OpenGL;
-using Horizon.Rendering.Effects;
-using Horizon.Rendering.Effects.Components;
-using Horizon.Prefabs.Effects;
+﻿using Horizon;
 using Horizon.Debugging.Debuggers;
+using Horizon.Prefabs.Character;
+using Horizon.Prefabs.Effects;
+using Horizon.Rendering;
+using Horizon.Rendering.Effects;
+using Horizon.Rendering.Shapes;
+using ImGuiNET;
+using Silk.NET.OpenGL;
 
 namespace SkyBrigade;
 
@@ -23,13 +20,12 @@ internal class DemoGameScreen : Scene
     {
         InitializeRenderingPipeline();
 
-        /* need to consoldiate OpenGL calls into profiles, perhaps a call to 
+        /* need to consoldiate OpenGL calls into profiles, perhaps a call to
          * GameManager.Instance.InitializeGL(GLProfile); maybe predefined calls
          * ie. GLProfile.Realtime3D can setup depth testing and GLProfile.Flat
          * can be 2D orientated?                                              */
         GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
         GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
-
 
         character = new CharacterController();
         AddEntity(character);
@@ -50,6 +46,7 @@ internal class DemoGameScreen : Scene
 
     /* The reason i opted to have an overidable method is for safety, while its
      * not in the slightest ellegant, what it is is foolproof and simple.     */
+
     protected override Effect[] GeneratePostProccessingEffects()
     {
         return new Effect[] { vingette = new VingetteEffect() };
@@ -83,7 +80,6 @@ internal class DemoGameScreen : Scene
 
             ImGui.End();
         }
-
     }
 
     public override void Update(float dt)
@@ -94,14 +90,11 @@ internal class DemoGameScreen : Scene
             GameManager.Instance.Debugger.Enabled = !GameManager.Instance.Debugger.Enabled;
     }
 
-
     public override void Dispose()
     {
-
     }
 
     public override void DrawOther(float dt, RenderOptions? renderOptions = null)
     {
-
     }
 }

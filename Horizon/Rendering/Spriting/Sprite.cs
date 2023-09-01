@@ -1,10 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Numerics;
-using System.Xml.Linq;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering.Spriting.Data;
+using System.Numerics;
 
 namespace Horizon.Rendering.Spriting;
 

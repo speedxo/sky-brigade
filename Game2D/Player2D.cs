@@ -1,17 +1,11 @@
-﻿using System;
-using System.Numerics;
-using Box2D.NetStandard.Collision.Shapes;
+﻿using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
-using Box2D.NetStandard.Dynamics.Fixtures;
 using Box2D.NetStandard.Dynamics.World;
 using Horizon;
-using Horizon.GameEntity;
-using Horizon.Rendering.Spriting;
-using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
-using System.Linq;
-using System.Collections.Generic;
-using Horizon.GameEntity.Components;
 using Horizon.GameEntity.Components.Physics2D;
+using Horizon.Rendering.Spriting;
+using System.Numerics;
+using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
 
 namespace Game2D;
 
@@ -70,7 +64,6 @@ public class Player2D : Sprite
         UpdatePosition(dt);
         base.Update(dt);
     }
-
 
     private void GenerateTileColliders(float dt)
     {
@@ -143,4 +136,3 @@ public class Player2D : Sprite
         Flipped = movementDir.X < 0;
     }
 }
-

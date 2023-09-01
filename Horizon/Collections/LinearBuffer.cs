@@ -12,7 +12,7 @@ public class LinearBuffer<T>
     public int Length { get; private set; }
 
     public bool IsFull { get => Length == buffer.Length; }
-    
+
     public LinearBuffer(int capacity)
     {
         buffer = new T[capacity];

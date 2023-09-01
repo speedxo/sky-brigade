@@ -7,6 +7,7 @@ public static class MathHelper
     {
         return MathF.PI / 180f * degrees;
     }
+
     [System.Diagnostics.Contracts.Pure]
     public static float RadiansToDegrees(float degrees)
     {

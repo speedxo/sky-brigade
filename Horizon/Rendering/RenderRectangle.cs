@@ -1,13 +1,8 @@
-﻿using System;
-using Silk.NET.OpenGL;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
-using Horizon.Rendering.Effects.Components;
-
+using Silk.NET.OpenGL;
 using Shader = Horizon.OpenGL.Shader;
-using System.Numerics;
-using Silk.NET.Vulkan;
 
 namespace Horizon.Rendering;
 
@@ -27,6 +22,7 @@ public class RenderTarget : Entity
         Mesh = AddComponent<MeshRendererComponent>();
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(technique));
     }
+
     public RenderTarget(Shader shader)
     {
         Technique = AddEntity(new Technique(shader));
@@ -39,7 +35,6 @@ public class RenderTarget : Entity
 
     public void RenderScene(float dt)
     {
-        
     }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
@@ -54,7 +49,6 @@ public class RenderTarget : Entity
 
     public override void Update(float dt)
     {
-
     }
 }
 
@@ -76,6 +70,7 @@ public class RenderRectangle : Entity
         Mesh = AddComponent<MeshRendererComponent>();
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(technique));
     }
+
     public RenderRectangle(Shader shader, int width = 0, int height = 0)
     {
         FrameBuffer = new FrameBufferObject(width == 0 ? (int)GameManager.Instance.ViewportSize.X : width, height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height);
@@ -97,6 +92,7 @@ public class RenderRectangle : Entity
         Mesh = AddComponent<MeshRendererComponent>();
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
     }
+
     public RenderRectangle(Technique technique, FrameBufferObject fbo)
     {
         FrameBuffer = fbo;
@@ -134,12 +130,9 @@ public class RenderRectangle : Entity
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-
     }
 
     public override void Update(float dt)
     {
-
     }
 }
-

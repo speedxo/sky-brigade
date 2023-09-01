@@ -1,10 +1,4 @@
-﻿using System;
-using System.Numerics;
-using System.Xml.Linq;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using Horizon.Rendering.Effects.Components;
-using Horizon.Rendering.Spriting;
+﻿using Horizon.Rendering.Effects.Components;
 
 namespace Horizon.Rendering;
 
@@ -15,7 +9,6 @@ public abstract partial class Tiling<TTileID, TTextureID>
         private static ShaderComponent _shader;
         public Dictionary<TileSet, TileMesh> TileSetMeshes { get; init; }
         public TileMapChunk Chunk { get; init; }
-
 
         public TilemapRenderer(TileMapChunk chunk)
         {
@@ -61,5 +54,4 @@ public abstract partial class Tiling<TTileID, TTextureID>
             }
         }
     }
-
 }

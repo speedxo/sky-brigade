@@ -1,10 +1,9 @@
 ﻿using Silk.NET.OpenGL;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Net.Mail;
 using System.Numerics;
 
 namespace Horizon.OpenGL;
+
 public class FrameBufferObject : IDisposable
 {
     public Dictionary<FramebufferAttachment, uint> Attachments { get; init; }
@@ -33,7 +32,7 @@ public class FrameBufferObject : IDisposable
         if (Attachments.ContainsKey(attachment)) return;
 
         var (internalFormat, pixelFormat) = GetCorespondingAttachmentFormats(attachment);
-        
+
         Attachments.Add(attachment, GenerateTexture(Width, Height, internalFormat, pixelFormat: pixelFormat));
     }
 
@@ -42,7 +41,6 @@ public class FrameBufferObject : IDisposable
         _requiresResize = true;
         _newSize = new Vector2(newWidth, newHeight);
     }
-
 
     public unsafe FrameBufferObject(int width, int height)
     {
@@ -105,7 +103,6 @@ public class FrameBufferObject : IDisposable
         return texture;
     }
 
-
     public void Bind()
     {
         if (_requiresResize)
@@ -119,7 +116,6 @@ public class FrameBufferObject : IDisposable
                 attachmentTypes.Add(type);
             }
             GameManager.Instance.Gl.DeleteFramebuffer(Handle);
-
 
             this.Width = (int)_newSize.X;
             this.Height = (int)_newSize.Y;

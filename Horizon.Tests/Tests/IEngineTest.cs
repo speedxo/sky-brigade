@@ -1,5 +1,4 @@
-﻿using Silk.NET.OpenGL;
-using Horizon.Rendering;
+﻿using Horizon.Rendering;
 
 namespace Horizon.Tests.Tests
 {

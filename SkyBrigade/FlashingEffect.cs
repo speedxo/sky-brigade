@@ -9,7 +9,9 @@ internal class FlashingEffect : Effect
     private struct FlashingStage
     {
         public float iTime { get; set; }
-    } private FlashingStage data = default;
+    }
+
+    private FlashingStage data = default;
 
     // Providing shader source through the constructor.
     public FlashingEffect() :

@@ -1,13 +1,7 @@
-﻿using Silk.NET.OpenGL;
-using Horizon.Collections;
+﻿using Horizon.Collections;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using Horizon.OpenGL;
-using Horizon.Primitives;
 using Horizon.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
 
 namespace Horizon;
 
@@ -91,12 +85,10 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
 
     public void Initialize()
     {
-
     }
 
     public void RemoveComponent<T>() where T : IGameComponent
     {
-
     }
 
     public void Update(float dt)

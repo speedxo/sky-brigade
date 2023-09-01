@@ -1,14 +1,14 @@
-﻿using System.Numerics;
-using Horizon;
+﻿using Horizon;
 using Horizon.Rendering;
 using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Game2D;
 
 public class NoiseGenerator
 {
-    RenderRectangle renderRect;
-    Technique technique;
+    private RenderRectangle renderRect;
+    private Technique technique;
 
     public uint TextureHandle { get => renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]; }
 

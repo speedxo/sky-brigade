@@ -1,10 +1,9 @@
-﻿using System;
-using System.Numerics;
-using Silk.NET.Input;
-using Silk.NET.Input.Extensions;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
+using Silk.NET.Input;
+using Silk.NET.Input.Extensions;
+using System.Numerics;
 
 namespace Horizon.Input.Components
 {
@@ -88,7 +87,8 @@ namespace Horizon.Input.Components
                 state.IsKeyPressed(Key.S) ? -1 : state.IsKeyPressed(Key.W) ? 1 : 0
             );
 
-            Data = new() {
+            Data = new()
+            {
                 Actions = actions,
                 MovementDirection = direction
             };

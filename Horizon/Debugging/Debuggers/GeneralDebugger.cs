@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using Horizon.Logging;
+﻿using Horizon.Logging;
 using Horizon.Rendering;
 using ImGuiNET;
 
@@ -55,6 +51,7 @@ namespace Horizon.Debugging.Debuggers
 
                 _singleUseValues.Clear();
             }
+
             internal void UpdateValues()
             {
                 foreach ((string name, Func<object> valueExpr) in _monitoredVariables)
@@ -87,6 +84,7 @@ namespace Horizon.Debugging.Debuggers
         }
 
         public void AddWatch(string name, Func<object> objExpr) => AddWatch("Misc", name, objExpr);
+
         public void AddWatch(string catagory, string name, Func<object> objExpr)
         {
             lock (_catagoriesLock)
@@ -97,7 +95,6 @@ namespace Horizon.Debugging.Debuggers
                 _catagories[catagory].AddWatch(name, objExpr);
             }
         }
-
 
         public override void Draw(float dt, RenderOptions? options = null)
         {
@@ -125,7 +122,7 @@ namespace Horizon.Debugging.Debuggers
                         ImGui.Columns(1);
                     }
                 }
-                
+
                 ImGui.End();
             }
         }
@@ -156,4 +153,3 @@ namespace Horizon.Debugging.Debuggers
         }
     }
 }
-

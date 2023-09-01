@@ -1,10 +1,6 @@
 ﻿using Horizon.GameEntity;
 using Horizon.Logging;
 using Horizon.OpenGL;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Horizon.Content
 {
@@ -61,8 +57,6 @@ namespace Horizon.Content
             }
         }
 
-
-
         #region Textures
 
         public Texture LoadTexture(string path)
@@ -118,6 +112,7 @@ namespace Horizon.Content
         #endregion Textures
 
         #region Shaders
+
         public Shader LoadShader(string vertexPath, string fragmentPath)
         {
             string internedVertexPath = string.Intern(vertexPath);
@@ -138,7 +133,8 @@ namespace Horizon.Content
         }
 
         public Shader LoadShaderFromSource(string vertSource, string fragSource)
-        {;
+        {
+            ;
             string uniqueKey = (vertSource.GetHashCode() + fragSource.GetHashCode()).ToString().GetHashCode().ToString();
 
             if (!unnamedShaders.TryGetValue(uniqueKey, out var shader))
@@ -177,7 +173,6 @@ namespace Horizon.Content
             string internedName = string.Intern(name);
             return namedShaders.TryGetValue(internedName, out var shader) ? shader : throw new Exception($"Key {internedName} not found in stored shaders.");
         }
-
 
         #endregion Shaders
 

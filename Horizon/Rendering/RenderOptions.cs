@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -9,12 +9,14 @@ public struct RenderOptions
 {
     // Primative Properties
     public float Gamma { get; set; }
+
     public bool IsPostProcessingEnabled { get; set; }
     public bool IsWireframeEnabled { get; set; }
     public float AmbientLightingStrength { get; set; }
 
     // Reference Properties
     public Camera Camera { get; set; }
+
     public GL GL { get; set; }
 
     // Value Properties

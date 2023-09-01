@@ -1,5 +1,4 @@
-﻿using System;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL;
 
@@ -58,8 +57,6 @@ public class ComputeShader : IDisposable
 
         return bufferData;
     }
-
-
 
     public void Dispose()
     {

@@ -1,8 +1,5 @@
-﻿using Silk.NET.OpenGL;
-using Horizon.Data;
+﻿using Horizon.Data;
 using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using Horizon.OpenGL;
 using System.Numerics;
 
 namespace Horizon.Rendering.Shapes;
@@ -15,7 +12,9 @@ public class Plane : GameObject
     /// <summary>
     /// The size of the plane in 3D space.
     /// </summary>
-    public Vector2 Size { get => size; set { size = value; UpdateVertices(); } }
+    public Vector2 Size
+    { get => size; set { size = value; UpdateVertices(); } }
+
     private Vector2 size = Vector2.One;
 
     /// <summary>
@@ -23,7 +22,7 @@ public class Plane : GameObject
     /// </summary>
     /// <param name="material">The material to use for rendering the plane. If null, the default material will be used.</param>
     public Plane(Material? material = null, Vector3? initialScale = null, Vector3? initialPosition = null, Vector2? initialSize = null)
-        :base(material)
+        : base(material)
     {
         Transform.Scale = initialScale ?? Vector3.One;
         Transform.Position = initialPosition ?? default;
