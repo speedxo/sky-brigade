@@ -61,7 +61,7 @@ public class SpritesheetAnimationManager : IGameComponent
 
     public void Initialize()
     {
-        Spritesheet = Parent as Spritesheet;
+        Spritesheet = (Spritesheet)Parent;
     }
 
     public void Update(float dt)

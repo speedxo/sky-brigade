@@ -43,7 +43,7 @@ namespace Horizon.Input.Components
         public void Initialize()
         {
             Bindings = KeyboardBindings.Default;
-            Manager = Parent as InputManager;
+            Manager = (InputManager)Parent;
         }
 
         /// <summary>

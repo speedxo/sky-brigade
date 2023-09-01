@@ -24,7 +24,7 @@ namespace Horizon.Debugging.Debuggers
             isPostProcessingEnabled = RenderOptions.Default.IsPostProcessingEnabled;
             isWireframeEnabled = RenderOptions.Default.IsWireframeEnabled;
 
-            Debugger = Parent as SkylineDebugger;
+            Debugger = (SkylineDebugger)Parent;
 
             Name = "Render Options";
         }

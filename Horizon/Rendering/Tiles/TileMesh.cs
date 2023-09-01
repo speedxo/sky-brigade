@@ -18,7 +18,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
             public TileVertex(float x, float y, float uvX, float uvY, System.Drawing.Color color)
             {
-                Color = new Vector3(color.R / 255.0f, color.G / 255.0f, color.G / 255.0f);
+                Color = new Vector3(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f);
                 TexCoords = new Vector2(uvX, uvY);
                 Position = new Vector2(x, y);
             }
@@ -147,7 +147,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
             }
 
-            unsafe // dont wanna make the whole methud unsafe just for this
+            unsafe // i dont wanna make the whole methud unsafe just for this
             {
                 GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
             }

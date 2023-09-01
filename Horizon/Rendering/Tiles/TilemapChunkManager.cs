@@ -16,13 +16,13 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         public void Initialize()
         {
-            Map = Parent as TileMap;
+            Map = (TileMap)Parent!;
 
             Chunks = new TileMapChunk[TileMap.WIDTH, TileMap.HEIGHT];
 
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y] = new TileMapChunk(Map, new Vector2(x, y));
+                    Chunks[x, y] = new TileMapChunk(Map!, new Vector2(x, y));
         }
 
         public void Update(float dt)

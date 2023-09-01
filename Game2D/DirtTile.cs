@@ -12,9 +12,9 @@ public class DirtTile : Tile
         IsCollidable = false;
     }
 
-    public override void PostGeneration(int x, int y)
+    public override void PostGeneration()
     {
-        RenderingData.TextureID = Chunk.IsEmpty(x, y + 1) ? GameScene.TileTextureID.Grass : GameScene.TileTextureID.Dirt;
+        RenderingData.TextureID = Map.IsEmpty((int)GlobalPosition.X, (int)GlobalPosition.Y + 1) ? GameScene.TileTextureID.Grass : GameScene.TileTextureID.Dirt;
         Chunk.FlagForMeshRegeneration();
     }
 }

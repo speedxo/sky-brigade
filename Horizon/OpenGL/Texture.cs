@@ -21,8 +21,13 @@ public class Texture : IDisposable
 
     public unsafe Texture(string path)
     {
-        var fileName = System.IO.Path.GetFileName(path);
-        var lastFolder = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(path));
+        if (!File.Exists(path))
+            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"[Texture] There is no file at location '{path}'!");
+
+        var fileName = System.IO.Path.GetFileName(path)!;
+        var lastFolder = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(path))!;
+
+        // ! We tested to ensure a file exists.
 
         Path = System.IO.Path.Combine(lastFolder, fileName);
 

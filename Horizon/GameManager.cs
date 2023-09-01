@@ -118,7 +118,6 @@ public class GameManager : Entity, IDisposable
     private ImGuiController imguiController;
     private Type initialGameScreen;
     private float oneSecondTimer;
-    private List<Entity> entities;
 
     #endregion Private Properties
 
@@ -131,6 +130,8 @@ public class GameManager : Entity, IDisposable
     {
         // Store the initial game screen that we should display when the game starts.
         this.initialGameScreen = parameters.InitialGameScreen;
+        if (!typeof(Scene).IsAssignableFrom(this.initialGameScreen))
+            Logger.Log(LogLevel.Fatal, "Initial game screen is not of type Scene!");
 
         // Create a window with the specified options.
         var options = WindowOptions.Default with
@@ -225,7 +226,8 @@ public class GameManager : Entity, IDisposable
 
         // Initialize the GameScreenManager and set the initial game screen.
         GameScreenManager = AddEntity<GameScreenManager>();
-        GameScreenManager.AddInstance<Scene>((Scene)Activator.CreateInstance(initialGameScreen));
+        // ! We ensure that intialGameScreen has to be of type Scene in ctor
+        GameScreenManager.AddInstance<Scene>((Scene)Activator.CreateInstance(initialGameScreen)!);
 
         Gl.Enable(EnableCap.VertexArray);
         for (int i = 0; i < Input.Mice.Count; i++)

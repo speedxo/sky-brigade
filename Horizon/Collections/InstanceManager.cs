@@ -45,7 +45,7 @@ public class InstanceManager<InstanceType>
             GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"The specified type must implement {nameof(InstanceType)}.");
         }
 
-        var instance = (InstanceType)Activator.CreateInstance(type);
+        var instance = (InstanceType)Activator.CreateInstance(type)!;
         AddInstance<InstanceType>(instance);
     }
 
@@ -65,10 +65,7 @@ public class InstanceManager<InstanceType>
     public void ChangeInstance(Type type)
     {
         if (!Instances.ContainsKey(type))
-        {
-            var newScreen = (InstanceType)Activator.CreateInstance(type) ?? throw new NullReferenceException("An impossible scenario has occurred, perhaps a single event upset occurred??");
-            Instances.Add(type, newScreen);
-        }
+            AddInstance(type);
 
         key = type;
     }

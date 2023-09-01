@@ -40,7 +40,8 @@ namespace Horizon.Debugging.Debuggers
 
         private void DrawEntityTree(IEntity? entity)
         {
-            if (entity is null) return;
+            if (entity is null)
+                return;
 
             ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 20.0f);
 
@@ -71,7 +72,7 @@ namespace Horizon.Debugging.Debuggers
 
                 ImGui.Columns(1);
 
-                foreach (IGameComponent? component in entity.Components.Values)
+                foreach (IGameComponent? component in entity!.Components.Values)
                 {
                     if (component == null) continue;
 
@@ -118,6 +119,8 @@ namespace Horizon.Debugging.Debuggers
 
             foreach (var property in properties)
             {
+                if (property is null) continue;
+
                 object? value = property.GetValue(component);
 
                 if (property.GetMethod?.IsStatic == true)
@@ -127,20 +130,28 @@ namespace Horizon.Debugging.Debuggers
 
                 if (property.PropertyType.IsArray)
                 {
-                    DrawArrayProperty(property.Name, value as Array);
+                    DrawArrayProperty(property.Name, (Array)value!);
                 }
                 else if (property.PropertyType.IsGenericType &&
                          property.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
                 {
+                    if (value is null) continue;
+
                     DrawListProperty(property.Name, value);
                 }
                 else if (property.PropertyType.IsGenericType &&
                          property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
+                    if (value is null) continue;
+
                     DrawDictionaryProperty(property.Name, value);
                 }
-                else if (property.PropertyType.IsValueType && !property.PropertyType.Namespace.StartsWith("System"))
+                else if (property.PropertyType.IsValueType)
                 {
+                    if (property.PropertyType.Namespace is null ||
+                        property.PropertyType.Namespace.StartsWith("System"))
+                        continue;
+
                     if (ImGui.TreeNodeEx($"{property.Name} (Value Type)"))
                     {
                         DrawProperties(value, depth + 1);

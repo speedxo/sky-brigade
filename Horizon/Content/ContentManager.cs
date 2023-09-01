@@ -63,17 +63,13 @@ namespace Horizon.Content
         {
             string internedPath = string.Intern(path);
 
-            if (!unnamedTextures.TryGetValue(internedPath, out var texture))
-            {
-                texture = new Texture(internedPath);
-                unnamedTextures.TryAdd(texture.Path, texture);
-            }
+            if (!unnamedTextures.ContainsKey(internedPath))
+                unnamedTextures.TryAdd(internedPath, new Texture(internedPath));
             else
-            {
                 GameManager.Instance.Logger.Log(LogLevel.Warning, $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned.");
-            }
+            
 
-            return texture;
+            return unnamedTextures[internedPath];
         }
 
         public Texture GenerateNamedTexture(string name, Texture texture)

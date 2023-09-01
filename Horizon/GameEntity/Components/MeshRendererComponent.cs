@@ -12,7 +12,8 @@ namespace Horizon.GameEntity.Components
 
         public void Initialize()
         {
-            Transform = Parent.GetComponent<TransformComponent>();
+            Transform = Parent.GetComponent<TransformComponent>()!;
+            // ! We attached a [RequiresComponent(typeof(TransformComponent))]
         }
 
         public override void Use(RenderOptions options)

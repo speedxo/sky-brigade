@@ -22,7 +22,8 @@ namespace Horizon.Rendering
 
         public void Initialize()
         {
-            Shader ??= Parent.GetComponent<ShaderComponent>();
+            // We attach a [RequiresComponent(typeof(ShaderComponent))]
+            Shader ??= Parent.GetComponent<ShaderComponent>()!;
         }
 
         public UniformBufferObject AddUniformBuffer(uint bindingPoint)

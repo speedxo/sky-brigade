@@ -10,24 +10,6 @@ namespace Horizon.Dialogs
     /// </summary>
     public class OpenFileDialog : Entity
     {
-        public int ID { get; set; }
-        public string Name { get; set; } = "Open File Dialog";
-
-        /// <summary>
-        /// Gets or sets this entities enable flag.
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// The total number of components.
-        /// </summary>
-        public int TotalComponents { get => Components.Count + Entities.Sum(e => e.TotalComponents); }
-
-        /// <summary>
-        /// The total sum of entities including their children.
-        /// </summary>
-        public int TotalEntities { get => Entities.Count + Entities.Sum(e => e.TotalEntities); }
-
         /// <summary>
         /// Gets or sets the selected file's name with full path.
         /// </summary>
@@ -42,10 +24,6 @@ namespace Horizon.Dialogs
         /// Gets or sets a value indicating whether multiple files can be selected.
         /// </summary>
         public bool Multiselect { get; set; }
-
-        public IEntity? Parent { get; set; }
-        public List<IEntity> Entities { get; set; }
-        public Dictionary<Type, IGameComponent> Components { get; set; } = new();
 
         private List<FileItem> files = new();
         private DirectoryInfo? currentDirectory;
@@ -197,19 +175,10 @@ namespace Horizon.Dialogs
         /// </summary>
         /// <param name="dt">Time elapsed since the last update.</param>
         /// <param name="renderOptions">Optional render options (unused in this implementation).</param>
-        public void Draw(float dt, RenderOptions? renderOptions = null)
+        public override void Draw(float dt, RenderOptions? renderOptions = null)
         {
             // Show the open file dialog on the screen.
             ShowDialog();
-        }
-
-        /// <summary>
-        /// Updates the OpenFileDialog instance (IEntity implementation, no update logic in this implementation).
-        /// </summary>
-        /// <param name="dt">Time elapsed since the last update.</param>
-        public void Update(float dt)
-        {
-            // No update logic for this dialog.
         }
     }
 }

@@ -120,6 +120,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         polygonMeshIndexCount = 0;
     }
 
+    [Obsolete]
     public override void DrawCircle(in Box2D.NetStandard.Common.Vec2 center, float radius, in Color color)
     {
         AddCircle(center, radius, color);
@@ -163,11 +164,13 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         }
     }
 
+    [Obsolete]
     public override void DrawPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
     {
         AddPolygon(vertices, vertexCount, color);
     }
 
+    [Obsolete]
     public override void DrawSegment(in Box2D.NetStandard.Common.Vec2 p1, in Box2D.NetStandard.Common.Vec2 p2, in Color color)
     {
         DrawSegment(p1, p2, color);
@@ -184,16 +187,19 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         segmentMesh.Indices.Add((uint)segmentMesh.Indices.Count);
     }
 
+    [Obsolete]
     public override void DrawSolidCircle(in Box2D.NetStandard.Common.Vec2 center, float radius, in Box2D.NetStandard.Common.Vec2 axis, in Color color)
     {
         AddCircle(center, radius, color);
     }
 
+    [Obsolete]
     public override void DrawSolidPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
     {
         AddPolygon(vertices, vertexCount, color);
     }
 
+    [Obsolete]
     private void AddPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
     {
         if (vertexCount != 4)

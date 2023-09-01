@@ -42,6 +42,7 @@ public abstract class Scene : Entity, IDisposable
     {
         // yes this is trashy.
         defaultSceneRect ??= new RenderRectangle(new EffectStack().Technique, FrameBuffer);
+
         SceneRect = new RenderRectangle(PostEffects.Technique.Shader, FrameBuffer);
         return true;
     }
@@ -118,7 +119,7 @@ public abstract class Scene : Entity, IDisposable
         var options = renderOptions ?? RenderOptions.Default;
         if (options.IsPostProcessingEnabled)
             SceneRect.RenderScene(dt);
-        else defaultSceneRect.RenderScene(dt);
+        else defaultSceneRect!.RenderScene(dt); // we do a test on hasRenderPipelineBeenInitialized in Draw
 
         if (GameManager.Instance.Debugger.GameContainerDebugger.Visible)
             GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Unbind();

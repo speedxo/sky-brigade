@@ -4,44 +4,101 @@ using System.Numerics;
 
 namespace Horizon.Rendering;
 
+/// <summary>
+/// Represents a tile in a tilemap.
+/// </summary>
+/// <typeparam name="TTileID">The type of tile ID.</typeparam>
+/// <typeparam name="TTextureID">The type of texture ID.</typeparam>
 public partial class Tiling<TTileID, TTextureID>
     where TTileID : Enum
     where TTextureID : Enum
 {
     public abstract class Tile : IUpdateable, IDrawable
     {
+        /// <summary>
+        /// The width of the tile.
+        /// </summary>
         public const float TILE_WIDTH = 1.0f;
+
+        /// <summary>
+        /// The height of the tile.
+        /// </summary>
         public const float TILE_HEIGHT = 1.0f;
 
+        /// <summary>
+        /// Gets the local position of the tile within its chunk.
+        /// </summary>
         public Vector2 LocalPosition { get; protected set; }
+
+        /// <summary>
+        /// Gets the global position of the tile within the tilemap.
+        /// </summary>
         public Vector2 GlobalPosition { get; protected set; }
+
+        /// <summary>
+        /// Gets the ID of the tile.
+        /// </summary>
         public TTileID ID { get; protected set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this tile has a collider.
+        /// </summary>
         public bool HasCollider { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this tile is collidable.
+        /// </summary>
         public bool IsCollidable { get; protected set; } = true;
 
-        public TileRenderingData RenderingData;
-        public TileBox2DData Box2DData;
+        /// <summary>
+        /// Gets the rendering data for this tile.
+        /// </summary>
+        public TileRenderingData RenderingData = default;
 
+        /// <summary>
+        /// Gets the Box2D data for this tile.
+        /// </summary>
+        public TileBox2DData Box2DData = default;
+
+        /// <summary>
+        /// Gets the chunk to which this tile belongs.
+        /// </summary>
         public TileMapChunk Chunk { get; init; }
+
+        /// <summary>
+        /// Gets the tilemap to which this tile belongs.
+        /// </summary>
         public TileMap Map => Chunk.Map;
 
+        /// <summary>
+        /// Gets the tile set to which this tile belongs.
+        /// </summary>
         public TileSet Set => Map.GetTileSetFromTileTextureID(RenderingData.TextureID);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tile{TTileID, TTextureID}"/> class.
+        /// </summary>
+        /// <param name="chunk">The chunk to which the tile belongs.</param>
+        /// <param name="local">The local position of the tile within the chunk.</param>
         public Tile(TileMapChunk chunk, Vector2 local)
         {
-            this.Chunk = chunk;
-            this.LocalPosition = local;
-            this.GlobalPosition = local + chunk.Position * new Vector2(TileMapChunk.Width - 1, TileMapChunk.Height - 1);
-            this.RenderingData = new();
-            this.Box2DData = new();
+            Chunk = chunk;
+            LocalPosition = local;
+            GlobalPosition = local + chunk.Position * new Vector2(TileMapChunk.Width - 1, TileMapChunk.Height - 1);
+            RenderingData = new TileRenderingData();
+            Box2DData = new TileBox2DData();
         }
 
+        /// <summary>
+        /// Tries to generate a collider for this tile.
+        /// </summary>
+        /// <returns>True if a collider was successfully generated; otherwise, false.</returns>
         public bool TryGenerateCollider()
         {
-            if (Chunk.Body is null || !IsCollidable) return false;
+            if (Chunk.Body is null || !IsCollidable)
+                return false;
 
-            Box2DData = new()
+            Box2DData = new TileBox2DData
             {
                 Fixture = Chunk.Body.CreateFixture(GenerateCollider()),
                 Age = 0,
@@ -49,25 +106,33 @@ public partial class Tiling<TTileID, TTextureID>
             };
 
             Box2DData.Fixture.m_friction = 0.6f;
-
             HasCollider = true;
 
             return true;
         }
 
+        /// <summary>
+        /// Generates the collider shape for this tile.
+        /// </summary>
+        /// <returns>The collider shape.</returns>
         protected virtual PolygonShape GenerateCollider()
         {
             return new PolygonShape(
                 GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
-                        GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
-                        GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f),
-                        GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f)
-                    );
+                GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
+                GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f),
+                GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f)
+            );
         }
 
+        /// <summary>
+        /// Tries to destroy the collider of this tile.
+        /// </summary>
+        /// <returns>True if the collider was successfully destroyed; otherwise, false.</returns>
         public bool TryDestroyCollider()
         {
-            if (Chunk.Body is null || !HasCollider) return false;
+            if (Chunk.Body is null || !HasCollider)
+                return false;
 
             Chunk.Body.DestroyFixture(Box2DData.Fixture);
             HasCollider = false;
@@ -75,16 +140,31 @@ public partial class Tiling<TTileID, TTextureID>
             return true;
         }
 
+        /// <summary>
+        /// Draws the tile.
+        /// </summary>
+        /// <param name="dt">The time elapsed since the last frame.</param>
+        /// <param name="renderOptions">Optional rendering options.</param>
         public virtual void Draw(float dt, RenderOptions? renderOptions = null)
         {
+            // Implement drawing logic here.
         }
 
+        /// <summary>
+        /// Updates the tile.
+        /// </summary>
+        /// <param name="dt">The time elapsed since the last update.</param>
         public virtual void Update(float dt)
         {
+            // Implement update logic here.
         }
 
-        public virtual void PostGeneration(int x, int y)
+        /// <summary>
+        /// Performs post-generation actions for the tile.
+        /// </summary>
+        public virtual void PostGeneration()
         {
+            // Implement post-generation logic here.
         }
     }
 }
