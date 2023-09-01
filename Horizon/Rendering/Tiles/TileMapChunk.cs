@@ -21,26 +21,31 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         public Dictionary<TileSet, Tile[,]> TileSetPairs { get; init; }
 
-        public int Slice { get; init; }
+        public Vector2 Position { get; init; }
         public TileMap Map { get; init; }
 
         public TilemapRenderer Renderer { get; init; }
         public bool ShouldUpdate { get; set; }
 
-        public TileMapChunk(TileMap map, int slice)
+        public RectangleF Bounds { get; init; }
+        public bool IsVisibleByCamera { get; set; } = true;
+
+        public TileMapChunk(TileMap map, Vector2 pos)
         {
             Map = map;
-            Slice = slice;
+            Position = pos;
 
             if (map.World is not null)
                 Body = map.World.CreateBody(new BodyDef {
-                type = BodyType.Static
-            });
+                    type = BodyType.Static
+                });
 
             Tiles = new Tile?[Width, Height];
             TileSetPairs = new();
             Renderer = new(this);
             ShouldUpdate = true;
+
+            Bounds = new RectangleF(pos * new Vector2(Width - 1, Height - 1) - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f), new(Width - 1, Height - 1));
         }
 
         public bool IsEmpty(int x, int y)
@@ -52,7 +57,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
         {
             get
             {
-                if (x / Width >= Width || x < 0 || y < 0 || y >= Height)
+                if (x / Width >= Width || x < 0 || y < 0 || y / Height >= Height)
                     return null;
 
                 return Tiles[x, y];
@@ -63,32 +68,30 @@ public abstract partial class Tiling<TTileID, TTextureID>
         {
             if (ShouldUpdate)
                 GenerateMesh();
-            
+
             Renderer.Draw(dt, renderOptions);
+        }
+
+        public bool FlagForMeshRegeneration()
+        {
+            if (ShouldUpdate)
+                return false;
+
+            ShouldUpdate = true;
+            return true;
         }
 
         public void Update(float dt)
         {
-            for (int x = 0; x < Tiles.GetLength(0); x++)
-            {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-                    var tile = Tiles[x, y];
-                    if (tile is null) continue;
+            if (!IsVisibleByCamera) return;
 
-                    if (tile.ShouldUpdateMesh)
-                    {
-                        ShouldUpdate = true;
-                        return;
-                    }
-                }
-            }
+            // todo: stuff
         }
 
         public void GenerateMesh()
         {
             UpdateTileSetPairs();
-            Renderer.GenerateMeshes(Slice);
+            Renderer.GenerateMeshes();
             ShouldUpdate = false;
         }
 

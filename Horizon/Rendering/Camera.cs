@@ -17,26 +17,36 @@ public class Camera
     public Matrix4x4 View { get; protected set; }
     public Matrix4x4 Projection { get; protected set; }
     public Vector3 Position { get; set; } = new Vector3(0, 0, 10);
+    public RectangleF Bounds { get; protected set; }
 
     public bool Locked { get; set; } = false;
 
     public Camera()
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.ViewportSize.X / (float)GameManager.Instance.ViewportSize.Y, 0.1f, 100.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 0.1f, 100.0f);
     }
 
     public virtual void Update(float dt)
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.ViewportSize.X / (float)GameManager.Instance.ViewportSize.Y, 0.1f, 100.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 0.1f, 100.0f);
+
+        UpdateBounds(dt);
     }
+
+    protected virtual void UpdateBounds(float dt)
+    {
+        var h = MathF.Tan(CameraZoom / 2.0f) * Position.Z * 1.5f;
+        var w = h * GameManager.Instance.AspectRatio;
+
+        Bounds = new RectangleF(Position.X - w / 2.0f, Position.Y - h / 2.0f, w, h);
+    }
+
     public bool IsPointInFrustum(Vector2 point) => IsPointInFrustum(new Vector3(point, 0.0f));
 
     public bool IsPointInFrustum(Vector3 point)
     {
-        return true;
-
         Matrix4x4 viewProjection = View * Projection;
 
         // Calculate the transformed point in homogeneous coordinates

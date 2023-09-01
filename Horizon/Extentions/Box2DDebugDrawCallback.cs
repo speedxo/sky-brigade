@@ -115,7 +115,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         technique.SetUniform("uModel", Matrix4x4.Identity);
         technique.SetUniform("useNormalAsColor", true);
 
-        
+
         polygonMesh.Draw(dt, options);
         circleMesh.Draw(dt, options);
         segmentMesh.Draw(dt, options);
@@ -133,6 +133,19 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     public override void DrawPoint(in Vector2 position, float size, in Color color)
     {
         AddCircle(position, size, color);
+    }
+
+    public void DrawRectangleF(in   RectangleF rect, in Color color)
+    {
+        polygonMesh.Vertices.AddRange(new Vertex[] {
+                new Vertex(rect.X, rect.Y, 0, 0, 0, color.R, color.G, color.B),
+                new Vertex(rect.X + rect.Width, rect.Y, 0, 0, 0, color.R, color.G, color.B),
+                new Vertex(rect.X + rect.Width, rect.Y + rect.Height, 0, 0, 0, color.R, color.G, color.B),
+                new Vertex(rect.X, rect.Y + rect.Height, 0, 0, 0, color.R, color.G, color.B)
+            });
+
+        polygonMesh.Indices.AddRange(new uint[] { polygonMeshIndexCount + 0, polygonMeshIndexCount + 1, polygonMeshIndexCount + 2, polygonMeshIndexCount + 0, polygonMeshIndexCount + 2, polygonMeshIndexCount + 3 });
+        polygonMeshIndexCount += 4;
     }
 
     private void AddCircle(in Vector2 position, float radius, in Color color)
@@ -191,7 +204,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     {
         if (vertexCount != 4)
             return;
-        
+
         for (int i = 0; i < vertexCount; i++)
             polygonMesh.Vertices.Add(new Vertex(vertices[i].X, vertices[i].Y, 0, 0, 0, color.R, color.G, color.B));
 

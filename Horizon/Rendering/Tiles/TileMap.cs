@@ -11,8 +11,10 @@ public abstract partial class Tiling<TTileID, TTextureID>
     public class TileMap : Entity
     {
         public const int WIDTH = 4;
+        public const int HEIGHT = 4;
 
         public World? World { get; private set; }
+
         public TilemapChunkManager ChunkManager { get; private set; }
 
         public Dictionary<string, TileSet> TileSets { get; private set; }
@@ -40,13 +42,16 @@ public abstract partial class Tiling<TTileID, TTextureID>
         {
             get
             {
-                if (x / TileMapChunk.Width >= ChunkManager.Chunks.Length|| x < 0 || y < 0 || y >= TileMapChunk.Height)
+                int chunkIndexX = x / TileMapChunk.Width;
+                int chunkIndexY = y / TileMapChunk.Height;
+
+                if (chunkIndexX >= WIDTH || chunkIndexX >= HEIGHT || x < 0 || y < 0 || y >= TileMapChunk.Height)
                     return null;
 
-                int chunkIndex = x / TileMapChunk.Width;
-                int tileIndex = x % TileMapChunk.Width;
+                int tileIndexX = x % TileMapChunk.Width;
+                int tileIndexY = y % TileMapChunk.Height;
 
-                return ChunkManager.Chunks[chunkIndex].Tiles[tileIndex, y];
+                return ChunkManager.Chunks[chunkIndexX, chunkIndexY].Tiles[tileIndexX, tileIndexY];
             }
         }
 

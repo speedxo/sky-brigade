@@ -77,16 +77,9 @@ public class GameScene : Scene
     }
     private void PopulateTiles(Tile?[,] tiles, TileMapChunk chunk)
     {
-        var noise = new NoiseGenerator(TileMap.WIDTH * TileMapChunk.Width, 1, new Vector2(1.0f));
-        int heightOffset = (tiles.GetLength(1) - 1) / 4;
-
-        for (int x = 0; x < tiles.GetLength(0); x++)
+        for (int x = 0; x < tiles.GetLength(0) - 1; x++)
         {
-            int height = (int)(noise.Data[x + chunk.Slice * TileMapChunk.Width, 0]
-                            * ((tiles.GetLength(1) - 1) / 2.0f)
-                            + heightOffset);
-
-            for (int y = height; y > 0; y--)
+            for (int y = 0; y < tiles.GetLength(1) - 1; y++)
             {
                 tiles[x, y] = new DirtTile(chunk, new Vector2(x, y));
             }

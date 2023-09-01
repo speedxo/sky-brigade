@@ -15,7 +15,6 @@ using Horizon.GameEntity.Components.Physics2D;
 
 namespace Game2D;
 
-
 public class Player2D : Sprite
 {
     public Body PhysicsBody { get => box2DBodyComponent.Body; }

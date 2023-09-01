@@ -70,7 +70,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         private Dictionary<Vector2, uint> _cache = new();
 
-        public void AddTiles(Tile[,] tiles, int slice)
+        public void AddTiles(Tile[,] tiles)
         {
             int width = tiles.GetLength(0);
             int height = tiles.GetLength(1);

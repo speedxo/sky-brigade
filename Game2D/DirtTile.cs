@@ -10,12 +10,13 @@ public class DirtTile : Tile
         : base(chunk, local)
     {
         RenderingData.TextureID = GameScene.TileTextureID.Dirt;
+        IsCollidable = false;
     }
 
     public override void PostGeneration(int x, int y)
     {
         RenderingData.TextureID = Chunk.IsEmpty(x, y + 1) ? GameScene.TileTextureID.Grass : GameScene.TileTextureID.Dirt;
-        ShouldUpdateMesh = true;
+        Chunk.FlagForMeshRegeneration();
     }
 }
 

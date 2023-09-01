@@ -38,7 +38,7 @@ public class Sprite : Entity
 
     public Vertex2D[] GetVertices()
     {
-        Debug.Assert(_hasBeenSetup);
+        if (!_hasBeenSetup) GameManager.Instance.Logger.Log(Logging.LogLevel.Error, "[Sprite] Setup() has not been called!");
 
         Vector2[] uv = IsAnimated
             ? Spritesheet.GetAnimatedTextureCoordinates(FrameName)

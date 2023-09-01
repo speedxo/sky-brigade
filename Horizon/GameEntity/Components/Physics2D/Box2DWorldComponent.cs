@@ -10,7 +10,7 @@ public class Box2DWorldComponent : Box2D.NetStandard.Dynamics.World.World, IGame
     public Entity Parent { get; set; }
 
     public Box2DWorldComponent()
-        :base(new System.Numerics.Vector2(0, -9.8f))
+        :base(System.Numerics.Vector2.Zero)
     {
 
     }

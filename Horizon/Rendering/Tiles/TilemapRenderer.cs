@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Xml.Linq;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
@@ -15,6 +16,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
         public Dictionary<TileSet, TileMesh> TileSetMeshes { get; init; }
         public TileMapChunk Chunk { get; init; }
 
+
         public TilemapRenderer(TileMapChunk chunk)
         {
             _shader ??= new ShaderComponent(GameManager.Instance.ContentManager.LoadShader("Assets/tilemap_shaders/tiles.vert", "Assets/tilemap_shaders/tiles.frag"));
@@ -23,7 +25,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
             this.TileSetMeshes = new();
         }
 
-        public void GenerateMeshes(int slice)
+        public void GenerateMeshes()
         {
             var sheets = Chunk.TileSetPairs.Keys;
 
@@ -37,7 +39,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
             foreach ((TileSet set, Tile[,] tiles) in Chunk.TileSetPairs)
             {
-                TileSetMeshes[set].AddTiles(tiles, slice);
+                TileSetMeshes[set].AddTiles(tiles);
             }
 
             foreach (var sheet in sheets)
@@ -48,6 +50,11 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
         public void Draw(float dt, RenderOptions? renderOptions = null)
         {
+            var options = (renderOptions ?? RenderOptions.Default);
+            Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
+
+            if (!Chunk.IsVisibleByCamera) return;
+
             foreach ((_, var mesh) in TileSetMeshes)
             {
                 mesh.Draw(dt, renderOptions);
