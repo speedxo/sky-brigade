@@ -12,38 +12,38 @@ public abstract partial class Tiling<TTileID, TTextureID>
         public Entity Parent { get; set; }
         public TileMap Map { get; private set; }
 
-        public TileMapChunk[,] Chunks { get; private set; }
+        public TileMapChunk[] Chunks { get; private set; }
 
         public void Initialize()
         {
             Map = (TileMap)Parent!;
 
-            Chunks = new TileMapChunk[TileMap.WIDTH, TileMap.HEIGHT];
+            Chunks = new TileMapChunk[TileMap.WIDTH * TileMap.HEIGHT];
 
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y] = new TileMapChunk(Map!, new Vector2(x, y));
+                    Chunks[x + y * TileMap.WIDTH] = new TileMapChunk(Map!, new Vector2(x, y));
         }
 
         public void Update(float dt)
         {
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y].Update(dt);
+                    Chunks[x + y * TileMap.WIDTH].Update(dt);
         }
 
         public void Draw(float dt, RenderOptions? options = null)
         {
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y].Draw(dt, options);
+                    Chunks[x + y * TileMap.WIDTH].Draw(dt, options);
         }
 
         public void GenerateMeshes()
         {
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y].GenerateMesh();
+                    Chunks[x + y * TileMap.WIDTH].GenerateMesh();
         }
 
         /// <summary>
@@ -66,16 +66,27 @@ public abstract partial class Tiling<TTileID, TTextureID>
         {
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y].Populate(action);
+                    Chunks[x + y * TileMap.WIDTH].Populate(action);
 
             PostGenerateTiles();
         }
+        /// <summary>
+        /// This method accepts a populator action that is expected to fill the tile[].
+        /// </summary>
+        /// <param name="action">The populator action</param>
+        public void PopulateTiles(Action<Tile?[], TileMapChunk> action)
+        {
+            for (int x = 0; x < TileMap.WIDTH; x++)
+                for (int y = 0; y < TileMap.HEIGHT; y++)
+                    Chunks[x + y * TileMap.WIDTH].Populate(action);
 
+            PostGenerateTiles();
+        }
         private void PostGenerateTiles()
         {
             for (int x = 0; x < TileMap.WIDTH; x++)
                 for (int y = 0; y < TileMap.HEIGHT; y++)
-                    Chunks[x, y].PostGenerate();
+                    Chunks[x + y * TileMap.WIDTH].PostGenerate();
         }
     }
 }

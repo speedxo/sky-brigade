@@ -3,6 +3,8 @@ using Horizon.OpenGL;
 using Horizon.Rendering.Effects.Components;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Horizon.Rendering;
 
@@ -16,9 +18,9 @@ public abstract partial class Tiling<TTileID, TTextureID>
             public Vector2 TexCoords { get; set; }
             public Vector3 Color { get; set; }
 
-            public TileVertex(float x, float y, float uvX, float uvY, System.Drawing.Color color)
+            public TileVertex(float x, float y, float uvX, float uvY, Vector3 color)
             {
-                Color = new Vector3(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f);
+                Color = new Vector3(color.X, color.Y, color.Z);
                 TexCoords = new Vector2(uvX, uvY);
                 Position = new Vector2(x, y);
             }
@@ -33,9 +35,10 @@ public abstract partial class Tiling<TTileID, TTextureID>
         public VertexBufferObject<TileVertex> Vbo { get; private set; }
         public TileSet Set { get; init; }
 
-        private List<TileVertex> _vertices;
-        private List<uint> _indices;
+        private readonly List<TileVertex> _vertices;
+        private readonly List<uint> _indices;
         private uint _vertexCounter;
+        private bool _uploadData, _isUpdatingMesh;
 
         public TileMesh(ShaderComponent shader, TileSet set, TileMap map)
         {
@@ -53,7 +56,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
             _vertices = new();
         }
 
-        protected void Upload(TileVertex[] vertices, uint[] elements)
+        protected void Upload(ReadOnlySpan<TileVertex> vertices, ReadOnlySpan<uint> elements)
         {
             Vbo.VertexBuffer.BufferData(vertices);
             Vbo.ElementBuffer.BufferData(elements);
@@ -61,34 +64,25 @@ public abstract partial class Tiling<TTileID, TTextureID>
             ElementCount = (uint)elements.Length;
         }
 
-        public void BeginMeshGeneration()
+        public void GenerateMeshFromTiles(ReadOnlySpan<Tile> tiles)
         {
-            _vertexCounter = 0;
-            _cache.Clear();
-        }
+            if (_isUpdatingMesh) return;
 
-        private Dictionary<Vector2, uint> _cache = new();
+            _isUpdatingMesh = true;
 
-        public void AddTiles(Tile[,] tiles)
-        {
-            int width = tiles.GetLength(0);
-            int height = tiles.GetLength(1);
-
-            for (int y = 0; y < height; y++)
+            for (int i = 0; i < tiles.Length; i++)
             {
-                for (int x = 0; x < width; x++)
-                {
-                    if (tiles[x, height - 1 - y] != null)
-                    {
-                        AddTile(tiles[x, height - 1 - y]);
-                    }
-                }
+                if (tiles[i] is null) continue;
+                AddTile(tiles[i]);
             }
+            
+            _uploadData = true;
         }
 
-        private void AddTile(Tile tile)
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private void AddTile(in Tile tile)
         {
-            uint[] getElements(uint _offset)
+            static uint[] getElements(uint _offset)
             {
                 return new uint[] {
                     _offset, _offset + 1, _offset + 2,
@@ -101,7 +95,8 @@ public abstract partial class Tiling<TTileID, TTextureID>
             _vertexCounter += 4;
         }
 
-        private static TileVertex[] GetVertices(Tile tile)
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private static TileVertex[] GetVertices(in Tile tile)
         {
             Vector2[] uv = tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID);
 
@@ -113,16 +108,20 @@ public abstract partial class Tiling<TTileID, TTextureID>
             };
         }
 
-        public void EndMeshGeneration()
-        {
-            Upload(_vertices.ToArray(), _indices.ToArray());
-
-            _vertices.Clear();
-            _indices.Clear();
-        }
-
         public override void Draw(float dt, RenderOptions? renderOptions = null)
         {
+            if (_uploadData)
+            {
+                _uploadData = false;
+                _isUpdatingMesh = false;
+
+                Upload(CollectionsMarshal.AsSpan(_vertices), CollectionsMarshal.AsSpan(_indices));
+
+                _indices.Clear();
+                _vertices.Clear();
+                _vertexCounter = 0;
+            }
+
             if (ElementCount < 1)
             {
                 return;

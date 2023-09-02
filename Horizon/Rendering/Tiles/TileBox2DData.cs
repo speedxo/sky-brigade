@@ -8,10 +8,12 @@ public abstract partial class Tiling<TTileID, TTextureID> where TTileID : Enum
     /// <summary>
     /// Contains complementary data for Box2D integration.
     /// </summary>
-    public struct TileBox2DData
+    public struct TilePhysicsData
     {
         public Fixture Fixture;
         public float Age;
         public float Distance;
+        public bool HasCollider;
+        public bool IsCollidable;
     }
 }

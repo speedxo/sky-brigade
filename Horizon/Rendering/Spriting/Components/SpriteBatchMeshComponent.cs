@@ -50,7 +50,7 @@ public class SpriteBatchMesh
         count++;
     }
 
-    public void Upload(Vertex2D[] vertices, uint[] elements)
+    public void Upload(ReadOnlySpan<Vertex2D> vertices, ReadOnlySpan<uint> elements)
     {
         Vbo.VertexBuffer.BufferData(vertices);
         Vbo.ElementBuffer.BufferData(elements);

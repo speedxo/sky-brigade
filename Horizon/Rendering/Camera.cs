@@ -23,13 +23,13 @@ public class Camera
     public Camera()
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 0.1f, 100.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 1.0f, 1000.0f);
     }
 
     public virtual void Update(float dt)
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 0.1f, 100.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 1.0f, 1000.0f);
 
         UpdateBounds(dt);
     }

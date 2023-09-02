@@ -77,7 +77,10 @@ namespace Horizon.GameEntity
 
                     // Check if the entity has the required component
                     if (!HasComponent(requiredComponentType))
+                    {
                         GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'.");
+                        throw new Exception();
+                    }
                 }
             }
 

@@ -79,7 +79,7 @@ public class Texture : IDisposable
         this.Height = textureHeight;
     }
 
-    public unsafe Texture(Span<byte> data, uint width, uint height)
+    public unsafe Texture(ReadOnlySpan<byte> data, uint width, uint height)
     {
         Width = (int)width;
         Height = (int)height;

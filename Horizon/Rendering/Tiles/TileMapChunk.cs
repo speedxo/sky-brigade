@@ -29,12 +29,12 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// <summary>
         /// Gets the 2D array of tiles in the chunk.
         /// </summary>
-        public Tile?[,] Tiles { get; init; }
+        public Tile?[] Tiles { get; init; }
 
         /// <summary>
         /// Gets the dictionary of tile sets paired with tile arrays.
         /// </summary>
-        public Dictionary<TileSet, Tile[,]> TileSetPairs { get; init; }
+        public Dictionary<TileSet, Tile[]> TileSetPairs { get; init; }
 
         /// <summary>
         /// Gets the position of the chunk in the tile map.
@@ -52,9 +52,9 @@ public abstract partial class Tiling<TTileID, TTextureID>
         public TilemapRenderer Renderer { get; init; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the chunk should be updated.
+        /// Gets a value indicating whether the chunk should be updated.
         /// </summary>
-        public bool ShouldUpdate { get; set; }
+        public bool IsDirty { get; private set; }
 
         /// <summary>
         /// Gets the bounds of the chunk in world space.
@@ -65,6 +65,8 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// Gets or sets a value indicating whether the chunk is visible by the camera.
         /// </summary>
         public bool IsVisibleByCamera { get; set; } = true;
+
+        private float _meshUpdateCooldown = 0.0f;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TileMapChunk"/> class.
@@ -81,10 +83,11 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 type = BodyType.Static
             });
 
-            Tiles = new Tile?[Width, Height];
-            TileSetPairs = new Dictionary<TileSet, Tile[,]>();
+            Tiles = new Tile?[Width * Height];
+            TileSetPairs = new Dictionary<TileSet, Tile[]>();
+
             Renderer = new TilemapRenderer(this);
-            ShouldUpdate = true;
+            IsDirty = true;
 
             Bounds = new RectangleF(pos * new Vector2(Width - 1, Height - 1) - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f), new(Width - 1, Height - 1));
         }
@@ -113,7 +116,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 if (x / Width >= TileMap.WIDTH || x < 0 || y < 0 || y / Height >= TileMap.HEIGHT)
                     return null;
 
-                return Tiles[x, y];
+                return Tiles[x + y * Width];
             }
         }
 
@@ -124,8 +127,15 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// <param name="renderOptions">Optional rendering options.</param>
         public void Draw(float dt, RenderOptions? renderOptions = null)
         {
-            if (ShouldUpdate)
+            _meshUpdateCooldown += dt;
+
+            if (IsDirty && _meshUpdateCooldown > 0.25f)
+            {
+                _meshUpdateCooldown = 0.0f;
+                IsDirty = false;
+
                 GenerateMesh();
+            }
 
             Renderer.Draw(dt, renderOptions);
         }
@@ -134,13 +144,12 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// Flags the chunk for mesh regeneration.
         /// </summary>
         /// <returns>True if the chunk was flagged for regeneration; otherwise, false.</returns>
-        public bool FlagForMeshRegeneration()
+        public bool MarkDirty()
         {
-            if (ShouldUpdate)
+            if (IsDirty)
                 return false;
 
-            ShouldUpdate = true;
-            return true;
+            return IsDirty = true;
         }
 
         /// <summary>
@@ -161,7 +170,6 @@ public abstract partial class Tiling<TTileID, TTextureID>
         {
             UpdateTileSetPairs();
             Renderer.GenerateMeshes();
-            ShouldUpdate = false;
         }
 
         /// <summary>
@@ -178,32 +186,30 @@ public abstract partial class Tiling<TTileID, TTextureID>
             TileSetPairs.Clear();
 
             // Temporary storage for organizing tiles by tile set.
-            var tempPairs = new Dictionary<TileSet, Tile[,]>();
+            var tempPairs = new Dictionary<TileSet, List<Tile>>();
 
             // Iterate through the tiles in the chunk.
-            for (int x = 0; x < Tiles.GetLength(0); x++)
+            for (int i = 0; i < Tiles.Length; i++)
             {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
+                var tile = Tiles[i];
+                if (tile == null) continue;
+
+                // Check if the tile set is already in the temporary pairs.
+                if (!tempPairs.ContainsKey(tile.Set))
                 {
-                    var tile = Tiles[x, y];
-                    if (tile == null) continue;
-
-                    // Check if the tile set is already in the temporary pairs.
-                    if (!tempPairs.ContainsKey(tile.Set))
-                    {
-                        // If not, create a new 2D array for that tile set.
-                        tempPairs[tile.Set] = new Tile[Width, Height];
-                    }
-
-                    // Add the tile to the corresponding tile set's array.
-                    tempPairs[tile.Set][x, y] = tile;
+                    // If not, create a new array for that tile set.
+                    tempPairs[tile.Set] = new List<Tile>();
                 }
+
+                // Add the tile to the corresponding tile set's array.
+                tempPairs[tile.Set].Add(tile);
             }
 
             // Copy the organized tile set pairs to the main TileSetPairs dictionary.
-            foreach ((TileSet set, Tile[,] tiles) in tempPairs)
+            foreach ((TileSet set, List<Tile> tiles) in tempPairs)
             {
-                TileSetPairs[set] = tiles;
+                TileSetPairs[set] = tiles.ToArray();
+                tiles.Clear();
             }
 
             // Clear the temporary storage to free up memory.
@@ -217,13 +223,18 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// <param name="generateTileFunc">The custom generation function.</param>
         public void Generate(Func<TileMapChunk, Vector2, Tile?> generateTileFunc)
         {
-            Parallel.For(0, Tiles.GetLength(0), x =>
-            {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-                    Tiles[x, y] = generateTileFunc(this, new Vector2(x, y));
-                }
+            Parallel.For(0, Tiles.Length, i => {
+                Tiles[i] = generateTileFunc(this, new Vector2(i % Width, i / Height));
             });
+        }
+
+        /// <summary>
+        /// Populates the chunk with tiles using a custom action.
+        /// </summary>
+        /// <param name="action">The custom action to populate the chunk.</param>
+        public void Populate(Action<Tile?[], TileMapChunk> action)
+        {
+            action(Tiles, this);
         }
 
         /// <summary>
@@ -232,7 +243,11 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// <param name="action">The custom action to populate the chunk.</param>
         public void Populate(Action<Tile?[,], TileMapChunk> action)
         {
-            action(Tiles, this);
+            var tiles = new Tile[Width, Height];
+            action(tiles, this);
+
+            for (int i = 0; i < Tiles.Length; i++)
+                Tiles[i] = tiles[i % Width, i / Height];
         }
 
         /// <summary>
@@ -240,14 +255,11 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// </summary>
         public void PostGenerate()
         {
-            for (int x = 0; x < Tiles.GetLength(0); x++)
+            for (int i = 0; i < Tiles.Length; i++)
             {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-                    if (Tiles[x, y] is null) continue;
+                if (Tiles[i] is null) continue;
 
-                    Tiles[x, y]!.PostGeneration();
-                }
+                Tiles[i]!.PostGeneration();
             }
         }
     }

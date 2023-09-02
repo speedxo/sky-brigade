@@ -41,16 +41,6 @@ public partial class Tiling<TTileID, TTextureID>
         public TTileID ID { get; protected set; }
 
         /// <summary>
-        /// Gets a value indicating whether this tile has a collider.
-        /// </summary>
-        public bool HasCollider { get; private set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this tile is collidable.
-        /// </summary>
-        public bool IsCollidable { get; protected set; } = true;
-
-        /// <summary>
         /// Gets the rendering data for this tile.
         /// </summary>
         public TileRenderingData RenderingData = default;
@@ -58,7 +48,7 @@ public partial class Tiling<TTileID, TTextureID>
         /// <summary>
         /// Gets the Box2D data for this tile.
         /// </summary>
-        public TileBox2DData Box2DData = default;
+        public TilePhysicsData PhysicsData = default;
 
         /// <summary>
         /// Gets the chunk to which this tile belongs.
@@ -86,27 +76,27 @@ public partial class Tiling<TTileID, TTextureID>
             LocalPosition = local;
             GlobalPosition = local + chunk.Position * new Vector2(TileMapChunk.Width - 1, TileMapChunk.Height - 1);
             RenderingData = new TileRenderingData();
-            Box2DData = new TileBox2DData();
+            PhysicsData = new TilePhysicsData();
         }
 
         /// <summary>
         /// Tries to generate a collider for this tile.
         /// </summary>
         /// <returns>True if a collider was successfully generated; otherwise, false.</returns>
-        public bool TryGenerateCollider()
+        public virtual bool TryGenerateCollider()
         {
-            if (Chunk.Body is null || !IsCollidable)
+            if (Chunk.Body is null || !PhysicsData.IsCollidable)
                 return false;
 
-            Box2DData = new TileBox2DData
+            PhysicsData = PhysicsData with
             {
                 Fixture = Chunk.Body.CreateFixture(GenerateCollider()),
                 Age = 0,
                 Distance = 0
             };
 
-            Box2DData.Fixture.m_friction = 0.6f;
-            HasCollider = true;
+            PhysicsData.Fixture.m_friction = 0.6f;
+            PhysicsData.HasCollider = true;
 
             return true;
         }
@@ -129,13 +119,13 @@ public partial class Tiling<TTileID, TTextureID>
         /// Tries to destroy the collider of this tile.
         /// </summary>
         /// <returns>True if the collider was successfully destroyed; otherwise, false.</returns>
-        public bool TryDestroyCollider()
+        public virtual bool TryDestroyCollider()
         {
-            if (Chunk.Body is null || !HasCollider)
+            if (Chunk.Body is null || !PhysicsData.HasCollider)
                 return false;
 
-            Chunk.Body.DestroyFixture(Box2DData.Fixture);
-            HasCollider = false;
+            Chunk.Body.DestroyFixture(PhysicsData.Fixture);
+            PhysicsData.HasCollider = false;
 
             return true;
         }

@@ -1,4 +1,5 @@
-﻿using Horizon.GameEntity;
+﻿using System.Runtime.InteropServices;
+using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering.Effects.Components;
 using Horizon.Rendering.Spriting.Components;
@@ -8,78 +9,53 @@ namespace Horizon.Rendering.Spriting;
 
 public class SpriteBatch : Entity
 {
-    private static int count = 0;
     public TransformComponent Transform { get; init; }
-
-    public List<Sprite> Sprites { get; init; }
     public ShaderComponent Shader { get; init; }
-    public Dictionary<Spritesheet, SpriteBatchMesh> Spritesheets { get; init; }
+    public Dictionary<Spritesheet, (List<Sprite> sprites, SpriteBatchMesh mesh)> SpritesheetSprites { get; init; }
+
+    private bool _requiresVboUpdate = false;
 
     public SpriteBatch(ShaderComponent? shader = null)
     {
-        this.Sprites = new List<Sprite>();
         this.Shader = shader ?? new ShaderComponent("Assets/sprite_shaders/sprites.vert", "Assets/sprite_shaders/sprites.frag");
-        this.Spritesheets = new();
+        this.SpritesheetSprites = new();
 
         this.Transform = AddComponent<TransformComponent>();
-
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch($"Spritebatch({count++}) Metrics", "Total Sprites", () => Sprites.Count + $"/{SpriteBatchMesh.MAX_SPRITES}");
     }
 
     public void AddSprite(Sprite sprite)
     {
-        if (Sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
-        {
+        if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet))
+            SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(Shader)));
+
+        if (SpritesheetSprites[sprite.Spritesheet].sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
             GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"You are attempting to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit. Please create another sprite batch.");
-        }
 
-        if (!Spritesheets.TryGetValue(sprite.Spritesheet, out var spriteBatchMesh))
-        {
-            spriteBatchMesh = new SpriteBatchMesh(Shader);
-            Spritesheets.Add(sprite.Spritesheet, spriteBatchMesh);
-        }
-
-        Sprites.Add(sprite);
+        SpritesheetSprites[sprite.Spritesheet].sprites.Add(sprite);
+        _requiresVboUpdate = true;
     }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
+        if (_requiresVboUpdate) UpdateVBO();
+
         var options = (renderOptions ?? RenderOptions.Default);
 
         base.Draw(dt, options);
-        int counter = 0;
-        foreach (var (sheet, mesh) in Spritesheets)
-        {
-            IEnumerable<Sprite> sprites()
-            {
-                foreach (Sprite sprite in Sprites)
-                {
-                    if (sprite.Spritesheet == sheet)
-                    {
-                        counter++;
-                        yield return sprite;
-                    }
-                }
-            }
 
-            mesh.Draw(sheet, Transform.ModelMatrix, sprites(), renderOptions);
-        }
-        System.Diagnostics.Debug.Assert(counter == Sprites.Count);
+        foreach (var (spritesheet, (sprites, mesh)) in SpritesheetSprites)
+            mesh.Draw(spritesheet, Transform.ModelMatrix, sprites, options);
     }
 
     public void UpdateVBO()
     {
-        foreach (var (spriteSheet, mesh) in Spritesheets)
-        {
-            var sprites = (from Sprite sprite in Sprites
-                           where sprite.Spritesheet == spriteSheet
-                           select sprite);
+        foreach (var (_, (sprites, mesh)) in SpritesheetSprites)
+            GenerateAndUploadSpriteMesh(CollectionsMarshal.AsSpan(sprites), mesh);
 
-            GenerateAndUploadSpriteMesh(sprites, mesh);
-        }
+        _requiresVboUpdate = false;
     }
 
-    private static void GenerateAndUploadSpriteMesh(IEnumerable<Sprite> sprites, SpriteBatchMesh mesh)
+    private static void GenerateAndUploadSpriteMesh(ReadOnlySpan<Sprite> sprites, SpriteBatchMesh mesh)
     {
         List<Vertex2D> vertices = new();
         List<uint> elements = new();
@@ -92,7 +68,7 @@ public class SpriteBatch : Entity
                 vertexCounter, vertexCounter + 2, vertexCounter + 3
             };
         }
-        sprites.First().Spritesheet.ResetSpriteCounter();
+        sprites[0].Spritesheet.ResetSpriteCounter();
 
         foreach (var sprite in sprites)
         {
@@ -101,6 +77,8 @@ public class SpriteBatch : Entity
             vertexCounter += 4;
         }
 
-        mesh.Upload(vertices.ToArray(), elements.ToArray());
+        mesh.Upload(CollectionsMarshal.AsSpan(vertices), CollectionsMarshal.AsSpan(elements));
+        vertices.Clear();
+        elements.Clear();
     }
 }

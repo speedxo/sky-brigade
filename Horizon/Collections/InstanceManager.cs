@@ -31,14 +31,14 @@ public class InstanceManager<InstanceType>
     /// Instansiates and adds an instance to the manager.
     /// </summary>
     /// <typeparam name="T">The type (has to be descended from InstanceType)</typeparam>
-    public void AddInstance<T>() where T : InstanceType
+    public void AddInstance<T>() where T : InstanceType, new()
         => AddInstance<T>(Activator.CreateInstance<T>());
 
     /// <summary>
     /// Adds an instance of the specified type to the manager.
     /// </summary>
     /// <param name="type">The type of the game screen to add.</param>
-    public void AddInstance(Type type)
+    public void AddInstance(Type type) 
     {
         if (!typeof(InstanceType).IsAssignableFrom(type))
         {

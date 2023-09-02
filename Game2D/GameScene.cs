@@ -55,11 +55,10 @@ public class GameScene : Scene
 
         spriteBatch = AddEntity(new SpriteBatch());
         spriteBatch.AddSprite(player);
-        spriteBatch.UpdateVBO();
 
         cam = new Camera()
         {
-            Position = new Vector3(0, 0, 10)
+            Position = new Vector3(0, 0, 100)
         };
 
         InitializeRenderingPipeline();
@@ -84,7 +83,7 @@ public class GameScene : Scene
         GameManager.Instance.Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private float cameraMovement = 10;
+    private float cameraMovement = 100;
 
     public override void Update(float dt)
     {
@@ -127,7 +126,6 @@ public class GameScene : Scene
 
     public override void DrawGui(float dt)
     {
-        ImGui.Text(player.Position.ToString());
-        //ImGui.Text(tilemap[0, 0].GlobalPosition.ToString());
+        
     }
 }

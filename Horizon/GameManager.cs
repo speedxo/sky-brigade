@@ -241,7 +241,7 @@ public class GameManager : Entity, IDisposable
         AspectRatio = WindowSize.X / WindowSize.Y;
     }
 
-    private void LoadImGuiStyle()
+    private static void LoadImGuiStyle()
     {
         ImGuiStylePtr style = ImGui.GetStyle();
         style.WindowRounding = 5.3f;

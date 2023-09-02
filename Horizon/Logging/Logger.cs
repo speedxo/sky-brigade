@@ -74,14 +74,6 @@ namespace Horizon.Logging
             ConsoleColor color = Colors[level];
 
             string log = $"{prefix}{message}{suffix}";
-
-            logQueue.Enqueue(new LogEntry(log, color));
-
-            if (level == LogLevel.Fatal)
-            {
-                Dispose();
-                throw new Exception(message);
-            }
         }
 
         private void ProcessLogs(object? state)

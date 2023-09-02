@@ -69,6 +69,33 @@ public abstract partial class Tiling<TTileID, TTextureID>
         }
 
         /// <summary>
+        /// Returns all the tiles within a half area by half area region around a specified point, within O(area) time complexity.
+        /// </summary>
+        public IEnumerable<Tile> FindVisibleTiles(Vector2 position, float area = 10.0f)
+        {
+            var areaSize = new Vector2(area / 2.0f);
+            var playerPos = position + areaSize / 2.0f;
+
+            int startingX = (int)(playerPos.X - areaSize.X);
+            int endingX = (int)(playerPos.X + areaSize.X);
+
+            int startingY = (int)(playerPos.Y - areaSize.Y);
+            int endingY = (int)(playerPos.Y + areaSize.Y);
+
+            for (int x = startingX; x < endingX; x++)
+            {
+                for (int y = endingY; y > startingY; y--)
+                {
+                    var tile = this[x, y];
+                    if (tile != null)
+                    {
+                        yield return tile;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a tile at the specified coordinates.
         /// </summary>
         /// <param name="x">The X coordinate of the tile.</param>
@@ -87,7 +114,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 int tileIndexX = x % (TileMapChunk.Width - 1);
                 int tileIndexY = y % (TileMapChunk.Height - 1);
 
-                return ChunkManager.Chunks[chunkIndexX, chunkIndexY].Tiles[tileIndexX, tileIndexY];
+                return ChunkManager.Chunks[chunkIndexX + chunkIndexY * WIDTH].Tiles[tileIndexX + tileIndexY * TileMapChunk.Width];
             }
         }
 
@@ -125,6 +152,14 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// </summary>
         /// <param name="action">The custom action to populate tiles.</param>
         public void PopulateTiles(Action<Tile?[,], TileMapChunk> action)
+        {
+            ChunkManager.PopulateTiles(action);
+        }
+        /// <summary>
+        /// Populates tiles in the tile map using a custom action.
+        /// </summary>
+        /// <param name="action">The custom action to populate tiles.</param>
+        public void PopulateTiles(Action<Tile?[], TileMapChunk> action)
         {
             ChunkManager.PopulateTiles(action);
         }

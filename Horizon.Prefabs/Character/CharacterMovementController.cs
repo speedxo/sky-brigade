@@ -8,7 +8,6 @@ namespace Horizon.Prefabs.Character;
 public partial class CharacterController
 {
     [RequiresComponent(typeof(TransformComponent))]
-    [RequiresComponent(typeof(CameraComponent))]
     public class CharacterMovementController : IGameComponent
     {
         public string Name { get; set; }
@@ -16,26 +15,27 @@ public partial class CharacterController
         public Entity Parent { get; set; }
         public CharacterController Controller { get; private set; }
         public TransformComponent Transform { get; private set; }
-        public CameraComponent Camera { get; private set; }
         public CharacterMovementControllerConfig Config { get; private set; }
 
         public Vector3 Position { get => Transform.Position; set => Transform.Position = value; }
         public Vector3 Rotation { get => Transform.Rotation; set => Transform.Rotation = value; }
         public Vector3 Front { get => Transform.Front; }
 
-#pragma warning disable CS8601, CS8602 // shut UP.
+        public CharacterMovementController()
+        {
+            Name = "Character Movement controller";
+        }
 
         public void Initialize()
         {
             Config = CharacterMovementControllerConfig.Default;
 
-            Controller = Parent as CharacterController;
+            Controller = (CharacterController)Parent;
 
-            Transform = Parent.GetComponent<TransformComponent>();
+            Transform = Parent.GetComponent<TransformComponent>()!;
             Transform.Position = new Vector3(0, 5, -2);
         }
 
-#pragma warning restore CS8601, CS8602 // SHUT UP
 
         public void Update(float dt)
         {

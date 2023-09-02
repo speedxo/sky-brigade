@@ -3,6 +3,7 @@ using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.World;
 using Horizon;
 using Horizon.GameEntity.Components.Physics2D;
+using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
 using System.Numerics;
 using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
@@ -19,6 +20,7 @@ public class Player2D : Sprite
     private readonly World world;
     private readonly TileMap map;
     private readonly List<Tile> colliableTiles = new();
+    private Tile[] visibleTiles = Array.Empty<Tile>();
 
     public Player2D(World world, TileMap map)
     {
@@ -34,12 +36,12 @@ public class Player2D : Sprite
         box2DBodyComponent = AddComponent(new Box2DBodyComponent(world.CreateBody(new BodyDef
         {
             type = BodyType.Dynamic,
-            position = new Vector2(1, 16)
+            position = new Vector2(-5, 16)
         })));
 
         CircleShape shape = new()
         {
-            Radius = 0.9f
+            Radius = 0.8f
         };
 
         PhysicsBody.CreateFixture(shape, 1.0f);
@@ -62,15 +64,28 @@ public class Player2D : Sprite
     {
         GenerateTileColliders(dt);
         UpdatePosition(dt);
+
         base.Update(dt);
+    }
+
+    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    {
+        foreach (var tile in visibleTiles)
+            tile.Draw(dt, renderOptions);
+        
+
+        base.Draw(dt, renderOptions);
     }
 
     private void GenerateTileColliders(float dt)
     {
-        var visibleTiles = FindVisibleTiles();
+        // Enumerate the enumerable so its only itterated once.
+        visibleTiles = map.FindVisibleTiles(Position + Size / 2.0f, 8.0f).ToArray();
 
         foreach (var tile in visibleTiles)
         {
+            tile.Update(dt);
+
             if (!colliableTiles.Contains(tile))
             {
                 if (tile.TryGenerateCollider())
@@ -84,41 +99,17 @@ public class Player2D : Sprite
         {
             var tile = colliableTiles[i];
 
-            tile.Box2DData.Distance = Vector2.DistanceSquared(tile.GlobalPosition, Position);
-            if (tile.Box2DData.Distance > 25.0f)
+            tile.PhysicsData.Distance = Vector2.DistanceSquared(tile.GlobalPosition, Position);
+            if (tile.PhysicsData.Distance > 25.0f)
             {
-                tile.Box2DData.Age += dt;
+                tile.PhysicsData.Age += dt;
 
-                if (tile.Box2DData.Age > 5.0f)
+                if (tile.PhysicsData.Age > 5.0f)
                 {
                     if (tile.TryDestroyCollider())
                     {
-                        colliableTiles.RemoveAt(i);
+                        colliableTiles.Remove(tile);
                     }
-                }
-            }
-        }
-    }
-
-    private IEnumerable<Tile> FindVisibleTiles(float area = 10.0f)
-    {
-        var areaSize = new Vector2(area / 2.0f);
-        var playerPos = Position - Size / 2.0f + areaSize / 2.0f;
-
-        int startingX = (int)(playerPos.X - areaSize.X);
-        int endingX = (int)(playerPos.X + areaSize.X);
-
-        int startingY = (int)(playerPos.Y - areaSize.Y);
-        int endingY = (int)(playerPos.Y + areaSize.Y);
-
-        for (int x = startingX; x < endingX; x++)
-        {
-            for (int y = endingY; y > startingY; y--)
-            {
-                var tile = map[x, y];
-                if (tile != null)
-                {
-                    yield return tile;
                 }
             }
         }

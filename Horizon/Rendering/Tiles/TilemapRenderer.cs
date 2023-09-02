@@ -26,18 +26,11 @@ public abstract partial class Tiling<TTileID, TTextureID>
             {
                 if (!TileSetMeshes.ContainsKey(sheet))
                     TileSetMeshes[sheet] = new TileMesh(_shader, sheet, Chunk.Map);
-
-                TileSetMeshes[sheet].BeginMeshGeneration();
             }
 
-            foreach ((TileSet set, Tile[,] tiles) in Chunk.TileSetPairs)
+            foreach ((TileSet set, Tile[] tiles) in Chunk.TileSetPairs)
             {
-                TileSetMeshes[set].AddTiles(tiles);
-            }
-
-            foreach (var sheet in sheets)
-            {
-                TileSetMeshes[sheet].EndMeshGeneration();
+                TileSetMeshes[set].GenerateMeshFromTiles(tiles);
             }
         }
 

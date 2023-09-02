@@ -42,6 +42,8 @@ internal class DemoGameScreen : Scene
 
         // yea this single boolean enables or disables the debugging interface
         GameManager.Instance.Debugger.Enabled = true;
+
+        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("player pos", () => character.Position);
     }
 
     /* The reason i opted to have an overidable method is for safety, while its

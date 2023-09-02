@@ -7,6 +7,7 @@ using Horizon.Primitives;
 using Horizon.Rendering;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Color = Box2D.NetStandard.Dynamics.World.Color;
 
 namespace Horizon.Extentions;
@@ -43,8 +44,8 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         {
             if (Indices.Count < 1) return;
 
-            VBO.VertexBuffer.BufferData(Vertices.ToArray());
-            VBO.ElementBuffer.BufferData(Indices.ToArray());
+            VBO.VertexBuffer.BufferData(CollectionsMarshal.AsSpan(Vertices));
+            VBO.ElementBuffer.BufferData(CollectionsMarshal.AsSpan(Indices));
 
             VBO.Bind();
 
@@ -73,7 +74,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         }
     }
 
-    private Technique technique { get; init; }
+    private Technique Technique { get; init; }
 
     private DebugDrawIntermediaryMeshData polygonMesh { get; init; }
     private DebugDrawIntermediaryMeshData segmentMesh { get; init; }
@@ -89,7 +90,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         circleMesh = new(PrimitiveType.TriangleFan);
         polygonMesh = new(PrimitiveType.Triangles);
 
-        technique = new Technique(GameManager.Instance.ContentManager.GetShader("basic"));
+        Technique = new Technique(GameManager.Instance.ContentManager.GetShader("basic"));
     }
 
     public void Initialize()
@@ -104,18 +105,18 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     {
         var options = renderOptions ?? RenderOptions.Default;
 
-        technique.Use();
+        Technique.Use();
 
-        technique.SetUniform("uProjection", options.Camera.Projection);
-        technique.SetUniform("uView", options.Camera.View);
-        technique.SetUniform("uModel", Matrix4x4.Identity);
-        technique.SetUniform("useNormalAsColor", true);
+        Technique.SetUniform("uProjection", options.Camera.Projection);
+        Technique.SetUniform("uView", options.Camera.View);
+        Technique.SetUniform("uModel", Matrix4x4.Identity);
+        Technique.SetUniform("useNormalAsColor", true);
 
         polygonMesh.Draw(dt, options);
         circleMesh.Draw(dt, options);
         segmentMesh.Draw(dt, options);
 
-        technique.End();
+        Technique.End();
 
         polygonMeshIndexCount = 0;
     }
