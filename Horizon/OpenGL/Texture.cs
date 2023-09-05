@@ -1,4 +1,5 @@
-﻿using Horizon.Logging;
+﻿using Horizon.Extentions;
+using Horizon.Logging;
 using Silk.NET.OpenGL;
 using System.Numerics;
 using Image = SixLabors.ImageSharp.Image;
@@ -95,6 +96,25 @@ public class Texture : IDisposable
             GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
             SetParameters();
         }
+    }
+    public unsafe Texture(Stream stream, uint width, uint height)
+    {
+        Width = (int)width;
+        Height = (int)height;
+
+        //Generating the opengl handle;
+        Handle = GameManager.Instance.Gl.GenTexture();
+        Bind();
+
+        var data = StreamExtensions.ReadAllBytes(stream);
+        //We want the ability to create a texture using data generated from code aswell.
+        fixed (void* d = &data[0])
+        {
+            //Setting the data of a texture.
+            GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
+            SetParameters();
+        }
+        stream.Close();
     }
 
     private void SetParameters()

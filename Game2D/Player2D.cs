@@ -6,7 +6,6 @@ using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
 using System.Numerics;
-using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
 
 namespace Game2D;
 
@@ -72,7 +71,6 @@ public class Player2D : Sprite
     {
         foreach (var tile in visibleTiles)
             tile.Draw(dt, renderOptions);
-        
 
         base.Draw(dt, renderOptions);
     }

@@ -2,7 +2,7 @@
 
 namespace Horizon.Rendering;
 
-public abstract partial class Tiling<TTileID, TTextureID>
+public abstract partial class Tiling<TTextureID>
 {
     public class TilemapRenderer
     {
@@ -39,7 +39,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
             var options = (renderOptions ?? RenderOptions.Default);
             Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
 
-            if (!Chunk.IsVisibleByCamera) return;
+            //if (!Chunk.IsVisibleByCamera) return;
 
             foreach ((_, var mesh) in TileSetMeshes)
             {

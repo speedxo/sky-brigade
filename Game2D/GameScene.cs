@@ -1,4 +1,6 @@
-﻿using Box2D.NetStandard.Dynamics.World;
+﻿global using static Horizon.Rendering.Tiling<Game2D.TileTextureID>;
+
+using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
 using Horizon;
 using Horizon.Extentions;
@@ -7,29 +9,20 @@ using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
 using ImGuiNET;
 using Silk.NET.OpenGL;
+using System.Collections.Generic;
 using System.Numerics;
-using static Horizon.Rendering.Tiling<Game2D.GameScene.TileID, Game2D.GameScene.TileTextureID>;
+using System.Reflection.Emit;
 
 namespace Game2D;
 
 public class GameScene : Scene
 {
-    public enum TileID
-    {
-        Dirt = 1
-    }
-
-    public enum TileTextureID
-    {
-        Dirt = 1,
-        Grass = 2
-    }
-
     private Player2D player;
     private SpriteBatch spriteBatch;
     private Camera cam;
     private TileMap tilemap;
     private World world;
+
     public static Box2DDebugDrawCallback debugDrawCallback;
 
     public GameScene()
@@ -42,14 +35,15 @@ public class GameScene : Scene
         world = AddComponent<Box2DWorldComponent>();
         world.SetDebugDraw(debugDrawCallback);
 
-        tilemap = new TileMap();
-        AddEntity(tilemap);
+        if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
+        {
+            GameManager.Instance.Logger.Log(Horizon.Logging.LogLevel.Fatal, "Failed to load tilemap, aborting...");
+            Environment.Exit(1);
+        }
+        else AddEntity(tilemap);
 
-        var sheet = tilemap.AddTileSet("tileset", new TileSet(GameManager.Instance.ContentManager.LoadTexture("content/tileset.png"), new Vector2(16)));
-        sheet.RegisterTile(TileTextureID.Grass, new Vector2(16, 0));
-        sheet.RegisterTile(TileTextureID.Dirt, new Vector2(16, 16));
-        tilemap.PopulateTiles(PopulateTiles);
-        tilemap.GenerateMeshes();
+        //TileGenerator.RegisterTile<DirtTile>(TileID.Dirt);
+        //TileGenerator.RegisterTile<CobblestoneTile>(TileID.Cobblestone);
 
         AddEntity(player = new Player2D(world, tilemap));
 
@@ -64,16 +58,35 @@ public class GameScene : Scene
         InitializeRenderingPipeline();
     }
 
-    private void PopulateTiles(Tile?[,] tiles, TileMapChunk chunk)
-    {
-        for (int x = 0; x < tiles.GetLength(0) - 1; x++)
-        {
-            for (int y = 0; y < tiles.GetLength(1) - 1; y++)
-            {
-                tiles[x, y] = new DirtTile(chunk, new Vector2(x, y));
-            }
-        }
-    }
+    //private void PopTiles(TileMapChunkSlice[] slices, TileMapChunk chunk)
+    //{
+    //    var slice = slices[0];
+
+    //    int maxWidth = slice.Width - 1;
+    //    int maxHeight = slice.Height - 1;
+
+    //    for (int x = 0; x < maxWidth; x++)
+    //    {
+    //        int height = chunk.Position.Y == tilemap.Height - 1 ? (int)(maxHeight * noise[x + (int)chunk.Position.X * maxWidth]) : 0;
+
+    //        for (int y = height; y < maxHeight; y++)
+    //        {
+    //            slice[x, maxHeight - y] = TileGenerator.GetTile(chunk, new Vector2(x, maxHeight - y), TileID.Dirt);
+    //        }
+    //    }
+
+    //    slice = slices[1];
+
+    //    for (int x = 0; x < maxWidth; x++)
+    //    {
+    //        int height = chunk.Position.Y == tilemap.Height - 1 ? (int)(maxHeight * noise[x + (int)chunk.Position.X * maxWidth]) : 0;
+
+    //        for (int y = height; y < maxHeight; y += 2)
+    //        {
+    //            slice[x, maxHeight - y] = TileGenerator.GetTile(chunk, new Vector2(x, maxHeight - y), TileID.Cobblestone);
+    //        }
+    //    }
+    //}
 
     private static void InitializeGl()
     {
@@ -126,6 +139,6 @@ public class GameScene : Scene
 
     public override void DrawGui(float dt)
     {
-        
+        ImGui.Text(((int)player.Position.Y).ToString());
     }
 }

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Horizon.Rendering;
 
-public abstract partial class Tiling<TTileID, TTextureID>
+public abstract partial class Tiling<TTextureID>
 {
     public class TileMesh : Entity
     {
@@ -64,6 +64,10 @@ public abstract partial class Tiling<TTileID, TTextureID>
             ElementCount = (uint)elements.Length;
         }
 
+        /// <summary>
+        /// Constructs a mesh from a Span<Tile>. No null checking is performed.
+        /// </summary>
+        /// <param name="tiles"></param>
         public void GenerateMeshFromTiles(ReadOnlySpan<Tile> tiles)
         {
             if (_isUpdatingMesh) return;
@@ -72,10 +76,10 @@ public abstract partial class Tiling<TTileID, TTextureID>
 
             for (int i = 0; i < tiles.Length; i++)
             {
-                if (tiles[i] is null) continue;
+                if (!tiles[i].RenderingData.IsVisible) continue;
                 AddTile(tiles[i]);
             }
-            
+
             _uploadData = true;
         }
 
@@ -98,8 +102,13 @@ public abstract partial class Tiling<TTileID, TTextureID>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         private static TileVertex[] GetVertices(in Tile tile)
         {
-            Vector2[] uv = tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID);
+            Vector2[] uv;
 
+            if (tile is StaticTile sTile)
+                uv = sTile.Set.GetTextureCoordinatesFromTiledMapId(sTile.ID);
+            else
+                uv = tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID);
+            
             return new[] {
                 new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[0].X, uv[0].Y, tile.RenderingData.Color),
                 new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[1].X, uv[1].Y, tile.RenderingData.Color),

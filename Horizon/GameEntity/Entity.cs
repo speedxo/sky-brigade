@@ -139,7 +139,7 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <typeparam name="T">The type of the component to add.</typeparam>
         /// <returns>The added component.</returns>
-        public T AddComponent<T>() where T : IGameComponent, new() => AddComponent(Activator.CreateInstance<T>());
+            public T AddComponent<T>() where T : IGameComponent, new() => AddComponent(Activator.CreateInstance<T>());
 
         /// <summary>
         /// Removes the component of type T from the entity.

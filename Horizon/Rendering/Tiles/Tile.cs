@@ -9,8 +9,7 @@ namespace Horizon.Rendering;
 /// </summary>
 /// <typeparam name="TTileID">The type of tile ID.</typeparam>
 /// <typeparam name="TTextureID">The type of texture ID.</typeparam>
-public partial class Tiling<TTileID, TTextureID>
-    where TTileID : Enum
+public partial class Tiling<TTextureID>
     where TTextureID : Enum
 {
     public abstract class Tile : IUpdateable, IDrawable
@@ -36,11 +35,6 @@ public partial class Tiling<TTileID, TTextureID>
         public Vector2 GlobalPosition { get; protected set; }
 
         /// <summary>
-        /// Gets the ID of the tile.
-        /// </summary>
-        public TTileID ID { get; protected set; }
-
-        /// <summary>
         /// Gets the rendering data for this tile.
         /// </summary>
         public TileRenderingData RenderingData = default;
@@ -63,7 +57,7 @@ public partial class Tiling<TTileID, TTextureID>
         /// <summary>
         /// Gets the tile set to which this tile belongs.
         /// </summary>
-        public TileSet Set => Map.GetTileSetFromTileTextureID(RenderingData.TextureID);
+        public TileSet Set { get; protected set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Tile{TTileID, TTextureID}"/> class.
@@ -74,9 +68,20 @@ public partial class Tiling<TTileID, TTextureID>
         {
             Chunk = chunk;
             LocalPosition = local;
-            GlobalPosition = local + chunk.Position * new Vector2(TileMapChunk.Width - 1, TileMapChunk.Height - 1);
-            RenderingData = new TileRenderingData();
+            GlobalPosition = GetTileGlobalCoordinates(local, chunk);
+            RenderingData = new TileRenderingData() ;
             PhysicsData = new TilePhysicsData();
+
+            Set = Map.GetTileSetFromTileTextureID(RenderingData.TextureID);
+        }
+
+        /// <summary>
+        /// Calculates the tiles GLOBAL coordinates from its LOCAL coordinates.
+        /// </summary>
+        /// <returns>The global coordinates.</returns>
+        public static Vector2 GetTileGlobalCoordinates(Vector2 local, TileMapChunk chunk)
+        {
+            return local + chunk.Position * new Vector2(TileMapChunk.Width, TileMapChunk.Height);
         }
 
         /// <summary>

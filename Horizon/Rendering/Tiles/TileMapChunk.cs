@@ -4,8 +4,61 @@ using System.Numerics;
 
 namespace Horizon.Rendering;
 
-public abstract partial class Tiling<TTileID, TTextureID>
+public abstract partial class Tiling<TTextureID>
 {
+    public class TileMapChunkSlice
+    {
+        /// <summary>
+        /// The width of the tile map chunk in tiles.
+        /// </summary>
+        public int Width { get; init; }
+
+        /// <summary>
+        /// The height of the tile map chunk in tiles.
+        /// </summary>
+        public int Height { get; init; }
+
+        /// <summary>
+        /// Gets the 2D array of tiles in the chunk.
+        /// </summary>
+        public Tile?[] Tiles { get; init; }
+
+        public TileMapChunkSlice(int width, int height)
+        {
+            this.Width = width;
+            this.Height = height;
+            this.Tiles = new Tile[Width * Height];
+        }
+
+        public Tile? this[int x, int y]
+        {
+            get
+            {
+                return Tiles[x + y * Width];
+            }
+            set
+            {
+                Tiles[x + y * Width] = value;
+            }
+        }
+        public Tile? this[int i]
+        {
+            get
+            {
+                if (i < 0 || i > Tiles.Length - 1)
+                    return null;
+
+                return Tiles[i];
+            }
+            set
+            {
+                if (i < 0 || i > Tiles.Length - 1)
+                    throw new IndexOutOfRangeException();
+
+                Tiles[i] = value;
+            }
+        }
+    }
     /// <summary>
     /// Represents a chunk of tiles in a tile map.
     /// </summary>
@@ -26,10 +79,7 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// </summary>
         public const int Height = 32;
 
-        /// <summary>
-        /// Gets the 2D array of tiles in the chunk.
-        /// </summary>
-        public Tile?[] Tiles { get; init; }
+        public TileMapChunkSlice[] Slices { get; init; }
 
         /// <summary>
         /// Gets the dictionary of tile sets paired with tile arrays.
@@ -83,7 +133,10 @@ public abstract partial class Tiling<TTileID, TTextureID>
                 type = BodyType.Static
             });
 
-            Tiles = new Tile?[Width * Height];
+            Slices = new TileMapChunkSlice[map.Depth];
+            for (int i = 0; i < Slices.Length; i++)
+                Slices[i] = new(Width, Height);
+            
             TileSetPairs = new Dictionary<TileSet, Tile[]>();
 
             Renderer = new TilemapRenderer(this);
@@ -92,13 +145,15 @@ public abstract partial class Tiling<TTileID, TTextureID>
             Bounds = new RectangleF(pos * new Vector2(Width - 1, Height - 1) - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f), new(Width - 1, Height - 1));
         }
 
+        public TileMapChunkSlice CreateSlice() => new(Width, Height);
+
         /// <summary>
         /// Checks if a specific tile location in the chunk is empty.
         /// </summary>
         /// <param name="x">The X coordinate of the tile in the chunk.</param>
         /// <param name="y">The Y coordinate of the tile in the chunk.</param>
         /// <returns>True if the tile location is empty; otherwise, false.</returns>
-        public bool IsEmpty(int x, int y)
+        public bool IsEmpty(int x, int y, int z=0)
         {
             return this[x, y] is null;
         }
@@ -109,14 +164,21 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// <param name="x">The X coordinate of the tile in the chunk.</param>
         /// <param name="y">The Y coordinate of the tile in the chunk.</param>
         /// <returns>The tile at the specified coordinates in the chunk.</returns>
-        public Tile? this[int x, int y]
+        public Tile? this[int x, int y, int z=0]
         {
             get
             {
-                if (x / Width >= TileMap.WIDTH || x < 0 || y < 0 || y / Height >= TileMap.HEIGHT)
+                if (z < 0 || z > Map.Depth -1)
                     return null;
 
-                return Tiles[x + y * Width];
+                return Slices[z][x, y];
+            }
+            set
+            {
+                if (z < 0 || z > Map.Depth - 1)
+                    return;
+
+                Slices[z][x, y] = value;
             }
         }
 
@@ -188,21 +250,24 @@ public abstract partial class Tiling<TTileID, TTextureID>
             // Temporary storage for organizing tiles by tile set.
             var tempPairs = new Dictionary<TileSet, List<Tile>>();
 
-            // Iterate through the tiles in the chunk.
-            for (int i = 0; i < Tiles.Length; i++)
+            for (int s = 0; s < Slices.Length; s++)
             {
-                var tile = Tiles[i];
-                if (tile == null) continue;
-
-                // Check if the tile set is already in the temporary pairs.
-                if (!tempPairs.ContainsKey(tile.Set))
+                // Iterate through the tiles in the chunk.
+                for (int i = 0; i < Slices[s].Tiles.Length; i++)
                 {
-                    // If not, create a new array for that tile set.
-                    tempPairs[tile.Set] = new List<Tile>();
-                }
+                    var tile = Slices[s][i];
+                    if (tile is null) continue;
 
-                // Add the tile to the corresponding tile set's array.
-                tempPairs[tile.Set].Add(tile);
+                    // Check if the tile set is already in the temporary pairs.
+                    if (!tempPairs.ContainsKey(tile.Set))
+                    {
+                        // If not, create a new array for that tile set.
+                        tempPairs[tile.Set] = new List<Tile>();
+                    }
+
+                    // Add the tile to the corresponding tile set's array.
+                    tempPairs[tile.Set].Add(tile);
+                }
             }
 
             // Copy the organized tile set pairs to the main TileSetPairs dictionary.
@@ -216,38 +281,13 @@ public abstract partial class Tiling<TTileID, TTextureID>
             tempPairs.Clear();
         }
 
-
-        /// <summary>
-        /// Generates tiles for the chunk using a custom generation function.
-        /// </summary>
-        /// <param name="generateTileFunc">The custom generation function.</param>
-        public void Generate(Func<TileMapChunk, Vector2, Tile?> generateTileFunc)
-        {
-            Parallel.For(0, Tiles.Length, i => {
-                Tiles[i] = generateTileFunc(this, new Vector2(i % Width, i / Height));
-            });
-        }
-
         /// <summary>
         /// Populates the chunk with tiles using a custom action.
         /// </summary>
         /// <param name="action">The custom action to populate the chunk.</param>
-        public void Populate(Action<Tile?[], TileMapChunk> action)
+        public void Populate(Action<TileMapChunkSlice[], TileMapChunk> action)
         {
-            action(Tiles, this);
-        }
-
-        /// <summary>
-        /// Populates the chunk with tiles using a custom action.
-        /// </summary>
-        /// <param name="action">The custom action to populate the chunk.</param>
-        public void Populate(Action<Tile?[,], TileMapChunk> action)
-        {
-            var tiles = new Tile[Width, Height];
-            action(tiles, this);
-
-            for (int i = 0; i < Tiles.Length; i++)
-                Tiles[i] = tiles[i % Width, i / Height];
+            action(Slices, this);
         }
 
         /// <summary>
@@ -255,11 +295,15 @@ public abstract partial class Tiling<TTileID, TTextureID>
         /// </summary>
         public void PostGenerate()
         {
-            for (int i = 0; i < Tiles.Length; i++)
+            for (int s = 0; s < Slices.Length; s++)
             {
-                if (Tiles[i] is null) continue;
+                var slice = Slices[s];
+                for (int i = 0; i < slice.Tiles.Length; i++)
+                {
+                    if (slice.Tiles[i] is null) continue;
 
-                Tiles[i]!.PostGeneration();
+                    slice.Tiles[i]!.PostGeneration();
+                }
             }
         }
     }

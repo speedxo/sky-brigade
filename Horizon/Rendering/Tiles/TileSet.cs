@@ -5,13 +5,14 @@ using System.Numerics;
 
 namespace Horizon.Rendering;
 
-public abstract partial class Tiling<TTileID, TTextureID>
+public abstract partial class Tiling<TTextureID>
 {
     public class TileSet : Entity
     {
         public Texture Texture { get; init; }
         public Dictionary<TTextureID, SpriteDefinition> Tiles { get; init; }
         public Vector2 TileSize { get; init; }
+        public int? TileCount { get; internal set; }
 
         public TileSet(Texture texture, Vector2 spriteSize)
         {
@@ -29,6 +30,33 @@ public abstract partial class Tiling<TTileID, TTextureID>
             }
 
             Tiles.Add(key, new SpriteDefinition { Position = pos, Size = size ?? TileSize });
+        }
+
+        public Vector2[] GetTextureCoordinatesFromTiledMapId(int id)
+        {
+            // Calculate the number of columns in the tileset
+            float columns = Texture.Width / TileSize.X;
+
+            // Calculate the X and Y position of the tile in the tileset
+            float tileX = (id % columns) * TileSize.X;
+            float tileY = (id / columns) * TileSize.Y;
+
+            // Normalize the coordinates to a range of [0, 1]
+            float normalizedX = tileX / Texture.Width;
+            float normalizedY = tileY / Texture.Height;
+
+            // Calculate the texture coordinates
+            float left = normalizedX;
+            float right = normalizedX + TileSize.X / Texture.Width;
+            float top = normalizedY;
+            float bottom = normalizedY + TileSize.Y / Texture.Height;
+
+            return new Vector2[] {
+                new Vector2(left, top),
+                new Vector2(right, top),
+                new Vector2(right, bottom),
+                new Vector2(left, bottom)
+            };
         }
 
         public Vector2[] GetTextureCoordinates(TTextureID key)

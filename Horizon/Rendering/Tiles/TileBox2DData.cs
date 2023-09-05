@@ -2,7 +2,7 @@
 
 namespace Horizon.Rendering;
 
-public abstract partial class Tiling<TTileID, TTextureID> where TTileID : Enum
+public abstract partial class Tiling<TTextureID>
     where TTextureID : Enum
 {
     /// <summary>
