@@ -141,7 +141,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="9" name="colliders" width="64" height="64">
+ <layer id="9" name="colliders" width="64" height="64" visible="0">
   <properties>
    <property name="isCollidable" type="bool" value="true"/>
   </properties>

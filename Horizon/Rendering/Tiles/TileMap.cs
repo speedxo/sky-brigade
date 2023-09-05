@@ -135,7 +135,8 @@ public abstract partial class Tiling<TTextureID>
                             IsVisible = layer.Visible
                         };
 
-                        map[tile.X, tileY, layerIndex] = new StaticTile(config, chunk, new Vector2(localTileX, localTileY));
+                        map.ChunkManager[chunkX, chunkY][localTileX, localTileY, layerIndex] = new StaticTile(config, chunk, new Vector2(localTileX, localTileY));
+                        //map[tile.X, tileY, layerIndex] = new StaticTile(config, chunk, new Vector2(localTileX, localTileY));
                     }
                     layerIndex++;
                 }
@@ -193,30 +194,35 @@ public abstract partial class Tiling<TTextureID>
 
         /// <summary>
         /// Returns all the tiles within a half area by half area region around a specified point, within O(area) time complexity.
-        /// </summary>
+        /// </summary>using System.Collections.Generic;
         public IEnumerable<Tile> FindVisibleTiles(Vector2 position, float area = 10.0f)
         {
             var areaSize = new Vector2(area / 2.0f);
             var playerPos = position + areaSize / 2.0f;
 
-            int startingX = (int)(playerPos.X - areaSize.X);
-            int endingX = (int)(playerPos.X + areaSize.X);
+            int startingX = (int)Math.Round(playerPos.X - areaSize.X); // round the value
+            int endingX = (int)Math.Round(playerPos.X + areaSize.X); // round the value
 
-            int startingY = (int)(playerPos.Y - areaSize.Y);
-            int endingY = (int)(playerPos.Y + areaSize.Y);
+            int startingY = (int)Math.Round(playerPos.Y - areaSize.Y); // round the value
+            int endingY = (int)Math.Round(playerPos.Y + areaSize.Y); // round the value
 
-            for (int x = startingX; x < endingX; x++)
+            for (int x = startingX; x <= endingX; x++) // include the endingX value
             {
-                for (int y = startingY; y < endingY; y++)
+                for (int y = startingY; y <= endingY; y++) // include the endingY value
                 {
                     for (int z = 0; z < Depth; z++)
                     {
-                        if (!IsEmpty(x, y, z))
-                            yield return this[x, y, z]!;
+                        Tile? tile = this[x, y, z];
+                        if (tile is null) // handle null value
+                            continue;
+                    
+
+                        yield return tile;
                     }
                 }
             }
         }
+
 
         /// <summary>
         /// Gets or sets a tile at the specified coordinates.
@@ -231,7 +237,7 @@ public abstract partial class Tiling<TTextureID>
                 int chunkIndexX = x / (TileMapChunk.Width);
                 int chunkIndexY = y / (TileMapChunk.Height);
 
-                if (chunkIndexX >= Width || chunkIndexY >= Height || x < 0 || y < 0)
+                if (chunkIndexX >= Width || chunkIndexY >= Height || x < 0 || y < 0 || z < 0 || z >= Depth)
                     return null;
 
                 int tileIndexX = x % (TileMapChunk.Width);
@@ -244,7 +250,7 @@ public abstract partial class Tiling<TTextureID>
                 int chunkIndexX = x / (TileMapChunk.Width);
                 int chunkIndexY = y / (TileMapChunk.Height);
 
-                if (chunkIndexX >= Width || chunkIndexY >= Height || x < 0 || y < 0)
+                if (chunkIndexX >= Width || chunkIndexY >= Height || x < 0 || y < 0 || z < 0 || z >= Depth)
                     return;
 
                 int tileIndexX = x % (TileMapChunk.Width);

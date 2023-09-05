@@ -60,7 +60,7 @@ public class Player2D : Sprite
     }
 
     public override void Update(float dt)
-    {
+    {   
         GenerateTileColliders(dt);
         UpdatePosition(dt);
 

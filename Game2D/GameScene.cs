@@ -9,9 +9,7 @@ using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
 using ImGuiNET;
 using Silk.NET.OpenGL;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Reflection.Emit;
 
 namespace Game2D;
 
@@ -40,7 +38,7 @@ public class GameScene : Scene
             GameManager.Instance.Logger.Log(Horizon.Logging.LogLevel.Fatal, "Failed to load tilemap, aborting...");
             Environment.Exit(1);
         }
-        else AddEntity(tilemap);
+        else Entities.Add(tilemap);
 
         //TileGenerator.RegisterTile<DirtTile>(TileID.Dirt);
         //TileGenerator.RegisterTile<CobblestoneTile>(TileID.Cobblestone);
@@ -139,6 +137,6 @@ public class GameScene : Scene
 
     public override void DrawGui(float dt)
     {
-        ImGui.Text(((int)player.Position.Y).ToString());
+        ImGui.Text($"({(int)player.Position.X}, {(int)player.Position.Y})");
     }
 }

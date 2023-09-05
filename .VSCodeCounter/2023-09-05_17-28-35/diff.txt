@@ -1,0 +1,213 @@
+Date : 2023-09-05 17:28:35
+Directory : /Users/bogz/Documents/sky-brigade/Horizon
+Total : 129 files,  -1092 codes, 210 comments, -304 blanks, all -1186 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Markdown |          1 |         -8 |          0 |         -4 |        -12 |
+| GLSL     |         12 |        -43 |        -11 |        -28 |        -82 |
+| YAML     |          1 |        -58 |          0 |        -16 |        -74 |
+| XML      |          6 |       -202 |          0 |        -15 |       -217 |
+| C#       |        109 |       -781 |        221 |       -241 |       -801 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                   |        129 |     -1,092 |        210 |       -304 |     -1,186 |
+| . (Files)                                                                                           |          5 |         44 |          4 |         10 |         58 |
+| ..                                                                                                  |         37 |     -1,706 |        -64 |       -403 |     -2,173 |
+| .. (Files)                                                                                          |          1 |         -8 |          0 |         -4 |        -12 |
+| ../.github                                                                                          |          1 |        -58 |          0 |        -16 |        -74 |
+| ../.github/workflows                                                                                |          1 |        -58 |          0 |        -16 |        -74 |
+| ../Game2D                                                                                           |          9 |       -312 |        -11 |        -91 |       -414 |
+| ../Game2D (Files)                                                                                   |          5 |       -243 |          0 |        -59 |       -302 |
+| ../Game2D/content                                                                                   |          4 |        -69 |        -11 |        -32 |       -112 |
+| ../Game2D/content (Files)                                                                           |          2 |        -33 |         -2 |        -15 |        -50 |
+| ../Game2D/content/noise                                                                             |          2 |        -36 |         -9 |        -17 |        -62 |
+| ../Horizon.Prefabs                                                                                  |          5 |       -147 |         -6 |        -37 |       -190 |
+| ../Horizon.Prefabs (Files)                                                                          |          1 |        -21 |          0 |         -4 |        -25 |
+| ../Horizon.Prefabs/Character                                                                        |          3 |        -86 |         -3 |        -22 |       -111 |
+| ../Horizon.Prefabs/Effects                                                                          |          1 |        -40 |         -3 |        -11 |        -54 |
+| ../Horizon.Tests                                                                                    |         10 |       -662 |        -20 |       -154 |       -836 |
+| ../Horizon.Tests (Files)                                                                            |          3 |       -181 |         -4 |        -36 |       -221 |
+| ../Horizon.Tests/Tests                                                                              |          7 |       -481 |        -16 |       -118 |       -615 |
+| ../SkyBrigade                                                                                       |          6 |       -181 |        -15 |        -40 |       -236 |
+| ../SkyBrigade (Files)                                                                               |          4 |       -160 |        -14 |        -32 |       -206 |
+| ../SkyBrigade.MaterialEditor                                                                        |          4 |       -177 |        -12 |        -42 |       -231 |
+| ../SkyBrigade/Assets                                                                                |          2 |        -21 |         -1 |         -8 |        -30 |
+| ../SkyBrigade/Assets/shaders                                                                        |          2 |        -21 |         -1 |         -8 |        -30 |
+| ../SkyBrigade/Assets/shaders/basic                                                                  |          2 |        -21 |         -1 |         -8 |        -30 |
+| ../VrekLang                                                                                         |          1 |       -161 |          0 |        -19 |       -180 |
+| Assets                                                                                              |          6 |         47 |          1 |         12 |         60 |
+| Assets/basic_shader                                                                                 |          2 |          8 |          0 |          1 |          9 |
+| Assets/line_shader                                                                                  |          2 |         34 |          1 |         11 |         46 |
+| Assets/tilemap_shaders                                                                              |          2 |          5 |          0 |          0 |          5 |
+| Collections                                                                                         |          1 |         -3 |          0 |          0 |         -3 |
+| Content                                                                                             |          1 |         -8 |          0 |         -2 |        -10 |
+| Debugging                                                                                           |          8 |        -10 |          0 |        -18 |        -28 |
+| Debugging (Files)                                                                                   |          1 |         -2 |          0 |         -2 |         -4 |
+| Debugging/Debuggers                                                                                 |          7 |         -8 |          0 |        -16 |        -24 |
+| Dialogs                                                                                             |          1 |        -16 |        -14 |         -7 |        -37 |
+| Extentions                                                                                          |          2 |        190 |          3 |         52 |        245 |
+| GameEntity                                                                                          |         11 |         96 |         51 |         23 |        170 |
+| GameEntity (Files)                                                                                  |          4 |          5 |          3 |         -2 |          6 |
+| GameEntity/Components                                                                               |          7 |         91 |         48 |         25 |        164 |
+| GameEntity/Components (Files)                                                                       |          5 |         41 |         48 |         12 |        101 |
+| GameEntity/Components/Physics2D                                                                     |          2 |         50 |          0 |         13 |         63 |
+| Input                                                                                               |         13 |         -7 |          0 |        -14 |        -21 |
+| Input (Files)                                                                                       |         10 |         -5 |          0 |        -11 |        -16 |
+| Input/Components                                                                                    |          3 |         -2 |          0 |         -3 |         -5 |
+| Logging                                                                                             |          1 |         -9 |          0 |         -2 |        -11 |
+| OpenGL                                                                                              |          7 |         25 |          4 |          3 |         32 |
+| Rendering                                                                                           |         36 |        265 |        225 |         42 |        532 |
+| Rendering (Files)                                                                                   |         13 |        -17 |          1 |        -11 |        -27 |
+| Rendering/Effects                                                                                   |          4 |         -9 |          0 |        -14 |        -23 |
+| Rendering/Effects (Files)                                                                           |          3 |         -8 |          0 |         -7 |        -15 |
+| Rendering/Effects/Components                                                                        |          1 |         -1 |          0 |         -7 |         -8 |
+| Rendering/Shapes                                                                                    |          2 |         -3 |          0 |         -3 |         -6 |
+| Rendering/Spriting                                                                                  |          7 |        -28 |          0 |        -12 |        -40 |
+| Rendering/Spriting (Files)                                                                          |          5 |        -22 |          0 |         -9 |        -31 |
+| Rendering/Spriting/Components                                                                       |          1 |         -5 |          0 |         -3 |         -8 |
+| Rendering/Spriting/Data                                                                             |          1 |         -1 |          0 |          0 |         -1 |
+| Rendering/Tiles                                                                                     |         10 |        322 |        224 |         82 |        628 |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                            | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /Users/bogz/Documents/sky-brigade/.github/workflows/dotnet.yml                                      | YAML     |        -58 |          0 |        -16 |        -74 |
+| /Users/bogz/Documents/sky-brigade/Game2D/DirtTile.cs                                                | C#       |        -18 |          0 |         -6 |        -24 |
+| /Users/bogz/Documents/sky-brigade/Game2D/Game2D.csproj                                              | XML      |        -60 |          0 |         -3 |        -63 |
+| /Users/bogz/Documents/sky-brigade/Game2D/GameScene.cs                                               | C#       |        -99 |          0 |        -30 |       -129 |
+| /Users/bogz/Documents/sky-brigade/Game2D/NoiseGenerator.cs                                          | C#       |        -53 |          0 |        -18 |        -71 |
+| /Users/bogz/Documents/sky-brigade/Game2D/Program.cs                                                 | C#       |        -13 |          0 |         -2 |        -15 |
+| /Users/bogz/Documents/sky-brigade/Game2D/content/noise/noise.frag                                   | GLSL     |        -26 |         -8 |        -12 |        -46 |
+| /Users/bogz/Documents/sky-brigade/Game2D/content/noise/noise.vert                                   | GLSL     |        -10 |         -1 |         -5 |        -16 |
+| /Users/bogz/Documents/sky-brigade/Game2D/content/sprites.frag                                       | GLSL     |         -8 |          0 |         -5 |        -13 |
+| /Users/bogz/Documents/sky-brigade/Game2D/content/sprites.vert                                       | GLSL     |        -25 |         -2 |        -10 |        -37 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Prefabs/Character/CharacterController.cs                  | C#       |        -23 |         -1 |         -5 |        -29 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Prefabs/Character/CharacterMovementController.cs          | C#       |        -49 |         -2 |        -15 |        -66 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Prefabs/Character/CharacterMovementControllerConfig.cs    | C#       |        -14 |          0 |         -2 |        -16 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Prefabs/Effects/VingetteEffect.cs                         | C#       |        -40 |         -3 |        -11 |        -54 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Prefabs/Horizon.Prefabs.csproj                            | XML      |        -21 |          0 |         -4 |        -25 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Horizon.Tests.csproj                                | XML      |        -70 |          0 |         -4 |        -74 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Program.cs                                          | C#       |        -15 |          0 |         -3 |        -18 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/TestMenuGameScreen.cs                               | C#       |        -96 |         -4 |        -29 |       -129 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/IEngineTest.cs                                | C#       |        -13 |          0 |         -4 |        -17 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/MeshLoadingEngineTest.cs                      | C#       |       -108 |        -10 |        -23 |       -141 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/PIDController.cs                              | C#       |        -32 |          0 |         -8 |        -40 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/PIDTest.cs                                    | C#       |        -79 |          0 |        -16 |        -95 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/PingPongGameTest.cs                           | C#       |       -112 |          0 |        -29 |       -141 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/PlanetGraphicsTest.cs                         | C#       |        -92 |         -6 |        -26 |       -124 |
+| /Users/bogz/Documents/sky-brigade/Horizon.Tests/Tests/RenderRectangleEngineTest.cs                  | C#       |        -45 |          0 |        -12 |        -57 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Assets/basic_shader/basic.frag                            | GLSL     |          6 |          0 |          1 |          7 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Assets/basic_shader/basic.vert                            | GLSL     |          2 |          0 |          0 |          2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Assets/line_shader/lines.frag                             | GLSL     |         19 |          0 |          6 |         25 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Assets/line_shader/lines.vert                             | GLSL     |         15 |          1 |          5 |         21 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Assets/tilemap_shaders/tiles.frag                         | GLSL     |          2 |          0 |          1 |          3 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Assets/tilemap_shaders/tiles.vert                         | GLSL     |          3 |          0 |         -1 |          2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Collections/InstanceManager.cs                            | C#       |         -3 |          0 |          0 |         -3 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Content/ContentManager.cs                                 | C#       |         -8 |          0 |         -2 |        -10 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/DebuggerComponent.cs                  | C#       |         -1 |          0 |          1 |          0 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/DockedGameContainerDebugger.cs        | C#       |         -3 |          0 |         -3 |         -6 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/GeneralDebugger.cs                    | C#       |         -4 |          0 |         -1 |         -5 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/LoadedContentDebugger.cs              | C#       |         -3 |          0 |         -5 |         -8 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/PerformanceProfilerDebugger.cs        | C#       |          3 |          0 |         -3 |          0 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/RenderOptionsDebugger.cs              | C#       |         -3 |          0 |         -2 |         -5 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/Debuggers/SceneEntityDebugger.cs                | C#       |          3 |          0 |         -3 |          0 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Debugging/SkylineDebugger.cs                              | C#       |         -2 |          0 |         -2 |         -4 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Dialogs/OpenFileDialog.cs                                 | C#       |        -16 |        -14 |         -7 |        -37 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Extentions/Box2DDebugDrawCallback.cs                      | C#       |        175 |          3 |         50 |        228 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Extentions/StreamExtentions.cs                            | C#       |         15 |          0 |          2 |         17 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/CameraComponent.cs                  | C#       |         -4 |          0 |          1 |         -3 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/IGameComponent.cs                   | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/MeshRendererComponent.cs            | C#       |         -2 |          1 |          0 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/Physics2D/Box2DBody.cs              | C#       |         29 |          0 |          7 |         36 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/Physics2D/Box2DWorldComponent.cs    | C#       |         21 |          0 |          6 |         27 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/TransformComponent.cs               | C#       |          0 |          0 |         -3 |         -3 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Components/TransformComponent2D.cs             | C#       |         47 |         47 |         15 |        109 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/Entity.cs                                      | C#       |          4 |          3 |          0 |          7 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/GameObject.cs                                  | C#       |         -1 |          0 |         -1 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/IEntity.cs                                     | C#       |          8 |          0 |          1 |          9 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameEntity/RequiresComponentAttribute.cs                  | C#       |         -6 |          0 |         -2 |         -8 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameManager.cs                                            | C#       |          4 |          4 |          3 |         11 |
+| /Users/bogz/Documents/sky-brigade/Horizon/GameScreenManager.cs                                      | C#       |         24 |          0 |          7 |         31 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Horizon.csproj                                            | XML      |         16 |          0 |          0 |         16 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/Components/JoystickInputManager.cs                  | C#       |         -1 |          0 |         -1 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/Components/KeyboardInputManager.cs                  | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/Components/MouseInputManager.cs                     | C#       |         -1 |          0 |         -1 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/InputManager.cs                                     | C#       |         -3 |          0 |         -2 |         -5 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/JoystickBindings.cs                                 | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/JoystickButton.cs                                   | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/JoystickData.cs                                     | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/KeyboardBindings.cs                                 | C#       |         -1 |          0 |         -1 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/KeyboardData.cs                                     | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/MouseBindings.cs                                    | C#       |         -1 |          0 |         -1 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/MouseData.cs                                        | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/VirtualAction.cs                                    | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Input/VirtualController.cs                                | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Logging/Logger.cs                                         | C#       |         -9 |          0 |         -2 |        -11 |
+| /Users/bogz/Documents/sky-brigade/Horizon/MathHelper.cs                                             | C#       |          5 |          0 |          1 |          6 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/ComputeShader.cs                                   | C#       |         -1 |          0 |         -3 |         -4 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/FrameBufferManager.cs                              | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/FrameBufferObject.cs                               | C#       |         -2 |          0 |         -2 |         -4 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/Shader.cs                                          | C#       |         14 |          0 |          5 |         19 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/Texture.cs                                         | C#       |         17 |          4 |          4 |         25 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/UniformBufferObject.cs                             | C#       |         -2 |          0 |          0 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/OpenGL/VertexArrayObject.cs                               | C#       |         -1 |          0 |          0 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/AdvancedMaterial.cs                             | C#       |         -1 |          0 |          0 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/BasicMaterial.cs                                | C#       |         -2 |          0 |          0 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Camera.cs                                       | C#       |          6 |          0 |          3 |          9 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/CustomMaterial.cs                               | C#       |         -1 |          0 |         -1 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Effects/BasicEffect.cs                          | C#       |         -1 |          0 |         -5 |         -6 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Effects/Components/ShaderComponent.cs           | C#       |         -1 |          0 |         -7 |         -8 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Effects/Effect.cs                               | C#       |         -4 |          0 |         -1 |         -5 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Effects/EffectStack.cs                          | C#       |         -3 |          0 |         -1 |         -4 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/EmptyMaterial.cs                                | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Material.cs                                     | C#       |         -1 |          0 |          1 |          0 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Mesh.cs                                         | C#       |         -3 |          0 |         -2 |         -5 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/MeshData.cs                                     | C#       |          0 |          0 |         -1 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/MeshGenerators.cs                               | C#       |         -1 |          0 |         -3 |         -4 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/RenderOptions.cs                                | C#       |          0 |          0 |          2 |          2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/RenderRectangle.cs                              | C#       |        -17 |          0 |         -7 |        -24 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Shapes/Plane.cs                                 | C#       |         -2 |          0 |          0 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Shapes/Terrain.cs                               | C#       |         -1 |          0 |         -3 |         -4 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/Components/SpriteBatchMeshComponent.cs | C#       |         -5 |          0 |         -3 |         -8 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/Data/Vertex2D.cs                       | C#       |         -1 |          0 |          0 |         -1 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/SpriteAnimationDefinition.cs           | C#       |          0 |          0 |         -2 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/SpriteBatch.cs                         | C#       |        -19 |          0 |         -3 |        -22 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/SpriteDefinition.cs                    | C#       |          0 |          0 |         -2 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/Spritesheet.cs                         | C#       |          0 |          0 |         -2 |         -2 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Spriting/SpritesheetAnimationManager.cs         | C#       |         -3 |          0 |          0 |         -3 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Technique.cs                                    | C#       |         -4 |          0 |         -3 |         -7 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/StaticTile.cs                             | C#       |         27 |          0 |          5 |         32 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/Tile.cs                                   | C#       |         35 |         68 |         11 |        114 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TileBox2DData.cs                          | C#       |         14 |          3 |          2 |         19 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TileMap.cs                                | C#       |        125 |         61 |         36 |        222 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TileMapChunk.cs                           | C#       |         73 |         91 |         27 |        191 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TileMesh.cs                               | C#       |         13 |          0 |         -3 |         10 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TileRenderingData.cs                      | C#       |          7 |          0 |          0 |          7 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TileSet.cs                                | C#       |         19 |          4 |          4 |         27 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TilemapChunkManager.cs                    | C#       |         17 |         -4 |          1 |         14 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/Tiles/TilemapRenderer.cs                        | C#       |         -8 |          1 |         -1 |         -8 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Rendering/UniformBufferManager.cs                         | C#       |          7 |          1 |          1 |          9 |
+| /Users/bogz/Documents/sky-brigade/Horizon/Scene.cs                                                  | C#       |         -5 |          0 |         -1 |         -6 |
+| /Users/bogz/Documents/sky-brigade/README.md                                                         | Markdown |         -8 |          0 |         -4 |        -12 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/EditorMenuBar.cs                        | C#       |        -28 |         -6 |         -8 |        -42 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/EditorMenuBarItem.cs                    | C#       |         -7 |          0 |         -1 |         -8 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/Program.cs                              | C#       |       -122 |         -6 |        -31 |       -159 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/SkyBrigade.MaterialEditor.csproj        | XML      |        -20 |          0 |         -2 |        -22 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade/Assets/shaders/basic/basic.frag                        | GLSL     |         -8 |          0 |         -3 |        -11 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade/Assets/shaders/basic/basic.vert                        | GLSL     |        -13 |         -1 |         -5 |        -19 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade/DemoGameScreen.cs                                      | C#       |        -75 |        -10 |        -22 |       -107 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade/FlashingEffect.cs                                      | C#       |        -23 |         -4 |         -6 |        -33 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade/Program.cs                                             | C#       |        -15 |          0 |         -2 |        -17 |
+| /Users/bogz/Documents/sky-brigade/SkyBrigade/SkyBrigade.csproj                                      | XML      |        -47 |          0 |         -2 |        -49 |
+| /Users/bogz/Documents/sky-brigade/VrekLang/Class1.cs                                                | C#       |       -161 |          0 |        -19 |       -180 |
+| Total                                                                                               |          |     -1,092 |        210 |       -304 |     -1,186 |
++-----------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

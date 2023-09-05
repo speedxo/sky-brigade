@@ -22,7 +22,7 @@ namespace Horizon.Rendering
             {
                 this.ID = config.ID;
                 this.Set = config.Set;
-                this.PhysicsData.IsCollidable = true;
+                this.PhysicsData.IsCollidable = config.IsCollidable;
                 this.RenderingData.IsVisible = config.IsVisible;
             }
         }

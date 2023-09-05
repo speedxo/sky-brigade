@@ -153,9 +153,9 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="x">The X coordinate of the tile in the chunk.</param>
         /// <param name="y">The Y coordinate of the tile in the chunk.</param>
         /// <returns>True if the tile location is empty; otherwise, false.</returns>
-        public bool IsEmpty(int x, int y, int z=0)
+        public bool IsEmpty(int x, int y, int z)
         {
-            return this[x, y] is null;
+            return this[x, y, z] is null;
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="x">The X coordinate of the tile in the chunk.</param>
         /// <param name="y">The Y coordinate of the tile in the chunk.</param>
         /// <returns>The tile at the specified coordinates in the chunk.</returns>
-        public Tile? this[int x, int y, int z=0]
+        public Tile? this[int x, int y, int z]
         {
             get
             {
