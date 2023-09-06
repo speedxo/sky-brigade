@@ -76,6 +76,16 @@ public abstract partial class Tiling<TTextureID>
                     throw new ArgumentException("Invalid Tiled map dimensions.");
                 }
 
+                if (
+                    tiledMap.Width % TileMapChunk.Width != 0
+                    || tiledMap.Height % TileMapChunk.Height != 0
+                )
+                {
+                    throw new ArgumentException(
+                        $"Tiled map dimensions must be multiples of {TileMapChunk.Width}x{TileMapChunk.Height}!"
+                    );
+                }
+
                 int widthInChunks = tiledMap.Width / TileMapChunk.Width;
                 int heightInChunks = tiledMap.Height / TileMapChunk.Height;
                 int depthInLayers = tiledMap.Layers.Count;
@@ -90,7 +100,10 @@ public abstract partial class Tiling<TTextureID>
                 {
                     if (!string.IsNullOrEmpty(tileset.Image?.Source))
                     {
-                        var set = new TileSet(GameManager.Instance.ContentManager.LoadTexture(tileset.Image.Source), new Vector2(tileset.TileWidth, tileset.TileHeight))
+                        var set = new TileSet(
+                            GameManager.Instance.ContentManager.LoadTexture(tileset.Image.Source),
+                            new Vector2(tileset.TileWidth, tileset.TileHeight)
+                        )
                         {
                             ID = tileset.FirstGid,
                             TileCount = tileset.TileCount
@@ -106,9 +119,7 @@ public abstract partial class Tiling<TTextureID>
 
                 foreach (var layer in tiledMap.Layers)
                 {
-                    layer.Properties.TryGetValue("isCollidable", out var _stringIsCollidable);
-
-                    bool isCollidable = bool.TryParse(_stringIsCollidable, out isCollidable) && isCollidable;
+                    var layerConfig = GenerateTiledTileConfigFromLayer(layer);
 
                     foreach (var tile in layer.Tiles)
                     {
@@ -118,25 +129,25 @@ public abstract partial class Tiling<TTextureID>
                         // invert the tile Y coordinates because one again openGL is weird (read about coordinate system orientations)
                         int tileY = tiledMap.Height - tile.Y - 1;
 
-                        int localTileX = (tile.X % chunkWidth);
-                        int localTileY = (tileY % chunkHeight);
+                        float localTileX =
+                            tile.X % chunkWidth
+                            + (float)(layer.OffsetX > 0 ? layer.OffsetX / 16.0f : 0);
+                        float localTileY =
+                            tileY % chunkHeight
+                            - (float)(layer.OffsetY > 0 ? layer.OffsetY / 16.0f : 0);
 
                         int chunkX = tile.X / chunkWidth;
                         int chunkY = tileY / chunkHeight;
 
-                        var (set, id) = map.FindTilesetFromGUID(tile.Gid);
-                        var chunk = map.ChunkManager[chunkX, chunkY];
+                        var chunk = map.ChunkManager[chunkX, chunkY]!;
 
-                        var config = new StaticTile.TiledTileConfig
-                        {
-                            ID = id,
-                            Set = set,
-                            IsCollidable = isCollidable,
-                            IsVisible = layer.Visible
-                        };
+                        var tileConfig = GenerateTiledTileConfigFromTile(layerConfig, map, tile);
 
-                        map.ChunkManager[chunkX, chunkY][localTileX, localTileY, layerIndex] = new StaticTile(config, chunk, new Vector2(localTileX, localTileY));
-                        //map[tile.X, tileY, layerIndex] = new StaticTile(config, chunk, new Vector2(localTileX, localTileY));
+                        map[tile.X, tileY, layerIndex] = new StaticTile(
+                            tileConfig,
+                            chunk,
+                            new Vector2(localTileX, localTileY)
+                        );
                     }
                     layerIndex++;
                 }
@@ -147,16 +158,48 @@ public abstract partial class Tiling<TTextureID>
             }
             catch (Exception ex)
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Error loading Tiled map: + {ex.Message}");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Error,
+                    $"Error loading Tiled map: + {ex.Message}"
+                );
                 return null;
             }
         }
-            
 
-        private (TileSet? set, int localTileID) FindTilesetFromGUID(int guid)
+        // The reason these are factored out is for future proofing.
+        private static StaticTile.TiledTileConfig GenerateTiledTileConfigFromLayer(TmxLayer layer)
         {
-            TileSet? set = null;
-            int localTileId = -1;
+            layer.Properties.TryGetValue("IsCollidable", out var _stringIsCollidable);
+
+            bool isCollidable =
+                bool.TryParse(_stringIsCollidable, out isCollidable) && isCollidable;
+
+            return new StaticTile.TiledTileConfig
+            {
+                IsCollidable = isCollidable,
+                IsVisible = layer.Visible
+            };
+        }
+
+        private static StaticTile.TiledTileConfig GenerateTiledTileConfigFromTile(
+            StaticTile.TiledTileConfig layerConfig,
+            TileMap map,
+            TmxLayerTile tile
+        )
+        {
+            var (set, id) = map.FindTilesetFromGUID(tile.Gid);
+
+            return layerConfig with
+            {
+                Set = set!,
+                ID = id
+            };
+        }
+
+        private (TileSet? tileSet, int localTileId) FindTilesetFromGUID(int guid)
+        {
+            TileSet? set = null; // Changed the local variable name from "set" to "tileSet" to avoid conflict with the private field name
+            int localTileId = 0; // Removed the unnecessary initialization
 
             foreach (var tileset in TileSets.Values)
             {
@@ -169,7 +212,6 @@ public abstract partial class Tiling<TTextureID>
             }
             return (set, localTileId);
         }
-
 
         /// <summary>
         /// Initializes the tile map.
@@ -215,14 +257,12 @@ public abstract partial class Tiling<TTextureID>
                         Tile? tile = this[x, y, z];
                         if (tile is null) // handle null value
                             continue;
-                    
 
                         yield return tile;
                     }
                 }
             }
         }
-
 
         /// <summary>
         /// Gets or sets a tile at the specified coordinates.
@@ -237,26 +277,45 @@ public abstract partial class Tiling<TTextureID>
                 int chunkIndexX = x / (TileMapChunk.Width);
                 int chunkIndexY = y / (TileMapChunk.Height);
 
-                if (chunkIndexX >= Width || chunkIndexY >= Height || x < 0 || y < 0 || z < 0 || z >= Depth)
+                if (
+                    chunkIndexX >= Width
+                    || chunkIndexY >= Height
+                    || x < 0
+                    || y < 0
+                    || z < 0
+                    || z >= Depth
+                )
                     return null;
 
                 int tileIndexX = x % (TileMapChunk.Width);
                 int tileIndexY = y % (TileMapChunk.Height);
 
-                return ChunkManager.Chunks[chunkIndexX + chunkIndexY * Width][tileIndexX, tileIndexY, z];
+                return ChunkManager.Chunks[chunkIndexX + chunkIndexY * Width][
+                    tileIndexX,
+                    tileIndexY,
+                    z
+                ];
             }
             set
             {
                 int chunkIndexX = x / (TileMapChunk.Width);
                 int chunkIndexY = y / (TileMapChunk.Height);
 
-                if (chunkIndexX >= Width || chunkIndexY >= Height || x < 0 || y < 0 || z < 0 || z >= Depth)
+                if (
+                    chunkIndexX >= Width
+                    || chunkIndexY >= Height
+                    || x < 0
+                    || y < 0
+                    || z < 0
+                    || z >= Depth
+                )
                     return;
 
                 int tileIndexX = x % (TileMapChunk.Width);
                 int tileIndexY = y % (TileMapChunk.Height);
 
-                ChunkManager.Chunks[chunkIndexX + chunkIndexY * Width][tileIndexX, tileIndexY, z] = value;
+                ChunkManager.Chunks[chunkIndexX + chunkIndexY * Width][tileIndexX, tileIndexY, z] =
+                    value;
             }
         }
 
@@ -304,7 +363,10 @@ public abstract partial class Tiling<TTextureID>
                 }
             }
 
-            GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"[TileMap] No TileSet is bound to the texture ID '{textureID}'!");
+            GameManager.Instance.Logger.Log(
+                Logging.LogLevel.Fatal,
+                $"[TileMap] No TileSet is bound to the texture ID '{textureID}'!"
+            );
             return null!; // Returning null because LogLevel.Fatal throws an exception.
         }
     }

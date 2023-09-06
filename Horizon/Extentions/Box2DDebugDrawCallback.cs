@@ -16,6 +16,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 {
     public string Name { get; set; }
     public Entity Parent { get; set; }
+    public bool Enabled { get; set; } = false;
 
     private class DebugDrawIntermediaryMeshData : IDrawable, IDisposable
     {
@@ -103,6 +104,8 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void Draw(float dt, RenderOptions? renderOptions = null)
     {
+        if (!Enabled) return;
+
         var options = renderOptions ?? RenderOptions.Default;
 
         Technique.Use();
@@ -134,6 +137,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void DrawRectangleF(in RectangleF rect, in Color color)
     {
+        if (!Enabled) return;
         polygonMesh.Vertices.AddRange(new Vertex[] {
                 new Vertex(rect.X, rect.Y, 0, 0, 0, color.R, color.G, color.B),
                 new Vertex(rect.X + rect.Width, rect.Y, 0, 0, 0, color.R, color.G, color.B),
@@ -147,6 +151,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     private void AddCircle(in Vector2 position, float radius, in Color color)
     {
+        if (!Enabled) return;
         int vCount = 12;
         float angle = 360.0f / (vCount - 1);
 
@@ -179,6 +184,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void DrawSegment(in Vector2 p1, in Vector2 p2, in Color color)
     {
+        if (!Enabled) return;
         segmentMesh.Vertices.AddRange(new[] {
             new Vertex(p1.X, p1.Y, 0, 0, 0, color.R, color.G, color.B),
             new Vertex(p2.X, p2.Y, 0, 0, 0, color.R, color.G, color.B)
@@ -203,6 +209,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     [Obsolete]
     private void AddPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
     {
+        if (!Enabled) return;
         if (vertexCount != 4)
             return;
 

@@ -33,13 +33,16 @@ public class RenderTarget : Entity
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
     }
 
-    public void RenderScene(float dt)
-    {
-    }
+    public void RenderScene(float dt) { }
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.ViewportSize.X, (uint)GameManager.Instance.ViewportSize.Y);
+        GameManager.Instance.Gl.Viewport(
+            0,
+            0,
+            (uint)GameManager.Instance.ViewportSize.X,
+            (uint)GameManager.Instance.ViewportSize.Y
+        );
         Technique.Use();
 
         Mesh.Draw(dt);
@@ -47,9 +50,7 @@ public class RenderTarget : Entity
         Technique.End();
     }
 
-    public override void Update(float dt)
-    {
-    }
+    public override void Update(float dt) { }
 }
 
 public class RenderRectangle : Entity
@@ -62,7 +63,10 @@ public class RenderRectangle : Entity
 
     public RenderRectangle(Technique technique, int width = 0, int height = 0)
     {
-        FrameBuffer = new FrameBufferObject(width == 0 ? (int)GameManager.Instance.ViewportSize.X : width, height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height);
+        FrameBuffer = new FrameBufferObject(
+            width == 0 ? (int)GameManager.Instance.ViewportSize.X : width,
+            height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height
+        );
         Technique = AddEntity(technique);
 
         Transform = AddComponent<TransformComponent>();
@@ -73,7 +77,10 @@ public class RenderRectangle : Entity
 
     public RenderRectangle(Shader shader, int width = 0, int height = 0)
     {
-        FrameBuffer = new FrameBufferObject(width == 0 ? (int)GameManager.Instance.ViewportSize.X : width, height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height);
+        FrameBuffer = new FrameBufferObject(
+            width == 0 ? (int)GameManager.Instance.ViewportSize.X : width,
+            height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height
+        );
         Technique = AddEntity(new Technique(shader));
 
         Transform = AddComponent<TransformComponent>();
@@ -108,14 +115,24 @@ public class RenderRectangle : Entity
     {
         Technique.Use();
 
-        if (FrameBuffer.Attachments.TryGetValue(FramebufferAttachment.ColorAttachment0, out uint albedo))
+        if (
+            FrameBuffer.Attachments.TryGetValue(
+                FramebufferAttachment.ColorAttachment0,
+                out uint albedo
+            )
+        )
         {
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, albedo);
             Technique.SetUniform("uAlbedo", 0);
         }
 
-        if (FrameBuffer.Attachments.TryGetValue(FramebufferAttachment.DepthAttachment, out uint depth))
+        if (
+            FrameBuffer.Attachments.TryGetValue(
+                FramebufferAttachment.DepthAttachment,
+                out uint depth
+            )
+        )
         {
             GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture1);
             GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, depth);
@@ -128,11 +145,7 @@ public class RenderRectangle : Entity
         Technique.End();
     }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
-    {
-    }
+    public override void Draw(float dt, RenderOptions? renderOptions = null) { }
 
-    public override void Update(float dt)
-    {
-    }
+    public override void Update(float dt) { }
 }

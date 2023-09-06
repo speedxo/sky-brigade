@@ -22,7 +22,9 @@ namespace Horizon;
 public class GameManager : Entity, IDisposable
 {
     // Singleton pattern: Lazy initialization of a single instance of the GameManager class
-    private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
+    private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(
+        () => new GameManager()
+    );
 
     /// <summary>
     /// Gets the singleton instance of the GameManager class.
@@ -101,14 +103,18 @@ public class GameManager : Entity, IDisposable
     /// </summary>
     public static class OperatingSystem
     {
-        public static bool IsWindows() =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        static OperatingSystem()
+        {
+            IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            IsMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+            IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        }
 
-        public static bool IsMacOS() =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        public static bool IsWindows { get; }
 
-        public static bool IsLinux() =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        public static bool IsMacOS { get; }
+
+        public static bool IsLinux { get; }
     }
 
     #endregion Public Properties
@@ -144,9 +150,11 @@ public class GameManager : Entity, IDisposable
                 Version = new APIVersion(4, 1)
             },
             Title = parameters.WindowTitle,
-            Size = new Silk.NET.Maths.Vector2D<int>((int)parameters.InitialWindowSize.X, (int)parameters.InitialWindowSize.Y),
+            Size = new Silk.NET.Maths.Vector2D<int>(
+                (int)parameters.InitialWindowSize.X,
+                (int)parameters.InitialWindowSize.Y
+            ),
             FramesPerSecond = 0,
-
             VSync = false
         };
 
@@ -156,10 +164,7 @@ public class GameManager : Entity, IDisposable
         // Register event handlers for the window.
         Window.Render += (delta) =>
         {
-            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with
-            {
-                GL = Gl
-            });
+            Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with { GL = Gl });
         };
         Window.Update += (delta) =>
         {
@@ -210,7 +215,9 @@ public class GameManager : Entity, IDisposable
 
         // Check if at least one keyboard is available for input.
         if (Input.Keyboards.Count < 1)
-            throw new Exception("Cannot play without a keyboard. A keyboard is required for this game to function.");
+            throw new Exception(
+                "Cannot play without a keyboard. A keyboard is required for this game to function."
+            );
 
         // initialize and add the input manager
         InputManager = AddEntity<InputManager>();
@@ -237,7 +244,13 @@ public class GameManager : Entity, IDisposable
     private void UpdateViewport()
     {
         WindowSize = new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y);
-        ViewportSize = (Debugger.Enabled && Debugger.GameContainerDebugger.Visible) ? new Vector2(Debugger.GameContainerDebugger.FrameBuffer.Width, Debugger.GameContainerDebugger.FrameBuffer.Height) : (new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y));
+        ViewportSize =
+            (Debugger.Enabled && Debugger.GameContainerDebugger.Visible)
+                ? new Vector2(
+                    Debugger.GameContainerDebugger.FrameBuffer.Width,
+                    Debugger.GameContainerDebugger.FrameBuffer.Height
+                )
+                : (new Vector2(Window.FramebufferSize.X, Window.FramebufferSize.Y));
         AspectRatio = WindowSize.X / WindowSize.Y;
     }
 
@@ -287,7 +300,10 @@ public class GameManager : Entity, IDisposable
     // Method to load essential assets required for the game.
     private void LoadEssentialAssets()
     {
-        ContentManager.GenerateNamedShader("default", OpenGL.Shader.CompileShaderFromSource(@"#version 410 core
+        ContentManager.GenerateNamedShader(
+            "default",
+            OpenGL.Shader.CompileShaderFromSource(
+                @"#version 410 core
 
 layout (location = 0) in vec3 vPos;
 layout (location = 1) in vec3 vNorm;
@@ -306,8 +322,7 @@ void main()
     // Trying to understand the universe through vertex manipulation!
     gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
 }",
-
-@"#version 410 core
+                @"#version 410 core
 out vec4 FinalFragColor;
 
 in vec2 texCoords;
@@ -318,10 +333,24 @@ void main()
 {{
     FinalFragColor = texture(uAlbedo, texCoords);
 }}
-"));
-        ContentManager.GenerateNamedShader("material_basic", "Assets/material_shader/basic.vert", "Assets/material_shader/basic.frag");
-        ContentManager.GenerateNamedShader("basic", "Assets/basic_shader/basic.vert", "Assets/basic_shader/basic.frag");
-        ContentManager.GenerateNamedShader("material_advanced", "Assets/material_shader/advanced.vert", "Assets/material_shader/advanced.frag");
+"
+            )
+        );
+        ContentManager.GenerateNamedShader(
+            "material_basic",
+            "Assets/material_shader/basic.vert",
+            "Assets/material_shader/basic.frag"
+        );
+        ContentManager.GenerateNamedShader(
+            "basic",
+            "Assets/basic_shader/basic.vert",
+            "Assets/basic_shader/basic.frag"
+        );
+        ContentManager.GenerateNamedShader(
+            "material_advanced",
+            "Assets/material_shader/advanced.vert",
+            "Assets/material_shader/advanced.frag"
+        );
 
         ContentManager.GenerateNamedTexture("debug", "Assets/among.png");
         ContentManager.GenerateNamedTexture("gray", "Assets/gray.png");
@@ -337,7 +366,9 @@ void main()
         {
             IsInputCaptured = !IsInputCaptured;
             for (int i = 0; i < Input.Mice.Count; i++)
-                Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
+                Input.Mice[i].Cursor.CursorMode = IsInputCaptured
+                    ? CursorMode.Raw
+                    : CursorMode.Normal;
         }
 
         oneSecondTimer += dt;

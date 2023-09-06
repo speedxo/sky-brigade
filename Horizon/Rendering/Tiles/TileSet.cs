@@ -25,7 +25,10 @@ public abstract partial class Tiling<TTextureID>
         {
             if (Tiles.ContainsKey(key))
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to add sprite '{key}' which already exists!");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Error,
+                    $"Attempt to add sprite '{key}' which already exists!"
+                );
                 return;
             }
 
@@ -35,11 +38,14 @@ public abstract partial class Tiling<TTextureID>
         public Vector2[] GetTextureCoordinatesFromTiledMapId(int id)
         {
             // Calculate the number of columns in the tileset
-            float columns = Texture.Width / TileSize.X;
+            int columns = Texture.Width / (int)TileSize.X;
 
-            // Calculate the X and Y position of the tile in the tileset
-            float tileX = (id % columns) * TileSize.X;
-            float tileY = (id / columns) * TileSize.Y;
+            // Calculate the X position of the tile in the tileset
+            float tileX = id % (int)columns * TileSize.X;
+
+            // Calculate the Y position of the tile in the tileset (using integer division!!!)
+            // originally i did 'float tileY = (id / columns) * TileSize.Y;' which didn't work!!!!!
+            float tileY = id / (int)columns * TileSize.Y;
 
             // Normalize the coordinates to a range of [0, 1]
             float normalizedX = tileX / Texture.Width;
@@ -51,7 +57,8 @@ public abstract partial class Tiling<TTextureID>
             float top = normalizedY;
             float bottom = normalizedY + TileSize.Y / Texture.Height;
 
-            return new Vector2[] {
+            return new Vector2[]
+            {
                 new Vector2(left, top),
                 new Vector2(right, top),
                 new Vector2(right, bottom),
@@ -63,7 +70,10 @@ public abstract partial class Tiling<TTextureID>
         {
             if (!Tiles.TryGetValue(key, out var sprite))
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to get sprite '{key}' which doesn't exist!");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Error,
+                    $"Attempt to get sprite '{key}' which doesn't exist!"
+                );
                 return Array.Empty<Vector2>();
             }
 

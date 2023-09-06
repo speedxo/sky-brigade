@@ -5,7 +5,9 @@ using Box2D.NetStandard.Dynamics.World.Callbacks;
 using Horizon;
 using Horizon.Extentions;
 using Horizon.GameEntity.Components.Physics2D;
+using Horizon.Prefabs.Effects;
 using Horizon.Rendering;
+using Horizon.Rendering.Effects;
 using Horizon.Rendering.Spriting;
 using ImGuiNET;
 using Silk.NET.OpenGL;
@@ -28,64 +30,39 @@ public class GameScene : Scene
         InitializeGl();
 
         debugDrawCallback = new();
-        debugDrawCallback.AppendFlags(DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair);
+        debugDrawCallback.AppendFlags(
+            DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair
+        );
+        debugDrawCallback.Enabled = false;
 
         world = AddComponent<Box2DWorldComponent>();
         world.SetDebugDraw(debugDrawCallback);
 
         if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
         {
-            GameManager.Instance.Logger.Log(Horizon.Logging.LogLevel.Fatal, "Failed to load tilemap, aborting...");
+            GameManager.Instance.Logger.Log(
+                Horizon.Logging.LogLevel.Fatal,
+                "Failed to load tilemap, aborting..."
+            );
             Environment.Exit(1);
         }
-        else Entities.Add(tilemap);
-
-        //TileGenerator.RegisterTile<DirtTile>(TileID.Dirt);
-        //TileGenerator.RegisterTile<CobblestoneTile>(TileID.Cobblestone);
+        else
+            Entities.Add(tilemap);
 
         AddEntity(player = new Player2D(world, tilemap));
 
         spriteBatch = AddEntity(new SpriteBatch());
         spriteBatch.AddSprite(player);
 
-        cam = new Camera()
-        {
-            Position = new Vector3(0, 0, 100)
-        };
+        cam = new Camera() { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
     }
 
-    //private void PopTiles(TileMapChunkSlice[] slices, TileMapChunk chunk)
-    //{
-    //    var slice = slices[0];
-
-    //    int maxWidth = slice.Width - 1;
-    //    int maxHeight = slice.Height - 1;
-
-    //    for (int x = 0; x < maxWidth; x++)
-    //    {
-    //        int height = chunk.Position.Y == tilemap.Height - 1 ? (int)(maxHeight * noise[x + (int)chunk.Position.X * maxWidth]) : 0;
-
-    //        for (int y = height; y < maxHeight; y++)
-    //        {
-    //            slice[x, maxHeight - y] = TileGenerator.GetTile(chunk, new Vector2(x, maxHeight - y), TileID.Dirt);
-    //        }
-    //    }
-
-    //    slice = slices[1];
-
-    //    for (int x = 0; x < maxWidth; x++)
-    //    {
-    //        int height = chunk.Position.Y == tilemap.Height - 1 ? (int)(maxHeight * noise[x + (int)chunk.Position.X * maxWidth]) : 0;
-
-    //        for (int y = height; y < maxHeight; y += 2)
-    //        {
-    //            slice[x, maxHeight - y] = TileGenerator.GetTile(chunk, new Vector2(x, maxHeight - y), TileID.Cobblestone);
-    //        }
-    //    }
-    //}
-
+    protected override Effect[] GeneratePostProccessingEffects()
+    {
+        return new[] { new VingetteEffect() };
+    }
     private static void InitializeGl()
     {
         GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
@@ -94,7 +71,7 @@ public class GameScene : Scene
         GameManager.Instance.Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private float cameraMovement = 100;
+    private float cameraMovement = 10;
 
     public override void Update(float dt)
     {
@@ -118,10 +95,7 @@ public class GameScene : Scene
     {
         world.DrawDebugData();
 
-        var options = (renderOptions ?? RenderOptions.Default) with
-        {
-            Camera = cam
-        };
+        var options = (renderOptions ?? RenderOptions.Default) with { Camera = cam };
         base.Draw(dt, options);
     }
 

@@ -2,6 +2,7 @@
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.World;
 using Horizon;
+using Horizon.Extentions;
 using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
@@ -11,13 +12,17 @@ namespace Game2D;
 
 public class Player2D : Sprite
 {
-    public Body PhysicsBody { get => box2DBodyComponent.Body; }
+    public Body PhysicsBody
+    {
+        get => box2DBodyComponent.Body;
+    }
     private Box2DBodyComponent box2DBodyComponent;
 
     public Vector2 Position => PhysicsBody.Position;
 
     private readonly World world;
     private readonly TileMap map;
+    private readonly IntervalRunner collidersIntervalRunner;
     private readonly List<Tile> colliableTiles = new();
     private Tile[] visibleTiles = Array.Empty<Tile>();
 
@@ -28,20 +33,21 @@ public class Player2D : Sprite
 
         CreateSprite();
         CreatePhysics();
+
+        collidersIntervalRunner = AddEntity(new IntervalRunner(0.25f, GenerateTileColliders));
     }
 
     private void CreatePhysics()
     {
-        box2DBodyComponent = AddComponent(new Box2DBodyComponent(world.CreateBody(new BodyDef
-        {
-            type = BodyType.Dynamic,
-            position = new Vector2(-5, 16)
-        })));
+        box2DBodyComponent = AddComponent(
+            new Box2DBodyComponent(
+                world.CreateBody(
+                    new BodyDef { type = BodyType.Dynamic, position = new Vector2(-5, 16) }
+                )
+            )
+        );
 
-        CircleShape shape = new()
-        {
-            Radius = 0.8f
-        };
+        CircleShape shape = new() { Radius = 0.8f };
 
         PhysicsBody.CreateFixture(shape, 1.0f);
         PhysicsBody.SetFixedRotation(true);
@@ -50,18 +56,24 @@ public class Player2D : Sprite
 
     private void CreateSprite()
     {
-        var sprSheet1 = (new Spritesheet(GameManager.Instance.ContentManager.LoadTexture("content/spritesheet.png"), new Vector2(69, 44)));
+        var sprSheet1 = (
+            new Spritesheet(
+                GameManager.Instance.ContentManager.LoadTexture("content/spritesheet.png"),
+                new Vector2(69, 44)
+            )
+        );
         sprSheet1.AddAnimation("idle", new Vector2(0, 0), 6);
         sprSheet1.AddAnimation("run", new Vector2(0, 1), 6);
 
         Setup(sprSheet1, "idle");
         IsAnimated = true;
+        // nice
         Size = new Vector2(69.0f / 44.0f * 2.0f, 2.0f);
     }
 
     public override void Update(float dt)
-    {   
-        GenerateTileColliders(dt);
+    {
+        UpdateTileColliders(dt);
         UpdatePosition(dt);
 
         base.Update(dt);
@@ -75,27 +87,29 @@ public class Player2D : Sprite
         base.Draw(dt, renderOptions);
     }
 
-    private void GenerateTileColliders(float dt)
+    private void GenerateTileColliders()
     {
         // Enumerate the enumerable so its only itterated once.
-        visibleTiles = map.FindVisibleTiles(Position + Size / 2.0f, 8.0f).ToArray();
+        visibleTiles = map.FindVisibleTiles(Position - Size / 2.0f, 8.0f)
+            .Where(e => e.PhysicsData.IsCollidable)
+            .ToArray();
 
         foreach (var tile in visibleTiles)
         {
-            tile.Update(dt);
+            tile.PhysicsData.Age = 0;
 
             if (!colliableTiles.Contains(tile))
-            {
                 if (tile.TryGenerateCollider())
-                {
                     colliableTiles.Add(tile);
-                }
-            }
         }
+    }
 
-        for (int i = colliableTiles.Count - 1; i >= 0; i--)
+    private void UpdateTileColliders(float dt)
+    {
+        for (int i = 0; i < colliableTiles.Count; i++)
         {
             var tile = colliableTiles[i];
+            tile.Update(dt);
 
             tile.PhysicsData.Distance = Vector2.DistanceSquared(tile.GlobalPosition, Position);
             if (tile.PhysicsData.Distance > 25.0f)
@@ -106,6 +120,7 @@ public class Player2D : Sprite
                 {
                     if (tile.TryDestroyCollider())
                     {
+                        tile.PhysicsData.Age = 0.0f;
                         colliableTiles.Remove(tile);
                     }
                 }
@@ -119,7 +134,9 @@ public class Player2D : Sprite
         var movementDir = GameManager.Instance.InputManager.GetVirtualController().MovementAxis;
 
         PhysicsBody.ApplyForce(movementDir * 100.0f, Transform.Position);
-        PhysicsBody.SetLinearVelocity(Vector2.Clamp(PhysicsBody.GetLinearVelocity(), Vector2.One * -5, Vector2.One * 5));
+        PhysicsBody.SetLinearVelocity(
+            Vector2.Clamp(PhysicsBody.GetLinearVelocity(), Vector2.One * -5, Vector2.One * 5)
+        );
 
         FrameName = Math.Abs(movementDir.X) > 0 ? "run" : "idle";
         Flipped = movementDir.X < 0;

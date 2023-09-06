@@ -5,7 +5,11 @@ namespace Horizon.Prefabs.Effects
 {
     public class VingetteEffect : Effect
     {
-        public float Intensity { get => data.Intensity; set => data.Intensity = value; }
+        public float Intensity
+        {
+            get => data.Intensity;
+            set => data.Intensity = value;
+        }
 
         private struct VignetteStage
         {
@@ -19,7 +23,9 @@ namespace Horizon.Prefabs.Effects
 
         private VignetteStage data = new VignetteStage();
 
-        public VingetteEffect() : base(@"layout(std140) uniform VignetteStageData
+        public VingetteEffect()
+            : base(
+                @"layout(std140) uniform VignetteStageData
 {
     float Intensity;
 } VignetteStage;
@@ -33,9 +39,10 @@ ShaderData ShaderStage(ShaderData data)
     // Calculate the vignette intensity using a smooth curve
     float vignetteIntensity = smoothstep(0.4, 1.0, distance);
 
-    return ShaderData(data.FragColor * (1 - VignetteStage.Intensity * vignetteIntensity), data.DepthComponent);
+    return ShaderData(data.FragColor * vec4(vec3((1 - VignetteStage.Intensity * vignetteIntensity)), 1.0f), data.DepthComponent);
 }
-")
+"
+            )
         {
             RequiresUpdate = true;
         }
