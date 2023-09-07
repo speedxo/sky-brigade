@@ -17,9 +17,20 @@ public partial class CharacterController
         public TransformComponent Transform { get; private set; }
         public CharacterMovementControllerConfig Config { get; private set; }
 
-        public Vector3 Position { get => Transform.Position; set => Transform.Position = value; }
-        public Vector3 Rotation { get => Transform.Rotation; set => Transform.Rotation = value; }
-        public Vector3 Front { get => Transform.Front; }
+        public Vector3 Position
+        {
+            get => Transform.Position;
+            set => Transform.Position = value;
+        }
+        public Vector3 Rotation
+        {
+            get => Transform.Rotation;
+            set => Transform.Rotation = value;
+        }
+        public Vector3 Front
+        {
+            get => Transform.Front;
+        }
 
         public CharacterMovementController()
         {
@@ -36,7 +47,6 @@ public partial class CharacterController
             Transform.Position = new Vector3(0, 5, -2);
         }
 
-
         public void Update(float dt)
         {
             DoLocomotion(dt);
@@ -48,7 +58,10 @@ public partial class CharacterController
 
             var virtualController = GameManager.Instance.InputManager.GetVirtualController();
 
-            Position += Vector3.Normalize(Vector3.Cross(Front, Vector3.UnitY)) * moveSpeed * virtualController.MovementAxis.X;
+            Position +=
+                Vector3.Normalize(Vector3.Cross(Front, Vector3.UnitY))
+                * moveSpeed
+                * virtualController.MovementAxis.X;
             Position += moveSpeed * Front * virtualController.MovementAxis.Y;
 
             // there apears to be some funky wunky happenings with the underlying
@@ -57,8 +70,6 @@ public partial class CharacterController
                 Position = new Vector3(0, 5, -2);
         }
 
-        public void Draw(float dt, RenderOptions? options = null)
-        {
-        }
+        public void Draw(float dt, RenderOptions? options = null) { }
     }
 }

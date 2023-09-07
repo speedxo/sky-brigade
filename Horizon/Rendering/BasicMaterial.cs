@@ -9,9 +9,17 @@ namespace Horizon.Rendering
         public BasicMaterialDescription MaterialDescription;
 
         // forward some properties
-        public override Vector4 Color { get => MaterialDescription.Color; set => MaterialDescription.Color = value; }
+        public override Vector4 Color
+        {
+            get => MaterialDescription.Color;
+            set => MaterialDescription.Color = value;
+        }
 
-        public override Texture? Texture { get => MaterialDescription.Texture; set => MaterialDescription.Texture = value; }
+        public override Texture? Texture
+        {
+            get => MaterialDescription.Texture;
+            set => MaterialDescription.Texture = value;
+        }
 
         public BasicMaterial()
         {
@@ -36,7 +44,7 @@ namespace Horizon.Rendering
         //{
         //    // check if a file exists at the destination
         //    if (System.IO.File.Exists(path))
-        //        File.Delete(path); // TODO: we should log this override.
+        //        File.Delete(path);
 
         //    // use the path to save the material description using json
         //    System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(MaterialDescription));

@@ -21,7 +21,10 @@ namespace Horizon.Input.Components
         /// <summary>
         /// Gets the first connected joystick/gamepad, or null if none is connected.
         /// </summary>
-        public static IJoystick? Joystick => GameManager.Instance.Input.Joysticks.Count > 0 ? GameManager.Instance.Input.Joysticks[0] : null;
+        public static IJoystick? Joystick =>
+            GameManager.Instance.Input.Joysticks.Count > 0
+                ? GameManager.Instance.Input.Joysticks[0]
+                : null;
 
         /// <summary>
         /// Gets the JoystickBindings representing the button-to-action mappings for the joystick.
@@ -34,7 +37,9 @@ namespace Horizon.Input.Components
         public bool IsConnected => Joystick?.IsConnected ?? false;
 
         private VirtualAction actions;
-        private Vector2 primaryAxis, secondaryAxis, triggers;
+        private Vector2 primaryAxis,
+            secondaryAxis,
+            triggers;
 
         /// <summary>
         /// Initializes the JoystickInputManager by setting the default JoystickBindings.

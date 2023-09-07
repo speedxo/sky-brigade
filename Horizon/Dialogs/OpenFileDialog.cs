@@ -29,7 +29,8 @@ namespace Horizon.Dialogs
         private DirectoryInfo? currentDirectory;
         private string[] fileNames = Array.Empty<string>();
         private string[] selectedFileNames = Array.Empty<string>();
-        private int index = 0, selectedFileIndex = 0;
+        private int index = 0,
+            selectedFileIndex = 0;
         private List<FileItem> selectedFiles = new();
 
         /// <summary>
@@ -70,11 +71,21 @@ namespace Horizon.Dialogs
         {
             currentDirectory = new DirectoryInfo(dir);
             files.Clear();
-            files.Add(new FileItem("..", currentDirectory?.Parent?.FullName ?? "", FileItemType.Directory));
-            files.AddRange(currentDirectory?.GetDirectories()?.Select(file => new FileItem(file.Name, file.FullName, FileItemType.Directory)) ?? Enumerable.Empty<FileItem>());
+            files.Add(
+                new FileItem("..", currentDirectory?.Parent?.FullName ?? "", FileItemType.Directory)
+            );
+            files.AddRange(
+                currentDirectory
+                    ?.GetDirectories()
+                    ?.Select(file => new FileItem(file.Name, file.FullName, FileItemType.Directory))
+                    ?? Enumerable.Empty<FileItem>()
+            );
 
-            foreach (var (file, fileName) in (currentDirectory?.GetFiles() ?? Enumerable.Empty<FileInfo>())
-                                                .Select(file => (file, file.Name)))
+            foreach (
+                var (file, fileName) in (
+                    currentDirectory?.GetFiles() ?? Enumerable.Empty<FileInfo>()
+                ).Select(file => (file, file.Name))
+            )
             {
                 if (!string.IsNullOrEmpty(Filter))
                 {
@@ -137,7 +148,14 @@ namespace Horizon.Dialogs
                 {
                     if (selectedFileNames != null && selectedFileNames.Length > 0)
                     {
-                        if (ImGui.ListBox("Selected Files", ref selectedFileIndex, selectedFileNames, selectedFileNames.Length))
+                        if (
+                            ImGui.ListBox(
+                                "Selected Files",
+                                ref selectedFileIndex,
+                                selectedFileNames,
+                                selectedFileNames.Length
+                            )
+                        )
                         {
                             selectedFiles.RemoveAt(selectedFileIndex);
                             selectedFileNames = selectedFiles.Select(f => f.Name).ToArray();

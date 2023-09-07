@@ -32,14 +32,8 @@ public abstract partial class Tiling<TTextureID>
 
         public Tile? this[int x, int y]
         {
-            get
-            {
-                return Tiles[x + y * Width];
-            }
-            set
-            {
-                Tiles[x + y * Width] = value;
-            }
+            get { return Tiles[x + y * Width]; }
+            set { Tiles[x + y * Width] = value; }
         }
         public Tile? this[int i]
         {
@@ -59,6 +53,7 @@ public abstract partial class Tiling<TTextureID>
             }
         }
     }
+
     /// <summary>
     /// Represents a chunk of tiles in a tile map.
     /// </summary>
@@ -128,21 +123,23 @@ public abstract partial class Tiling<TTextureID>
             Map = map;
             Position = pos;
 
-            if (map.World is not null) Body = map.World.CreateBody(new BodyDef
-            {
-                type = BodyType.Static
-            });
+            if (map.World is not null)
+                Body = map.World.CreateBody(new BodyDef { type = BodyType.Static });
 
             Slices = new TileMapChunkSlice[map.Depth];
             for (int i = 0; i < Slices.Length; i++)
                 Slices[i] = new(Width, Height);
-            
+
             TileSetPairs = new Dictionary<TileSet, Tile[]>();
 
             Renderer = new TilemapRenderer(this);
             IsDirty = true;
 
-            Bounds = new RectangleF(pos * new Vector2(Width - 1, Height - 1) - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f), new(Width - 1, Height - 1));
+            Bounds = new RectangleF(
+                pos * new Vector2(Width - 1, Height - 1)
+                    - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
+                new(Width - 1, Height - 1)
+            );
         }
 
         public TileMapChunkSlice CreateSlice() => new(Width, Height);
@@ -168,7 +165,7 @@ public abstract partial class Tiling<TTextureID>
         {
             get
             {
-                if (z < 0 || z > Map.Depth -1)
+                if (z < 0 || z > Map.Depth - 1)
                     return null;
 
                 return Slices[z][x, y];
@@ -220,9 +217,8 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="dt">The time elapsed since the last update.</param>
         public void Update(float dt)
         {
-            if (!IsVisibleByCamera) return;
-
-            // TODO: Implement update logic for the chunk.
+            if (!IsVisibleByCamera)
+                return;
         }
 
         /// <summary>
@@ -256,7 +252,8 @@ public abstract partial class Tiling<TTextureID>
                 for (int i = 0; i < Slices[s].Tiles.Length; i++)
                 {
                     var tile = Slices[s][i];
-                    if (tile is null) continue;
+                    if (tile is null)
+                        continue;
 
                     // Check if the tile set is already in the temporary pairs.
                     if (!tempPairs.ContainsKey(tile.Set))
@@ -300,7 +297,8 @@ public abstract partial class Tiling<TTextureID>
                 var slice = Slices[s];
                 for (int i = 0; i < slice.Tiles.Length; i++)
                 {
-                    if (slice.Tiles[i] is null) continue;
+                    if (slice.Tiles[i] is null)
+                        continue;
 
                     slice.Tiles[i]!.PostGeneration();
                 }

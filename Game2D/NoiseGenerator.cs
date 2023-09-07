@@ -10,11 +10,23 @@ public class NoiseGenerator
     private RenderRectangle renderRect;
     private Technique technique;
 
-    public uint TextureHandle { get => renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]; }
+    public uint TextureHandle
+    {
+        get => renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0];
+    }
 
     public NoiseGenerator(int width, int height, Vector2 scale)
     {
-        renderRect = new RenderRectangle(technique = new Technique(GameManager.Instance.ContentManager.LoadShader("content/noise/noise.vert", "content/noise/noise.frag")), width, height);
+        renderRect = new RenderRectangle(
+            technique = new Technique(
+                GameManager.Instance.ContentManager.LoadShader(
+                    "content/noise/noise.vert",
+                    "content/noise/noise.frag"
+                )
+            ),
+            width,
+            height
+        );
         renderRect.FrameBuffer.AddAttachment(FramebufferAttachment.ColorAttachment0);
         System.Diagnostics.Debug.Assert(renderRect.FrameBuffer.ContructFrameBuffer());
 
@@ -27,7 +39,10 @@ public class NoiseGenerator
 
         renderRect.RenderScene(1.0f);
 
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]);
+        GameManager.Instance.Gl.BindTexture(
+            TextureTarget.Texture2D,
+            renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]
+        );
 
         // Allocate array for pixel data
         byte[] pixelData = new byte[width * height * 4]; // RGBA format, assuming 8 bits per channel
@@ -37,7 +52,13 @@ public class NoiseGenerator
             fixed (void* data = pixelData)
             {
                 // Get the pixel data from the texture
-                GameManager.Instance.Gl.GetTexImage(GLEnum.Texture2D, 0, GLEnum.Rgba, GLEnum.UnsignedByte, data);
+                GameManager.Instance.Gl.GetTexImage(
+                    GLEnum.Texture2D,
+                    0,
+                    GLEnum.Rgba,
+                    GLEnum.UnsignedByte,
+                    data
+                );
             }
         }
         GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, 0);

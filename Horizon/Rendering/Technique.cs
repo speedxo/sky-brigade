@@ -9,18 +9,24 @@ namespace Horizon.Rendering
         public ShaderComponent Shader { get; set; }
         public UniformBufferManager BufferManager { get; init; }
 
-        public uint Handle { get => Shader.Handle; }
+        public uint Handle
+        {
+            get => Shader.Handle;
+        }
 
         public void SetUniform(string name, object? value) => Shader.SetUniform(name, value);
 
-        public static Technique Default { get; private set; } = new Technique(OpenGL.Shader.Default);
+        public static Technique Default { get; private set; } =
+            new Technique(OpenGL.Shader.Default);
 
         public Technique(string path, string name)
         {
-            Shader = AddComponent(new ShaderComponent(
-                Path.Combine(path, name + ".vert"),
-                Path.Combine(path, name + ".frag")
-            ));
+            Shader = AddComponent(
+                new ShaderComponent(
+                    Path.Combine(path, name + ".vert"),
+                    Path.Combine(path, name + ".frag")
+                )
+            );
             BufferManager = AddComponent(new UniformBufferManager(Shader));
         }
 

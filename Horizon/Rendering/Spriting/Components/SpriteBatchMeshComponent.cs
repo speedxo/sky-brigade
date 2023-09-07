@@ -34,7 +34,9 @@ public class SpriteBatchMesh
     public SpriteBatchMesh(ShaderComponent shader)
     {
         this.Shader = shader;
-        UniformBuffer = new UniformBufferObject(GameManager.Instance.Gl.GetUniformBlockIndex(shader.Handle, "SpriteUniforms"));
+        UniformBuffer = new UniformBufferObject(
+            GameManager.Instance.Gl.GetUniformBlockIndex(shader.Handle, "SpriteUniforms")
+        );
 
         unsafe
         {
@@ -42,11 +44,33 @@ public class SpriteBatchMesh
         }
         Vbo = new();
 
-        Vbo.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 0);
-        Vbo.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)Vertex2D.SizeInBytes, 2 * sizeof(float));
-        Vbo.VertexAttributePointer(2, 1, VertexAttribPointerType.Int, (uint)Vertex2D.SizeInBytes, 4 * sizeof(float));
+        Vbo.VertexAttributePointer(
+            0,
+            2,
+            VertexAttribPointerType.Float,
+            (uint)Vertex2D.SizeInBytes,
+            0
+        );
+        Vbo.VertexAttributePointer(
+            1,
+            2,
+            VertexAttribPointerType.Float,
+            (uint)Vertex2D.SizeInBytes,
+            2 * sizeof(float)
+        );
+        Vbo.VertexAttributePointer(
+            2,
+            1,
+            VertexAttribPointerType.Int,
+            (uint)Vertex2D.SizeInBytes,
+            4 * sizeof(float)
+        );
 
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("SpriteBatch Triangles", $"({count}) Element Count", () => ElementCount / 3);
+        GameManager.Instance.Debugger.GeneralDebugger.AddWatch(
+            "SpriteBatch Triangles",
+            $"({count}) Element Count",
+            () => ElementCount / 3
+        );
         count++;
     }
 
@@ -58,9 +82,15 @@ public class SpriteBatchMesh
         ElementCount = (uint)elements.Length;
     }
 
-    public void Draw(Spritesheet sheet, Matrix4x4 modelMatrix, IEnumerable<Sprite> sprites, RenderOptions? renderOptions = null)
+    public void Draw(
+        Spritesheet sheet,
+        Matrix4x4 modelMatrix,
+        IEnumerable<Sprite> sprites,
+        RenderOptions? renderOptions = null
+    )
     {
-        if (ElementCount < 1) return; // Don't render if there is nothing to render to improve performance.
+        if (ElementCount < 1)
+            return; // Don't render if there is nothing to render to improve performance.
 
         var options = renderOptions ?? RenderOptions.Default;
 
@@ -82,7 +112,7 @@ public class SpriteBatchMesh
         Shader.SetUniform("uView", options.Camera.View);
         Shader.SetUniform("uProjection", options.Camera.Projection);
         Shader.SetUniform("uModel", modelMatrix);
-        Shader.SetUniform("uSingleFrameSize", sheet.SpriteSize / sheet.Texture.Size);
+        Shader.SetUniform("uSingleFrameSize", sheet.SingleSpriteSize);
         Shader.SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
 
         Vbo.Bind();
@@ -91,12 +121,19 @@ public class SpriteBatchMesh
         unsafe
         {
             // Turn on wireframe mode
-            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+            if (options.IsWireframeEnabled)
+                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
-            GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+            GameManager.Instance.Gl.DrawElements(
+                PrimitiveType.Triangles,
+                ElementCount,
+                DrawElementsType.UnsignedInt,
+                null
+            );
 
             // Turn off wireframe mode
-            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+            if (options.IsWireframeEnabled)
+                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
         Vbo.Unbind();
@@ -106,9 +143,6 @@ public class SpriteBatchMesh
 
     private SpriteData[] AggregateSpriteData(IEnumerable<Sprite> sprites)
     {
-        //var matrices = new Matrix4x4[sprites.Count()];
-        //var offsets = new int[sprites.Count()];
-
         int i = 0;
         foreach (var sprite in sprites)
         {
@@ -119,8 +153,6 @@ public class SpriteBatchMesh
                 spriteId = sprite.ID,
                 isFlipped = sprite.Flipped
             };
-
-            //matrices[i] = (sprite.Transform.ModelMatrix);
             i++;
         }
         return data;

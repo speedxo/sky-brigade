@@ -31,12 +31,18 @@ namespace Horizon.GameEntity
         /// <summary>
         /// The total number of components.
         /// </summary>
-        public int TotalComponents { get => Components.Count + Entities.Sum(e => e.TotalComponents); }
+        public int TotalComponents
+        {
+            get => Components.Count + Entities.Sum(e => e.TotalComponents);
+        }
 
         /// <summary>
         /// The total sum of entities including their children.
         /// </summary>
-        public int TotalEntities { get => Entities.Count + Entities.Sum(e => e.TotalEntities); }
+        public int TotalEntities
+        {
+            get => Entities.Count + Entities.Sum(e => e.TotalEntities);
+        }
 
         /// <summary>
         /// The parent entity (if there is one)
@@ -48,9 +54,7 @@ namespace Horizon.GameEntity
         /// <summary>
         /// This method is called after the parent entity is set.
         /// </summary>
-        public virtual void Initialize()
-        {
-        }
+        public virtual void Initialize() { }
 
         /// <summary>
         /// Adds a component of type T to the entity.
@@ -58,15 +62,20 @@ namespace Horizon.GameEntity
         /// <typeparam name="T">The type of the component to add.</typeparam>
         /// <param name="component">The instance of the component to add.</param>
         /// <returns>The added component.</returns>
-        public T AddComponent<T>(T component) where T : IGameComponent
+        public T AddComponent<T>(T component)
+            where T : IGameComponent
         {
             if (!Components.TryAdd(typeof(T), component))
             {
-                // TODO: Handle error: Component of the same type already exists
+                var msg = $"Component of the same type ({nameof(T)}) already exists";
+
+                GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, msg);
+                throw new ArgumentException(msg);
             }
 
             Type componentType = component.GetType();
-            RequiresComponentAttribute[] requiredAttributes = (RequiresComponentAttribute[])componentType.GetCustomAttributes(typeof(RequiresComponentAttribute), true);
+            RequiresComponentAttribute[] requiredAttributes = (RequiresComponentAttribute[])
+                componentType.GetCustomAttributes(typeof(RequiresComponentAttribute), true);
 
             // Check if the component has any RequiresComponentAttribute
             if (requiredAttributes.Length > 0)
@@ -78,7 +87,10 @@ namespace Horizon.GameEntity
                     // Check if the entity has the required component
                     if (!HasComponent(requiredComponentType))
                     {
-                        GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'.");
+                        GameManager.Instance.Logger.Log(
+                            Logging.LogLevel.Fatal,
+                            $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'."
+                        );
                         throw new Exception();
                     }
                 }
@@ -97,7 +109,8 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <param name="entity">The entity to be added.</param>
         /// <returns>The added entity.</returns>
-        public T AddEntity<T>(T entity) where T : IEntity
+        public T AddEntity<T>(T entity)
+            where T : IEntity
         {
             Entities.Add(entity);
             entity.Parent = this;
@@ -114,7 +127,8 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <param name="entity">The entity to be added.</param>
         /// <returns>The added entity.</returns>
-        public T AddEntity<T>() where T : IEntity, new() => AddEntity(Activator.CreateInstance<T>());
+        public T AddEntity<T>()
+            where T : IEntity, new() => AddEntity(Activator.CreateInstance<T>());
 
         /// <summary>
         /// Removes an entity from the scene.
@@ -139,17 +153,21 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <typeparam name="T">The type of the component to add.</typeparam>
         /// <returns>The added component.</returns>
-            public T AddComponent<T>() where T : IGameComponent, new() => AddComponent(Activator.CreateInstance<T>());
+        public T AddComponent<T>()
+            where T : IGameComponent, new() => AddComponent(Activator.CreateInstance<T>());
 
         /// <summary>
         /// Removes the component of type T from the entity.
         /// </summary>
         /// <typeparam name="T">The type of the component to remove.</typeparam>
-        public void RemoveComponent<T>() where T : IGameComponent
+        public void RemoveComponent<T>()
+            where T : IGameComponent
         {
             if (!Components.Remove(typeof(T)))
             {
-                // TODO: Handle error: Component of the specified type doesn't exist
+                var msg = $"Component of the same type ({nameof(T)}) doesn't exist";
+
+                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, msg);
             }
         }
 
@@ -158,7 +176,8 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <typeparam name="T">The type of the component to get.</typeparam>
         /// <returns>The component of the specified type if found, otherwise null.</returns>
-        public T? GetComponent<T>() where T : IGameComponent
+        public T? GetComponent<T>()
+            where T : IGameComponent
         {
             if (Components.ContainsKey(typeof(T)))
             {
@@ -166,7 +185,10 @@ namespace Horizon.GameEntity
             }
             else
             {
-                // TODO: Handle error: Component of the specified type doesn't exist
+                var msg = $"Component of the same type ({nameof(T)}) doesn't exist";
+
+                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, msg);
+
                 return default;
             }
         }
@@ -176,7 +198,8 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <typeparam name="T">The type of the component to check.</typeparam>
         /// <returns>True if the entity has the specified component, otherwise false.</returns>
-        public bool HasComponent<T>() where T : IGameComponent
+        public bool HasComponent<T>()
+            where T : IGameComponent
         {
             return Components.ContainsKey(typeof(T));
         }
@@ -192,7 +215,8 @@ namespace Horizon.GameEntity
         /// <param name="dt">Delta time.</param>
         public virtual void Update(float dt)
         {
-            if (!Enabled) return;
+            if (!Enabled)
+                return;
 
             foreach (var item in Components.Values)
                 item.Update(dt);
@@ -208,7 +232,8 @@ namespace Horizon.GameEntity
         /// <param name="renderOptions">Render options (optional).</param>
         public virtual void Draw(float dt, RenderOptions? renderOptions = null)
         {
-            if (!Enabled) return;
+            if (!Enabled)
+                return;
 
             for (int i = 0; i < Components.Count; i++)
                 Components.Values.ElementAt(i).Draw(dt, renderOptions);

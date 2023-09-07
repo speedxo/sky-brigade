@@ -16,7 +16,11 @@ namespace Horizon.OpenGL
 
         public void BindToUniformBlockBindingPoint()
         {
-            GameManager.Instance.Gl.BindBufferBase(BufferTargetARB.UniformBuffer, _bindingPoint, Handle);
+            GameManager.Instance.Gl.BindBufferBase(
+                BufferTargetARB.UniformBuffer,
+                _bindingPoint,
+                Handle
+            );
         }
 
         public unsafe void BufferData<T>(ReadOnlySpan<T> data)
@@ -25,7 +29,12 @@ namespace Horizon.OpenGL
             Bind();
             fixed (void* d = data)
             {
-                GameManager.Instance.Gl.BufferData(BufferTargetARB.UniformBuffer, (nuint)(data.Length * sizeof(T)), d, BufferUsageARB.DynamicDraw);
+                GameManager.Instance.Gl.BufferData(
+                    BufferTargetARB.UniformBuffer,
+                    (nuint)(data.Length * sizeof(T)),
+                    d,
+                    BufferUsageARB.DynamicDraw
+                );
             }
             Unbind();
         }
@@ -34,7 +43,12 @@ namespace Horizon.OpenGL
             where T : unmanaged
         {
             Bind();
-            GameManager.Instance.Gl.BufferData(BufferTargetARB.UniformBuffer, (nuint)(sizeof(T)), data, BufferUsageARB.DynamicDraw);
+            GameManager.Instance.Gl.BufferData(
+                BufferTargetARB.UniformBuffer,
+                (nuint)(sizeof(T)),
+                data,
+                BufferUsageARB.DynamicDraw
+            );
 
             Unbind();
         }
@@ -43,7 +57,12 @@ namespace Horizon.OpenGL
             where T : unmanaged
         {
             Bind();
-            GameManager.Instance.Gl.BufferData(BufferTargetARB.UniformBuffer, (nuint)(sizeof(T) * data.Length), in data[0], BufferUsageARB.DynamicDraw);
+            GameManager.Instance.Gl.BufferData(
+                BufferTargetARB.UniformBuffer,
+                (nuint)(sizeof(T) * data.Length),
+                in data[0],
+                BufferUsageARB.DynamicDraw
+            );
 
             Unbind();
         }

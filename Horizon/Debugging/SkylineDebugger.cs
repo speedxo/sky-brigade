@@ -39,7 +39,8 @@ namespace Horizon.Debugging
         {
             RenderToConatiner = Enabled && GameContainerDebugger.Visible;
 
-            if (!Enabled) return;
+            if (!Enabled)
+                return;
 
             if (ImGui.BeginMainMenuBar())
             {
@@ -52,8 +53,16 @@ namespace Horizon.Debugging
                 }
                 if (ImGui.BeginMenu(DebuggerCatagoryNames.Graphics))
                 {
-                    ImGui.MenuItem(RenderOptionsDebugger.Name, "", ref RenderOptionsDebugger.Visible);
-                    ImGui.MenuItem(GameContainerDebugger.Name, "", ref GameContainerDebugger.Visible);
+                    ImGui.MenuItem(
+                        RenderOptionsDebugger.Name,
+                        "",
+                        ref RenderOptionsDebugger.Visible
+                    );
+                    ImGui.MenuItem(
+                        GameContainerDebugger.Name,
+                        "",
+                        ref GameContainerDebugger.Visible
+                    );
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu(DebuggerCatagoryNames.Metrics))
@@ -65,12 +74,20 @@ namespace Horizon.Debugging
                 if (ImGui.BeginMenu(DebuggerCatagoryNames.Scene))
                 {
                     ImGui.MenuItem(SceneEntityDebugger.Name, "", ref SceneEntityDebugger.Visible);
-                    ImGui.MenuItem("Debug Entire Instance", "", ref SceneEntityDebugger.DebugInstance);
+                    ImGui.MenuItem(
+                        "Debug Entire Instance",
+                        "",
+                        ref SceneEntityDebugger.DebugInstance
+                    );
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu(DebuggerCatagoryNames.Content))
                 {
-                    ImGui.MenuItem(LoadedContentDebugger.Name, "", ref LoadedContentDebugger.Visible);
+                    ImGui.MenuItem(
+                        LoadedContentDebugger.Name,
+                        "",
+                        ref LoadedContentDebugger.Visible
+                    );
                     ImGui.EndMenu();
                 }
 

@@ -12,7 +12,9 @@ namespace Horizon.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; set; } = "PID Controller Test";
 
-        private Plane axisLine, marker, autoMarker;
+        private Plane axisLine,
+            marker,
+            autoMarker;
         private bool targetMouse = false;
 
         public PIDTest()
@@ -43,18 +45,9 @@ namespace Horizon.Tests.Tests
                 Camera = RenderOptions.Default.Camera
             };
 
-            axisLine.Draw(dt, options with
-            {
-                Color = Vector4.One
-            });
-            autoMarker.Draw(dt, options with
-            {
-                Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f)
-            });
-            marker.Draw(dt, options with
-            {
-                Color = new Vector4(0.0f, 1.0f, 0.0f, 0.0f)
-            });
+            axisLine.Draw(dt, options with { Color = Vector4.One });
+            autoMarker.Draw(dt, options with { Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f) });
+            marker.Draw(dt, options with { Color = new Vector4(0.0f, 1.0f, 0.0f, 0.0f) });
         }
 
         public void RenderGui()
@@ -74,24 +67,37 @@ namespace Horizon.Tests.Tests
         }
 
         private PIDController controller = new PIDController(0.5f, 0.1f, 0.001f);
-        private float timer = 0.0f, speed = 2.0f;
+        private float timer = 0.0f,
+            speed = 2.0f;
 
         public void Update(float dt)
         {
             timer += dt;
 
-            float mousePos = (GameManager.Instance.Input.Mice[0].Position.X - GameManager.Instance.Window.Position.X - GameManager.Instance.Window.Size.X / 2.0f) / (100.0f);
+            float mousePos =
+                (
+                    GameManager.Instance.Input.Mice[0].Position.X
+                    - GameManager.Instance.Window.Position.X
+                    - GameManager.Instance.Window.Size.X / 2.0f
+                ) / (100.0f);
             float autoMarkerPos = targetMouse ? mousePos : MathF.Sin(timer * speed) * 5;
 
-            autoMarker.Position = new Vector3(autoMarkerPos, autoMarker.Position.Y, autoMarker.Position.Z);
+            autoMarker.Position = new Vector3(
+                autoMarkerPos,
+                autoMarker.Position.Y,
+                autoMarker.Position.Z
+            );
 
             setMarkerPos(controller.Update(autoMarkerPos - marker.Position.X, dt));
         }
 
-        private void setMarkerPos(float value) => marker.Position = new Vector3(marker.Position.X + value, marker.Position.Y, marker.Position.Z);
+        private void setMarkerPos(float value) =>
+            marker.Position = new Vector3(
+                marker.Position.X + value,
+                marker.Position.Y,
+                marker.Position.Z
+            );
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 }

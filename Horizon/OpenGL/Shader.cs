@@ -10,7 +10,10 @@ public class Shader : IDisposable
     //Most of the time you would want to abstract items to make things like this invisible.
     public uint Handle { get; private init; }
 
-    public static Shader Default { get => GameManager.Instance.ContentManager.GetShader("default"); }
+    public static Shader Default
+    {
+        get => GameManager.Instance.ContentManager.GetShader("default");
+    }
 
     private Dictionary<string, int> uniformIndexes;
     private Dictionary<string, uint> uniformBlockIndexes;
@@ -28,7 +31,10 @@ public class Shader : IDisposable
             throw new InvalidOperationException("Shader program is not created.");
 
         if (!uniformBlockIndexes.ContainsKey(blockName))
-            uniformBlockIndexes.Add(blockName, GameManager.Instance.Gl.GetUniformBlockIndex(Handle, blockName));
+            uniformBlockIndexes.Add(
+                blockName,
+                GameManager.Instance.Gl.GetUniformBlockIndex(Handle, blockName)
+            );
 
         return uniformBlockIndexes[blockName];
     }
@@ -71,11 +77,22 @@ public class Shader : IDisposable
                 break;
 
             case Vector3 vector3Value:
-                GameManager.Instance.Gl.Uniform3(location, vector3Value.X, vector3Value.Y, vector3Value.Z);
+                GameManager.Instance.Gl.Uniform3(
+                    location,
+                    vector3Value.X,
+                    vector3Value.Y,
+                    vector3Value.Z
+                );
                 break;
 
             case Vector4 vector4Value:
-                GameManager.Instance.Gl.Uniform4(location, vector4Value.X, vector4Value.Y, vector4Value.Z, vector4Value.W);
+                GameManager.Instance.Gl.Uniform4(
+                    location,
+                    vector4Value.X,
+                    vector4Value.Y,
+                    vector4Value.Z,
+                    vector4Value.W
+                );
                 break;
 
             case Matrix4x4 matrixValue:
@@ -87,7 +104,10 @@ public class Shader : IDisposable
                 break;
 
             default:
-                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to upload uniform of unsupported data type {value!.GetType()}.");
+                GameManager.Instance.Logger.Log(
+                    LogLevel.Error,
+                    $"Attempt to upload uniform of unsupported data type {value!.GetType()}."
+                );
                 return;
         }
     }
@@ -115,7 +135,10 @@ public class Shader : IDisposable
         if (!string.IsNullOrWhiteSpace(infoLog))
         {
             // LogLevel of fatal throws an exception
-            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Error compiling shader of type {type}, failed with error {infoLog}");
+            GameManager.Instance.Logger.Log(
+                LogLevel.Fatal,
+                $"Error compiling shader of type {type}, failed with error {infoLog}"
+            );
         }
         return handle;
     }
@@ -129,7 +152,10 @@ public class Shader : IDisposable
         if (!string.IsNullOrWhiteSpace(infoLog))
         {
             // LogLevel of fatal throws an exception
-            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Error compiling shader of type {type}, failed with error {infoLog}");
+            GameManager.Instance.Logger.Log(
+                LogLevel.Fatal,
+                $"Error compiling shader of type {type}, failed with error {infoLog}"
+            );
         }
         return handle;
     }
@@ -151,7 +177,10 @@ public class Shader : IDisposable
         //Check for linking errors.
         GameManager.Instance.Gl.GetProgram(handle, GLEnum.LinkStatus, out var status);
         if (status == 0)
-            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Program failed to link with error: {GameManager.Instance.Gl.GetProgramInfoLog(handle)}");
+            GameManager.Instance.Logger.Log(
+                LogLevel.Fatal,
+                $"Program failed to link with error: {GameManager.Instance.Gl.GetProgramInfoLog(handle)}"
+            );
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{handle}] created!");
 
         //Detach and delete the shaders
@@ -163,14 +192,20 @@ public class Shader : IDisposable
         return new Shader(handle);
     }
 
-    public static Shader CompileShader(string vertexPath, string fragmentPath, string geometryPath = "")
+    public static Shader CompileShader(
+        string vertexPath,
+        string fragmentPath,
+        string geometryPath = ""
+    )
     {
         bool generateGeometry = !string.IsNullOrEmpty(geometryPath);
 
         //Load the individual shaders.
         uint vertex = LoadShader(ShaderType.VertexShader, vertexPath);
         uint fragment = LoadShader(ShaderType.FragmentShader, fragmentPath);
-        uint? geometry = generateGeometry ? LoadShader(ShaderType.GeometryShader, geometryPath) : null;
+        uint? geometry = generateGeometry
+            ? LoadShader(ShaderType.GeometryShader, geometryPath)
+            : null;
 
         //Create the shader program.
         var handle = GameManager.Instance.Gl.CreateProgram();
@@ -185,7 +220,10 @@ public class Shader : IDisposable
         //Check for linking errors.
         GameManager.Instance.Gl.GetProgram(handle, GLEnum.LinkStatus, out var status);
         if (status == 0)
-            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"Program failed to link with error: {GameManager.Instance.Gl.GetProgramInfoLog(handle)}");
+            GameManager.Instance.Logger.Log(
+                LogLevel.Fatal,
+                $"Program failed to link with error: {GameManager.Instance.Gl.GetProgramInfoLog(handle)}"
+            );
         GameManager.Instance.Logger.Log(LogLevel.Debug, $"Shader[{handle}] created!");
 
         //Detach and delete the shaders

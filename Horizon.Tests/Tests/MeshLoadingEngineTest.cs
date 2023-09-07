@@ -12,11 +12,12 @@ namespace Horizon.Tests.Tests
         private GameObject lightMesh;
 
         // lights
-        private readonly Vector3[] lightPositions = new[] {
-            new Vector3(-10.0f,  10.0f, 10.0f),
-            new Vector3( 10.0f,  10.0f, 10.0f),
+        private readonly Vector3[] lightPositions = new[]
+        {
+            new Vector3(-10.0f, 10.0f, 10.0f),
+            new Vector3(10.0f, 10.0f, 10.0f),
             new Vector3(-10.0f, -10.0f, 10.0f),
-            new Vector3( 10.0f, -10.0f, 10.0f)
+            new Vector3(10.0f, -10.0f, 10.0f)
         };
 
         private List<GameObject> objects;
@@ -36,7 +37,8 @@ namespace Horizon.Tests.Tests
 
         public MeshLoadingEngineTest()
         {
-            if (Loaded) return;
+            if (Loaded)
+                return;
 
             // make some random vector3
             int intensity = 1000;
@@ -46,7 +48,8 @@ namespace Horizon.Tests.Tests
                 lightColors[i] = new Vector3(intensity);
             }
 
-            var materials = new AdvancedMaterial[] {
+            var materials = new AdvancedMaterial[]
+            {
                 AdvancedMaterial.LoadFromZip("Assets/pbr_textures/metal_ball.material"),
                 AdvancedMaterial.LoadFromZip("Assets/pbr_textures/bricks_mortar.material"),
                 AdvancedMaterial.LoadFromZip("Assets/pbr_textures/black_tiles.material"),
@@ -56,7 +59,12 @@ namespace Horizon.Tests.Tests
             objects = new List<GameObject>(materials.Length);
 
             for (int i = 0; i < materials.Length; i++)
-                objects.Add(new GameObject(material: materials[i], meshData: MeshGenerators.CreateSphere(1, 50)));
+                objects.Add(
+                    new GameObject(
+                        material: materials[i],
+                        meshData: MeshGenerators.CreateSphere(1, 50)
+                    )
+                );
 
             lightMesh = new GameObject(meshData: MeshGenerators.CreateSphere());
 
@@ -80,13 +88,18 @@ namespace Horizon.Tests.Tests
             // Get the render options
             var options = renderOptions ?? RenderOptions.Default;
 
-            objects.Sort((o1, o2) =>
-            {
-                // TODO: expensive square root operation.
-                // EDIT: nevermind there is a DistanceSquared method for that
-                if (Vector3.DistanceSquared(options.Camera.Position, o1.Position) < Vector3.DistanceSquared(options.Camera.Position, o2.Position)) return 1;
-                return 0;
-            });
+            objects.Sort(
+                (o1, o2) =>
+                {
+                    // figures a sqrt op takes a couple thou cycles
+                    if (
+                        Vector3.DistanceSquared(options.Camera.Position, o1.Position)
+                        < Vector3.DistanceSquared(options.Camera.Position, o2.Position)
+                    )
+                        return 1;
+                    return 0;
+                }
+            );
 
             foreach (var item in objects)
             {
@@ -94,7 +107,13 @@ namespace Horizon.Tests.Tests
 
                 for (int v = 0; v < lightColors.Length; v++)
                 {
-                    var newPos = lightPositions[v] + new Vector3(MathF.Sin(totalTime * 2.0f) * 100, 0.0f, MathF.Cos(totalTime * 2.0f) * 100);
+                    var newPos =
+                        lightPositions[v]
+                        + new Vector3(
+                            MathF.Sin(totalTime * 2.0f) * 100,
+                            0.0f,
+                            MathF.Cos(totalTime * 2.0f) * 100
+                        );
 
                     item.MeshRenderer.SetUniform("lightPositions[" + v + "]", newPos);
                     item.MeshRenderer.SetUniform("lightColors[" + v + "]", lightColors[v]);
@@ -115,11 +134,28 @@ namespace Horizon.Tests.Tests
             if (ImGui.Button("Reset Lights"))
             {
                 float multiplier = 1000;
-                lightColors = new[] {
-                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier),
-                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier),
-                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier),
-                    new Vector3(rand.NextSingle() * multiplier, rand.NextSingle() * multiplier, rand.NextSingle() * multiplier)
+                lightColors = new[]
+                {
+                    new Vector3(
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier
+                    ),
+                    new Vector3(
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier
+                    ),
+                    new Vector3(
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier
+                    ),
+                    new Vector3(
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier,
+                        rand.NextSingle() * multiplier
+                    )
                 };
             }
         }

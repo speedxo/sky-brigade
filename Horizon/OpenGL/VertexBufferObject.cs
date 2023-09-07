@@ -2,7 +2,8 @@
 
 namespace Horizon.OpenGL;
 
-public class VertexBufferObject<T> : IDisposable where T : unmanaged
+public class VertexBufferObject<T> : IDisposable
+    where T : unmanaged
 {
     /* In OpenGL, buffers can store a wide variety of data
      * and all buffers require us to specify the data type
@@ -15,8 +16,14 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
     private BufferObject<uint> ebo;
     private VertexArrayObject<T, uint> vao;
 
-    public BufferObject<T> VertexBuffer { get => vbo; }
-    public BufferObject<uint> ElementBuffer { get => ebo; }
+    public BufferObject<T> VertexBuffer
+    {
+        get => vbo;
+    }
+    public BufferObject<uint> ElementBuffer
+    {
+        get => ebo;
+    }
 
     public VertexBufferObject()
     {
@@ -39,7 +46,13 @@ public class VertexBufferObject<T> : IDisposable where T : unmanaged
     /* Forwarding this method.
      */
 
-    public unsafe void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint vertexSize, int offSet)
+    public unsafe void VertexAttributePointer(
+        uint index,
+        int count,
+        VertexAttribPointerType type,
+        uint vertexSize,
+        int offSet
+    )
     {
         vao.VertexAttributePointer(index, count, type, vertexSize, offSet);
     }

@@ -37,9 +37,10 @@ namespace Horizon.GameEntity.Components
             Quaternion rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, radiansZ);
 
             // Create the model matrix
-            ModelMatrix = Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f) *
-                          Matrix4x4.CreateFromQuaternion(rotation) *
-                          Matrix4x4.CreateTranslation(pos.X, pos.Y, 0.0f);
+            ModelMatrix =
+                Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f)
+                * Matrix4x4.CreateFromQuaternion(rotation)
+                * Matrix4x4.CreateTranslation(pos.X, pos.Y, 0.0f);
         }
 
         /// <summary>
@@ -53,7 +54,11 @@ namespace Horizon.GameEntity.Components
         public Vector2 Position
         {
             get => pos;
-            set { pos = value; updateModelMatrix(); }
+            set
+            {
+                pos = value;
+                updateModelMatrix();
+            }
         }
 
         /// <summary>
@@ -62,7 +67,11 @@ namespace Horizon.GameEntity.Components
         public float Rotation
         {
             get => rot;
-            set { rot = value; updateModelMatrix(); }
+            set
+            {
+                rot = value;
+                updateModelMatrix();
+            }
         }
 
         /// <summary>
@@ -71,7 +80,11 @@ namespace Horizon.GameEntity.Components
         public Vector2 Scale
         {
             get => scale;
-            set { scale = value; updateModelMatrix(); }
+            set
+            {
+                scale = value;
+                updateModelMatrix();
+            }
         }
 
         /// <summary>
@@ -91,19 +104,13 @@ namespace Horizon.GameEntity.Components
         /// Updates the transform component based on the elapsed time (dt).
         /// </summary>
         /// <param name="dt">The elapsed time since the last update call.</param>
-        public void Update(float dt)
-        {
-            // TODO: Implement update logic, if needed.
-        }
+        public void Update(float dt) { }
 
         /// <summary>
         /// Draws the game entity with the current transformation.
         /// </summary>
         /// <param name="dt">The elapsed time since the last draw call.</param>
         /// <param name="options">Optional render options.</param>
-        public void Draw(float dt, RenderOptions? options = null)
-        {
-            // TODO: Implement draw logic, if needed.
-        }
+        public void Draw(float dt, RenderOptions? options = null) { }
     }
 }

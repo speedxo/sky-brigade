@@ -18,7 +18,7 @@ namespace Horizon.Debugging.Debuggers
 
         public abstract void Draw(float dt, RenderOptions? options = null);
 
-        protected void Log(LogLevel level, string msg)
-            => GameManager.Instance.Logger.Log(level, $"({Name}) {msg}");
+        protected void Log(LogLevel level, string msg) =>
+            GameManager.Instance.Logger.Log(level, $"({Name}) {msg}");
     }
 }

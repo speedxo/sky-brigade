@@ -2,8 +2,11 @@
 {
     internal class PIDController
     {
-        public float kP, kI, kD;
-        public float integral, previousError;
+        public float kP,
+            kI,
+            kD;
+        public float integral,
+            previousError;
 
         public float Min;
         public float Max;
@@ -20,8 +23,14 @@
 
         private float Clamp(float variableToClamp)
         {
-            if (variableToClamp <= Min) { return Min; }
-            if (variableToClamp >= Max) { return Max; }
+            if (variableToClamp <= Min)
+            {
+                return Min;
+            }
+            if (variableToClamp >= Max)
+            {
+                return Max;
+            }
             return variableToClamp;
         }
 

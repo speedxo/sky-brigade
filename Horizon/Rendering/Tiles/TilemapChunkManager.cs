@@ -19,7 +19,8 @@ public abstract partial class Tiling<TTextureID>
         {
             get
             {
-                if (index < 0 || index > Chunks.Length - 1) return null;
+                if (index < 0 || index > Chunks.Length - 1)
+                    return null;
 
                 return Chunks[index];
             }
@@ -30,7 +31,8 @@ public abstract partial class Tiling<TTextureID>
             {
                 int index = x + y * Map.Width;
 
-                if (index < 0 || index > Chunks.Length - 1) return null;
+                if (index < 0 || index > Chunks.Length - 1)
+                    return null;
 
                 return Chunks[index];
             }

@@ -13,7 +13,11 @@ namespace Horizon.Tests.Tests
         public bool Loaded { get; set; }
         public string Name { get; set; } = "Ping Pong Test";
 
-        private Plane playerPaddle, botPaddle, ball, topBar, bottomBar;
+        private Plane playerPaddle,
+            botPaddle,
+            ball,
+            topBar,
+            bottomBar;
         private Camera gameCamera;
         private Vector2 direction;
         private float speed = 5.0f;
@@ -21,7 +25,8 @@ namespace Horizon.Tests.Tests
 
         public PingPongGameTest()
         {
-            if (Loaded) return;
+            if (Loaded)
+                return;
 
             playerPaddle = new Plane()
             {
@@ -29,11 +34,7 @@ namespace Horizon.Tests.Tests
                 Position = new Vector3(-5, 0, 0)
             };
 
-            topBar = new Plane()
-            {
-                Size = new Vector2(10, 0.1f),
-                Position = new Vector3(0, -4, 0)
-            };
+            topBar = new Plane() { Size = new Vector2(10, 0.1f), Position = new Vector3(0, -4, 0) };
             bottomBar = new Plane()
             {
                 Size = new Vector2(10, 0.1f),
@@ -46,10 +47,7 @@ namespace Horizon.Tests.Tests
                 Position = new Vector3(5, 0, 0)
             };
 
-            ball = new Plane()
-            {
-                Size = new Vector2(0.1f, 0.1f)
-            };
+            ball = new Plane() { Size = new Vector2(0.1f, 0.1f) };
             gameCamera = new Camera() { Position = new Vector3(0, 0, 10), Locked = true };
 
             direction = new Vector2(-1);
@@ -86,10 +84,18 @@ namespace Horizon.Tests.Tests
                     playerPaddle.Position += new System.Numerics.Vector3(0, -1, 0) * dt * 10;
 
                 if (playerPaddle.Position.Y >= 3.5f)
-                    playerPaddle.Position = new Vector3(playerPaddle.Position.X, 3.5f, playerPaddle.Position.Z);
+                    playerPaddle.Position = new Vector3(
+                        playerPaddle.Position.X,
+                        3.5f,
+                        playerPaddle.Position.Z
+                    );
 
                 if (playerPaddle.Position.Y <= -3.5f)
-                    playerPaddle.Position = new Vector3(playerPaddle.Position.X, -3.5f, playerPaddle.Position.Z);
+                    playerPaddle.Position = new Vector3(
+                        playerPaddle.Position.X,
+                        -3.5f,
+                        playerPaddle.Position.Z
+                    );
             }
 
             ball.Position += new Vector3(direction * dt * speed, 0);
@@ -101,7 +107,8 @@ namespace Horizon.Tests.Tests
             if (ball.CheckIntersection(bottomBar))
                 direction.Y = -1;
 
-            if (MathF.Abs(ball.Position.X) > 6) ball.Position = new Vector3(0);
+            if (MathF.Abs(ball.Position.X) > 6)
+                ball.Position = new Vector3(0);
 
             if (ball.CheckIntersection(playerPaddle))
                 direction.X = 1f;
@@ -116,8 +123,17 @@ namespace Horizon.Tests.Tests
         {
             var error = ball.Position.Y - botPaddle.Position.Y;
             var output = controller.Update(error, dt);
-            botPaddle.Position = new Vector3(botPaddle.Position.X, botPaddle.Position.Y + output, botPaddle.Position.Z);
-            if (isAutomatic) playerPaddle.Position = new Vector3(playerPaddle.Position.X, botPaddle.Position.Y, playerPaddle.Position.Z);
+            botPaddle.Position = new Vector3(
+                botPaddle.Position.X,
+                botPaddle.Position.Y + output,
+                botPaddle.Position.Z
+            );
+            if (isAutomatic)
+                playerPaddle.Position = new Vector3(
+                    playerPaddle.Position.X,
+                    botPaddle.Position.Y,
+                    playerPaddle.Position.Z
+                );
         }
 
         public void RenderGui()
@@ -131,8 +147,6 @@ namespace Horizon.Tests.Tests
             ImGui.Text($"Delta Error: {ball.Position.Y - botPaddle.Position.Y}");
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 }

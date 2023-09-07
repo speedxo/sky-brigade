@@ -16,7 +16,11 @@ public class BodyRenderer : Entity
     {
         this.universe = universe;
 
-        AddEntity(bodyRendererTechnique = new Technique(Shader.CompileShader("shaders/bodies.vert", "shaders/bodies.frag")));
+        AddEntity(
+            bodyRendererTechnique = new Technique(
+                Shader.CompileShader("shaders/bodies.vert", "shaders/bodies.frag")
+            )
+        );
         AddEntity(new RenderTarget(bodyRendererTechnique));
         bodyRendererTechnique.BufferManager.AddUniformBuffer("BodyBuffer");
     }
@@ -44,7 +48,9 @@ public class BodyRenderer : Entity
         universe.Lock.EnterReadLock();
         try
         {
-            bodyRendererTechnique.BufferManager.GetBuffer("BodyBuffer").BufferSingleData((universe.RenderBodies));
+            bodyRendererTechnique.BufferManager
+                .GetBuffer("BodyBuffer")
+                .BufferSingleData((universe.RenderBodies));
         }
         finally
         {

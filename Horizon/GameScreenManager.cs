@@ -15,7 +15,10 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     /// <summary>
     /// The total number of components.
     /// </summary>
-    public int TotalComponents { get => Components.Count + Instances.Values.Sum(e => e.TotalComponents); }
+    public int TotalComponents
+    {
+        get => Components.Count + Instances.Values.Sum(e => e.TotalComponents);
+    }
 
     /// <summary>
     /// Gets or sets this entities enable flag.
@@ -25,7 +28,10 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     /// <summary>
     /// The total sum of entities including their children.
     /// </summary>
-    public int TotalEntities { get => Entities.Count + Instances.Values.Sum(e => e.TotalEntities); }
+    public int TotalEntities
+    {
+        get => Entities.Count + Instances.Values.Sum(e => e.TotalEntities);
+    }
 
     public IEntity? Parent { get; set; }
     public List<IEntity> Entities { get; set; } = new List<IEntity>();
@@ -34,17 +40,20 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     public int ID { get; set; }
     public string Name { get; set; } = "Scene Manager";
 
-    public T AddComponent<T>(T component) where T : IGameComponent
+    public T AddComponent<T>(T component)
+        where T : IGameComponent
     {
         throw new NotImplementedException();
     }
 
-    public T AddComponent<T>() where T : IGameComponent, new()
+    public T AddComponent<T>()
+        where T : IGameComponent, new()
     {
         throw new NotImplementedException();
     }
 
-    public T AddEntity<T>() where T : IEntity, new()
+    public T AddEntity<T>()
+        where T : IEntity, new()
     {
         throw new NotImplementedException();
     }
@@ -64,16 +73,19 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
     /// <param name="renderOptions">Render Options</param>
     public void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
         GetCurrentInstance().Draw(dt, renderOptions);
     }
 
-    public T? GetComponent<T>() where T : IGameComponent
+    public T? GetComponent<T>()
+        where T : IGameComponent
     {
         return default;
     }
 
-    public bool HasComponent<T>() where T : IGameComponent
+    public bool HasComponent<T>()
+        where T : IGameComponent
     {
         return default;
     }
@@ -83,17 +95,15 @@ public class GameScreenManager : InstanceManager<Scene>, IEntity, IDisposable
         return default;
     }
 
-    public void Initialize()
-    {
-    }
+    public void Initialize() { }
 
-    public void RemoveComponent<T>() where T : IGameComponent
-    {
-    }
+    public void RemoveComponent<T>()
+        where T : IGameComponent { }
 
     public void Update(float dt)
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
         GetCurrentInstance().Update(dt);
     }
 }

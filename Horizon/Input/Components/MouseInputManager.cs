@@ -21,7 +21,8 @@ namespace Horizon.Input.Components
         /// <summary>
         /// Gets the first connected mouse, or null if none is connected.
         /// </summary>
-        public static IMouse? Mouse => GameManager.Instance.Input.Mice.Count > 0 ? GameManager.Instance.Input.Mice[0] : null;
+        public static IMouse? Mouse =>
+            GameManager.Instance.Input.Mice.Count > 0 ? GameManager.Instance.Input.Mice[0] : null;
 
         /// <summary>
         /// Gets the MouseBindings representing the button-to-action mappings for the mouse.
@@ -29,7 +30,8 @@ namespace Horizon.Input.Components
         public MouseBindings Bindings { get; private set; }
 
         private VirtualAction actions;
-        private Vector2 direction, previousPosition;
+        private Vector2 direction,
+            previousPosition;
 
         /// <summary>
         /// Initializes the MouseInputManager by setting the default MouseBindings.
@@ -45,11 +47,7 @@ namespace Horizon.Input.Components
         /// <returns>The MouseData containing the mouse input.</returns>
         public MouseData GetData()
         {
-            return new MouseData
-            {
-                Actions = actions,
-                LookingAxis = direction
-            };
+            return new MouseData { Actions = actions, LookingAxis = direction };
         }
 
         /// <summary>

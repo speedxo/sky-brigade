@@ -25,39 +25,52 @@ public class SpritesheetAnimationManager : IGameComponent
 
     public (SpriteDefinition definition, int index) GetFrame(string name)
     {
-        if (!Animations.ContainsKey(name))
+        if (!Animations.TryGetValue(name, out SpriteAnimationDefinition value))
         {
-            GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to get animation '{name}' which doesn't exist!");
+            GameManager.Instance.Logger.Log(
+                Logging.LogLevel.Error,
+                $"Attempt to get animation '{name}' which doesn't exist!"
+            );
             return default;
         }
 
-        return (Animations[name].FirstFrame, Animations[name].Index);
+        return (value.FirstFrame, value.Index);
     }
 
-    public void AddAnimation(string name, Vector2 position, int length, float frameTime = 0.1f, Vector2? inSize = null)
+    public void AddAnimation(
+        string name,
+        Vector2 position,
+        int length,
+        float frameTime = 0.1f,
+        Vector2? inSize = null
+    )
     {
         if (Animations.ContainsKey(name))
         {
-            GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to add animation '{name}' which already exists!");
+            GameManager.Instance.Logger.Log(
+                Logging.LogLevel.Error,
+                $"Attempt to add animation '{name}' which already exists!"
+            );
             return;
         }
 
-        this.Animations.Add(name, new SpriteAnimationDefinition()
-        {
-            Index = 0,
-            Length = length,
-            FirstFrame = new SpriteDefinition
+        this.Animations.Add(
+            name,
+            new SpriteAnimationDefinition()
             {
-                Position = position,
-                Size = inSize ?? Spritesheet.SpriteSize
-            },
-            FrameTime = frameTime
-        });
+                Index = 0,
+                Length = length,
+                FirstFrame = new SpriteDefinition
+                {
+                    Position = position,
+                    Size = inSize ?? Spritesheet.SpriteSize
+                },
+                FrameTime = frameTime,
+            }
+        );
     }
 
-    public void Draw(float dt, RenderOptions? options = null)
-    {
-    }
+    public void Draw(float dt, RenderOptions? options = null) { }
 
     public void Initialize()
     {

@@ -38,7 +38,8 @@ public abstract partial class Tiling<TTextureID>
         private readonly List<TileVertex> _vertices;
         private readonly List<uint> _indices;
         private uint _vertexCounter;
-        private bool _uploadData, _isUpdatingMesh;
+        private bool _uploadData,
+            _isUpdatingMesh;
 
         public TileMesh(ShaderComponent shader, TileSet set, TileMap map)
         {
@@ -48,9 +49,27 @@ public abstract partial class Tiling<TTextureID>
 
             Vbo = new();
 
-            Vbo.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, (uint)TileVertex.SizeInBytes, 0);
-            Vbo.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)TileVertex.SizeInBytes, 2 * sizeof(float));
-            Vbo.VertexAttributePointer(2, 3, VertexAttribPointerType.Float, (uint)TileVertex.SizeInBytes, 4 * sizeof(float));
+            Vbo.VertexAttributePointer(
+                0,
+                2,
+                VertexAttribPointerType.Float,
+                (uint)TileVertex.SizeInBytes,
+                0
+            );
+            Vbo.VertexAttributePointer(
+                1,
+                2,
+                VertexAttribPointerType.Float,
+                (uint)TileVertex.SizeInBytes,
+                2 * sizeof(float)
+            );
+            Vbo.VertexAttributePointer(
+                2,
+                3,
+                VertexAttribPointerType.Float,
+                (uint)TileVertex.SizeInBytes,
+                4 * sizeof(float)
+            );
 
             _indices = new();
             _vertices = new();
@@ -70,27 +89,36 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="tiles"></param>
         public void GenerateMeshFromTiles(ReadOnlySpan<Tile> tiles)
         {
-            if (_isUpdatingMesh) return;
+            if (_isUpdatingMesh)
+                return;
 
             _isUpdatingMesh = true;
 
             for (int i = 0; i < tiles.Length; i++)
             {
-                if (!tiles[i].RenderingData.IsVisible) continue;
+                if (!tiles[i].RenderingData.IsVisible)
+                    continue;
                 AddTile(tiles[i]);
             }
 
             _uploadData = true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(
+            MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization
+        )]
         private void AddTile(in Tile tile)
         {
             static uint[] getElements(uint _offset)
             {
-                return new uint[] {
-                    _offset, _offset + 1, _offset + 2,
-                    _offset, _offset + 2, _offset + 3
+                return new uint[]
+                {
+                    _offset,
+                    _offset + 1,
+                    _offset + 2,
+                    _offset,
+                    _offset + 2,
+                    _offset + 3
                 };
             }
 
@@ -99,7 +127,9 @@ public abstract partial class Tiling<TTextureID>
             _vertexCounter += 4;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(
+            MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization
+        )]
         private static TileVertex[] GetVertices(in Tile tile)
         {
             Vector2[] uv;
@@ -108,12 +138,37 @@ public abstract partial class Tiling<TTextureID>
                 uv = sTile.Set.GetTextureCoordinatesFromTiledMapId(sTile.ID);
             else
                 uv = tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID);
-            
-            return new[] {
-                new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[0].X, uv[0].Y, tile.RenderingData.Color),
-                new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[1].X, uv[1].Y, tile.RenderingData.Color),
-                new TileVertex(Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[2].X, uv[2].Y, tile.RenderingData.Color),
-                new TileVertex(-Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH, -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT, uv[3].X, uv[3].Y, tile.RenderingData.Color)
+
+            return new[]
+            {
+                new TileVertex(
+                    -Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
+                    Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
+                    uv[0].X,
+                    uv[0].Y,
+                    tile.RenderingData.Color
+                ),
+                new TileVertex(
+                    Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
+                    Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
+                    uv[1].X,
+                    uv[1].Y,
+                    tile.RenderingData.Color
+                ),
+                new TileVertex(
+                    Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
+                    -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
+                    uv[2].X,
+                    uv[2].Y,
+                    tile.RenderingData.Color
+                ),
+                new TileVertex(
+                    -Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
+                    -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
+                    uv[3].X,
+                    uv[3].Y,
+                    tile.RenderingData.Color
+                )
             };
         }
 
@@ -157,7 +212,12 @@ public abstract partial class Tiling<TTextureID>
 
             unsafe // i dont wanna make the whole methud unsafe just for this
             {
-                GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+                GameManager.Instance.Gl.DrawElements(
+                    PrimitiveType.Triangles,
+                    ElementCount,
+                    DrawElementsType.UnsignedInt,
+                    null
+                );
             }
 
             if (options.IsWireframeEnabled)

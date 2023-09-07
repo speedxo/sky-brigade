@@ -26,7 +26,12 @@ public class BufferObject<T> : IDisposable
         Bind();
         fixed (void* d = data)
         {
-            GameManager.Instance.Gl.BufferData(_bufferType, (nuint)(data.Length * sizeof(T)), d, BufferUsageARB.StaticDraw);
+            GameManager.Instance.Gl.BufferData(
+                _bufferType,
+                (nuint)(data.Length * sizeof(T)),
+                d,
+                BufferUsageARB.StaticDraw
+            );
         }
         GameManager.Instance.Gl.BindBuffer(_bufferType, 0);
     }

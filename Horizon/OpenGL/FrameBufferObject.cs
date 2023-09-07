@@ -17,23 +17,32 @@ public class FrameBufferObject : IDisposable
     private Vector2 _newSize;
 
     [Pure]
-    protected static (InternalFormat internalFormat, PixelFormat pixelFormat) GetCorespondingAttachmentFormats(FramebufferAttachment attachment)
+    protected static (
+        InternalFormat internalFormat,
+        PixelFormat pixelFormat
+    ) GetCorespondingAttachmentFormats(FramebufferAttachment attachment)
     {
         return attachment switch
         {
-            FramebufferAttachment.DepthStencilAttachment => (InternalFormat.DepthStencil, PixelFormat.DepthStencil),
-            FramebufferAttachment.DepthAttachment => (InternalFormat.DepthComponent, PixelFormat.DepthComponent),
+            FramebufferAttachment.DepthStencilAttachment
+                => (InternalFormat.DepthStencil, PixelFormat.DepthStencil),
+            FramebufferAttachment.DepthAttachment
+                => (InternalFormat.DepthComponent, PixelFormat.DepthComponent),
             _ => (InternalFormat.Rgba, PixelFormat.Rgba)
         };
     }
 
     public void AddAttachment(FramebufferAttachment attachment)
     {
-        if (Attachments.ContainsKey(attachment)) return;
+        if (Attachments.ContainsKey(attachment))
+            return;
 
         var (internalFormat, pixelFormat) = GetCorespondingAttachmentFormats(attachment);
 
-        Attachments.Add(attachment, GenerateTexture(Width, Height, internalFormat, pixelFormat: pixelFormat));
+        Attachments.Add(
+            attachment,
+            GenerateTexture(Width, Height, internalFormat, pixelFormat: pixelFormat)
+        );
     }
 
     public void Resize(int newWidth, int newHeight)
@@ -61,17 +70,28 @@ public class FrameBufferObject : IDisposable
 
         foreach (var (attachment, texture) in Attachments)
         {
-            GameManager.Instance.Gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, TextureTarget.Texture2D, texture, 0);
+            GameManager.Instance.Gl.FramebufferTexture2D(
+                FramebufferTarget.Framebuffer,
+                attachment,
+                TextureTarget.Texture2D,
+                texture,
+                0
+            );
             GameManager.Instance.Gl.DrawBuffer((DrawBufferMode)attachment);
         }
         // Check if the framebuffer is complete
-        if (GameManager.Instance.Gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != GLEnum.FramebufferComplete)
+        if (
+            GameManager.Instance.Gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
+            != GLEnum.FramebufferComplete
+        )
         {
-            GameManager.Instance.Logger.Log(Logging.LogLevel.Error, "Framebuffer is incomplete." + GameManager.Instance.Gl.GetError().ToString());
+            GameManager.Instance.Logger.Log(
+                Logging.LogLevel.Error,
+                "Framebuffer is incomplete." + GameManager.Instance.Gl.GetError().ToString()
+            );
             return false;
         }
 
-        // TODO: Use a custom exception.
         // Unbind the framebuffer
         GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         return true;
@@ -86,15 +106,39 @@ public class FrameBufferObject : IDisposable
     /// <param name="internalFormat">Internal format.</param>
     /// <param name="pixelType">Pixel type.</param>
     /// <param name="pixelFormat">Pixel format.</param>
-    private unsafe uint GenerateTexture(int w, int h, InternalFormat internalFormat = InternalFormat.Rgba, PixelType pixelType = PixelType.Float, PixelFormat pixelFormat = PixelFormat.Rgba)
+    private unsafe uint GenerateTexture(
+        int w,
+        int h,
+        InternalFormat internalFormat = InternalFormat.Rgba,
+        PixelType pixelType = PixelType.Float,
+        PixelFormat pixelFormat = PixelFormat.Rgba
+    )
     {
         uint texture = GameManager.Instance.Gl.GenTexture();
 
         GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, texture);
 
-        GameManager.Instance.Gl.TexImage2D(GLEnum.Texture2D, 0, (int)internalFormat, (uint)w, (uint)h, 0, pixelFormat, pixelType, null);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        GameManager.Instance.Gl.TexImage2D(
+            GLEnum.Texture2D,
+            0,
+            (int)internalFormat,
+            (uint)w,
+            (uint)h,
+            0,
+            pixelFormat,
+            pixelType,
+            null
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMinFilter,
+            (int)TextureMinFilter.Linear
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMagFilter,
+            (int)TextureMagFilter.Linear
+        );
 
         GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, 0);
 

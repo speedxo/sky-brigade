@@ -16,12 +16,15 @@ public class TestMenuGameScreen : Scene
 
     public TestMenuGameScreen()
     {
-        character = AddEntity(new Prefabs.Character.CharacterController()
-        {
-            Position = new System.Numerics.Vector3(0, 0, 5)
-        });
+        character = AddEntity(
+            new Prefabs.Character.CharacterController()
+            {
+                Position = new System.Numerics.Vector3(0, 0, 5)
+            }
+        );
 
-        tests = new List<IEngineTest>() {
+        tests = new List<IEngineTest>()
+        {
             new PlaneEngineTest(),
             new MeshLoadingEngineTest(),
             new PlanetGraphicsTest(),
@@ -35,12 +38,17 @@ public class TestMenuGameScreen : Scene
 
         GameManager.Instance.Debugger.Enabled = true;
 
-        GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture constructor call count: {Texture.count}");
+        GameManager.Instance.Logger.Log(
+            LogLevel.Info,
+            $"Texture constructor call count: {Texture.count}"
+        );
 
         InitializeRenderingPipeline();
     }
 
-    private DeltaTracker<float> memoryTracker = new DeltaTracker<float>((prev, current) => current - prev);
+    private DeltaTracker<float> memoryTracker = new DeltaTracker<float>(
+        (prev, current) => current - prev
+    );
     private bool showDebugWindow = true;
 
     public override void DrawGui(float dt)
@@ -60,12 +68,26 @@ public class TestMenuGameScreen : Scene
 
         if (showDebugWindow)
         {
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(ImGui.GetIO().DisplaySize.X - 350, 0), ImGuiCond.Always);
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(350, ImGui.GetIO().DisplaySize.Y), ImGuiCond.Always);
+            ImGui.SetNextWindowPos(
+                new System.Numerics.Vector2(ImGui.GetIO().DisplaySize.X - 350, 0),
+                ImGuiCond.Always
+            );
+            ImGui.SetNextWindowSize(
+                new System.Numerics.Vector2(350, ImGui.GetIO().DisplaySize.Y),
+                ImGuiCond.Always
+            );
 
-            if (ImGui.Begin("Sidebar", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove |
-                                    ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoSavedSettings |
-                                    ImGuiWindowFlags.MenuBar))
+            if (
+                ImGui.Begin(
+                    "Sidebar",
+                    ImGuiWindowFlags.NoTitleBar
+                        | ImGuiWindowFlags.NoResize
+                        | ImGuiWindowFlags.NoMove
+                        | ImGuiWindowFlags.NoCollapse
+                        | ImGuiWindowFlags.NoSavedSettings
+                        | ImGuiWindowFlags.MenuBar
+                )
+            )
             {
                 // Collapsible header for Debug Info window
                 if (ImGui.CollapsingHeader("Debug Info", ImGuiTreeNodeFlags.DefaultOpen))
@@ -86,9 +108,15 @@ public class TestMenuGameScreen : Scene
                 // Collapsible header for Memory Usage window
                 if (ImGui.CollapsingHeader("Memory Usage", ImGuiTreeNodeFlags.DefaultOpen))
                 {
-                    ImGui.Text($"Memory Consumption: {float.Round((GC.GetTotalMemory(false) / 1024.0f) / 1024, 2)}MB");
+                    ImGui.Text(
+                        $"Memory Consumption: {float.Round((GC.GetTotalMemory(false) / 1024.0f) / 1024, 2)}MB"
+                    );
                     ImGui.Text($"Memory Delta: {memoryTracker.GetAverage()}KB");
-                    ImGui.PlotLines("dKb/dt", ref memoryTracker.Buffer[0], memoryTracker.Buffer.Length);
+                    ImGui.PlotLines(
+                        "dKb/dt",
+                        ref memoryTracker.Buffer[0],
+                        memoryTracker.Buffer.Length
+                    );
                 }
 
                 // End the sidebar layout
@@ -112,10 +140,7 @@ public class TestMenuGameScreen : Scene
 
     public override void DrawOther(float dt, RenderOptions? renderOptions = null)
     {
-        var options = (renderOptions ?? RenderOptions.Default) with
-        {
-            Camera = character.Camera
-        };
+        var options = (renderOptions ?? RenderOptions.Default) with { Camera = character.Camera };
 
         tests[index].Render(dt, options);
     }

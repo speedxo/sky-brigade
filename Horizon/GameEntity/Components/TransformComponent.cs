@@ -44,9 +44,10 @@ namespace Horizon.GameEntity.Components
             Quaternion rotation = rotationX * rotationY * rotationZ;
 
             // Create the model matrix
-            ModelMatrix = Matrix4x4.CreateScale(scale) *
-                          Matrix4x4.CreateFromQuaternion(rotation) *
-                          Matrix4x4.CreateTranslation(pos);
+            ModelMatrix =
+                Matrix4x4.CreateScale(scale)
+                * Matrix4x4.CreateFromQuaternion(rotation)
+                * Matrix4x4.CreateTranslation(pos);
         }
 
         /// <summary>
@@ -60,7 +61,11 @@ namespace Horizon.GameEntity.Components
         public Vector3 Position
         {
             get => pos;
-            set { pos = value; updateModelMatrix(); }
+            set
+            {
+                pos = value;
+                updateModelMatrix();
+            }
         }
 
         /// <summary>
@@ -69,7 +74,11 @@ namespace Horizon.GameEntity.Components
         public Vector3 Rotation
         {
             get => rot;
-            set { rot = value; updateModelMatrix(); }
+            set
+            {
+                rot = value;
+                updateModelMatrix();
+            }
         }
 
         /// <summary>
@@ -78,13 +87,20 @@ namespace Horizon.GameEntity.Components
         public Vector3 Scale
         {
             get => scale;
-            set { scale = value; updateModelMatrix(); }
+            set
+            {
+                scale = value;
+                updateModelMatrix();
+            }
         }
 
         /// <summary>
         /// The front direction of the game entity calculated from its rotation.
         /// </summary>
-        public Vector3 Front { get => Vector3.Normalize(Rotation); }
+        public Vector3 Front
+        {
+            get => Vector3.Normalize(Rotation);
+        }
 
         /// <summary>
         /// The parent entity to which this transform component belongs.
@@ -103,19 +119,13 @@ namespace Horizon.GameEntity.Components
         /// Updates the transform component based on the elapsed time (dt).
         /// </summary>
         /// <param name="dt">The elapsed time since the last update call.</param>
-        public void Update(float dt)
-        {
-            // TODO: Implement update logic, if needed.
-        }
+        public void Update(float dt) { }
 
         /// <summary>
         /// Draws the game entity with the current transformation.
         /// </summary>
         /// <param name="dt">The elapsed time since the last draw call.</param>
         /// <param name="options">Optional render options.</param>
-        public void Draw(float dt, RenderOptions? options = null)
-        {
-            // TODO: Implement draw logic, if needed.
-        }
+        public void Draw(float dt, RenderOptions? options = null) { }
     }
 }

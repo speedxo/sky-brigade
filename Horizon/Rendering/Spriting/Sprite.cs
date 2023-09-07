@@ -22,7 +22,11 @@ public class Sprite : Entity
 
     public TransformComponent2D Transform { get; private set; }
 
-    public void Setup(Spritesheet spriteSheet, string name, TransformComponent2D? inTransform = null)
+    public void Setup(
+        Spritesheet spriteSheet,
+        string name,
+        TransformComponent2D? inTransform = null
+    )
     {
         this.Spritesheet = AddEntity(spriteSheet);
         this.Transform = AddComponent(inTransform ?? new TransformComponent2D());
@@ -35,7 +39,11 @@ public class Sprite : Entity
 
     public Vertex2D[] GetVertices()
     {
-        if (!_hasBeenSetup) GameManager.Instance.Logger.Log(Logging.LogLevel.Error, "[Sprite] Setup() has not been called!");
+        if (!_hasBeenSetup)
+            GameManager.Instance.Logger.Log(
+                Logging.LogLevel.Error,
+                "[Sprite] Setup() has not been called!"
+            );
 
         Vector2[] uv = IsAnimated
             ? Spritesheet.GetAnimatedTextureCoordinates(FrameName)
@@ -43,7 +51,8 @@ public class Sprite : Entity
 
         int id = Spritesheet.GetNewSpriteId();
 
-        return new Vertex2D[] {
+        return new Vertex2D[]
+        {
             new Vertex2D(-Size.X / 2.0f, Size.Y / 2.0f, uv[0].X, uv[0].Y, id),
             new Vertex2D(Size.X / 2.0f, Size.Y / 2.0f, uv[1].X, uv[1].Y, id),
             new Vertex2D(Size.X / 2.0f, -Size.Y / 2.0f, uv[2].X, uv[2].Y, id),
@@ -53,8 +62,12 @@ public class Sprite : Entity
 
     public Vector2 GetFrameOffset()
     {
-        return IsAnimated
-            ? new Vector2(Spritesheet.AnimationManager.GetFrame(FrameName).index, Spritesheet.AnimationManager.GetFrame(FrameName).definition.Position.Y)
-            : Vector2.Zero;
+        if (IsAnimated)
+        {
+            var (definition, index) = Spritesheet.AnimationManager[FrameName];
+
+            return definition.Position + new Vector2(index, 0);
+        }
+        return Vector2.Zero;
     }
 }

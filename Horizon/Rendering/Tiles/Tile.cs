@@ -69,7 +69,7 @@ public partial class Tiling<TTextureID>
             Chunk = chunk;
             LocalPosition = local;
             GlobalPosition = GetTileGlobalCoordinates(local, chunk);
-            RenderingData = new TileRenderingData() ;
+            RenderingData = new TileRenderingData();
             PhysicsData = new TilePhysicsData();
 
             Set = Map.GetTileSetFromTileTextureID(RenderingData.TextureID);
@@ -115,7 +115,11 @@ public partial class Tiling<TTextureID>
             return new PolygonShape(
                 GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
                 GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
-                GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f),
+                GlobalPosition
+                    + new Vector2(
+                        TILE_WIDTH + TILE_WIDTH / -2.0f,
+                        TILE_HEIGHT + TILE_HEIGHT / -2.0f
+                    ),
                 GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f)
             );
         }

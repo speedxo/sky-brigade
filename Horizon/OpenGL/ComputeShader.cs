@@ -31,27 +31,49 @@ public class ComputeShader : IDisposable
         GameManager.Instance.Gl.UseProgram(0);
     }
 
-    public void SendDataToShader<T>(uint bufferBindingPoint, BufferObject<T> bufferObject) where T : unmanaged
+    public void SendDataToShader<T>(uint bufferBindingPoint, BufferObject<T> bufferObject)
+        where T : unmanaged
     {
         GameManager.Instance.Gl.UseProgram(_computeProgram);
         bufferObject.Bind();
-        GameManager.Instance.Gl.BindBufferBase(BufferTargetARB.ShaderStorageBuffer, bufferBindingPoint, bufferObject.Handle);
+        GameManager.Instance.Gl.BindBufferBase(
+            BufferTargetARB.ShaderStorageBuffer,
+            bufferBindingPoint,
+            bufferObject.Handle
+        );
         GameManager.Instance.Gl.UseProgram(0);
     }
 
-    public unsafe T[] ReceiveDataFromShader<T>(uint bufferBindingPoint, BufferObject<T> bufferObject) where T : unmanaged
+    public unsafe T[] ReceiveDataFromShader<T>(
+        uint bufferBindingPoint,
+        BufferObject<T> bufferObject
+    )
+        where T : unmanaged
     {
         GameManager.Instance.Gl.UseProgram(_computeProgram);
-        GameManager.Instance.Gl.BindBufferBase(BufferTargetARB.ShaderStorageBuffer, bufferBindingPoint, 0);
+        GameManager.Instance.Gl.BindBufferBase(
+            BufferTargetARB.ShaderStorageBuffer,
+            bufferBindingPoint,
+            0
+        );
         bufferObject.Bind();
 
         int bufferSize;
-        GameManager.Instance.Gl.GetNamedBufferParameter(bufferObject.Handle, BufferPNameARB.Size, &bufferSize);
+        GameManager.Instance.Gl.GetNamedBufferParameter(
+            bufferObject.Handle,
+            BufferPNameARB.Size,
+            &bufferSize
+        );
 
         T[] bufferData = new T[bufferSize];
         fixed (T* dataPtr = bufferData)
         {
-            GameManager.Instance.Gl.GetNamedBufferSubData(bufferObject.Handle, (IntPtr)0, (nuint)bufferSize, dataPtr);
+            GameManager.Instance.Gl.GetNamedBufferSubData(
+                bufferObject.Handle,
+                (IntPtr)0,
+                (nuint)bufferSize,
+                dataPtr
+            );
         }
         GameManager.Instance.Gl.UseProgram(0);
 

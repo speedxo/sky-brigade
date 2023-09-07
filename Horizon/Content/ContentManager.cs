@@ -23,8 +23,14 @@ namespace Horizon.Content
             unmanagedTextures = new List<Texture>();
         }
 
-        public int TotalTextures { get => namedTextures.Count + unnamedTextures.Count + unmanagedTextures.Count; }
-        public int TotalShaders { get => namedShaders.Count + unnamedShaders.Count; }
+        public int TotalTextures
+        {
+            get => namedTextures.Count + unnamedTextures.Count + unmanagedTextures.Count;
+        }
+        public int TotalShaders
+        {
+            get => namedShaders.Count + unnamedShaders.Count;
+        }
 
         public IEnumerable<Texture> GetTextures()
         {
@@ -66,8 +72,10 @@ namespace Horizon.Content
             if (!unnamedTextures.ContainsKey(internedPath))
                 unnamedTextures.TryAdd(internedPath, new Texture(internedPath));
             else
-                GameManager.Instance.Logger.Log(LogLevel.Warning, $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned.");
-            
+                GameManager.Instance.Logger.Log(
+                    LogLevel.Warning,
+                    $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned."
+                );
 
             return unnamedTextures[internedPath];
         }
@@ -102,7 +110,9 @@ namespace Horizon.Content
         public Texture GetTexture(string name)
         {
             string internedName = string.Intern(name);
-            return namedTextures.TryGetValue(internedName, out var texture) ? texture : throw new Exception($"Key {internedName} not found in stored textures.");
+            return namedTextures.TryGetValue(internedName, out var texture)
+                ? texture
+                : throw new Exception($"Key {internedName} not found in stored textures.");
         }
 
         #endregion Textures
@@ -122,7 +132,10 @@ namespace Horizon.Content
             }
             else
             {
-                GameManager.Instance.Logger.Log(LogLevel.Error, $"An attempt to load Shader({internedVertexPath}, {internedFragmentPath}) was made even though an instance of Shader({internedVertexPath}, {internedFragmentPath}) already exists, a reference to the already loaded shader will be returned.");
+                GameManager.Instance.Logger.Log(
+                    LogLevel.Error,
+                    $"An attempt to load Shader({internedVertexPath}, {internedFragmentPath}) was made even though an instance of Shader({internedVertexPath}, {internedFragmentPath}) already exists, a reference to the already loaded shader will be returned."
+                );
             }
 
             return shader;
@@ -131,7 +144,10 @@ namespace Horizon.Content
         public Shader LoadShaderFromSource(string vertSource, string fragSource)
         {
             ;
-            string uniqueKey = (vertSource.GetHashCode() + fragSource.GetHashCode()).ToString().GetHashCode().ToString();
+            string uniqueKey = (vertSource.GetHashCode() + fragSource.GetHashCode())
+                .ToString()
+                .GetHashCode()
+                .ToString();
 
             if (!unnamedShaders.TryGetValue(uniqueKey, out var shader))
             {
@@ -140,7 +156,10 @@ namespace Horizon.Content
             }
             else
             {
-                GameManager.Instance.Logger.Log(LogLevel.Error, $"Whoah partner, you just tried to compile the same shader twice?");
+                GameManager.Instance.Logger.Log(
+                    LogLevel.Error,
+                    $"Whoah partner, you just tried to compile the same shader twice?"
+                );
             }
 
             return shader;
@@ -161,13 +180,18 @@ namespace Horizon.Content
             string internedVertexPath = string.Intern(vertexPath);
             string internedFragmentPath = string.Intern(fragmentPath);
 
-            return GenerateNamedShader(internedName, Shader.CompileShader(internedVertexPath, internedFragmentPath));
+            return GenerateNamedShader(
+                internedName,
+                Shader.CompileShader(internedVertexPath, internedFragmentPath)
+            );
         }
 
         public Shader GetShader(string name)
         {
             string internedName = string.Intern(name);
-            return namedShaders.TryGetValue(internedName, out var shader) ? shader : throw new Exception($"Key {internedName} not found in stored shaders.");
+            return namedShaders.TryGetValue(internedName, out var shader)
+                ? shader
+                : throw new Exception($"Key {internedName} not found in stored shaders.");
         }
 
         #endregion Shaders
@@ -221,15 +245,23 @@ namespace Horizon.Content
         public void DeleteTexture(string name)
         {
             if (!namedTextures.Remove(name, out var texture))
-                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Texture({name})");
-            else texture?.Dispose();
+                GameManager.Instance.Logger.Log(
+                    LogLevel.Error,
+                    $"Attempt to delete nonexistent Texture({name})"
+                );
+            else
+                texture?.Dispose();
         }
 
         public void DeleteShader(string name)
         {
             if (!namedShaders.Remove(name, out var shader))
-                GameManager.Instance.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Shader({name})");
-            else shader?.Dispose();
+                GameManager.Instance.Logger.Log(
+                    LogLevel.Error,
+                    $"Attempt to delete nonexistent Shader({name})"
+                );
+            else
+                shader?.Dispose();
         }
 
         public Texture AddUnmanagedTexture(uint texture)

@@ -31,7 +31,10 @@ namespace Horizon.Tests.Tests
             AddPlanet("star2", 10);
             for (int i = 0; i < 9; i++)
             {
-                AddPlanet(rand.NextDouble() > 0.5 ? "metal_planet" : "rock_planet", rand.NextInt64(2, 10));
+                AddPlanet(
+                    rand.NextDouble() > 0.5 ? "metal_planet" : "rock_planet",
+                    rand.NextInt64(2, 10)
+                );
             }
 
             UpdatePlanets(1 / 60.0f); // 🥶
@@ -41,25 +44,44 @@ namespace Horizon.Tests.Tests
 
         private void AddPlanet(string materialPath, float size)
         {
-            planets.Add(new Planet
-            {
-                Object = new GameObject(material: AdvancedMaterial.LoadFromZip(Path.Combine("Assets", "planets", $"{materialPath}.material")), MeshGenerators.CreateSphere(size / 10.0f)),
-                Size = size / 10.0f,
-                Index = planets.Count,
-                DriftOffset = (float)rand.NextDouble() * 2 * MathF.PI
-            });
+            planets.Add(
+                new Planet
+                {
+                    Object = new GameObject(
+                        material: AdvancedMaterial.LoadFromZip(
+                            Path.Combine("Assets", "planets", $"{materialPath}.material")
+                        ),
+                        MeshGenerators.CreateSphere(size / 10.0f)
+                    ),
+                    Size = size / 10.0f,
+                    Index = planets.Count,
+                    DriftOffset = (float)rand.NextDouble() * 2 * MathF.PI
+                }
+            );
 
-            planets.Last().Object.Material.Color = new Vector4(new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), 1.0f);
+            planets.Last().Object.Material.Color = new Vector4(
+                new Vector3(
+                    (float)rand.NextDouble(),
+                    (float)rand.NextDouble(),
+                    (float)rand.NextDouble()
+                ),
+                1.0f
+            );
         }
 
         public void Render(float dt, RenderOptions? renderOptions = null)
         {
             var options = renderOptions ?? RenderOptions.Default;
 
-            planets.Sort((o1, o2) =>
-            {
-                return (int)(Vector3.Distance(options.Camera.Position, o2.Object.Position) - Vector3.Distance(options.Camera.Position, o1.Object.Position));
-            });
+            planets.Sort(
+                (o1, o2) =>
+                {
+                    return (int)(
+                        Vector3.Distance(options.Camera.Position, o2.Object.Position)
+                        - Vector3.Distance(options.Camera.Position, o1.Object.Position)
+                    );
+                }
+            );
 
             foreach (var planet in planets)
             {
@@ -69,7 +91,10 @@ namespace Horizon.Tests.Tests
                 planet.Object.Material.Technique.SetUniform("lightPositions[0]", Vector3.Zero);
 
                 // The *100.0f is because we have HDR and tonemapping so can go big
-                planet.Object.Material.Technique.SetUniform("lightColors[0]", new Vector3(100.0f, 100.0f, 0.0f));
+                planet.Object.Material.Technique.SetUniform(
+                    "lightColors[0]",
+                    new Vector3(100.0f, 100.0f, 0.0f)
+                );
 
                 planet.Object.Draw(dt, renderOptions);
             }
@@ -99,10 +124,12 @@ namespace Horizon.Tests.Tests
             }
             foreach (var planet in planets)
             {
-                if (planet.Index < 1) continue;
+                if (planet.Index < 1)
+                    continue;
 
                 // Calculate the orbit radius based on the planet's index and size
-                float orbitRadius = planets[0].Size + planet.Size * MathF.Pow(planet.Index, 1.5f) + 2.0f;
+                float orbitRadius =
+                    planets[0].Size + planet.Size * MathF.Pow(planet.Index, 1.5f) + 2.0f;
 
                 // Calculate the new position in the orbit using the circular motion equations
                 float x = MathF.Cos(totalGameTime * orbitSpeed * planet.DriftOffset) * orbitRadius;
@@ -113,8 +140,6 @@ namespace Horizon.Tests.Tests
             }
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 }

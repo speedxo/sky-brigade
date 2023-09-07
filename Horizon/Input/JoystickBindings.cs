@@ -13,14 +13,15 @@
         /// <summary>
         /// Gets the default JoystickBindings with some pre-defined button-to-action mappings.
         /// </summary>
-        public static JoystickBindings Default { get; } = new JoystickBindings
-        {
-            ButtonActionPairs = new Dictionary<JoystickButton, VirtualAction>
+        public static JoystickBindings Default { get; } =
+            new JoystickBindings
             {
-                { JoystickButton.Y, VirtualAction.Back },
-                { JoystickButton.X, VirtualAction.Interact },
-                { JoystickButton.Start, VirtualAction.Pause }
-            }
-        };
+                ButtonActionPairs = new Dictionary<JoystickButton, VirtualAction>
+                {
+                    { JoystickButton.Y, VirtualAction.Back },
+                    { JoystickButton.X, VirtualAction.Interact },
+                    { JoystickButton.Start, VirtualAction.Pause }
+                }
+            };
     }
 }

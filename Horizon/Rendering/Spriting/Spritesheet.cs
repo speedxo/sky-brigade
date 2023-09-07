@@ -19,6 +19,8 @@ namespace Horizon.Rendering.Spriting
 
         public Vector2 SpriteSize { get; init; }
 
+        public Vector2 SingleSpriteSize { get; init; }
+
         public SpritesheetAnimationManager AnimationManager { get; init; }
 
         public Spritesheet(Texture texture, Vector2 spriteSize)
@@ -30,34 +32,52 @@ namespace Horizon.Rendering.Spriting
             this.SpriteSize = spriteSize;
             this.Sprites = new();
 
+            SingleSpriteSize = SpriteSize / Texture.Size;
+
             AnimationManager = this.AddComponent<SpritesheetAnimationManager>();
         }
 
-        public void AddAnimation(string name, Vector2 position, int length, float frameTime = 0.1f, Vector2? inSize = null)
-            => AnimationManager.AddAnimation(name, position, length, frameTime, inSize);
+        public void AddAnimation(
+            string name,
+            Vector2 position,
+            int length,
+            float frameTime = 0.1f,
+            Vector2? inSize = null
+        ) => AnimationManager.AddAnimation(name, position, length, frameTime, inSize);
 
         public void AddSprite(string name, Vector2 pos, Vector2? size = null)
         {
             if (Sprites.ContainsKey(name))
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to add sprite '{name}' which already exists!");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Error,
+                    $"Attempt to add sprite '{name}' which already exists!"
+                );
                 return;
             }
 
-            this.Sprites.Add(name, new SpriteDefinition { Position = pos * (size ?? SpriteSize), Size = size ?? SpriteSize });
+            this.Sprites.Add(
+                name,
+                new SpriteDefinition { Position = pos, Size = size ?? SpriteSize }
+            );
         }
 
         public Vector2[] GetAnimatedTextureCoordinates(string name)
         {
             if (!AnimationManager.Animations.TryGetValue(name, out var sprite))
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to get sprite '{name}' which doesn't exist!");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Error,
+                    $"Attempt to get sprite '{name}' which doesn't exist!"
+                );
                 return Array.Empty<Vector2>();
             }
 
             // Calculate texture coordinates for the sprite
-            Vector2 topLeftTexCoord = sprite.FirstFrame.Position / Texture.Size;
-            Vector2 bottomRightTexCoord = (sprite.FirstFrame.Position + sprite.FirstFrame.Size) / Texture.Size;
+            Vector2 topLeftTexCoord =
+                sprite.FirstFrame.Position / Texture.Size
+                - new Vector2(SingleSpriteSize.X / 4.0f, 0);
+            Vector2 bottomRightTexCoord = topLeftTexCoord + (sprite.FirstFrame.Size / Texture.Size);
 
             return new Vector2[]
             {
@@ -72,7 +92,10 @@ namespace Horizon.Rendering.Spriting
         {
             if (!Sprites.TryGetValue(name, out var sprite))
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, $"Attempt to get sprite '{name}' which doesn't exist!");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Error,
+                    $"Attempt to get sprite '{name}' which doesn't exist!"
+                );
                 return Array.Empty<Vector2>();
             }
 

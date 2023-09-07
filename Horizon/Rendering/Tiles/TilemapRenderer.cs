@@ -12,7 +12,12 @@ public abstract partial class Tiling<TTextureID>
 
         public TilemapRenderer(TileMapChunk chunk)
         {
-            _shader ??= new ShaderComponent(GameManager.Instance.ContentManager.LoadShader("Assets/tilemap_shaders/tiles.vert", "Assets/tilemap_shaders/tiles.frag"));
+            _shader ??= new ShaderComponent(
+                GameManager.Instance.ContentManager.LoadShader(
+                    "Assets/tilemap_shaders/tiles.vert",
+                    "Assets/tilemap_shaders/tiles.frag"
+                )
+            );
 
             this.Chunk = chunk;
             this.TileSetMeshes = new();

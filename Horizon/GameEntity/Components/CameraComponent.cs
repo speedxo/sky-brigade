@@ -60,10 +60,12 @@ namespace Horizon.GameEntity.Components
             CameraPitch = Math.Clamp(CameraPitch, -89.0f, 89.0f);
 
             Transform.Rotation = new Vector3(
-                MathF.Cos(MathHelper.DegreesToRadians(CameraYaw)) * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch)),
+                MathF.Cos(MathHelper.DegreesToRadians(CameraYaw))
+                    * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch)),
                 MathF.Sin(MathHelper.DegreesToRadians(CameraPitch)),
-                MathF.Sin(MathHelper.DegreesToRadians(CameraYaw)) * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch))
-                );
+                MathF.Sin(MathHelper.DegreesToRadians(CameraYaw))
+                    * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch))
+            );
 
             Front = Vector3.Normalize(Transform.Rotation);
         }
@@ -79,11 +81,22 @@ namespace Horizon.GameEntity.Components
         /// <param name="dt">Delta time.</param>
         public override void Update(float dt)
         {
-            if (!GameManager.Instance.IsInputCaptured) return;
+            if (!GameManager.Instance.IsInputCaptured)
+                return;
 
             UpdateMouse();
-            View = Matrix4x4.CreateLookAt(Transform.Position, Transform.Position + Transform.Front, CameraUp);
-            Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)GameManager.Instance.ViewportSize.X / (float)GameManager.Instance.ViewportSize.Y, 0.1f, 100.0f);
+            View = Matrix4x4.CreateLookAt(
+                Transform.Position,
+                Transform.Position + Transform.Front,
+                CameraUp
+            );
+            Projection = Matrix4x4.CreatePerspectiveFieldOfView(
+                MathHelper.DegreesToRadians(CameraZoom),
+                (float)GameManager.Instance.ViewportSize.X
+                    / (float)GameManager.Instance.ViewportSize.Y,
+                0.1f,
+                100.0f
+            );
         }
     }
 }

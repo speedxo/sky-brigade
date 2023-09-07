@@ -11,9 +11,17 @@ public partial class CharacterController : Entity
     public CharacterMovementController MovementController { get; init; }
 
     // how do position and rotation have the same number of letters?
-    public Vector3 Position { get => Transform.Position; set => Transform.Position = value; }
+    public Vector3 Position
+    {
+        get => Transform.Position;
+        set => Transform.Position = value;
+    }
 
-    public Vector3 Rotation { get => Transform.Rotation; set => Transform.Rotation = value; }
+    public Vector3 Rotation
+    {
+        get => Transform.Rotation;
+        set => Transform.Rotation = value;
+    }
 
     public CharacterController()
     {

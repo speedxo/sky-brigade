@@ -12,40 +12,124 @@ namespace Horizon.Rendering
             var indices = new uint[6 * 6];
 
             // front
-            verts[0] = (new Vertex(new Vector3(-size, -size, size), new Vector3(0, 0, 1), new Vector2(0, 0)));
-            verts[1] = (new Vertex(new Vector3(size, -size, size), new Vector3(0, 0, 1), new Vector2(1, 0)));
-            verts[2] = (new Vertex(new Vector3(size, size, size), new Vector3(0, 0, 1), new Vector2(1, 1)));
-            verts[3] = (new Vertex(new Vector3(-size, size, size), new Vector3(0, 0, 1), new Vector2(0, 1)));
+            verts[0] = (
+                new Vertex(new Vector3(-size, -size, size), new Vector3(0, 0, 1), new Vector2(0, 0))
+            );
+            verts[1] = (
+                new Vertex(new Vector3(size, -size, size), new Vector3(0, 0, 1), new Vector2(1, 0))
+            );
+            verts[2] = (
+                new Vertex(new Vector3(size, size, size), new Vector3(0, 0, 1), new Vector2(1, 1))
+            );
+            verts[3] = (
+                new Vertex(new Vector3(-size, size, size), new Vector3(0, 0, 1), new Vector2(0, 1))
+            );
 
             // back
-            verts[4] = (new Vertex(new Vector3(-size, -size, -size), new Vector3(0, 0, -1), new Vector2(0, 0)));
-            verts[5] = (new Vertex(new Vector3(size, -size, -size), new Vector3(0, 0, -1), new Vector2(1, 0)));
-            verts[6] = (new Vertex(new Vector3(size, size, -size), new Vector3(0, 0, -1), new Vector2(1, 1)));
-            verts[7] = (new Vertex(new Vector3(-size, size, -size), new Vector3(0, 0, -1), new Vector2(0, 1)));
+            verts[4] = (
+                new Vertex(
+                    new Vector3(-size, -size, -size),
+                    new Vector3(0, 0, -1),
+                    new Vector2(0, 0)
+                )
+            );
+            verts[5] = (
+                new Vertex(
+                    new Vector3(size, -size, -size),
+                    new Vector3(0, 0, -1),
+                    new Vector2(1, 0)
+                )
+            );
+            verts[6] = (
+                new Vertex(new Vector3(size, size, -size), new Vector3(0, 0, -1), new Vector2(1, 1))
+            );
+            verts[7] = (
+                new Vertex(
+                    new Vector3(-size, size, -size),
+                    new Vector3(0, 0, -1),
+                    new Vector2(0, 1)
+                )
+            );
 
             // left
-            verts[8] = (new Vertex(new Vector3(-size, -size, -size), new Vector3(-1, 0, 0), new Vector2(0, 0)));
-            verts[9] = (new Vertex(new Vector3(-size, -size, size), new Vector3(-1, 0, 0), new Vector2(1, 0)));
-            verts[10] = (new Vertex(new Vector3(-size, size, size), new Vector3(-1, 0, 0), new Vector2(1, 1)));
-            verts[11] = (new Vertex(new Vector3(-size, size, -size), new Vector3(-1, 0, 0), new Vector2(0, 1)));
+            verts[8] = (
+                new Vertex(
+                    new Vector3(-size, -size, -size),
+                    new Vector3(-1, 0, 0),
+                    new Vector2(0, 0)
+                )
+            );
+            verts[9] = (
+                new Vertex(
+                    new Vector3(-size, -size, size),
+                    new Vector3(-1, 0, 0),
+                    new Vector2(1, 0)
+                )
+            );
+            verts[10] = (
+                new Vertex(new Vector3(-size, size, size), new Vector3(-1, 0, 0), new Vector2(1, 1))
+            );
+            verts[11] = (
+                new Vertex(
+                    new Vector3(-size, size, -size),
+                    new Vector3(-1, 0, 0),
+                    new Vector2(0, 1)
+                )
+            );
 
             // right
-            verts[12] = (new Vertex(new Vector3(size, -size, -size), new Vector3(1, 0, 0), new Vector2(0, 0)));
-            verts[13] = (new Vertex(new Vector3(size, -size, size), new Vector3(1, 0, 0), new Vector2(1, 0)));
-            verts[14] = (new Vertex(new Vector3(size, size, size), new Vector3(1, 0, 0), new Vector2(1, 1)));
-            verts[15] = (new Vertex(new Vector3(size, size, -size), new Vector3(1, 0, 0), new Vector2(0, 1)));
+            verts[12] = (
+                new Vertex(new Vector3(size, -size, -size), new Vector3(1, 0, 0), new Vector2(0, 0))
+            );
+            verts[13] = (
+                new Vertex(new Vector3(size, -size, size), new Vector3(1, 0, 0), new Vector2(1, 0))
+            );
+            verts[14] = (
+                new Vertex(new Vector3(size, size, size), new Vector3(1, 0, 0), new Vector2(1, 1))
+            );
+            verts[15] = (
+                new Vertex(new Vector3(size, size, -size), new Vector3(1, 0, 0), new Vector2(0, 1))
+            );
 
             // top
-            verts[16] = (new Vertex(new Vector3(-size, size, -size), new Vector3(0, 1, 0), new Vector2(0, 0)));
-            verts[17] = (new Vertex(new Vector3(size, size, -size), new Vector3(0, 1, 0), new Vector2(1, 0)));
-            verts[18] = (new Vertex(new Vector3(size, size, size), new Vector3(0, 1, 0), new Vector2(1, 1)));
-            verts[19] = (new Vertex(new Vector3(-size, size, size), new Vector3(0, 1, 0), new Vector2(0, 1)));
+            verts[16] = (
+                new Vertex(new Vector3(-size, size, -size), new Vector3(0, 1, 0), new Vector2(0, 0))
+            );
+            verts[17] = (
+                new Vertex(new Vector3(size, size, -size), new Vector3(0, 1, 0), new Vector2(1, 0))
+            );
+            verts[18] = (
+                new Vertex(new Vector3(size, size, size), new Vector3(0, 1, 0), new Vector2(1, 1))
+            );
+            verts[19] = (
+                new Vertex(new Vector3(-size, size, size), new Vector3(0, 1, 0), new Vector2(0, 1))
+            );
 
             // bottom
-            verts[20] = (new Vertex(new Vector3(-size, -size, -size), new Vector3(0, -1, 0), new Vector2(0, 0)));
-            verts[21] = (new Vertex(new Vector3(size, -size, -size), new Vector3(0, -1, 0), new Vector2(1, 0)));
-            verts[22] = (new Vertex(new Vector3(size, -size, size), new Vector3(0, -1, 0), new Vector2(1, 1)));
-            verts[23] = (new Vertex(new Vector3(-size, -size, size), new Vector3(0, -1, 0), new Vector2(0, 1)));
+            verts[20] = (
+                new Vertex(
+                    new Vector3(-size, -size, -size),
+                    new Vector3(0, -1, 0),
+                    new Vector2(0, 0)
+                )
+            );
+            verts[21] = (
+                new Vertex(
+                    new Vector3(size, -size, -size),
+                    new Vector3(0, -1, 0),
+                    new Vector2(1, 0)
+                )
+            );
+            verts[22] = (
+                new Vertex(new Vector3(size, -size, size), new Vector3(0, -1, 0), new Vector2(1, 1))
+            );
+            verts[23] = (
+                new Vertex(
+                    new Vector3(-size, -size, size),
+                    new Vector3(0, -1, 0),
+                    new Vector2(0, 1)
+                )
+            );
 
             // generate indices
             for (int i = 0; i < 6; i++)
@@ -59,27 +143,21 @@ namespace Horizon.Rendering
                 indices[i * 6 + 5] = ((uint)(i * 4 + 3));
             }
 
-            return new MeshData
-            {
-                Vertices = verts,
-                Elements = indices
-            };
+            return new MeshData { Vertices = verts, Elements = indices };
         }
 
         public static MeshData CreateRectangle()
         {
             return new MeshData
             {
-                Vertices = new Vertex[] {
+                Vertices = new Vertex[]
+                {
                     new Vertex(-1, -1, 0, 0, 0),
                     new Vertex(1, -1, 0, 1, 0),
                     new Vertex(1, 1, 0, 1, 1),
                     new Vertex(-1, 1, 0, 0, 1)
-                    },
-                Elements = new uint[] {
-                    0, 1, 3,
-                    1, 2, 3
-                }
+                },
+                Elements = new uint[] { 0, 1, 3, 1, 2, 3 }
             };
         }
 
@@ -95,12 +173,20 @@ namespace Horizon.Rendering
                 for (int j = 0; j < vertexCount; j++)
                 {
                     // Calculate the position of the vertex
-                    float x = (float)Math.Sin(Math.PI * i / (vertexCount - 1)) * (float)Math.Cos(2 * Math.PI * j / (vertexCount - 1));
+                    float x =
+                        (float)Math.Sin(Math.PI * i / (vertexCount - 1))
+                        * (float)Math.Cos(2 * Math.PI * j / (vertexCount - 1));
                     float y = (float)Math.Cos(Math.PI * i / (vertexCount - 1));
-                    float z = (float)Math.Sin(Math.PI * i / (vertexCount - 1)) * (float)Math.Sin(2 * Math.PI * j / (vertexCount - 1));
+                    float z =
+                        (float)Math.Sin(Math.PI * i / (vertexCount - 1))
+                        * (float)Math.Sin(2 * Math.PI * j / (vertexCount - 1));
 
                     // Add the vertex to the memory region of vertices
-                    verts.Span[i * vertexCount + j] = new Vertex(new Vector3(x, y, z) * radius, new Vector3(x, y, z), new Vector2((float)j / (vertexCount - 1), (float)i / (vertexCount - 1)));
+                    verts.Span[i * vertexCount + j] = new Vertex(
+                        new Vector3(x, y, z) * radius,
+                        new Vector3(x, y, z),
+                        new Vector2((float)j / (vertexCount - 1), (float)i / (vertexCount - 1))
+                    );
                 }
             }
 
@@ -119,11 +205,7 @@ namespace Horizon.Rendering
                     indices.Span[index++] = (uint)((i + 1) * vertexCount + j);
                 }
             }
-            return new MeshData
-            {
-                Vertices = verts,
-                Elements = indices
-            };
+            return new MeshData { Vertices = verts, Elements = indices };
         }
 
         //// dont even bother

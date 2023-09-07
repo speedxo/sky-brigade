@@ -18,12 +18,18 @@ public class Texture : IDisposable
     public int Width { get; init; }
     public int Height { get; init; }
 
-    public Vector2 Size { get => new Vector2(Width, Height); }
+    public Vector2 Size
+    {
+        get => new Vector2(Width, Height);
+    }
 
     public unsafe Texture(string path)
     {
         if (!File.Exists(path))
-            GameManager.Instance.Logger.Log(LogLevel.Fatal, $"[Texture] There is no file at location '{path}'!");
+            GameManager.Instance.Logger.Log(
+                LogLevel.Fatal,
+                $"[Texture] There is no file at location '{path}'!"
+            );
 
         var fileName = System.IO.Path.GetFileName(path)!;
         var lastFolder = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(path))!;
@@ -42,7 +48,17 @@ public class Texture : IDisposable
             Height = img.Height;
 
             //Reserve enough memory from the gpu for the whole image
-            GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+            GameManager.Instance.Gl.TexImage2D(
+                TextureTarget.Texture2D,
+                0,
+                InternalFormat.Rgba8,
+                (uint)img.Width,
+                (uint)img.Height,
+                0,
+                PixelFormat.Rgba,
+                PixelType.UnsignedByte,
+                null
+            );
 
             int y = 0;
             img.ProcessPixelRows(accessor =>
@@ -53,7 +69,17 @@ public class Texture : IDisposable
                     fixed (void* data = accessor.GetRowSpan(y))
                     {
                         //Loading the actual image.
-                        GameManager.Instance.Gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                        GameManager.Instance.Gl.TexSubImage2D(
+                            TextureTarget.Texture2D,
+                            0,
+                            0,
+                            y,
+                            (uint)accessor.Width,
+                            1,
+                            PixelFormat.Rgba,
+                            PixelType.UnsignedByte,
+                            data
+                        );
                     }
                 }
             });
@@ -62,7 +88,10 @@ public class Texture : IDisposable
         count++;
         SetParameters();
 
-        GameManager.Instance.Logger.Log(LogLevel.Info, $"Texture[{Handle}] loaded from file '{path}'!");
+        GameManager.Instance.Logger.Log(
+            LogLevel.Info,
+            $"Texture[{Handle}] loaded from file '{path}'!"
+        );
     }
 
     public Texture(uint handle)
@@ -71,9 +100,20 @@ public class Texture : IDisposable
         this.Path = "";
 
         Bind();
-        int textureWidth, textureHeight;
-        GameManager.Instance.Gl.GetTexLevelParameter(TextureTarget.Texture2D, 0, GetTextureParameter.TextureWidth, out textureWidth);
-        GameManager.Instance.Gl.GetTexLevelParameter(TextureTarget.Texture2D, 0, GetTextureParameter.TextureHeight, out textureHeight);
+        int textureWidth,
+            textureHeight;
+        GameManager.Instance.Gl.GetTexLevelParameter(
+            TextureTarget.Texture2D,
+            0,
+            GetTextureParameter.TextureWidth,
+            out textureWidth
+        );
+        GameManager.Instance.Gl.GetTexLevelParameter(
+            TextureTarget.Texture2D,
+            0,
+            GetTextureParameter.TextureHeight,
+            out textureHeight
+        );
         UnBind();
 
         this.Width = textureWidth;
@@ -93,10 +133,21 @@ public class Texture : IDisposable
         fixed (void* d = &data[0])
         {
             //Setting the data of a texture.
-            GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
+            GameManager.Instance.Gl.TexImage2D(
+                TextureTarget.Texture2D,
+                0,
+                (int)InternalFormat.Rgba,
+                width,
+                height,
+                0,
+                PixelFormat.Rgba,
+                PixelType.UnsignedByte,
+                d
+            );
             SetParameters();
         }
     }
+
     public unsafe Texture(Stream stream, uint width, uint height)
     {
         Width = (int)width;
@@ -111,7 +162,17 @@ public class Texture : IDisposable
         fixed (void* d = &data[0])
         {
             //Setting the data of a texture.
-            GameManager.Instance.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
+            GameManager.Instance.Gl.TexImage2D(
+                TextureTarget.Texture2D,
+                0,
+                (int)InternalFormat.Rgba,
+                width,
+                height,
+                0,
+                PixelFormat.Rgba,
+                PixelType.UnsignedByte,
+                d
+            );
             SetParameters();
         }
         stream.Close();
@@ -120,12 +181,36 @@ public class Texture : IDisposable
     private void SetParameters()
     {
         //Setting some texture perameters so the texture behaves as expected.
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.Repeat);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.Repeat);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.NearestMipmapNearest);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        GameManager.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureWrapS,
+            (int)GLEnum.Repeat
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureWrapT,
+            (int)GLEnum.Repeat
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMinFilter,
+            (int)GLEnum.NearestMipmapNearest
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMagFilter,
+            (int)GLEnum.Nearest
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureBaseLevel,
+            0
+        );
+        GameManager.Instance.Gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMaxLevel,
+            8
+        );
         //Generating mipmaps.
         GameManager.Instance.Gl.GenerateMipmap(TextureTarget.Texture2D);
     }

@@ -2,7 +2,5 @@
 
 public class PrimitiveGenerator
 {
-    public PrimitiveGenerator()
-    {
-    }
+    public PrimitiveGenerator() { }
 }

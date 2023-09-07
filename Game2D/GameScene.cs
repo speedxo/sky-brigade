@@ -31,9 +31,9 @@ public class GameScene : Scene
 
         debugDrawCallback = new();
         debugDrawCallback.AppendFlags(
-            DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair
+            DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair | DrawFlags.Shape
         );
-        debugDrawCallback.Enabled = false;
+        debugDrawCallback.Enabled = true;
 
         world = AddComponent<Box2DWorldComponent>();
         world.SetDebugDraw(debugDrawCallback);
@@ -61,8 +61,9 @@ public class GameScene : Scene
 
     protected override Effect[] GeneratePostProccessingEffects()
     {
-        return new[] { new VingetteEffect() };
+        return new[] { new VingetteEffect() { Intensity = 1.0f } };
     }
+
     private static void InitializeGl()
     {
         GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
@@ -109,8 +110,5 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    public override void DrawGui(float dt)
-    {
-        ImGui.Text($"({(int)player.Position.X}, {(int)player.Position.Y})");
-    }
+    public override void DrawGui(float dt) { }
 }

@@ -15,13 +15,14 @@ namespace Horizon.Input
         /// <summary>
         /// Gets the default KeyboardBindings with some pre-defined key-to-action mappings.
         /// </summary>
-        public static KeyboardBindings Default { get; } = new KeyboardBindings
-        {
-            KeyActionPairs = new Dictionary<Key, VirtualAction>
+        public static KeyboardBindings Default { get; } =
+            new KeyboardBindings
             {
-                { Key.E, VirtualAction.Interact },
-                { Key.Escape, VirtualAction.Pause }
-            }
-        };
+                KeyActionPairs = new Dictionary<Key, VirtualAction>
+                {
+                    { Key.E, VirtualAction.Interact },
+                    { Key.Escape, VirtualAction.Pause }
+                }
+            };
     }
 }

@@ -94,7 +94,10 @@ public class QuadTree
         nodes[0] = new QuadTree(depth + 1, new RectangleF(x + subWidth, y, subWidth, subHeight));
         nodes[1] = new QuadTree(depth + 1, new RectangleF(x, y, subWidth, subHeight));
         nodes[2] = new QuadTree(depth + 1, new RectangleF(x, y + subHeight, subWidth, subHeight));
-        nodes[3] = new QuadTree(depth + 1, new RectangleF(x + subWidth, y + subHeight, subWidth, subHeight));
+        nodes[3] = new QuadTree(
+            depth + 1,
+            new RectangleF(x + subWidth, y + subHeight, subWidth, subHeight)
+        );
     }
 
     private int GetQuadrantIndex(Vector2 point)

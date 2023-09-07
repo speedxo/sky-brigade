@@ -22,22 +22,38 @@ public class GameObject : Entity
     /// <summary>
     /// The position of the game object in 3D space.
     /// </summary>
-    public Vector3 Position { get => Transform.Position; set => Transform.Position = value; }
+    public Vector3 Position
+    {
+        get => Transform.Position;
+        set => Transform.Position = value;
+    }
 
     /// <summary>
     /// The scale of the game object in 3D space.
     /// </summary>
-    public Vector3 Scale { get => Transform.Scale; set => Transform.Scale = value; }
+    public Vector3 Scale
+    {
+        get => Transform.Scale;
+        set => Transform.Scale = value;
+    }
 
     /// <summary>
     /// The rotation angles of the game object in degrees around each axis (X, Y, and Z).
     /// </summary>
-    public Vector3 Rotation { get => Transform.Rotation; set => Transform.Rotation = value; }
+    public Vector3 Rotation
+    {
+        get => Transform.Rotation;
+        set => Transform.Rotation = value;
+    }
 
     /// <summary>
     /// The material used for rendering the game object.
     /// </summary>
-    public Material Material { get => MeshRenderer.Material; set => MeshRenderer.Material = value; }
+    public Material Material
+    {
+        get => MeshRenderer.Material;
+        set => MeshRenderer.Material = value;
+    }
 
     /// <summary>
     /// Creates a new instance of the GameObject class.

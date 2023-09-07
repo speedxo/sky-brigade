@@ -4,7 +4,8 @@ namespace Horizon.OpenGL;
 
 //The vertex array object abstraction.
 public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
-    where TIndexType : unmanaged where TVertexType : unmanaged
+    where TIndexType : unmanaged
+    where TVertexType : unmanaged
 {
     //Our handle and the GL instance this class will use, these are private because they have no reason to be public.
     //Most of the time you would want to abstract items to make things like this invisible.
@@ -33,7 +34,13 @@ public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
         Unbind();
     }
 
-    public unsafe void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint vertexSize, int offSet)
+    public unsafe void VertexAttributePointer(
+        uint index,
+        int count,
+        VertexAttribPointerType type,
+        uint vertexSize,
+        int offSet
+    )
     {
         // Setting up a vertex attribute pointer
         Bind();

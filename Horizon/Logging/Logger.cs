@@ -10,32 +10,35 @@ namespace Horizon.Logging
     {
         private readonly object locker = new();
 
-        private static readonly Dictionary<LogLevel, ConsoleColor> Colors = new()
-        {
-            { LogLevel.Debug, ConsoleColor.Gray },
-            { LogLevel.Info, ConsoleColor.White },
-            { LogLevel.Warning, ConsoleColor.Yellow },
-            { LogLevel.Error, ConsoleColor.Red },
-            { LogLevel.Fatal, ConsoleColor.DarkRed }
-        };
+        private static readonly Dictionary<LogLevel, ConsoleColor> Colors =
+            new()
+            {
+                { LogLevel.Debug, ConsoleColor.Gray },
+                { LogLevel.Info, ConsoleColor.White },
+                { LogLevel.Warning, ConsoleColor.Yellow },
+                { LogLevel.Error, ConsoleColor.Red },
+                { LogLevel.Fatal, ConsoleColor.DarkRed }
+            };
 
-        private static readonly Dictionary<LogLevel, string> Prefixes = new()
-        {
-            { LogLevel.Debug, "[DEBUG] " },
-            { LogLevel.Info, "[INFO] " },
-            { LogLevel.Warning, "[WARNING] " },
-            { LogLevel.Error, "[ERROR] " },
-            { LogLevel.Fatal, "[FATAL] " }
-        };
+        private static readonly Dictionary<LogLevel, string> Prefixes =
+            new()
+            {
+                { LogLevel.Debug, "[DEBUG] " },
+                { LogLevel.Info, "[INFO] " },
+                { LogLevel.Warning, "[WARNING] " },
+                { LogLevel.Error, "[ERROR] " },
+                { LogLevel.Fatal, "[FATAL] " }
+            };
 
-        private static readonly Dictionary<LogLevel, string> Suffixes = new()
-        {
-            { LogLevel.Debug, "" },
-            { LogLevel.Info, "" },
-            { LogLevel.Warning, "" },
-            { LogLevel.Error, "" },
-            { LogLevel.Fatal, "" }
-        };
+        private static readonly Dictionary<LogLevel, string> Suffixes =
+            new()
+            {
+                { LogLevel.Debug, "" },
+                { LogLevel.Info, "" },
+                { LogLevel.Warning, "" },
+                { LogLevel.Error, "" },
+                { LogLevel.Fatal, "" }
+            };
 
         /// <summary>
         /// Gets or sets the output destination for the logs.
@@ -96,9 +99,7 @@ namespace Horizon.Logging
                                 if (Output > 0)
                                     textWriter.WriteLine(logEntry.Message);
                             }
-                            catch
-                            {
-                            }
+                            catch { }
                         }
                         isProcessingLogs = false;
                     }

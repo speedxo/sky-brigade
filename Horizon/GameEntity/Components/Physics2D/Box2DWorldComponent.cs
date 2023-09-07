@@ -8,20 +8,14 @@ public class Box2DWorldComponent : Box2D.NetStandard.Dynamics.World.World, IGame
     public Entity Parent { get; set; }
 
     public Box2DWorldComponent()
-        : base(System.Numerics.Vector2.Zero)
-    {
-    }
+        : base(System.Numerics.Vector2.Zero) { }
 
-    public void Initialize()
-    {
-    }
+    public void Initialize() { }
 
     public void Update(float dt)
     {
         Step(dt, 8, 3);
     }
 
-    public void Draw(float dt, RenderOptions? options = null)
-    {
-    }
+    public void Draw(float dt, RenderOptions? options = null) { }
 }

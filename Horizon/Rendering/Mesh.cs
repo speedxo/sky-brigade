@@ -33,7 +33,8 @@ public class Mesh : IDisposable
     /// <summary>
     /// Sets a uniform in the material's shader with a value.
     /// </summary>
-    public void SetUniform(string name, object? value) => Material.Technique.SetUniform(name, value);
+    public void SetUniform(string name, object? value) =>
+        Material.Technique.SetUniform(name, value);
 
     /// <summary>
     /// Creates a new instance of the Mesh class.
@@ -43,9 +44,27 @@ public class Mesh : IDisposable
         Vbo = new();
 
         // Telling the VAO object how to lay out the attribute pointers
-        Vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
-        Vbo.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 3 * sizeof(float));
-        Vbo.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
+        Vbo.VertexAttributePointer(
+            0,
+            3,
+            VertexAttribPointerType.Float,
+            (uint)Vertex.SizeInBytes,
+            0
+        );
+        Vbo.VertexAttributePointer(
+            1,
+            3,
+            VertexAttribPointerType.Float,
+            (uint)Vertex.SizeInBytes,
+            3 * sizeof(float)
+        );
+        Vbo.VertexAttributePointer(
+            2,
+            2,
+            VertexAttribPointerType.Float,
+            (uint)Vertex.SizeInBytes,
+            6 * sizeof(float)
+        );
     }
 
     /// <summary>
@@ -53,7 +72,8 @@ public class Mesh : IDisposable
     /// </summary>
     /// <param name="meshData">The mesh data containing vertices and elements of the mesh.</param>
     /// <param name="mat">The material to use for rendering the mesh. If null, the default material will be used.</param>
-    public virtual void Load(MeshDataDelegate meshData, Material? mat = null) => Load(meshData(), mat);
+    public virtual void Load(MeshDataDelegate meshData, Material? mat = null) =>
+        Load(meshData(), mat);
 
     /// <summary>
     /// Loads the mesh with the given mesh data and material.
@@ -91,7 +111,8 @@ public class Mesh : IDisposable
     /// <param name="renderOptions">Optional render options. If not provided, the default options will be used.</param>
     public virtual void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        if (ElementCount < 1) return; // Don't render if there is nothing to render to improve performance.
+        if (ElementCount < 1)
+            return; // Don't render if there is nothing to render to improve performance.
 
         var options = renderOptions ?? RenderOptions.Default;
 
@@ -103,12 +124,19 @@ public class Mesh : IDisposable
         unsafe
         {
             // Turn on wireframe mode
-            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+            if (options.IsWireframeEnabled)
+                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
-            GameManager.Instance.Gl.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, null);
+            GameManager.Instance.Gl.DrawElements(
+                PrimitiveType.Triangles,
+                ElementCount,
+                DrawElementsType.UnsignedInt,
+                null
+            );
 
             // Turn off wireframe mode
-            if (options.IsWireframeEnabled) GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+            if (options.IsWireframeEnabled)
+                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
         Vbo.Unbind();

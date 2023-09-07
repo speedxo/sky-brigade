@@ -28,7 +28,8 @@ namespace Horizon.Rendering
 
         public UniformBufferObject AddUniformBuffer(uint bindingPoint)
         {
-            if (_bufferObjects.ContainsKey(bindingPoint)) return _bufferObjects[bindingPoint];
+            if (_bufferObjects.ContainsKey(bindingPoint))
+                return _bufferObjects[bindingPoint];
 
             var buffer = new UniformBufferObject(bindingPoint);
             buffer.Bind();
@@ -47,7 +48,9 @@ namespace Horizon.Rendering
         {
             if (_bufferObjects.TryGetValue(bindingPoint, out var buffer))
                 return buffer;
-            throw new DirectoryNotFoundException($"Cannot find a UBO with the bindingPoint{bindingPoint}!");
+            throw new DirectoryNotFoundException(
+                $"Cannot find a UBO with the bindingPoint{bindingPoint}!"
+            );
         }
 
         public UniformBufferObject GetBuffer(string name)

@@ -15,7 +15,6 @@ using Silk.NET.Maths;
 
 namespace Gravitator2D;
 
-
 public class Universe : Entity
 {
     public const int MAX_BODIES_COUNT = 16;
@@ -74,7 +73,9 @@ public class Universe : Entity
 
     private void TryUpdateBodies(float dt)
     {
-        bool jump = GameManager.Instance.InputManager.GetVirtualController().IsPressed(Horizon.Input.VirtualAction.Interact);
+        bool jump = GameManager.Instance.InputManager
+            .GetVirtualController()
+            .IsPressed(Horizon.Input.VirtualAction.Interact);
 
         for (int i = 0; i < MAX_BODIES_COUNT; i++)
         {
@@ -98,9 +99,13 @@ public class Universe : Entity
         }
     }
 
-    private static Vector3 GetRandomVector3()
-        => new(rand.NextSingle() * 0.8f + 0.2f, rand.NextSingle() * 0.8f + 0.2f, rand.NextSingle() * 0.8f + 0.2f);
+    private static Vector3 GetRandomVector3() =>
+        new(
+            rand.NextSingle() * 0.8f + 0.2f,
+            rand.NextSingle() * 0.8f + 0.2f,
+            rand.NextSingle() * 0.8f + 0.2f
+        );
 
-    private static Vector2 GetRandomVector2()
-        => new(rand.NextSingle() * 2.0f - 1.0f, rand.NextSingle() * 2.0f - 1.0f);
+    private static Vector2 GetRandomVector2() =>
+        new(rand.NextSingle() * 2.0f - 1.0f, rand.NextSingle() * 2.0f - 1.0f);
 }

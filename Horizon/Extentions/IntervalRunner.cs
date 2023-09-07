@@ -4,9 +4,10 @@ namespace Horizon.Extentions;
 
 public class IntervalRunner : Entity
 {
-    public float TimeInterval{get; init; }
+    public float TimeInterval { get; init; }
     private float _timer = 0.0f;
     private Action _action;
+
     public IntervalRunner(float timeInterval, Action action)
     {
         TimeInterval = timeInterval;

@@ -13,7 +13,8 @@ namespace Horizon.Rendering.Effects
 
         public Technique Technique { get; init; }
 
-        private static readonly string ShaderStageData = @"
+        private static readonly string ShaderStageData =
+            @"
 struct ShaderData {
     vec4 FragColor;
     vec4 DepthComponent;
@@ -33,7 +34,10 @@ uniform sampler2D uDepth;
 
             if (finalIndex < 0)
             {
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Warning, "An empty EffectStack was created!");
+                GameManager.Instance.Logger.Log(
+                    Logging.LogLevel.Warning,
+                    "An empty EffectStack was created!"
+                );
                 return $@"
 out vec4 FinalFragColor;
 
@@ -73,9 +77,13 @@ void main()
             Effects = new List<Effect>(effects ?? Array.Empty<Effect>());
 
             var fragmentSource = GenerateShader();
-            var vertexSource = string.IsNullOrEmpty(vertexPath) ? GetVertexSource() : File.ReadAllText(vertexPath);
+            var vertexSource = string.IsNullOrEmpty(vertexPath)
+                ? GetVertexSource()
+                : File.ReadAllText(vertexPath);
 
-            Technique = AddEntity(new Technique(ShaderComponent.FromSource(vertexSource, fragmentSource)));
+            Technique = AddEntity(
+                new Technique(ShaderComponent.FromSource(vertexSource, fragmentSource))
+            );
 
             SetBindingPoints();
         }
@@ -85,19 +93,21 @@ void main()
         /// </summary>
         private void SetBindingPoints()
         {
-            static string getUniformBufferName(string source)
-                => source.TrimStart().Split(Environment.NewLine).First().Split(' ')[2];
+            static string getUniformBufferName(string source) =>
+                source.TrimStart().Split(Environment.NewLine).First().Split(' ')[2];
 
             Technique.Use();
             foreach (var effect in Effects)
             {
-                effect.BindingPoint = GameManager.Instance.Gl.GetUniformBlockIndex(Technique.Handle, getUniformBufferName(effect.Source));
+                effect.BindingPoint = GameManager.Instance.Gl.GetUniformBlockIndex(
+                    Technique.Handle,
+                    getUniformBufferName(effect.Source)
+                );
                 BufferManager.AddUniformBuffer(effect.BindingPoint);
             }
             Technique.End();
         }
 
-        // TODO: Optimize the universe while we're at it
         public override void Update(float dt)
         {
             base.Update(dt);

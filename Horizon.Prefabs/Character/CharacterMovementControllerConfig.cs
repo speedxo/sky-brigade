@@ -7,10 +7,7 @@ public partial class CharacterController
         public float BaseMovementSpeed { get; set; }
         public float BaseMouseSensitivity { get; set; }
 
-        public static CharacterMovementControllerConfig Default { get; } = new()
-        {
-            BaseMovementSpeed = 18.0f,
-            BaseMouseSensitivity = 0.1f
-        };
+        public static CharacterMovementControllerConfig Default { get; } =
+            new() { BaseMovementSpeed = 18.0f, BaseMouseSensitivity = 0.1f };
     }
 }

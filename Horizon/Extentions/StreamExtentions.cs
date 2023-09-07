@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Horizon.Extentions
 {
     public static class StreamExtensions
@@ -13,4 +14,3 @@ namespace Horizon.Extentions
         }
     }
 }
-

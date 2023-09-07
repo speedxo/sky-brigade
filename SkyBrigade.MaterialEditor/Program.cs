@@ -4,11 +4,13 @@ internal class Program : IGameScreen
 {
     private static void Main(string[] _)
     {
-        Instance.Initialize(GameInstanceParameters.Default with
-        {
-            InitialGameScreen = typeof(Program),
-            WindowTitle = "Material Editor"
-        });
+        Instance.Initialize(
+            GameInstanceParameters.Default with
+            {
+                InitialGameScreen = typeof(Program),
+                WindowTitle = "Material Editor"
+            }
+        );
 
         Instance.Run();
     }
@@ -33,10 +35,7 @@ internal class Program : IGameScreen
         sphere = new GameObject();
         sphere.MeshRenderer.Load(MeshGenerators.CreateSphere(1));
 
-        Entities = new List<IEntity> {
-            menuBar,
-            sphere
-        };
+        Entities = new List<IEntity> { menuBar, sphere };
     }
 
     private void MenuBar_MenuItemClicked(EditorMenuBarItem item)
@@ -44,20 +43,20 @@ internal class Program : IGameScreen
         switch (item)
         {
             case EditorMenuBarItem.Close:
-                Instance.Window.Close(); break;
+                Instance.Window.Close();
+                break;
             case EditorMenuBarItem.Save:
-                SaveMaterial(); break;
+                SaveMaterial();
+                break;
             case EditorMenuBarItem.OpenFile:
-                OpenFile(); break;
+                OpenFile();
+                break;
         }
     }
 
     private void OpenFile()
     {
-        var fileDialog = new OpenFileDialog(".material")
-        {
-            Multiselect = true
-        };
+        var fileDialog = new OpenFileDialog(".material") { Multiselect = true };
 
         fileDialog.FilesSelected += (files) =>
         {
@@ -73,10 +72,17 @@ internal class Program : IGameScreen
     private void LoadMaterials(FileItem[] files)
     {
         // safety check ensuring we dont try load directories!
-        foreach (var path in (from file in files where file.Type == FileItemType.File select file.Path).Distinct())
+        foreach (
+            var path in (
+                from file in files
+                where file.Type == FileItemType.File
+                select file.Path
+            ).Distinct()
+        )
             LoadMaterial(path);
 
-        if (loadedMaterials == null || loadedMaterials.Count < 1) return;
+        if (loadedMaterials == null || loadedMaterials.Count < 1)
+            return;
 
         sphere.Material = loadedMaterials.Values.FirstOrDefault();
         materialNames = loadedMaterials.Keys.ToArray().Select(Path.GetFileName).ToArray();
@@ -108,7 +114,15 @@ internal class Program : IGameScreen
     {
         if (ImGui.Begin("Materials"))
         {
-            if (materialNames != null && ImGui.ListBox("", ref selectedMaterialIndex, materialNames, loadedMaterials.Count))
+            if (
+                materialNames != null
+                && ImGui.ListBox(
+                    "",
+                    ref selectedMaterialIndex,
+                    materialNames,
+                    loadedMaterials.Count
+                )
+            )
                 sphere.Material = loadedMaterials.Values.ElementAt(selectedMaterialIndex);
 
             if (loadedMaterials.Count > 0 && ImGui.Button("Remove"))
@@ -123,10 +137,7 @@ internal class Program : IGameScreen
             ImGui.End();
         }
 
-        var options = renderOptions ?? RenderOptions.Default with
-        {
-            Camera = camera
-        };
+        var options = renderOptions ?? RenderOptions.Default with { Camera = camera };
 
         for (int i = 0; i < Entities.Count; i++)
             Entities[i].Draw(dt, options);
@@ -147,7 +158,5 @@ internal class Program : IGameScreen
     //    Instance.Window.Close();
     //}
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 }

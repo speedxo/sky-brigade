@@ -14,10 +14,8 @@ internal class FlashingEffect : Effect
     private FlashingStage data = default;
 
     // Providing shader source through the constructor.
-    public FlashingEffect() :
-        base(File.ReadAllText("Assets/DemoEffectStack/stage0.frag"))
-    {
-    }
+    public FlashingEffect()
+        : base(File.ReadAllText("Assets/DemoEffectStack/stage0.frag")) { }
 
     // Here we keep track of how much time has passed.
     public override void Update(float dt)

@@ -43,7 +43,10 @@ internal class DemoGameScreen : Scene
         // yea this single boolean enables or disables the debugging interface
         GameManager.Instance.Debugger.Enabled = true;
 
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("player pos", () => character.Position);
+        GameManager.Instance.Debugger.GeneralDebugger.AddWatch(
+            "player pos",
+            () => character.Position
+        );
     }
 
     /* The reason i opted to have an overidable method is for safety, while its
@@ -56,10 +59,7 @@ internal class DemoGameScreen : Scene
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        var options = (renderOptions ?? RenderOptions.Default) with
-        {
-            Camera = character.Camera
-        };
+        var options = (renderOptions ?? RenderOptions.Default) with { Camera = character.Camera };
 
         base.Draw(dt, options);
     }
@@ -92,11 +92,7 @@ internal class DemoGameScreen : Scene
             GameManager.Instance.Debugger.Enabled = !GameManager.Instance.Debugger.Enabled;
     }
 
-    public override void Dispose()
-    {
-    }
+    public override void Dispose() { }
 
-    public override void DrawOther(float dt, RenderOptions? renderOptions = null)
-    {
-    }
+    public override void DrawOther(float dt, RenderOptions? renderOptions = null) { }
 }

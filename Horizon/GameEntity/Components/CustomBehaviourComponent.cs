@@ -16,9 +16,7 @@ namespace Horizon.GameEntity.Components
 
         public event OnUpdateDelegate? OnUpdate;
 
-        public void Initialize()
-        {
-        }
+        public void Initialize() { }
 
         public void Update(float dt)
         {

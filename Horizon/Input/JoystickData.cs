@@ -30,11 +30,12 @@ namespace Horizon.Input
         /// <summary>
         /// Gets the default JoystickData with some pre-defined values for primary axis, secondary axis, and triggers.
         /// </summary>
-        public static JoystickData Default { get; } = new JoystickData
-        {
-            PrimaryAxis = Vector2.One,
-            SecondaryAxis = Vector2.One,
-            Triggers = Vector2.One
-        };
+        public static JoystickData Default { get; } =
+            new JoystickData
+            {
+                PrimaryAxis = Vector2.One,
+                SecondaryAxis = Vector2.One,
+                Triggers = Vector2.One
+            };
     }
 }

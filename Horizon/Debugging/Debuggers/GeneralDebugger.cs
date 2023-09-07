@@ -8,7 +8,10 @@ namespace Horizon.Debugging.Debuggers
     {
         private class GeneralDebuggerCatagory
         {
-            internal int TotalWatchedValues { get => _singleUseValues.Count + _cachedValues.Count; }
+            internal int TotalWatchedValues
+            {
+                get => _singleUseValues.Count + _cachedValues.Count;
+            }
 
             private readonly GeneralDebugger _generalDebugger;
 
@@ -63,7 +66,10 @@ namespace Horizon.Debugging.Debuggers
             internal void AddWatch(string name, Func<object> objExpr)
             {
                 if (_monitoredVariables.ContainsKey(name))
-                    _generalDebugger.Log(LogLevel.Warning, $"Attempt to assign watch '{name}' which already exists. Overriding!");
+                    _generalDebugger.Log(
+                        LogLevel.Warning,
+                        $"Attempt to assign watch '{name}' which already exists. Overriding!"
+                    );
 
                 _monitoredVariables[name] = objExpr;
             }
@@ -98,7 +104,8 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Draw(float dt, RenderOptions? options = null)
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
 
             if (ImGui.Begin(Name))
             {
@@ -107,7 +114,8 @@ namespace Horizon.Debugging.Debuggers
 
                 foreach ((string name, GeneralDebuggerCatagory monitor) in _catagories)
                 {
-                    if (monitor.TotalWatchedValues < 1) continue;
+                    if (monitor.TotalWatchedValues < 1)
+                        continue;
 
                     if (ImGui.CollapsingHeader(name))
                     {
@@ -129,7 +137,8 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Update(float dt)
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
 
             _updateCachedValuesTimer += dt;
             if (_updateCachedValuesTimer > 0.5f)

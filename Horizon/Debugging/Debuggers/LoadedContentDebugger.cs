@@ -21,7 +21,8 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Draw(float dt, RenderOptions? options = null)
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
 
             if (ImGui.Begin(Name))
             {
@@ -40,7 +41,10 @@ namespace Horizon.Debugging.Debuggers
             if (ImGui.TreeNode("Textures"))
             {
                 var imageSideLength = 100;
-                var imagesPerRow = Math.Max(1, (int)(columnWidth / (imageSideLength + itemSpacing)));
+                var imagesPerRow = Math.Max(
+                    1,
+                    (int)(columnWidth / (imageSideLength + itemSpacing))
+                );
 
                 ImGui.Columns(imagesPerRow, "TextureColumns", false);
 
@@ -52,7 +56,10 @@ namespace Horizon.Debugging.Debuggers
 
                     ImGui.BeginGroup();
 
-                    ImGui.Image((IntPtr)texture.Handle, new Vector2(imageSideLength, imageSideLength));
+                    ImGui.Image(
+                        (IntPtr)texture.Handle,
+                        new Vector2(imageSideLength, imageSideLength)
+                    );
                     ImGui.TextWrapped(texture.Name ?? $"Texture({texture.Handle})");
 
                     ImGui.EndGroup();
@@ -93,8 +100,6 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Update(float dt)
-        {
-        }
+        public override void Update(float dt) { }
     }
 }

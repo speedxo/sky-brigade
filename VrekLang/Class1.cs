@@ -16,7 +16,7 @@ public enum TokenType
     EndOfStatement
 }
 
-public class Token 
+public class Token
 {
     public TokenType Type { get; private set; }
     public string Lexeme { get; private set; }
@@ -26,6 +26,7 @@ public class Token
         this.Type = type;
         this.Lexeme = lexeme;
     }
+
     public override string ToString()
     {
         return $"({Type}, {Lexeme})";
@@ -52,11 +53,13 @@ public class Lexer
     {
         position++;
     }
-    private char Peek(int n=0)
+
+    private char Peek(int n = 0)
     {
         int peekPosition = position + n;
         return peekPosition < sourceCode.Length ? sourceCode[peekPosition] : '\0';
     }
+
     private bool CheckNextPattern(string pattern)
     {
         for (int i = 0; i < pattern.Length; i++)
@@ -103,8 +106,10 @@ public class Lexer
                 return new Token(TokenType.Identifier, GetVariable());
             }
 
-            while (char.IsWhiteSpace(CurrentChar())) { Advance(); }
-
+            while (char.IsWhiteSpace(CurrentChar()))
+            {
+                Advance();
+            }
 
             switch (currentChar)
             {
@@ -128,6 +133,7 @@ public class Lexer
 
         return new Token(TokenType.EOF, "");
     }
+
     private string GetVariable()
     {
         string result = "";
@@ -138,6 +144,7 @@ public class Lexer
         }
         return result;
     }
+
     private string GetInteger()
     {
         string result = "";
@@ -159,7 +166,7 @@ public class Lexer
             result += CurrentChar();
             Advance();
         }
-        
+
         Advance(); // Consume the tailing "
 
         return result;
@@ -173,8 +180,10 @@ public class Program
         string code = "var bingbong = 10;var test = \"cum\";\0";
         Lexer lexer = new Lexer(code);
         Token token;
-        do { token = lexer.GetNextToken(); Console.WriteLine(token.ToString()); }
-        while (token.Type != TokenType.EOF);
-        
+        do
+        {
+            token = lexer.GetNextToken();
+            Console.WriteLine(token.ToString());
+        } while (token.Type != TokenType.EOF);
     }
 }

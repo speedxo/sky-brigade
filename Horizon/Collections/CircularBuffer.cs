@@ -37,7 +37,10 @@ public class CircularBuffer<T>
         }
     }
 
-    public T[] Buffer { get => buffer; }
+    public T[] Buffer
+    {
+        get => buffer;
+    }
 
     public T[] ToArray()
     {

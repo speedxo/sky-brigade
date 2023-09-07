@@ -6,10 +6,12 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        GameManager.Instance.Initialize(GameInstanceParameters.Default with
-        {
-            InitialGameScreen = typeof(GameScene)
-        });
+        GameManager.Instance.Initialize(
+            GameInstanceParameters.Default with
+            {
+                InitialGameScreen = typeof(GameScene)
+            }
+        );
         GameManager.Instance.Run();
     }
 }

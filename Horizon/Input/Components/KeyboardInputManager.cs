@@ -27,7 +27,10 @@ namespace Horizon.Input.Components
         /// <summary>
         /// Gets the first connected keyboard, or null if none is connected.
         /// </summary>
-        public static IKeyboard? Keyboard => GameManager.Instance.Input.Keyboards.Count > 0 ? GameManager.Instance.Input.Keyboards[0] : null;
+        public static IKeyboard? Keyboard =>
+            GameManager.Instance.Input.Keyboards.Count > 0
+                ? GameManager.Instance.Input.Keyboards[0]
+                : null;
 
         /// <summary>
         /// Gets the KeyboardBindings representing the key-to-action mappings for the keyboard.
@@ -83,15 +86,19 @@ namespace Horizon.Input.Components
             }
 
             direction = new Vector2(
-                state.IsKeyPressed(Key.D) ? 1 : state.IsKeyPressed(Key.A) ? -1 : 0,
-                state.IsKeyPressed(Key.S) ? -1 : state.IsKeyPressed(Key.W) ? 1 : 0
+                state.IsKeyPressed(Key.D)
+                    ? 1
+                    : state.IsKeyPressed(Key.A)
+                        ? -1
+                        : 0,
+                state.IsKeyPressed(Key.S)
+                    ? -1
+                    : state.IsKeyPressed(Key.W)
+                        ? 1
+                        : 0
             );
 
-            Data = new()
-            {
-                Actions = actions,
-                MovementDirection = direction
-            };
+            Data = new() { Actions = actions, MovementDirection = direction };
         }
 
         /// <summary>

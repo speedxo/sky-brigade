@@ -23,9 +23,7 @@ namespace Horizon.GameEntity.Components.Physics2D
             transform = Parent.GetComponent<TransformComponent2D>()!;
         }
 
-        public void Draw(float dt, RenderOptions? options = null)
-        {
-        }
+        public void Draw(float dt, RenderOptions? options = null) { }
 
         public void Update(float dt)
         {

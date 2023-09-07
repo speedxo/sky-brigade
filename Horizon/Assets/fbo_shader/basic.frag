@@ -1,4 +1,4 @@
- #version 410 core
+#version 410 core
 
 uniform sampler2D uAlbedo;
 uniform vec4 uColor;
@@ -11,8 +11,4 @@ in vec2 texCoords;
 in vec3 normals;
 in vec3 vertexPos;
 
-
-void main()
-{
-    FragColor = texture(uAlbedo, texCoords);
-}
+void main() { FragColor = texture(uAlbedo, texCoords); }

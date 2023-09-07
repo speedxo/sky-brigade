@@ -13,7 +13,14 @@ public class Plane : GameObject
     /// The size of the plane in 3D space.
     /// </summary>
     public Vector2 Size
-    { get => size; set { size = value; UpdateVertices(); } }
+    {
+        get => size;
+        set
+        {
+            size = value;
+            UpdateVertices();
+        }
+    }
 
     private Vector2 size = Vector2.One;
 
@@ -21,7 +28,12 @@ public class Plane : GameObject
     /// Creates a new instance of the Plane class.
     /// </summary>
     /// <param name="material">The material to use for rendering the plane. If null, the default material will be used.</param>
-    public Plane(Material? material = null, Vector3? initialScale = null, Vector3? initialPosition = null, Vector2? initialSize = null)
+    public Plane(
+        Material? material = null,
+        Vector3? initialScale = null,
+        Vector3? initialPosition = null,
+        Vector2? initialSize = null
+    )
         : base(material)
     {
         Transform.Scale = initialScale ?? Vector3.One;
@@ -36,12 +48,15 @@ public class Plane : GameObject
     /// </summary>
     private void UpdateVertices()
     {
-        MeshRenderer.Vbo.VertexBuffer.BufferData(new Vertex[] {
+        MeshRenderer.Vbo.VertexBuffer.BufferData(
+            new Vertex[]
+            {
                 new Vertex(-Size.X, -Size.Y, 0, 0, 1),
                 new Vertex(Size.X, -Size.Y, 0, 1, 1),
                 new Vertex(Size.X, Size.Y, 0, 1, 0),
                 new Vertex(-Size.X, Size.Y, 0, 0, 0)
-        });
+            }
+        );
     }
 
     /// <summary>
@@ -55,12 +70,22 @@ public class Plane : GameObject
         Vector2 rect1TopLeft = new Vector2(Position.X - Size.X, Position.Y + Size.Y);
         Vector2 rect1BottomRight = new Vector2(Position.X + Size.X, Position.Y - Size.Y);
 
-        Vector2 rect2TopLeft = new Vector2(plane2.Position.X - plane2.Size.X, plane2.Position.Y + plane2.Size.Y);
-        Vector2 rect2BottomRight = new Vector2(plane2.Position.X + plane2.Size.X, plane2.Position.Y - plane2.Size.Y);
+        Vector2 rect2TopLeft = new Vector2(
+            plane2.Position.X - plane2.Size.X,
+            plane2.Position.Y + plane2.Size.Y
+        );
+        Vector2 rect2BottomRight = new Vector2(
+            plane2.Position.X + plane2.Size.X,
+            plane2.Position.Y - plane2.Size.Y
+        );
 
         // Check for intersection
-        if (rect1TopLeft.X <= rect2BottomRight.X && rect1BottomRight.X >= rect2TopLeft.X &&
-            rect1TopLeft.Y >= rect2BottomRight.Y && rect1BottomRight.Y <= rect2TopLeft.Y)
+        if (
+            rect1TopLeft.X <= rect2BottomRight.X
+            && rect1BottomRight.X >= rect2TopLeft.X
+            && rect1TopLeft.Y >= rect2BottomRight.Y
+            && rect1BottomRight.Y <= rect2TopLeft.Y
+        )
         {
             // Rectangles intersect
             return true;

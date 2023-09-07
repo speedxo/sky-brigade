@@ -41,11 +41,11 @@ public abstract partial class Tiling<TTextureID>
             int columns = Texture.Width / (int)TileSize.X;
 
             // Calculate the X position of the tile in the tileset
-            float tileX = id % (int)columns * TileSize.X;
+            float tileX = id % columns * TileSize.X;
 
             // Calculate the Y position of the tile in the tileset (using integer division!!!)
             // originally i did 'float tileY = (id / columns) * TileSize.Y;' which didn't work!!!!!
-            float tileY = id / (int)columns * TileSize.Y;
+            float tileY = id / columns * TileSize.Y;
 
             // Normalize the coordinates to a range of [0, 1]
             float normalizedX = tileX / Texture.Width;

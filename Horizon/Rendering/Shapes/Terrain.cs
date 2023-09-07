@@ -16,8 +16,6 @@ namespace Horizon.Rendering.Shapes
             MeshComponent = AddComponent<MeshRendererComponent>();
         }
 
-        public void GenerateTerrain(int seed)
-        {
-        }
+        public void GenerateTerrain(int seed) { }
     }
 }

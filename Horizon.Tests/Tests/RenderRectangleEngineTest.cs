@@ -17,7 +17,8 @@ namespace Horizon.Tests.Tests
 
         public PlaneEngineTest()
         {
-            if (Loaded) return;
+            if (Loaded)
+                return;
 
             rect = new Plane();
 

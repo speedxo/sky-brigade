@@ -12,7 +12,6 @@ namespace Horizon.Debugging.Debuggers
     {
         public bool DebugInstance = false;
 
-        // TODO: use string interns here because there are thousands of string allocations/second here
         public override void Initialize()
         {
             Name = "Scene Tree";
@@ -20,11 +19,14 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Draw(float dt, RenderOptions? options = null)
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
 
             if (ImGui.Begin(Name))
             {
-                Entity mainNode = DebugInstance ? GameManager.Instance : GameManager.Instance.GameScreenManager.GetCurrentInstance();
+                Entity mainNode = DebugInstance
+                    ? GameManager.Instance
+                    : GameManager.Instance.GameScreenManager.GetCurrentInstance();
 
                 ImGui.Text($"Total Entities: {mainNode.TotalEntities}");
                 ImGui.Text($"Total Components: {mainNode.TotalComponents}");
@@ -47,7 +49,12 @@ namespace Horizon.Debugging.Debuggers
 
             ImGui.OpenPopupOnItemClick($"EntityContextMenu_{entity.Name}{entity.ID}");
 
-            if (ImGui.TreeNodeEx(entity.Name ??= entity.GetType().Name, ImGuiTreeNodeFlags.DefaultOpen))
+            if (
+                ImGui.TreeNodeEx(
+                    entity.Name ??= entity.GetType().Name,
+                    ImGuiTreeNodeFlags.DefaultOpen
+                )
+            )
             {
                 if (ImGui.BeginPopupContextItem($"EntityContextMenu_{entity.Name}{entity.ID}"))
                 {
@@ -74,7 +81,8 @@ namespace Horizon.Debugging.Debuggers
 
                 foreach (IGameComponent? component in entity!.Components.Values)
                 {
-                    if (component == null) continue;
+                    if (component == null)
+                        continue;
 
                     if (ImGui.TreeNodeEx(component.Name ??= component.GetType().Name))
                     {
@@ -84,7 +92,6 @@ namespace Horizon.Debugging.Debuggers
                             {
                                 entity.Components.Remove(component.GetType());
                                 // TODO: some kind of disposing.
-
                                 ImGui.CloseCurrentPopup();
                             }
 
@@ -119,7 +126,8 @@ namespace Horizon.Debugging.Debuggers
 
             foreach (var property in properties)
             {
-                if (property is null) continue;
+                if (property is null)
+                    continue;
 
                 object? value = property.GetValue(component);
 
@@ -132,24 +140,32 @@ namespace Horizon.Debugging.Debuggers
                 {
                     DrawArrayProperty(property.Name, (Array)value!);
                 }
-                else if (property.PropertyType.IsGenericType &&
-                         property.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+                else if (
+                    property.PropertyType.IsGenericType
+                    && property.PropertyType.GetGenericTypeDefinition() == typeof(List<>)
+                )
                 {
-                    if (value is null) continue;
+                    if (value is null)
+                        continue;
 
                     DrawListProperty(property.Name, value);
                 }
-                else if (property.PropertyType.IsGenericType &&
-                         property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                else if (
+                    property.PropertyType.IsGenericType
+                    && property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>)
+                )
                 {
-                    if (value is null) continue;
+                    if (value is null)
+                        continue;
 
                     DrawDictionaryProperty(property.Name, value);
                 }
                 else if (property.PropertyType.IsValueType)
                 {
-                    if (property.PropertyType.Namespace is null ||
-                        property.PropertyType.Namespace.StartsWith("System"))
+                    if (
+                        property.PropertyType.Namespace is null
+                        || property.PropertyType.Namespace.StartsWith("System")
+                    )
                         continue;
 
                     if (ImGui.TreeNodeEx($"{property.Name} (Value Type)"))
@@ -230,7 +246,8 @@ namespace Horizon.Debugging.Debuggers
         {
             if (listObj is IList list)
             {
-                if (list.Count < 1) return;
+                if (list.Count < 1)
+                    return;
 
                 if (ImGui.TreeNode($"{name} (List)"))
                 {
@@ -313,7 +330,8 @@ namespace Horizon.Debugging.Debuggers
 
         private static void DrawArrayProperty(string name, Array array)
         {
-            if (array.Length < 1) return;
+            if (array.Length < 1)
+                return;
 
             ImGui.Columns(2, name, false);
             ImGui.SetColumnWidth(0, ImGui.GetWindowWidth() * 0.4f);
@@ -370,7 +388,8 @@ namespace Horizon.Debugging.Debuggers
                             array.SetValue(boolValue, i);
                         }
                     }
-                    else ImGui.Text($"{GetFriendlyName(element)}");
+                    else
+                        ImGui.Text($"{GetFriendlyName(element)}");
 
                     ImGui.Columns(1);
                 }
@@ -381,7 +400,8 @@ namespace Horizon.Debugging.Debuggers
 
         public static string GetFriendlyName(object? obj)
         {
-            if (obj == null) return string.Empty;
+            if (obj == null)
+                return string.Empty;
 
             var type = obj.GetType();
 
@@ -392,7 +412,8 @@ namespace Horizon.Debugging.Debuggers
         {
             if (dictionaryObj is IDictionary dictionary)
             {
-                if (dictionary.Count < 1) return;
+                if (dictionary.Count < 1)
+                    return;
 
                 if (ImGui.TreeNodeEx($"{name} (Dictionary)"))
                 {
@@ -425,8 +446,6 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Update(float dt)
-        {
-        }
+        public override void Update(float dt) { }
     }
 }

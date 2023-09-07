@@ -10,35 +10,25 @@ namespace Horizon.Rendering.Effects.Components
         public Entity Parent { get; set; }
 
         public ShaderComponent(uint handle)
-            : base(handle)
-        {
-        }
+            : base(handle) { }
 
         public ShaderComponent(Shader shader)
-            : base(shader.Handle)
-        {
-        }
+            : base(shader.Handle) { }
 
         public ShaderComponent(string vertPath, string fragPath)
-            : base(GameManager.Instance.ContentManager.LoadShader(vertPath, fragPath).Handle)
-        {
-        }
+            : base(GameManager.Instance.ContentManager.LoadShader(vertPath, fragPath).Handle) { }
 
         public static ShaderComponent FromSource(string vertSource, string fragSource)
         {
-            return new ShaderComponent(GameManager.Instance.ContentManager.LoadShaderFromSource(vertSource, fragSource));
+            return new ShaderComponent(
+                GameManager.Instance.ContentManager.LoadShaderFromSource(vertSource, fragSource)
+            );
         }
 
-        public virtual void Initialize()
-        {
-        }
+        public virtual void Initialize() { }
 
-        public virtual void Update(float dt)
-        {
-        }
+        public virtual void Update(float dt) { }
 
-        public virtual void Draw(float dt, RenderOptions? options = null)
-        {
-        }
+        public virtual void Draw(float dt, RenderOptions? options = null) { }
     }
 }

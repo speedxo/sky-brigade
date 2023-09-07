@@ -4,7 +4,5 @@ namespace Horizon.Data.MaterialSerialiser;
 
 public class MaterialSerialiser
 {
-    public static void SaveMaterial(Material material)
-    {
-    }
+    public static void SaveMaterial(Material material) { }
 }

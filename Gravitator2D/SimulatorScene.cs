@@ -18,7 +18,6 @@ public class SimulatorScene : Horizon.Scene
         InitializeRenderingPipeline();
     }
 
-
     public override void DrawGui(float dt)
     {
         if (ImGui.Begin("Physics"))
@@ -27,16 +26,19 @@ public class SimulatorScene : Horizon.Scene
             ImGui.DragFloat("G constant", ref universe.GravityConstant, 0.0001f);
             ImGui.DragFloat("Center Attraction", ref universe.CentralAttractionStrength, 0.001f);
             ImGui.DragFloat("Max speed", ref universe.MaxSpeed, 0.1f);
-            ImGui.DragFloat("Coefficient of Restitution", ref universe.CoRestitution, 0.01f, 0.01f, 1.0f);
+            ImGui.DragFloat(
+                "Coefficient of Restitution",
+                ref universe.CoRestitution,
+                0.01f,
+                0.01f,
+                1.0f
+            );
             ImGui.DragFloat("Close Repulsion", ref universe.RepulsionStrength, 0.01f, 0.01f, 10.0f);
             ImGui.End();
         }
     }
 
-    public override void DrawOther(float dt, RenderOptions? renderOptions = null)
-    {
-        
-    }
+    public override void DrawOther(float dt, RenderOptions? renderOptions = null) { }
 
     public override void Dispose()
     {

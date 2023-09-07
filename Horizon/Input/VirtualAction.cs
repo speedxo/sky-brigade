@@ -8,13 +8,13 @@
     {
         None = 0,
 
-        MoveForwards = 1,   // W/JoystickUp
-        MoveBackwards = 2,  // S/JoystickDown
-        MoveLeft = 4,       // A/JoystickLeft
-        MoveRight = 8,      // D/JoystickRight
+        MoveForwards = 1, // W/JoystickUp
+        MoveBackwards = 2, // S/JoystickDown
+        MoveLeft = 4, // A/JoystickLeft
+        MoveRight = 8, // D/JoystickRight
 
-        Interact = 16,       // E/X
-        Pause = 32,         // Escape/Menu
+        Interact = 16, // E/X
+        Pause = 32, // Escape/Menu
         Back = 64,
 
         PrimaryAction = 128, // LeftClick/LeftTrigger

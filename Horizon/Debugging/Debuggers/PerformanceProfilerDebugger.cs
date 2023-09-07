@@ -13,7 +13,11 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     /// <summary>
     /// How many times/s metrics are collected.
     /// </summary>
-    public int UpdateRate { get => (int)(1 / _updateRate); set => _updateRate = 1.0f / value; }
+    public int UpdateRate
+    {
+        get => (int)(1 / _updateRate);
+        set => _updateRate = 1.0f / value;
+    }
 
     private float _updateRate = 1.0f / 50.0f;
 
@@ -64,10 +68,12 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public void UpdateStart(float dt)
     {
-        if (!Visible) return;
+        if (!Visible)
+            return;
         _updateTimer += dt;
 
-        if (_pauseUpdateMetrics = (_updateTimer < _updateRate)) return;
+        if (_pauseUpdateMetrics = (_updateTimer < _updateRate))
+            return;
 
         _updateTimer = 0.0f;
         Monitor.Enter(_updateLock);
@@ -76,7 +82,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public void UpdateEnd()
     {
-        if (!Visible || _pauseUpdateMetrics) return;
+        if (!Visible || _pauseUpdateMetrics)
+            return;
 
         _updateStopwatch.Stop();
 
@@ -95,10 +102,12 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public void RenderStart(float dt)
     {
-        if (!Visible) return;
+        if (!Visible)
+            return;
         _renderTimer += dt;
 
-        if (_pauseRenderMetrics = _renderTimer < _updateRate) return;
+        if (_pauseRenderMetrics = _renderTimer < _updateRate)
+            return;
         _renderTimer = 0.0f;
 
         Monitor.Enter(_renderLock);
@@ -107,7 +116,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public void RenderEnd()
     {
-        if (!Visible || _pauseRenderMetrics) return;
+        if (!Visible || _pauseRenderMetrics)
+            return;
 
         _renderStopwatch.Stop();
         lock (_renderLock)
@@ -118,7 +128,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public override void Draw(float dt, RenderOptions? options = null)
     {
-        if (!Visible) return;
+        if (!Visible)
+            return;
 
         _frameTimers.Append(dt);
 
@@ -126,10 +137,15 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
         if (ImGui.Begin(Name))
         {
-            float maxUpdateFrameTime, maxRenderFrameTime, maxMemoryUsage;
-            lock (_updateLock) maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
-            lock (_renderLock) maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
-            lock (_memoryLock) maxMemoryUsage = _memoryUsage.Buffer.Max();
+            float maxUpdateFrameTime,
+                maxRenderFrameTime,
+                maxMemoryUsage;
+            lock (_updateLock)
+                maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
+            lock (_renderLock)
+                maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
+            lock (_memoryLock)
+                maxMemoryUsage = _memoryUsage.Buffer.Max();
 
             ImGui.Text($"Max Update Frame Time: {maxUpdateFrameTime:0.00} ms");
             ImGui.Text($"Max Render Frame Time: {maxRenderFrameTime:0.00} ms");
@@ -147,7 +163,12 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     }
 
     [Pure]
-    private static void PlotFrameTimes(string label, LinearBuffer<float> frameTimes, float maxValue, string unit = "ms")
+    private static void PlotFrameTimes(
+        string label,
+        LinearBuffer<float> frameTimes,
+        float maxValue,
+        string unit = "ms"
+    )
     {
         float windowWidth = ImGui.GetContentRegionAvail().X;
         float averageFrameTime = frameTimes.Buffer.Average();
@@ -185,7 +206,5 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         return (float)(GC.GetTotalMemory(false) / (1024.0 * 1024.0)); // in MB
     }
 
-    public override void Update(float dt)
-    {
-    }
+    public override void Update(float dt) { }
 }

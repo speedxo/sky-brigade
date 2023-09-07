@@ -11,7 +11,11 @@ public class Camera
     protected Vector3 _camDir = Vector3.Zero;
     protected float CameraZoom = 45f;
 
-    public Vector3 Rotation { get => _camDir; set => _camDir = value; }
+    public Vector3 Rotation
+    {
+        get => _camDir;
+        set => _camDir = value;
+    }
 
     public Matrix4x4 View { get; protected set; }
     public Matrix4x4 Projection { get; protected set; }
@@ -23,13 +27,23 @@ public class Camera
     public Camera()
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 1.0f, 1000.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(
+            MathHelper.DegreesToRadians(CameraZoom),
+            GameManager.Instance.AspectRatio,
+            1.0f,
+            1000.0f
+        );
     }
 
     public virtual void Update(float dt)
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), GameManager.Instance.AspectRatio, 1.0f, 1000.0f);
+        Projection = Matrix4x4.CreatePerspectiveFieldOfView(
+            MathHelper.DegreesToRadians(CameraZoom),
+            GameManager.Instance.AspectRatio,
+            1.0f,
+            1000.0f
+        );
 
         UpdateBounds(dt);
     }
@@ -53,12 +67,12 @@ public class Camera
 
         // Check if the transformed point is within the normalized device coordinates
         bool insideFrustum =
-            transformedPoint.X >= -transformedPoint.W &&
-            transformedPoint.X <= transformedPoint.W &&
-            transformedPoint.Y >= -transformedPoint.W &&
-            transformedPoint.Y <= transformedPoint.W &&
-            transformedPoint.Z >= -transformedPoint.W &&
-            transformedPoint.Z <= transformedPoint.W;
+            transformedPoint.X >= -transformedPoint.W
+            && transformedPoint.X <= transformedPoint.W
+            && transformedPoint.Y >= -transformedPoint.W
+            && transformedPoint.Y <= transformedPoint.W
+            && transformedPoint.Z >= -transformedPoint.W
+            && transformedPoint.Z <= transformedPoint.W;
 
         return insideFrustum;
     }

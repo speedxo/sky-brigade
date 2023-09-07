@@ -6,6 +6,8 @@ using Horizon.Extentions;
 using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
+using ImGuiNET;
+using System.Collections;
 using System.Numerics;
 
 namespace Game2D;
@@ -16,6 +18,8 @@ public class Player2D : Sprite
     {
         get => box2DBodyComponent.Body;
     }
+
+    private const float speed = 50.0f;
     private Box2DBodyComponent box2DBodyComponent;
 
     public Vector2 Position => PhysicsBody.Position;
@@ -47,11 +51,11 @@ public class Player2D : Sprite
             )
         );
 
-        CircleShape shape = new() { Radius = 0.8f };
+        CircleShape shape = new() { Radius = 0.6f };
 
         PhysicsBody.CreateFixture(shape, 1.0f);
         PhysicsBody.SetFixedRotation(true);
-        PhysicsBody.SetLinearDampling(0.5f);
+        PhysicsBody.SetLinearDampling(7.5f);
     }
 
     private void CreateSprite()
@@ -59,16 +63,21 @@ public class Player2D : Sprite
         var sprSheet1 = (
             new Spritesheet(
                 GameManager.Instance.ContentManager.LoadTexture("content/spritesheet.png"),
-                new Vector2(69, 44)
+                new Vector2(16)
             )
         );
-        sprSheet1.AddAnimation("idle", new Vector2(0, 0), 6);
-        sprSheet1.AddAnimation("run", new Vector2(0, 1), 6);
+        sprSheet1.AddAnimation("walk_up", new Vector2(0, 0), 4);
+        sprSheet1.AddAnimation("walk_down", new Vector2(4, 0), 4);
+
+        sprSheet1.AddAnimation("walk_left", new Vector2(0, 1), 4);
+        sprSheet1.AddAnimation("walk_right", new Vector2(4, 1), 4);
+        sprSheet1.AddAnimation("idle", new Vector2(4, 0), 1);
 
         Setup(sprSheet1, "idle");
+
         IsAnimated = true;
         // nice
-        Size = new Vector2(69.0f / 44.0f * 2.0f, 2.0f);
+        Size = new Vector2(1.0f);
     }
 
     public override void Update(float dt)
@@ -133,12 +142,18 @@ public class Player2D : Sprite
         // Move player with controller
         var movementDir = GameManager.Instance.InputManager.GetVirtualController().MovementAxis;
 
-        PhysicsBody.ApplyForce(movementDir * 100.0f, Transform.Position);
+        PhysicsBody.ApplyForce(movementDir * speed, Transform.Position);
         PhysicsBody.SetLinearVelocity(
             Vector2.Clamp(PhysicsBody.GetLinearVelocity(), Vector2.One * -5, Vector2.One * 5)
         );
 
-        FrameName = Math.Abs(movementDir.X) > 0 ? "run" : "idle";
-        Flipped = movementDir.X < 0;
+        FrameName = movementDir switch
+        {
+            var v when v.X < 0 => "walk_left",
+            var v when v.X > 0 => "walk_right",
+            var v when v.Y > 0 => "walk_up",
+            var v when v.Y < 0 => "walk_down",
+            _ => "idle"
+        };
     }
 }

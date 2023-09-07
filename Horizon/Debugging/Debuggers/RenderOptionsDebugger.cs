@@ -7,10 +7,12 @@ namespace Horizon.Debugging.Debuggers
     {
         private SkylineDebugger Debugger { get; set; }
 
-        private float gamma, ambientStrength;
+        private float gamma,
+            ambientStrength;
         private string[] renderModes;
         private int renderModeIndex;
-        private bool isPostProcessingEnabled, isWireframeEnabled;
+        private bool isPostProcessingEnabled,
+            isWireframeEnabled;
 
         public override void Initialize()
         {
@@ -33,7 +35,8 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Draw(float dt, RenderOptions? options = null)
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
 
             // Collapsible header for Render Options window
             if (ImGui.Begin(Name))

@@ -15,13 +15,14 @@ namespace Horizon.Input
         /// <summary>
         /// Gets the default MouseBindings with some pre-defined mouse-button-to-action mappings.
         /// </summary>
-        public static MouseBindings Default { get; } = new MouseBindings
-        {
-            MouseActionPairs = new Dictionary<MouseButton, VirtualAction>
+        public static MouseBindings Default { get; } =
+            new MouseBindings
             {
-                { MouseButton.Left, VirtualAction.PrimaryAction },
-                { MouseButton.Right, VirtualAction.SecondaryAction }
-            }
-        };
+                MouseActionPairs = new Dictionary<MouseButton, VirtualAction>
+                {
+                    { MouseButton.Left, VirtualAction.PrimaryAction },
+                    { MouseButton.Right, VirtualAction.SecondaryAction }
+                }
+            };
     }
 }

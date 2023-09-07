@@ -32,9 +32,27 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             VBO = new();
 
             // Telling the VAO object how to lay out the attribute pointers
-            VBO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 0);
-            VBO.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 3 * sizeof(float));
-            VBO.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, (uint)Vertex.SizeInBytes, 6 * sizeof(float));
+            VBO.VertexAttributePointer(
+                0,
+                3,
+                VertexAttribPointerType.Float,
+                (uint)Vertex.SizeInBytes,
+                0
+            );
+            VBO.VertexAttributePointer(
+                1,
+                3,
+                VertexAttribPointerType.Float,
+                (uint)Vertex.SizeInBytes,
+                3 * sizeof(float)
+            );
+            VBO.VertexAttributePointer(
+                2,
+                2,
+                VertexAttribPointerType.Float,
+                (uint)Vertex.SizeInBytes,
+                6 * sizeof(float)
+            );
 
             Vertices = new();
             Indices = new();
@@ -43,7 +61,8 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
         public void Draw(float dt, RenderOptions? renderOptions = null)
         {
-            if (Indices.Count < 1) return;
+            if (Indices.Count < 1)
+                return;
 
             VBO.VertexBuffer.BufferData(CollectionsMarshal.AsSpan(Vertices));
             VBO.ElementBuffer.BufferData(CollectionsMarshal.AsSpan(Indices));
@@ -53,7 +72,12 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             // Once again, I really don't want to make the whole method unsafe for one call.
             unsafe
             {
-                GameManager.Instance.Gl.DrawElements(primitive, (uint)Indices.Count, DrawElementsType.UnsignedInt, null);
+                GameManager.Instance.Gl.DrawElements(
+                    primitive,
+                    (uint)Indices.Count,
+                    DrawElementsType.UnsignedInt,
+                    null
+                );
             }
 
             VBO.Unbind();
@@ -94,17 +118,14 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         Technique = new Technique(GameManager.Instance.ContentManager.GetShader("basic"));
     }
 
-    public void Initialize()
-    {
-    }
+    public void Initialize() { }
 
-    public void Update(float dt)
-    {
-    }
+    public void Update(float dt) { }
 
     public void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
 
         var options = renderOptions ?? RenderOptions.Default;
 
@@ -125,7 +146,11 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     }
 
     [Obsolete]
-    public override void DrawCircle(in Box2D.NetStandard.Common.Vec2 center, float radius, in Color color)
+    public override void DrawCircle(
+        in Box2D.NetStandard.Common.Vec2 center,
+        float radius,
+        in Color color
+    )
     {
         AddCircle(center, radius, color);
     }
@@ -137,25 +162,51 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void DrawRectangleF(in RectangleF rect, in Color color)
     {
-        if (!Enabled) return;
-        polygonMesh.Vertices.AddRange(new Vertex[] {
+        if (!Enabled)
+            return;
+        polygonMesh.Vertices.AddRange(
+            new Vertex[]
+            {
                 new Vertex(rect.X, rect.Y, 0, 0, 0, color.R, color.G, color.B),
                 new Vertex(rect.X + rect.Width, rect.Y, 0, 0, 0, color.R, color.G, color.B),
-                new Vertex(rect.X + rect.Width, rect.Y + rect.Height, 0, 0, 0, color.R, color.G, color.B),
+                new Vertex(
+                    rect.X + rect.Width,
+                    rect.Y + rect.Height,
+                    0,
+                    0,
+                    0,
+                    color.R,
+                    color.G,
+                    color.B
+                ),
                 new Vertex(rect.X, rect.Y + rect.Height, 0, 0, 0, color.R, color.G, color.B)
-            });
+            }
+        );
 
-        polygonMesh.Indices.AddRange(new uint[] { polygonMeshIndexCount + 0, polygonMeshIndexCount + 1, polygonMeshIndexCount + 2, polygonMeshIndexCount + 0, polygonMeshIndexCount + 2, polygonMeshIndexCount + 3 });
+        polygonMesh.Indices.AddRange(
+            new uint[]
+            {
+                polygonMeshIndexCount + 0,
+                polygonMeshIndexCount + 1,
+                polygonMeshIndexCount + 2,
+                polygonMeshIndexCount + 0,
+                polygonMeshIndexCount + 2,
+                polygonMeshIndexCount + 3
+            }
+        );
         polygonMeshIndexCount += 4;
     }
 
     private void AddCircle(in Vector2 position, float radius, in Color color)
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
         int vCount = 12;
         float angle = 360.0f / (vCount - 1);
 
-        circleMesh.Vertices.Add(new Vertex(position.X, position.Y, 0, 0, 0, color.R, color.G, color.B));
+        circleMesh.Vertices.Add(
+            new Vertex(position.X, position.Y, 0, 0, 0, color.R, color.G, color.B)
+        );
 
         // positions
         for (int i = 0; i <= vCount; i++)
@@ -171,58 +222,94 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     }
 
     [Obsolete]
-    public override void DrawPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
+    public override void DrawPolygon(
+        in Box2D.NetStandard.Common.Vec2[] vertices,
+        int vertexCount,
+        in Color color
+    )
     {
         AddPolygon(vertices, vertexCount, color);
     }
 
     [Obsolete]
-    public override void DrawSegment(in Box2D.NetStandard.Common.Vec2 p1, in Box2D.NetStandard.Common.Vec2 p2, in Color color)
+    public override void DrawSegment(
+        in Box2D.NetStandard.Common.Vec2 p1,
+        in Box2D.NetStandard.Common.Vec2 p2,
+        in Color color
+    )
     {
         DrawSegment(p1, p2, color);
     }
 
     public void DrawSegment(in Vector2 p1, in Vector2 p2, in Color color)
     {
-        if (!Enabled) return;
-        segmentMesh.Vertices.AddRange(new[] {
-            new Vertex(p1.X, p1.Y, 0, 0, 0, color.R, color.G, color.B),
-            new Vertex(p2.X, p2.Y, 0, 0, 0, color.R, color.G, color.B)
-        });
+        if (!Enabled)
+            return;
+        segmentMesh.Vertices.AddRange(
+            new[]
+            {
+                new Vertex(p1.X, p1.Y, 0, 0, 0, color.R, color.G, color.B),
+                new Vertex(p2.X, p2.Y, 0, 0, 0, color.R, color.G, color.B)
+            }
+        );
 
         segmentMesh.Indices.Add((uint)segmentMesh.Indices.Count);
         segmentMesh.Indices.Add((uint)segmentMesh.Indices.Count);
     }
 
     [Obsolete]
-    public override void DrawSolidCircle(in Box2D.NetStandard.Common.Vec2 center, float radius, in Box2D.NetStandard.Common.Vec2 axis, in Color color)
+    public override void DrawSolidCircle(
+        in Box2D.NetStandard.Common.Vec2 center,
+        float radius,
+        in Box2D.NetStandard.Common.Vec2 axis,
+        in Color color
+    )
     {
         AddCircle(center, radius, color);
     }
 
     [Obsolete]
-    public override void DrawSolidPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
+    public override void DrawSolidPolygon(
+        in Box2D.NetStandard.Common.Vec2[] vertices,
+        int vertexCount,
+        in Color color
+    )
     {
         AddPolygon(vertices, vertexCount, color);
     }
 
     [Obsolete]
-    private void AddPolygon(in Box2D.NetStandard.Common.Vec2[] vertices, int vertexCount, in Color color)
+    private void AddPolygon(
+        in Box2D.NetStandard.Common.Vec2[] vertices,
+        int vertexCount,
+        in Color color
+    )
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
         if (vertexCount != 4)
             return;
 
         for (int i = 0; i < vertexCount; i++)
-            polygonMesh.Vertices.Add(new Vertex(vertices[i].X, vertices[i].Y, 0, 0, 0, color.R, color.G, color.B));
+            polygonMesh.Vertices.Add(
+                new Vertex(vertices[i].X, vertices[i].Y, 0, 0, 0, color.R, color.G, color.B)
+            );
 
-        polygonMesh.Indices.AddRange(new uint[] { polygonMeshIndexCount + 0, polygonMeshIndexCount + 1, polygonMeshIndexCount + 2, polygonMeshIndexCount + 0, polygonMeshIndexCount + 2, polygonMeshIndexCount + 3 });
+        polygonMesh.Indices.AddRange(
+            new uint[]
+            {
+                polygonMeshIndexCount + 0,
+                polygonMeshIndexCount + 1,
+                polygonMeshIndexCount + 2,
+                polygonMeshIndexCount + 0,
+                polygonMeshIndexCount + 2,
+                polygonMeshIndexCount + 3
+            }
+        );
         polygonMeshIndexCount += 4;
     }
 
-    public override void DrawTransform(in Box2D.NetStandard.Common.Transform xf)
-    {
-    }
+    public override void DrawTransform(in Box2D.NetStandard.Common.Transform xf) { }
 
     public void Dispose()
     {

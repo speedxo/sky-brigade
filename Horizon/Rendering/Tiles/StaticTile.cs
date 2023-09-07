@@ -3,8 +3,8 @@ using System.Numerics;
 
 namespace Horizon.Rendering
 {
-	public partial class Tiling<TTextureID>
-	{
+    public partial class Tiling<TTextureID>
+    {
         public class StaticTile : Tile
         {
             public struct TiledTileConfig
@@ -18,7 +18,7 @@ namespace Horizon.Rendering
             public int ID { get; init; }
 
             public StaticTile(TiledTileConfig config, TileMapChunk chunk, Vector2 local)
-                :base(chunk, local)
+                : base(chunk, local)
             {
                 this.ID = config.ID;
                 this.Set = config.Set;
@@ -28,4 +28,3 @@ namespace Horizon.Rendering
         }
     }
 }
-
