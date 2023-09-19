@@ -1,4 +1,5 @@
 ﻿using Box2D.NetStandard.Dynamics.Bodies;
+using Horizon.OpenGL;
 using Horizon.Primitives;
 using System.Numerics;
 
@@ -30,6 +31,7 @@ public abstract partial class Tiling<TTextureID>
             this.Tiles = new Tile[Width * Height];
         }
 
+        
         public Tile? this[int x, int y]
         {
             get { return Tiles[x + y * Width]; }
@@ -76,10 +78,6 @@ public abstract partial class Tiling<TTextureID>
 
         public TileMapChunkSlice[] Slices { get; init; }
 
-        /// <summary>
-        /// Gets the dictionary of tile sets paired with tile arrays.
-        /// </summary>
-        public Dictionary<TileSet, Tile[]> TileSetPairs { get; init; }
 
         /// <summary>
         /// Gets the position of the chunk in the tile map.
@@ -97,11 +95,6 @@ public abstract partial class Tiling<TTextureID>
         public TilemapRenderer Renderer { get; init; }
 
         /// <summary>
-        /// Gets a value indicating whether the chunk should be updated.
-        /// </summary>
-        public bool IsDirty { get; private set; }
-
-        /// <summary>
         /// Gets the bounds of the chunk in world space.
         /// </summary>
         public RectangleF Bounds { get; init; }
@@ -111,7 +104,10 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         public bool IsVisibleByCamera { get; set; } = true;
 
-        private float _meshUpdateCooldown = 0.0f;
+        /// <summary>
+        /// Gets a value indicating whether the chunk should be updated.
+        /// </summary>
+        public bool IsDirty { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TileMapChunk"/> class.
@@ -130,16 +126,16 @@ public abstract partial class Tiling<TTextureID>
             for (int i = 0; i < Slices.Length; i++)
                 Slices[i] = new(Width, Height);
 
-            TileSetPairs = new Dictionary<TileSet, Tile[]>();
-
             Renderer = new TilemapRenderer(this);
-            IsDirty = true;
 
             Bounds = new RectangleF(
                 pos * new Vector2(Width - 1, Height - 1)
                     - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
                 new(Width - 1, Height - 1)
             );
+                 
+
+            IsDirty = true;
         }
 
         public TileMapChunkSlice CreateSlice() => new(Width, Height);
@@ -153,6 +149,18 @@ public abstract partial class Tiling<TTextureID>
         public bool IsEmpty(int x, int y, int z)
         {
             return this[x, y, z] is null;
+        }
+
+        /// <summary>
+        /// Flags the chunk for mesh regeneration.
+        /// </summary>
+        /// <returns>True if the chunk was flagged for regeneration; otherwise, false.</returns>
+        public bool MarkDirty()
+        {
+            if (IsDirty)
+                return false;
+
+            return IsDirty = true;
         }
 
         /// <summary>
@@ -186,29 +194,7 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="renderOptions">Optional rendering options.</param>
         public void Draw(float dt, RenderOptions? renderOptions = null)
         {
-            _meshUpdateCooldown += dt;
-
-            if (IsDirty && _meshUpdateCooldown > 0.25f)
-            {
-                _meshUpdateCooldown = 0.0f;
-                IsDirty = false;
-
-                GenerateMesh();
-            }
-
             Renderer.Draw(dt, renderOptions);
-        }
-
-        /// <summary>
-        /// Flags the chunk for mesh regeneration.
-        /// </summary>
-        /// <returns>True if the chunk was flagged for regeneration; otherwise, false.</returns>
-        public bool MarkDirty()
-        {
-            if (IsDirty)
-                return false;
-
-            return IsDirty = true;
         }
 
         /// <summary>
@@ -219,63 +205,6 @@ public abstract partial class Tiling<TTextureID>
         {
             if (!IsVisibleByCamera)
                 return;
-        }
-
-        /// <summary>
-        /// Generates the mesh for the chunk.
-        /// </summary>
-        public void GenerateMesh()
-        {
-            UpdateTileSetPairs();
-            Renderer.GenerateMeshes();
-        }
-
-        /// <summary>
-        /// Updates the association between tile sets and their corresponding tiles in the chunk.
-        /// </summary>
-        /// <remarks>
-        /// This method iterates through the tiles in the chunk and organizes them into pairs, where each tile set
-        /// is associated with a 2D array of tiles that belong to that set. This allows for efficient rendering of tiles
-        /// using tile sets and minimizes the number of draw calls required.
-        /// </remarks>
-        private void UpdateTileSetPairs()
-        {
-            // Clear the existing tile set pairs to rebuild them.
-            TileSetPairs.Clear();
-
-            // Temporary storage for organizing tiles by tile set.
-            var tempPairs = new Dictionary<TileSet, List<Tile>>();
-
-            for (int s = 0; s < Slices.Length; s++)
-            {
-                // Iterate through the tiles in the chunk.
-                for (int i = 0; i < Slices[s].Tiles.Length; i++)
-                {
-                    var tile = Slices[s][i];
-                    if (tile is null)
-                        continue;
-
-                    // Check if the tile set is already in the temporary pairs.
-                    if (!tempPairs.ContainsKey(tile.Set))
-                    {
-                        // If not, create a new array for that tile set.
-                        tempPairs[tile.Set] = new List<Tile>();
-                    }
-
-                    // Add the tile to the corresponding tile set's array.
-                    tempPairs[tile.Set].Add(tile);
-                }
-            }
-
-            // Copy the organized tile set pairs to the main TileSetPairs dictionary.
-            foreach ((TileSet set, List<Tile> tiles) in tempPairs)
-            {
-                TileSetPairs[set] = tiles.ToArray();
-                tiles.Clear();
-            }
-
-            // Clear the temporary storage to free up memory.
-            tempPairs.Clear();
         }
 
         /// <summary>

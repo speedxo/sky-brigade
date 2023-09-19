@@ -2,6 +2,7 @@
 using Horizon.OpenGL;
 using Horizon.Rendering.Spriting;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering;
 
@@ -35,6 +36,7 @@ public abstract partial class Tiling<TTextureID>
             Tiles.Add(key, new SpriteDefinition { Position = pos, Size = size ?? TileSize });
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2[] GetTextureCoordinatesFromTiledMapId(int id)
         {
             // Calculate the number of columns in the tileset
@@ -66,6 +68,7 @@ public abstract partial class Tiling<TTextureID>
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2[] GetTextureCoordinates(TTextureID key)
         {
             if (!Tiles.TryGetValue(key, out var sprite))

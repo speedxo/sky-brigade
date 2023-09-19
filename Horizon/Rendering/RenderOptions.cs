@@ -13,6 +13,7 @@ public struct RenderOptions
     public bool IsPostProcessingEnabled { get; set; }
     public bool IsWireframeEnabled { get; set; }
     public float AmbientLightingStrength { get; set; }
+    public bool IsBox2DDebugDrawEnabled { get; set; }
 
     // Reference Properties
     public Camera Camera { get; set; }
@@ -34,6 +35,7 @@ public struct RenderOptions
             AmbientLightingStrength = 0.03f,
             DebugOptions = DebugRenderOptions.Default,
             IsPostProcessingEnabled = true,
-            GL = GameManager.Instance.Gl
+            GL = GameManager.Instance.Gl,
+            IsBox2DDebugDrawEnabled = false
         };
 }

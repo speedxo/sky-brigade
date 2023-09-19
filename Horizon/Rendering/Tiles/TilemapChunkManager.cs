@@ -66,8 +66,8 @@ public abstract partial class Tiling<TTextureID>
         public void GenerateMeshes()
         {
             for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].GenerateMesh();
+                for (int y = 0; y < Map.Height; y++) 
+                    Chunks[x + y * Map.Width].Renderer.GenerateMesh();
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 {
     public string Name { get; set; }
     public Entity Parent { get; set; }
-    public bool Enabled { get; set; } = false;
+    public bool Enabled { get; set; } = true;
 
     private class DebugDrawIntermediaryMeshData : IDrawable, IDisposable
     {
@@ -125,7 +125,12 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     public void Draw(float dt, RenderOptions? renderOptions = null)
     {
         if (!Enabled)
+        {
+            circleMesh.Clear();
+            polygonMesh.Clear();
+            segmentMesh.Clear();
             return;
+        }
 
         var options = renderOptions ?? RenderOptions.Default;
 
@@ -164,6 +169,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     {
         if (!Enabled)
             return;
+
         polygonMesh.Vertices.AddRange(
             new Vertex[]
             {
@@ -201,6 +207,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     {
         if (!Enabled)
             return;
+
         int vCount = 12;
         float angle = 360.0f / (vCount - 1);
 
@@ -245,6 +252,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     {
         if (!Enabled)
             return;
+
         segmentMesh.Vertices.AddRange(
             new[]
             {
@@ -287,6 +295,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     {
         if (!Enabled)
             return;
+
         if (vertexCount != 4)
             return;
 

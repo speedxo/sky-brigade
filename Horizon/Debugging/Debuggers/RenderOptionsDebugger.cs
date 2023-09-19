@@ -12,7 +12,8 @@ namespace Horizon.Debugging.Debuggers
         private string[] renderModes;
         private int renderModeIndex;
         private bool isPostProcessingEnabled,
-            isWireframeEnabled;
+            isWireframeEnabled,
+            isBox2DDebugDrawEnabled;
 
         public override void Initialize()
         {
@@ -49,6 +50,7 @@ namespace Horizon.Debugging.Debuggers
 
                 ImGui.Checkbox("Post Processing", ref isPostProcessingEnabled);
                 ImGui.Checkbox("Wireframe Mode", ref isWireframeEnabled);
+                ImGui.Checkbox("Box2D Debugger", ref isBox2DDebugDrawEnabled);
 
                 ImGui.End();
             }
@@ -65,7 +67,8 @@ namespace Horizon.Debugging.Debuggers
                     DefferedLayer = (DefferedRenderLayer)renderModeIndex
                 },
                 IsPostProcessingEnabled = isPostProcessingEnabled,
-                IsWireframeEnabled = isWireframeEnabled
+                IsWireframeEnabled = isWireframeEnabled,
+                IsBox2DDebugDrawEnabled = isBox2DDebugDrawEnabled
             };
         }
     }

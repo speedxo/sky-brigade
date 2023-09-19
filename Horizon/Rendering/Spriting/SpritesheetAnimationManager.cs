@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering.Spriting;
 
@@ -23,6 +24,7 @@ public class SpritesheetAnimationManager : IGameComponent
         get => GetFrame(name);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public (SpriteDefinition definition, int index) GetFrame(string name)
     {
         if (!Animations.TryGetValue(name, out SpriteAnimationDefinition value))

@@ -23,19 +23,23 @@ public class GameScene : Scene
     private TileMap tilemap;
     private World world;
 
-    public static Box2DDebugDrawCallback debugDrawCallback;
+    private readonly Box2DDebugDrawCallback debugDrawCallback;
 
     public GameScene()
     {
         InitializeGl();
 
         debugDrawCallback = new();
+        debugDrawCallback.Parent  =this;
+        debugDrawCallback.Initialize();
+
         debugDrawCallback.AppendFlags(
             DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair | DrawFlags.Shape
         );
         debugDrawCallback.Enabled = true;
 
         world = AddComponent<Box2DWorldComponent>();
+        
         world.SetDebugDraw(debugDrawCallback);
 
         if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
@@ -97,6 +101,7 @@ public class GameScene : Scene
         world.DrawDebugData();
 
         var options = (renderOptions ?? RenderOptions.Default) with { Camera = cam };
+        debugDrawCallback.Enabled = options.IsBox2DDebugDrawEnabled;
         base.Draw(dt, options);
     }
 

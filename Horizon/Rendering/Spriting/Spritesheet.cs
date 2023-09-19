@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering.Spriting
 {
@@ -62,6 +63,7 @@ namespace Horizon.Rendering.Spriting
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2[] GetAnimatedTextureCoordinates(string name)
         {
             if (!AnimationManager.Animations.TryGetValue(name, out var sprite))
@@ -88,6 +90,7 @@ namespace Horizon.Rendering.Spriting
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2[] GetTextureCoordinates(string name)
         {
             if (!Sprites.TryGetValue(name, out var sprite))

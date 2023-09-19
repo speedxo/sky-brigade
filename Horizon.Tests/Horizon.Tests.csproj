@@ -9,7 +9,6 @@
   </PropertyGroup>
 
 	<PropertyGroup>
-		<IsAotCompatible>true</IsAotCompatible>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 	</PropertyGroup>
 

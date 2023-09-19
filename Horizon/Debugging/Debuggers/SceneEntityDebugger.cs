@@ -10,6 +10,7 @@ namespace Horizon.Debugging.Debuggers
 {
     public class SceneEntityDebugger : DebuggerComponent
     {
+        private const float V_speed = 0.05f;
         public bool DebugInstance = false;
 
         public override void Initialize()
@@ -91,7 +92,7 @@ namespace Horizon.Debugging.Debuggers
                             if (ImGui.MenuItem("Delete"))
                             {
                                 entity.Components.Remove(component.GetType());
-                                // TODO: some kind of disposing.
+                                // TODO: some king of disposing.tho
                                 ImGui.CloseCurrentPopup();
                             }
 
@@ -122,110 +123,119 @@ namespace Horizon.Debugging.Debuggers
             }
 
             Type type = component.GetType();
-            PropertyInfo[] properties = type.GetProperties();
-
-            foreach (var property in properties)
+            var properties = type
+                .GetProperties()
+                .Where(p => p.GetIndexParameters().Length == 0)
+                .ToArray();
+            try
             {
-                if (property is null)
-                    continue;
-
-                object? value = property.GetValue(component);
-
-                if (property.GetMethod?.IsStatic == true)
+                foreach (var property in properties)
                 {
-                    continue; // Skip static properties
-                }
-
-                if (property.PropertyType.IsArray)
-                {
-                    DrawArrayProperty(property.Name, (Array)value!);
-                }
-                else if (
-                    property.PropertyType.IsGenericType
-                    && property.PropertyType.GetGenericTypeDefinition() == typeof(List<>)
-                )
-                {
-                    if (value is null)
+                    if (property is null || property.IsCollectible)
                         continue;
 
-                    DrawListProperty(property.Name, value);
-                }
-                else if (
-                    property.PropertyType.IsGenericType
-                    && property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>)
-                )
-                {
-                    if (value is null)
-                        continue;
+                    object? value = property.GetValue(component);
 
-                    DrawDictionaryProperty(property.Name, value);
-                }
-                else if (property.PropertyType.IsValueType)
-                {
-                    if (
-                        property.PropertyType.Namespace is null
-                        || property.PropertyType.Namespace.StartsWith("System")
+                    if (property.GetMethod?.IsStatic == true)
+                    {
+                        continue; // Skip static properties
+                    }
+
+                    if (property.PropertyType.IsArray)
+                    {
+                        DrawArrayProperty(property.Name, (Array)value!);
+                    }
+                    else if (
+                        property.PropertyType.IsGenericType
+                        && property.PropertyType.GetGenericTypeDefinition() == typeof(List<>)
                     )
-                        continue;
+                    {
+                        if (value is null)
+                            continue;
 
-                    if (ImGui.TreeNodeEx($"{property.Name} (Value Type)"))
+                        DrawListProperty(property.Name, value);
+                    }
+                    else if (
+                        property.PropertyType.IsGenericType
+                        && property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>)
+                    )
                     {
-                        DrawProperties(value, depth + 1);
-                        ImGui.TreePop();
+                        if (value is null)
+                            continue;
+
+                        DrawDictionaryProperty(property.Name, value);
+                    }
+                    else if (property.PropertyType.IsValueType)
+                    {
+                        if (
+                            property.PropertyType.Namespace is null
+                            || property.PropertyType.Namespace.StartsWith("System")
+                        )
+                            continue;
+
+                        if (ImGui.TreeNodeEx($"{property.Name} (Value Type)"))
+                        {
+                            DrawProperties(value, depth + 1);
+                            ImGui.TreePop();
+                        }
+                    }
+                    else if (!property.CanWrite || value == null)
+                    {
+                        DrawPropertyRow(property.Name, $"{value}");
+                    }
+                    else if (value is int intValue)
+                    {
+                        if (ImGui.DragInt(property.Name, ref intValue, V_speed))
+                            property.SetValue(component, intValue);
+                    }
+                    else if (value is string stringValue)
+                    {
+                        DrawPropertyRow(property.Name, $"\"{stringValue}\"");
+                    }
+                    else if (value is float floatValue)
+                    {
+                        if (ImGui.DragFloat(property.Name, ref floatValue, V_speed))
+                        {
+                            property.SetValue(component, floatValue);
+                        }
+                    }
+                    else if (value is Vector2 vector2Value)
+                    {
+                        if (ImGui.DragFloat2(property.Name, ref vector2Value, V_speed))
+                        {
+                            property.SetValue(component, vector2Value);
+                        }
+                    }
+                    else if (value is Vector3 vector3Value)
+                    {
+                        if (ImGui.DragFloat3(property.Name, ref vector3Value, V_speed))
+                        {
+                            property.SetValue(component, vector3Value);
+                        }
+                    }
+                    else if (value is Vector4 vector4Value)
+                    {
+                        if (ImGui.DragFloat4(property.Name, ref vector4Value, V_speed))
+                        {
+                            property.SetValue(component, vector4Value);
+                        }
+                    }
+                    else if (value is bool boolValue)
+                    {
+                        if (ImGui.Checkbox(property.Name, ref boolValue))
+                        {
+                            property.SetValue(component, boolValue);
+                        }
+                    }
+                    else
+                    {
+                        DrawPropertyRow(property.Name, $"{GetFriendlyName(value)}");
                     }
                 }
-                else if (!property.CanWrite || value == null)
-                {
-                    DrawPropertyRow(property.Name, $"{value}");
-                }
-                else if (value is int intValue)
-                {
-                    if (ImGui.DragInt(property.Name, ref intValue, 0.1f))
-                        property.SetValue(component, intValue);
-                }
-                else if (value is string stringValue)
-                {
-                    DrawPropertyRow(property.Name, $"\"{stringValue}\"");
-                }
-                else if (value is float floatValue)
-                {
-                    if (ImGui.DragFloat(property.Name, ref floatValue, 0.1f))
-                    {
-                        property.SetValue(component, floatValue);
-                    }
-                }
-                else if (value is Vector2 vector2Value)
-                {
-                    if (ImGui.DragFloat2(property.Name, ref vector2Value, 0.1f))
-                    {
-                        property.SetValue(component, vector2Value);
-                    }
-                }
-                else if (value is Vector3 vector3Value)
-                {
-                    if (ImGui.DragFloat3(property.Name, ref vector3Value, 0.1f))
-                    {
-                        property.SetValue(component, vector3Value);
-                    }
-                }
-                else if (value is Vector4 vector4Value)
-                {
-                    if (ImGui.DragFloat4(property.Name, ref vector4Value, 0.1f))
-                    {
-                        property.SetValue(component, vector4Value);
-                    }
-                }
-                else if (value is bool boolValue)
-                {
-                    if (ImGui.Checkbox(property.Name, ref boolValue))
-                    {
-                        property.SetValue(component, boolValue);
-                    }
-                }
-                else
-                {
-                    DrawPropertyRow(property.Name, $"{GetFriendlyName(value)}");
-                }
+            }
+            catch { 
+                ImGui.Text("EISH MY MAN");
+                throw;
             }
         }
 
@@ -274,35 +284,35 @@ namespace Horizon.Debugging.Debuggers
 
                             if (element is int intValue)
                             {
-                                if (ImGui.DragInt("", ref intValue, 0.1f))
+                                if (ImGui.DragInt("", ref intValue, V_speed))
                                 {
                                     list[i] = intValue;
                                 }
                             }
                             else if (element is float floatValue)
                             {
-                                if (ImGui.DragFloat("", ref floatValue, 0.1f))
+                                if (ImGui.DragFloat("", ref floatValue, V_speed))
                                 {
                                     list[i] = floatValue;
                                 }
                             }
                             else if (element is Vector2 vectorValue2)
                             {
-                                if (ImGui.DragFloat2("", ref vectorValue2, 0.1f))
+                                if (ImGui.DragFloat2("", ref vectorValue2, V_speed))
                                 {
                                     list[i] = vectorValue2;
                                 }
                             }
                             else if (element is Vector3 vectorValue3)
                             {
-                                if (ImGui.DragFloat3("", ref vectorValue3, 0.1f))
+                                if (ImGui.DragFloat3("", ref vectorValue3, V_speed))
                                 {
                                     list[i] = vectorValue3;
                                 }
                             }
                             else if (element is Vector4 vectorValue4)
                             {
-                                if (ImGui.DragFloat4("", ref vectorValue4, 0.1f))
+                                if (ImGui.DragFloat4("", ref vectorValue4, V_speed))
                                 {
                                     list[i] = vectorValue4;
                                 }
@@ -355,28 +365,28 @@ namespace Horizon.Debugging.Debuggers
 
                     if (element is int intValue)
                     {
-                        if (ImGui.DragInt("", ref intValue, 0.1f))
+                        if (ImGui.DragInt("", ref intValue, V_speed))
                         {
                             array.SetValue(intValue, i);
                         }
                     }
                     else if (element is float floatValue)
                     {
-                        if (ImGui.DragFloat("", ref floatValue, 0.1f))
+                        if (ImGui.DragFloat("", ref floatValue, V_speed))
                         {
                             array.SetValue(floatValue, i);
                         }
                     }
                     else if (element is Vector2 vectorValue2)
                     {
-                        if (ImGui.DragFloat2("", ref vectorValue2, 0.1f))
+                        if (ImGui.DragFloat2("", ref vectorValue2, V_speed))
                         {
                             array.SetValue(vectorValue2, i);
                         }
                     }
                     else if (element is Vector3 vectorValue3)
                     {
-                        if (ImGui.DragFloat3("", ref vectorValue3, 0.1f))
+                        if (ImGui.DragFloat3("", ref vectorValue3, V_speed))
                         {
                             array.SetValue(vectorValue3, i);
                         }

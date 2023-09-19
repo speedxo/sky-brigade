@@ -2,6 +2,7 @@
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components.Physics2D;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using TiledSharp;
 
 namespace Horizon.Rendering;
@@ -236,7 +237,7 @@ public abstract partial class Tiling<TTextureID>
 
         /// <summary>
         /// Returns all the tiles within a half area by half area region around a specified point, within O(area) time complexity.
-        /// </summary>using System.Collections.Generic;
+        /// </summary>
         public IEnumerable<Tile> FindVisibleTiles(Vector2 position, float area = 10.0f)
         {
             var areaSize = new Vector2(area / 2.0f);
@@ -353,6 +354,7 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         /// <param name="textureID">The texture ID to search for.</param>
         /// <returns>The tile set associated with the texture ID, or null if not found.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TileSet GetTileSetFromTileTextureID(TTextureID textureID)
         {
             foreach (TileSet set in TileSets.Values)
