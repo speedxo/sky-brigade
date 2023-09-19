@@ -110,7 +110,6 @@ public abstract partial class Tiling<TTextureID>
                 }
             }
         }
-
         float _dirtyChunkUpdateTimer = 0.0f;
         public void Draw(float dt, RenderOptions? renderOptions = null)
         {

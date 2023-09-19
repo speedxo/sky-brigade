@@ -9,8 +9,9 @@ using Horizon.Rendering.Spriting;
 using ImGuiNET;
 using System.Collections;
 using System.Numerics;
+using Game2D.Player.Behaviour;
 
-namespace Game2D;
+namespace Game2D.Player;
 
 public class Player2D : Sprite
 {
@@ -21,8 +22,10 @@ public class Player2D : Sprite
 
     private const float speed = 50.0f;
     private Box2DBodyComponent box2DBodyComponent;
-
+    private Player2DStateController stateController;
     public Vector2 Position => PhysicsBody.Position;
+
+    public Player2DStateIdentifier State { get => stateController.CurrentState; }
 
     private readonly World world;
     private readonly TileMap map;
@@ -37,8 +40,16 @@ public class Player2D : Sprite
 
         CreateSprite();
         CreatePhysics();
+        CreateStateController();
 
         collidersIntervalRunner = AddEntity(new IntervalRunner(0.25f, GenerateTileColliders));
+    }
+
+    private void CreateStateController()
+    {
+        stateController = AddComponent<Player2DStateController>();
+        stateController.RegisterBehaviour(Player2DStateIdentifier.Idle, new Behaviour.States.PlayerIdleBehaviour(stateController));
+        stateController.RegisterBehaviour(Player2DStateIdentifier.Walking, new Behaviour.States.PlayerWalkingBehaviour(stateController));
     }
 
     private void CreatePhysics()
@@ -76,7 +87,6 @@ public class Player2D : Sprite
         Setup(sprSheet1, "idle");
 
         IsAnimated = true;
-        // nice
         Size = new Vector2(1.0f);
     }
 

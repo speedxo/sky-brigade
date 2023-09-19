@@ -13,6 +13,8 @@ using ImGuiNET;
 using Silk.NET.OpenGL;
 using System.Numerics;
 
+using Game2D.Player;
+
 namespace Game2D;
 
 public class GameScene : Scene
@@ -115,5 +117,7 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    public override void DrawGui(float dt) { }
+    public override void DrawGui(float dt) { 
+        ImGui.Text(player.State.ToString());
+    }
 }
