@@ -14,6 +14,8 @@ using Silk.NET.Core.Attributes;
 using Silk.NET.OpenGL;
 using System.Numerics;
 
+using Game2D.Player;
+
 namespace Game2D;
 
 public class GameScene : Scene
