@@ -22,7 +22,7 @@ public class Sprite : Entity
 
     public TransformComponent2D Transform { get; private set; }
 
-    public void Setup(
+    public void ConfigureSpritesheetAndDefaultAnimation(
         Spritesheet spriteSheet,
         string name,
         TransformComponent2D? inTransform = null

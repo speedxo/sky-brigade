@@ -20,13 +20,15 @@ public class Player2D : Sprite
         get => box2DBodyComponent.Body;
     }
 
-    private const float speed = 50.0f;
     private Box2DBodyComponent box2DBodyComponent;
     private Player2DStateController stateController;
     public Vector2 Position => PhysicsBody.Position;
 
-    public Player2DStateIdentifier State { get => stateController.CurrentState; }
-
+    public Player2DStateIdentifier State
+    {
+        get => stateController.CurrentState;
+    }
+    public override string Name { get; set; } = "Player2D";
     private readonly World world;
     private readonly TileMap map;
     private readonly IntervalRunner collidersIntervalRunner;
@@ -41,15 +43,27 @@ public class Player2D : Sprite
         CreateSprite();
         CreatePhysics();
         CreateStateController();
+        AttachDebugWatches();
 
         collidersIntervalRunner = AddEntity(new IntervalRunner(0.25f, GenerateTileColliders));
+    }
+
+    private void AttachDebugWatches()
+    {
+        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("State", this.Name, () => State);
     }
 
     private void CreateStateController()
     {
         stateController = AddComponent<Player2DStateController>();
-        stateController.RegisterBehaviour(Player2DStateIdentifier.Idle, new Behaviour.States.PlayerIdleBehaviour(stateController));
-        stateController.RegisterBehaviour(Player2DStateIdentifier.Walking, new Behaviour.States.PlayerWalkingBehaviour(stateController));
+        stateController.RegisterBehaviour(
+            Player2DStateIdentifier.Idle,
+            new Behaviour.States.PlayerIdleBehaviour(stateController)
+        );
+        stateController.RegisterBehaviour(
+            Player2DStateIdentifier.Walking,
+            new Behaviour.States.PlayerWalkingBehaviour(stateController)
+        );
     }
 
     private void CreatePhysics()
@@ -67,24 +81,34 @@ public class Player2D : Sprite
         PhysicsBody.CreateFixture(shape, 1.0f);
         PhysicsBody.SetFixedRotation(true);
         PhysicsBody.SetLinearDampling(7.5f);
+        PhysicsBody.SetTransform(
+            new Vector2(
+                map.Width / 2.0f * TileMapChunk.WIDTH,
+                map.Height / 2.0f * TileMapChunk.HEIGHT
+            ),
+            0.0f
+        );
     }
 
     private void CreateSprite()
     {
-        var sprSheet1 = (
+        var sheet = (
             new Spritesheet(
                 GameManager.Instance.ContentManager.LoadTexture("content/spritesheet.png"),
                 new Vector2(16)
             )
         );
-        sprSheet1.AddAnimation("walk_up", new Vector2(0, 0), 4);
-        sprSheet1.AddAnimation("walk_down", new Vector2(4, 0), 4);
 
-        sprSheet1.AddAnimation("walk_left", new Vector2(0, 1), 4);
-        sprSheet1.AddAnimation("walk_right", new Vector2(4, 1), 4);
-        sprSheet1.AddAnimation("idle", new Vector2(4, 0), 1);
+        sheet.AddAnimationRange(new (string, Vector2, int, float, Vector2?)[] {
+            ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
+            ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
+            ("walk_down", new Vector2(4, 0), 4, 0.1f, null),
+            ("walk_left", new Vector2(0, 1), 4, 0.1f, null),
+            ("walk_right", new Vector2(4, 1), 4, 0.1f, null),
+            ("idle", new Vector2(4, 0), 1, 0.1f, null)
+        });
 
-        Setup(sprSheet1, "idle");
+        ConfigureSpritesheetAndDefaultAnimation(sheet, "idle");
 
         IsAnimated = true;
         Size = new Vector2(1.0f);
@@ -93,7 +117,6 @@ public class Player2D : Sprite
     public override void Update(float dt)
     {
         UpdateTileColliders(dt);
-        UpdatePosition(dt);
 
         base.Update(dt);
     }
@@ -145,25 +168,5 @@ public class Player2D : Sprite
                 }
             }
         }
-    }
-
-    private void UpdatePosition(float dt)
-    {
-        // Move player with controller
-        var movementDir = GameManager.Instance.InputManager.GetVirtualController().MovementAxis;
-
-        PhysicsBody.ApplyForce(movementDir * speed, Transform.Position);
-        PhysicsBody.SetLinearVelocity(
-            Vector2.Clamp(PhysicsBody.GetLinearVelocity(), Vector2.One * -5, Vector2.One * 5)
-        );
-
-        FrameName = movementDir switch
-        {
-            var v when v.X < 0 => "walk_left",
-            var v when v.X > 0 => "walk_right",
-            var v when v.Y > 0 => "walk_up",
-            var v when v.Y < 0 => "walk_down",
-            _ => "idle"
-        };
     }
 }

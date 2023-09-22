@@ -81,7 +81,7 @@ public partial class Tiling<TTextureID>
         /// <returns>The global coordinates.</returns>
         public static Vector2 GetTileGlobalCoordinates(Vector2 local, TileMapChunk chunk)
         {
-            return local + chunk.Position * new Vector2(TileMapChunk.Width, TileMapChunk.Height);
+            return local + chunk.Position * new Vector2(TileMapChunk.WIDTH, TileMapChunk.HEIGHT);
         }
 
         /// <summary>

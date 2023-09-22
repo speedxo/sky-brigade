@@ -44,6 +44,7 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         public Dictionary<string, TileSet> TileSets { get; init; }
 
+        private int TileUpdateCount = 0;
         /// <summary>
         /// Initializes a new instance of the <see cref="TileMap"/> class.
         /// </summary>
@@ -78,17 +79,17 @@ public abstract partial class Tiling<TTextureID>
                 }
 
                 if (
-                    tiledMap.Width % TileMapChunk.Width != 0
-                    || tiledMap.Height % TileMapChunk.Height != 0
+                    tiledMap.Width % TileMapChunk.WIDTH != 0
+                    || tiledMap.Height % TileMapChunk.HEIGHT != 0
                 )
                 {
                     throw new ArgumentException(
-                        $"Tiled map dimensions must be multiples of {TileMapChunk.Width}x{TileMapChunk.Height}!"
+                        $"Tiled map dimensions must be multiples of {TileMapChunk.WIDTH}x{TileMapChunk.HEIGHT}!"
                     );
                 }
 
-                int widthInChunks = tiledMap.Width / TileMapChunk.Width;
-                int heightInChunks = tiledMap.Height / TileMapChunk.Height;
+                int widthInChunks = tiledMap.Width / TileMapChunk.WIDTH;
+                int heightInChunks = tiledMap.Height / TileMapChunk.HEIGHT;
                 int depthInLayers = tiledMap.Layers.Count;
 
                 var map = new TileMap(widthInChunks, heightInChunks, depthInLayers)
@@ -115,8 +116,8 @@ public abstract partial class Tiling<TTextureID>
 
                 int layerIndex = 0;
 
-                int chunkWidth = TileMapChunk.Width;
-                int chunkHeight = TileMapChunk.Height;
+                int chunkWidth = TileMapChunk.WIDTH;
+                int chunkHeight = TileMapChunk.HEIGHT;
 
                 foreach (var layer in tiledMap.Layers)
                 {
@@ -222,6 +223,10 @@ public abstract partial class Tiling<TTextureID>
             if (Parent!.HasComponent<Box2DWorldComponent>())
                 World = Parent!.GetComponent<Box2DWorldComponent>();
             ChunkManager = AddComponent<TileMapChunkManager>();
+
+            GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Size", "Tilemap", () => $"{Width}, {Height}, {Depth}");
+            GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Chunk Count", "Tilemap", () => $"{ChunkManager.Chunks.GetLength(0)}");
+            GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Total Tiles", "Tilemap", () => TileUpdateCount);
         }
 
         /// <summary>
@@ -275,8 +280,8 @@ public abstract partial class Tiling<TTextureID>
         {
             get
             {
-                int chunkIndexX = x / (TileMapChunk.Width);
-                int chunkIndexY = y / (TileMapChunk.Height);
+                int chunkIndexX = x / (TileMapChunk.WIDTH);
+                int chunkIndexY = y / (TileMapChunk.HEIGHT);
 
                 if (
                     chunkIndexX >= Width
@@ -288,8 +293,8 @@ public abstract partial class Tiling<TTextureID>
                 )
                     return null;
 
-                int tileIndexX = x % (TileMapChunk.Width);
-                int tileIndexY = y % (TileMapChunk.Height);
+                int tileIndexX = x % (TileMapChunk.WIDTH);
+                int tileIndexY = y % (TileMapChunk.HEIGHT);
 
                 return ChunkManager.Chunks[chunkIndexX + chunkIndexY * Width][
                     tileIndexX,
@@ -299,8 +304,9 @@ public abstract partial class Tiling<TTextureID>
             }
             set
             {
-                int chunkIndexX = x / (TileMapChunk.Width);
-                int chunkIndexY = y / (TileMapChunk.Height);
+                TileUpdateCount++;
+                int chunkIndexX = x / (TileMapChunk.WIDTH);
+                int chunkIndexY = y / (TileMapChunk.HEIGHT);
 
                 if (
                     chunkIndexX >= Width
@@ -312,8 +318,8 @@ public abstract partial class Tiling<TTextureID>
                 )
                     return;
 
-                int tileIndexX = x % (TileMapChunk.Width);
-                int tileIndexY = y % (TileMapChunk.Height);
+                int tileIndexX = x % (TileMapChunk.WIDTH);
+                int tileIndexY = y % (TileMapChunk.HEIGHT);
 
                 ChunkManager.Chunks[chunkIndexX + chunkIndexY * Width][tileIndexX, tileIndexY, z] =
                     value;

@@ -117,7 +117,5 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    public override void DrawGui(float dt) { 
-        ImGui.Text(player.State.ToString());
-    }
+    public override void DrawGui(float dt) {}
 }

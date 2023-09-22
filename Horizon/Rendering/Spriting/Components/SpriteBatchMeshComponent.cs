@@ -9,7 +9,6 @@ namespace Horizon.Rendering.Spriting.Components;
 
 public class SpriteBatchMesh
 {
-    private static int count = 0;
     public static readonly int MAX_SPRITES = 750;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -65,13 +64,6 @@ public class SpriteBatchMesh
             (uint)Vertex2D.SizeInBytes,
             4 * sizeof(float)
         );
-
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch(
-            "SpriteBatch Triangles",
-            $"({count}) Element Count",
-            () => ElementCount / 3
-        );
-        count++;
     }
 
     public void Upload(ReadOnlySpan<Vertex2D> vertices, ReadOnlySpan<uint> elements)

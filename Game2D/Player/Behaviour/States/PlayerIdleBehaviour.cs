@@ -14,7 +14,7 @@ public class PlayerIdleBehaviour : Player2DStateBehaviour
         if (GameManager.Instance.InputManager.GetVirtualController().MovementAxis.LengthSquared() > 0) 
             return Player2DStateIdentifier.Walking;
 
-        
+        Player.FrameName = "idle";
 
         return Player2DStateIdentifier.Idle;
     }

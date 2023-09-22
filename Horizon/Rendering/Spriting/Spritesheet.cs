@@ -46,6 +46,17 @@ namespace Horizon.Rendering.Spriting
             Vector2? inSize = null
         ) => AnimationManager.AddAnimation(name, position, length, frameTime, inSize);
 
+        public void AddAnimationRange((
+            string name,
+            Vector2 position,
+            int length,
+            float frameTime,
+            Vector2? inSize)[] animations)
+        {
+            foreach (var (name, position, length, frameTime, inSize) in animations)
+                AddAnimation(name, position, length, frameTime, inSize);
+        }
+
         public void AddSprite(string name, Vector2 pos, Vector2? size = null)
         {
             if (Sprites.ContainsKey(name))

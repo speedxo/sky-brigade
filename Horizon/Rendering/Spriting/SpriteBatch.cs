@@ -17,6 +17,7 @@ public class SpriteBatch : Entity
     > SpritesheetSprites { get; init; }
 
     private bool _requiresVboUpdate = false;
+    public int Count { get; private set;}
 
     public SpriteBatch(ShaderComponent? shader = null)
     {
@@ -29,6 +30,7 @@ public class SpriteBatch : Entity
         this.SpritesheetSprites = new();
 
         this.Transform = AddComponent<TransformComponent>();
+        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
     }
 
     public void AddSprite(Sprite sprite)
@@ -61,8 +63,12 @@ public class SpriteBatch : Entity
 
     public void UpdateVBO()
     {
+        Count = 0;
         foreach (var (_, (sprites, mesh)) in SpritesheetSprites)
+        {
             GenerateAndUploadSpriteMesh(CollectionsMarshal.AsSpan(sprites), mesh);
+            Count += sprites.Count;
+        }
 
         _requiresVboUpdate = false;
     }

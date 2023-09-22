@@ -89,9 +89,9 @@ namespace Horizon.Debugging.Debuggers
             Name = "General Information";
         }
 
-        public void AddWatch(string name, Func<object> objExpr) => AddWatch("Misc", name, objExpr);
+        public void AddWatch(string name, Func<object> objExpr) => AddWatch(name, "Misc", objExpr);
 
-        public void AddWatch(string catagory, string name, Func<object> objExpr)
+        public void AddWatch(string name, string catagory, Func<object> objExpr)
         {
             lock (_catagoriesLock)
             {

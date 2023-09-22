@@ -69,12 +69,12 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// The width of the tile map chunk in tiles.
         /// </summary>
-        public const int Width = 32;
+        public const int WIDTH = 32;
 
         /// <summary>
         /// The height of the tile map chunk in tiles.
         /// </summary>
-        public const int Height = 32;
+        public const int HEIGHT = 32;
 
         public TileMapChunkSlice[] Slices { get; init; }
 
@@ -124,21 +124,21 @@ public abstract partial class Tiling<TTextureID>
 
             Slices = new TileMapChunkSlice[map.Depth];
             for (int i = 0; i < Slices.Length; i++)
-                Slices[i] = new(Width, Height);
+                Slices[i] = new(WIDTH, HEIGHT);
 
             Renderer = new TilemapRenderer(this);
 
             Bounds = new RectangleF(
-                pos * new Vector2(Width - 1, Height - 1)
+                pos * new Vector2(WIDTH - 1, HEIGHT - 1)
                     - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
-                new(Width - 1, Height - 1)
+                new(WIDTH - 1, HEIGHT - 1)
             );
                  
 
             IsDirty = true;
         }
 
-        public TileMapChunkSlice CreateSlice() => new(Width, Height);
+        public TileMapChunkSlice CreateSlice() => new(WIDTH, HEIGHT);
 
         /// <summary>
         /// Checks if a specific tile location in the chunk is empty.
@@ -218,7 +218,7 @@ public abstract partial class Tiling<TTextureID>
 
         /// <summary>
         /// Performs post-generation actions for the chunk.
-        /// </summary>
+        /// </summary>  
         public void PostGenerate()
         {
             for (int s = 0; s < Slices.Length; s++)
