@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -81,8 +81,6 @@
     <Folder Include="GameEntity\Components\" />
     <Folder Include="Assets\material_shader\" />
     <Folder Include="Primitives\" />
-    <Folder Include="Input\" />
-    <Folder Include="Input\Components\" />
     <Folder Include="Rendering\Shapes\" />
     <Folder Include="Debugging\" />
     <Folder Include="Debugging\Debuggers\" />
@@ -186,6 +184,9 @@
     <Content Include="Assets\line_shader\lines.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualSenseAPI\DualSenseAPI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\DemoEffectStack\stage0.frag">

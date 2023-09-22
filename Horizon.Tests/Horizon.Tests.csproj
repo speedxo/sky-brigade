@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>CS8618</NoWarn>
@@ -21,7 +21,6 @@
   <ItemGroup>
     <None Remove="Tests\" />
     <None Remove="Assets\" />
-    <None Remove="Assets\teapot.obj" />
     <None Remove="Assets\pbr_textures\metal_ball.material" />
     <None Remove="Assets\pbr_textures\black_tiles.material" />
     <None Remove="Assets\pbr_textures\bricks_mortar.material" />
@@ -37,9 +36,6 @@
     <Folder Include="Assets\planets\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\teapot.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\pbr_textures\metal_ball.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

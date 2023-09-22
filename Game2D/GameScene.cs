@@ -10,6 +10,7 @@ using Horizon.Rendering;
 using Horizon.Rendering.Effects;
 using Horizon.Rendering.Spriting;
 using ImGuiNET;
+using Silk.NET.Core.Attributes;
 using Silk.NET.OpenGL;
 using System.Numerics;
 
@@ -83,6 +84,14 @@ public class GameScene : Scene
     public override void Update(float dt)
     {
         base.Update(dt);
+
+        if (GameManager.Instance.InputManager.DualSenseInputManager.HasController)
+        {
+            GameManager.Instance.InputManager.DualSenseInputManager.OutputState.R2Effect = 
+            GameManager.Instance.InputManager.DualSenseInputManager.OutputState.L2Effect = 
+                new DualSenseAPI.TriggerEffect.Vibrate((byte)speed, start, middle, end, false);
+        }
+
         // Move camera with Q and E keys
         if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.Q))
         {
@@ -117,5 +126,19 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    public override void DrawGui(float dt) {}
+    float start = 1, middle = 1, end = 1;
+    int speed = 20;
+    readonly float sens = 0.001f;
+    public override void DrawGui(float dt) 
+    {
+        if (ImGui.Begin("DualSense Controller Test"))
+        {
+            ImGui.DragFloat("Start", ref start, sens, 0.0f, 1.0f);
+            ImGui.DragFloat("Middle", ref middle, sens, 0.0f, 1.0f);
+            ImGui.DragFloat("End", ref end, sens, 0.0f, 1.0f);
+            ImGui.DragInt("Freq.", ref speed, 0.1f, 1, 255);
+
+            ImGui.End();
+        }           
+    }
 }
