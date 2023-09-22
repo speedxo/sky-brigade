@@ -1,22 +1,23 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon", "Horizon\Horizon.csproj", "{ACE08932-A62F-42EA-AC50-D64EF79743A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horizon", "Horizon\Horizon.csproj", "{ACE08932-A62F-42EA-AC50-D64EF79743A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyBrigade", "SkyBrigade\SkyBrigade.csproj", "{3B9BB5AA-11C0-4151-BED3-A1B021464754}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkyBrigade", "SkyBrigade\SkyBrigade.csproj", "{3B9BB5AA-11C0-4151-BED3-A1B021464754}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Tests", "Horizon.Tests\Horizon.Tests.csproj", "{1A5C7370-CBD9-41A9-8131-05890AF31469}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horizon.Tests", "Horizon.Tests\Horizon.Tests.csproj", "{1A5C7370-CBD9-41A9-8131-05890AF31469}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B950282F-6125-4E5D-AFDE-62EDE4F55D4C}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Prefabs", "Horizon.Prefabs\Horizon.Prefabs.csproj", "{2D827CF8-E648-438C-8AF7-3592BA534F40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horizon.Prefabs", "Horizon.Prefabs\Horizon.Prefabs.csproj", "{2D827CF8-E648-438C-8AF7-3592BA534F40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game2D", "Game2D\Game2D.csproj", "{AB19AD6E-20BA-4D45-8B0F-FFDC2ED25020}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game2D", "Game2D\Game2D.csproj", "{AB19AD6E-20BA-4D45-8B0F-FFDC2ED25020}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DualSenseAPI", "DualSenseAPI\DualSenseAPI.csproj", "{95DE8997-1433-4B3C-988F-58D28F97C965}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +45,10 @@ Global
 		{AB19AD6E-20BA-4D45-8B0F-FFDC2ED25020}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB19AD6E-20BA-4D45-8B0F-FFDC2ED25020}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB19AD6E-20BA-4D45-8B0F-FFDC2ED25020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95DE8997-1433-4B3C-988F-58D28F97C965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95DE8997-1433-4B3C-988F-58D28F97C965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95DE8997-1433-4B3C-988F-58D28F97C965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95DE8997-1433-4B3C-988F-58D28F97C965}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

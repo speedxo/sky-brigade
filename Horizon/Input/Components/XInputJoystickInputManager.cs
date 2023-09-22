@@ -7,14 +7,14 @@ using System.Numerics;
 namespace Horizon.Input.Components
 {
     /// <summary>
-    /// The JoystickInputManager class is responsible for handling input from a joystick/gamepad.
+    /// The XInputJoystickInputManager class is responsible for handling input from a joystick/gamepad.
     /// </summary>
-    public class JoystickInputManager : IGameComponent
+    public class XInputJoystickInputManager : IGameComponent
     {
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the parent Entity that owns this JoystickInputManager component.
+        /// Gets or sets the parent Entity that owns this XInputJoystickInputManager component.
         /// </summary>
         public Entity Parent { get; set; }
 
@@ -23,8 +23,17 @@ namespace Horizon.Input.Components
         /// </summary>
         public static IJoystick? Joystick =>
             GameManager.Instance.Input.Joysticks.Count > 0
-                ? GameManager.Instance.Input.Joysticks[0]
+                ? GetController()
                 : null;
+
+        private static IJoystick? GetController()
+        {
+            // FIXME yea....
+            return
+                (from stick in GameManager.Instance.Input.Joysticks
+                where stick.IsConnected
+                select stick).FirstOrDefault();
+        }
 
         /// <summary>
         /// Gets the JoystickBindings representing the button-to-action mappings for the joystick.

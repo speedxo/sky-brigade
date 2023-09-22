@@ -412,6 +412,7 @@ void main()
     {
         ContentManager.Dispose();
         GameScreenManager.Dispose();
+        InputManager.Dispose();
 
         Logger.Dispose();
     }

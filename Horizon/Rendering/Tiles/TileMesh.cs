@@ -86,7 +86,7 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// Constructs a mesh from a Span<Tile>. No null checking is performed.
         /// </summary>
-        /// <param name="tiles"></param>
+        /// <param name="tiles">a span of tiles to generate the mesh from.</param>
         public void GenerateMeshFromTiles(ReadOnlySpan<Tile> tiles)
         {
             if (_isUpdatingMesh)
@@ -98,6 +98,7 @@ public abstract partial class Tiling<TTextureID>
             {
                 if (!tiles[i].RenderingData.IsVisible)
                     continue;
+
                 AddTile(tiles[i]);
             }
 
@@ -109,18 +110,8 @@ public abstract partial class Tiling<TTextureID>
         )]
         private void AddTile(in Tile tile)
         {
-            static uint[] getElements(uint _offset)
-            {
-                return new uint[]
-                {
-                    _offset,
-                    _offset + 1,
-                    _offset + 2,
-                    _offset,
-                    _offset + 2,
-                    _offset + 3
-                };
-            }
+            static uint[] getElements(uint _offset) =>
+                new uint[] { _offset, _offset + 1, _offset + 2, _offset, _offset + 2, _offset + 3 };
 
             _vertices.AddRange(GetVertices(tile));
             _indices.AddRange(getElements(_vertexCounter));

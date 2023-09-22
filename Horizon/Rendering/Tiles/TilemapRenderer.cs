@@ -86,11 +86,15 @@ public abstract partial class Tiling<TTextureID>
         }
 
         
-        /// <summary>
+        /// <summary>d
         /// Generates the mesh for the chunk.
         /// </summary>
+        /// <remarks>
+        /// The method first updates all tileset pairs for each slice of each chunk, then uses the tileset/tile associations to generate a mesh for each tileset so that multiple tilesets can exist within the same slice/chunk/map. 
+        /// </remarks> 
         public void GenerateMesh()
         {
+            // Update the tileset/tile associations.
             foreach (var slice in Chunk.Slices)
             {
                 if (!TileMapChunkSliceTileMeshesKeyPairs.ContainsKey(slice))
@@ -99,6 +103,7 @@ public abstract partial class Tiling<TTextureID>
                 TileMapChunkSliceTileMeshesKeyPairs[slice].UpdateTileSetPairs();
             }
 
+            // generate the meshes accordingly.
             foreach (var sliceMesh in TileMapChunkSliceTileMeshesKeyPairs.Values)
             {
                 foreach (var tileset in sliceMesh.TileSetPairs.Keys)
@@ -128,6 +133,7 @@ public abstract partial class Tiling<TTextureID>
                 GenerateMesh();
             }
             
+            // TODO find a better way as to not have several n^2 accesses.
             foreach ((_, var sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
             {
                 foreach ((_, var mesh) in sliceMeshes.TileMeshPairs)
