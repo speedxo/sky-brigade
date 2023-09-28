@@ -30,7 +30,7 @@ public class SpriteBatch : Entity
         this.SpritesheetSprites = new();
 
         this.Transform = AddComponent<TransformComponent>();
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
+        Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
     }
 
     public void AddSprite(Sprite sprite)
@@ -39,7 +39,7 @@ public class SpriteBatch : Entity
             SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(Shader)));
 
         if (SpritesheetSprites[sprite.Spritesheet].sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 Logging.LogLevel.Fatal,
                 $"You are attempting to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit. Please create another sprite batch."
             );

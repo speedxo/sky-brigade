@@ -40,7 +40,7 @@ public class Sprite : Entity
     public Vertex2D[] GetVertices()
     {
         if (!_hasBeenSetup)
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 Logging.LogLevel.Error,
                 "[Sprite] Setup() has not been called!"
             );

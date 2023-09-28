@@ -1,4 +1,5 @@
 using Horizon;
+using Horizon.GameEntity;
 
 namespace Game2D.Player.Behaviour.States;
 
@@ -11,7 +12,7 @@ public class PlayerIdleBehaviour : Player2DStateBehaviour
 
     public override Player2DStateIdentifier Update(in float dt)
     {
-        if (GameManager.Instance.InputManager.GetVirtualController().MovementAxis.LengthSquared() > 0) 
+        if (Entity.Engine.Input.GetVirtualController().MovementAxis.LengthSquared() > 0) 
             return Player2DStateIdentifier.Walking;
 
         Player.FrameName = "idle";

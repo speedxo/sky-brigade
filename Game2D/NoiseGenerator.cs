@@ -1,4 +1,5 @@
 ﻿using Horizon;
+using Horizon.GameEntity;
 using Horizon.Rendering;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -19,7 +20,7 @@ public class NoiseGenerator
     {
         renderRect = new RenderRectangle(
             technique = new Technique(
-                GameManager.Instance.ContentManager.LoadShader(
+                Entity.Engine.Content.LoadShader(
                     "content/noise/noise.vert",
                     "content/noise/noise.frag"
                 )
@@ -31,7 +32,7 @@ public class NoiseGenerator
         System.Diagnostics.Debug.Assert(renderRect.FrameBuffer.ContructFrameBuffer());
 
         renderRect.FrameBuffer.Bind();
-        GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit);
+        Entity.Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
         renderRect.FrameBuffer.Unbind();
 
         technique.Use();
@@ -39,7 +40,7 @@ public class NoiseGenerator
 
         renderRect.RenderScene(1.0f);
 
-        GameManager.Instance.Gl.BindTexture(
+        Entity.Engine.GL.BindTexture(
             TextureTarget.Texture2D,
             renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]
         );
@@ -52,7 +53,7 @@ public class NoiseGenerator
             fixed (void* data = pixelData)
             {
                 // Get the pixel data from the texture
-                GameManager.Instance.Gl.GetTexImage(
+                Entity.Engine.GL.GetTexImage(
                     GLEnum.Texture2D,
                     0,
                     GLEnum.Rgba,
@@ -61,7 +62,7 @@ public class NoiseGenerator
                 );
             }
         }
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, 0);
+        Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, 0);
         //renderRect.FrameBuffer.Dispose();
 
         ProcessData(pixelData, width, height);

@@ -6,6 +6,7 @@ using System.Numerics;
 
 namespace Horizon.Input.Components
 {
+    // FIXME cross static ref to Entity.Engine
     /// <summary>
     /// The MouseInputManager class is responsible for handling input from the mouse.
     /// </summary>
@@ -22,7 +23,7 @@ namespace Horizon.Input.Components
         /// Gets the first connected mouse, or null if none is connected.
         /// </summary>
         public static IMouse? Mouse =>
-            GameManager.Instance.Input.Mice.Count > 0 ? GameManager.Instance.Input.Mice[0] : null;
+            Entity.Engine.Input.NativeInputContext.Mice.Count > 0 ? Entity.Engine.Input.NativeInputContext.Mice[0] : null;
 
         /// <summary>
         /// Gets the MouseBindings representing the button-to-action mappings for the mouse.

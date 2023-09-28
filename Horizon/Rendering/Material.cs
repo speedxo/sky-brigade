@@ -13,6 +13,6 @@ namespace Horizon.Rendering
 
         public abstract void Use(RenderOptions? options = null);
 
-        public void End() => GameManager.Instance.Gl.UseProgram(0);
+        public static void End() => Engine.GL.UseProgram(0);
     }
 }

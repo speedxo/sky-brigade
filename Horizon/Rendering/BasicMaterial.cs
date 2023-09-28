@@ -68,8 +68,8 @@ namespace Horizon.Rendering
                 Technique.SetUniform("useTexture", 0);
             else
             {
-                GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-                GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, Texture.Handle);
+                Engine.GL.ActiveTexture(TextureUnit.Texture0);
+                Engine.GL.BindTexture(TextureTarget.Texture2D, Texture.Handle);
                 Technique.SetUniform("uTexture", 0);
                 Technique.SetUniform("useTexture", 1);
             }

@@ -29,7 +29,7 @@ public class SpritesheetAnimationManager : IGameComponent
     {
         if (!Animations.TryGetValue(name, out SpriteAnimationDefinition value))
         {
-            GameManager.Instance.Logger.Log(
+            Entity.Engine.Logger.Log(
                 Logging.LogLevel.Error,
                 $"Attempt to get animation '{name}' which doesn't exist!"
             );
@@ -49,7 +49,7 @@ public class SpritesheetAnimationManager : IGameComponent
     {
         if (Animations.ContainsKey(name))
         {
-            GameManager.Instance.Logger.Log(
+            Entity.Engine.Logger.Log(
                 Logging.LogLevel.Error,
                 $"Attempt to add animation '{name}' which already exists!"
             );

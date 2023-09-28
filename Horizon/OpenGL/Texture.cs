@@ -1,4 +1,5 @@
 ﻿using Horizon.Extentions;
+using Horizon.GameEntity;
 using Horizon.Logging;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -7,11 +8,10 @@ using PixelFormat = Silk.NET.OpenGL.PixelFormat;
 
 namespace Horizon.OpenGL;
 
-public class Texture : IDisposable
+public class Texture : Entity,  IDisposable
 {
     public uint Handle { get; }
     public string? Path { get; init; }
-    public string? Name { get; internal set; }
 
     public static int count = 0;
 
@@ -26,7 +26,7 @@ public class Texture : IDisposable
     public unsafe Texture(string path)
     {
         if (!File.Exists(path))
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 LogLevel.Fatal,
                 $"[Texture] There is no file at location '{path}'!"
             );
@@ -38,7 +38,7 @@ public class Texture : IDisposable
 
         Path = System.IO.Path.Combine(lastFolder, fileName);
 
-        Handle = GameManager.Instance.Gl.GenTexture();
+        Handle = Engine.GL.GenTexture();
         Bind();
 
         //Loading an image using imagesharp.
@@ -48,7 +48,7 @@ public class Texture : IDisposable
             Height = img.Height;
 
             //Reserve enough memory from the gpu for the whole image
-            GameManager.Instance.Gl.TexImage2D(
+            Engine.GL.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
                 InternalFormat.Rgba8,
@@ -69,7 +69,7 @@ public class Texture : IDisposable
                     fixed (void* data = accessor.GetRowSpan(y))
                     {
                         //Loading the actual image.
-                        GameManager.Instance.Gl.TexSubImage2D(
+                        Engine.GL.TexSubImage2D(
                             TextureTarget.Texture2D,
                             0,
                             0,
@@ -88,7 +88,7 @@ public class Texture : IDisposable
         count++;
         SetParameters();
 
-        GameManager.Instance.Logger.Log(
+        Engine.Logger.Log(
             LogLevel.Info,
             $"Texture[{Handle}] loaded from file '{path}'!"
         );
@@ -102,13 +102,13 @@ public class Texture : IDisposable
         Bind();
         int textureWidth,
             textureHeight;
-        GameManager.Instance.Gl.GetTexLevelParameter(
+        Engine.GL.GetTexLevelParameter(
             TextureTarget.Texture2D,
             0,
             GetTextureParameter.TextureWidth,
             out textureWidth
         );
-        GameManager.Instance.Gl.GetTexLevelParameter(
+        Engine.GL.GetTexLevelParameter(
             TextureTarget.Texture2D,
             0,
             GetTextureParameter.TextureHeight,
@@ -126,14 +126,14 @@ public class Texture : IDisposable
         Height = (int)height;
 
         //Generating the opengl handle;
-        Handle = GameManager.Instance.Gl.GenTexture();
+        Handle = Engine.GL.GenTexture();
         Bind();
 
         //We want the ability to create a texture using data generated from code aswell.
         fixed (void* d = &data[0])
         {
             //Setting the data of a texture.
-            GameManager.Instance.Gl.TexImage2D(
+            Engine.GL.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
                 (int)InternalFormat.Rgba,
@@ -154,7 +154,7 @@ public class Texture : IDisposable
         Height = (int)height;
 
         //Generating the opengl handle;
-        Handle = GameManager.Instance.Gl.GenTexture();
+        Handle = Engine.GL.GenTexture();
         Bind();
 
         var data = StreamExtensions.ReadAllBytes(stream);
@@ -162,7 +162,7 @@ public class Texture : IDisposable
         fixed (void* d = &data[0])
         {
             //Setting the data of a texture.
-            GameManager.Instance.Gl.TexImage2D(
+            Engine.GL.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
                 (int)InternalFormat.Rgba,
@@ -181,57 +181,57 @@ public class Texture : IDisposable
     private void SetParameters()
     {
         //Setting some texture perameters so the texture behaves as expected.
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureWrapS,
             (int)GLEnum.Repeat
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureWrapT,
             (int)GLEnum.Repeat
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMinFilter,
             (int)GLEnum.NearestMipmapNearest
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMagFilter,
             (int)GLEnum.Nearest
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureBaseLevel,
             0
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMaxLevel,
             8
         );
         //Generating mipmaps.
-        GameManager.Instance.Gl.GenerateMipmap(TextureTarget.Texture2D);
+        Engine.GL.GenerateMipmap(TextureTarget.Texture2D);
     }
 
     public void Bind(TextureUnit textureSlot = TextureUnit.Texture0)
     {
         //When we bind a texture we can choose which textureslot we can bind it to.
-        GameManager.Instance.Gl.ActiveTexture(textureSlot);
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, Handle);
+        Engine.GL.ActiveTexture(textureSlot);
+        Engine.GL.BindTexture(TextureTarget.Texture2D, Handle);
     }
 
     public void UnBind()
     {
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, 0);
+        Engine.GL.BindTexture(TextureTarget.Texture2D, 0);
     }
 
     public void Dispose()
     {
         //In order to dispose we need to delete the opengl handle for the texure.
-        GameManager.Instance.Gl.DeleteTexture(Handle);
-        GameManager.Instance.Logger.Log(LogLevel.Debug, $"Texture[{Handle}] destroyed!");
+        Engine.GL.DeleteTexture(Handle);
+        Engine.Logger.Log(LogLevel.Debug, $"Texture[{Handle}] destroyed!");
         GC.SuppressFinalize(this);
     }
 }

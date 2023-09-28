@@ -1,4 +1,5 @@
 ﻿using Horizon.GameEntity.Components;
+using Horizon.Primitives;
 using Horizon.Rendering;
 
 namespace Horizon.GameEntity
@@ -6,12 +7,21 @@ namespace Horizon.GameEntity
     /// <summary>
     /// Entity class represents a game entity.
     /// </summary>
-    public abstract class Entity : IEntity
+    public abstract class Entity : IDrawable, IUpdateable
     {
+        private static GameEngine _engine;
+        public static void SetGameEngine(in GameEngine engine) 
+            => _engine = engine;
+        /// <summary>
+        /// Static instance of the parent game engine.
+        /// </summary>
+        public static GameEngine Engine => _engine;
+        internal static int _nextId = 0;
+
         /// <summary>
         /// List containing the nested entities within this entity.
         /// </summary>
-        public virtual List<IEntity> Entities { get; set; } = new();
+        public virtual List<Entity> Entities { get; set; } = new();
 
         /// <summary>
         /// The unique ID for this entity.
@@ -47,7 +57,7 @@ namespace Horizon.GameEntity
         /// <summary>
         /// The parent entity (if there is one)
         /// </summary>
-        public IEntity? Parent { get; set; }
+        public Entity? Parent { get; set; }
 
         public Dictionary<Type, IGameComponent> Components { get; set; } = new();
 
@@ -69,7 +79,7 @@ namespace Horizon.GameEntity
             {
                 var msg = $"Component of the same type ({nameof(T)}) already exists";
 
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, msg);
+                Engine.Logger.Log(Logging.LogLevel.Fatal, msg);
                 throw new ArgumentException(msg);
             }
 
@@ -87,7 +97,7 @@ namespace Horizon.GameEntity
                     // Check if the entity has the required component
                     if (!HasComponent(requiredComponentType))
                     {
-                        GameManager.Instance.Logger.Log(
+                        Engine.Logger.Log(
                             Logging.LogLevel.Fatal,
                             $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'."
                         );
@@ -110,12 +120,12 @@ namespace Horizon.GameEntity
         /// <param name="entity">The entity to be added.</param>
         /// <returns>The added entity.</returns>
         public T AddEntity<T>(T entity)
-            where T : IEntity
+            where T : Entity
         {
             Entities.Add(entity);
             entity.Parent = this;
 
-            entity.ID = ++IEntity._nextId;
+            entity.ID = ++_nextId;
             entity.Name ??= entity.GetType().Name;
             entity.Initialize();
 
@@ -128,13 +138,13 @@ namespace Horizon.GameEntity
         /// <param name="entity">The entity to be added.</param>
         /// <returns>The added entity.</returns>
         public T AddEntity<T>()
-            where T : IEntity, new() => AddEntity(Activator.CreateInstance<T>());
+            where T : Entity, new() => AddEntity(Activator.CreateInstance<T>());
 
         /// <summary>
         /// Removes an entity from the scene.
         /// </summary>
         /// <param name="entity">The entity to be removed.</param>
-        public void RemoveEntity(IEntity entity)
+        public void RemoveEntity(Entity entity)
         {
             Entities.Remove(entity);
         }
@@ -167,7 +177,7 @@ namespace Horizon.GameEntity
             {
                 var msg = $"Component of the same type ({nameof(T)}) doesn't exist";
 
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, msg);
+                Engine.Logger.Log(Logging.LogLevel.Error, msg);
             }
         }
 
@@ -187,7 +197,7 @@ namespace Horizon.GameEntity
             {
                 var msg = $"Component of the same type ({nameof(T)}) doesn't exist";
 
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Error, msg);
+                Engine.Logger.Log(Logging.LogLevel.Error, msg);
 
                 return default;
             }

@@ -28,8 +28,8 @@ namespace Horizon.Input.Components
         /// Gets the first connected keyboard, or null if none is connected.
         /// </summary>
         public static IKeyboard? Keyboard =>
-            GameManager.Instance.Input.Keyboards.Count > 0
-                ? GameManager.Instance.Input.Keyboards[0]
+            Entity.Engine.Input.NativeInputContext.Keyboards.Count > 0
+                ? Entity.Engine.Input.NativeInputContext.Keyboards[0]
                 : null;
 
         /// <summary>

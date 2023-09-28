@@ -24,7 +24,7 @@ public class Player2DStateController : IGameComponent
     public void RegisterBehaviour(Player2DStateIdentifier identifier, Player2DStateBehaviour behaviour)
     {
         if (!StateBehaviours.TryAdd(identifier, behaviour))
-            GameManager.Instance.Logger.Log(Horizon.Logging.LogLevel.Error, $"[State Controller] Failed to register state {identifier}!");
+            Entity.Engine.Logger.Log(Horizon.Logging.LogLevel.Error, $"[State Controller] Failed to register state {identifier}!");
     }
 
     public void Initialize() 

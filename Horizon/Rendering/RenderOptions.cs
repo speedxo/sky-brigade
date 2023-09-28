@@ -35,7 +35,7 @@ public struct RenderOptions
             AmbientLightingStrength = 0.03f,
             DebugOptions = DebugRenderOptions.Default,
             IsPostProcessingEnabled = true,
-            GL = GameManager.Instance.Gl,
+            GL = GameEntity.Entity.Engine.GL,
             IsBox2DDebugDrawEnabled = false
         };
 }

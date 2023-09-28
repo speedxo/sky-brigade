@@ -47,7 +47,7 @@ public class GameScene : Scene
 
         if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
         {
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 Horizon.Logging.LogLevel.Fatal,
                 "Failed to load tilemap, aborting..."
             );
@@ -71,12 +71,12 @@ public class GameScene : Scene
         return new[] { new VingetteEffect() { Intensity = 1.0f } };
     }
 
-    private static void InitializeGl()
+    private void InitializeGl()
     {
-        GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
-        GameManager.Instance.Gl.Enable(EnableCap.Texture2D);
-        GameManager.Instance.Gl.Enable(EnableCap.Blend);
-        GameManager.Instance.Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        Engine.GL.ClearColor(System.Drawing.Color.CornflowerBlue);
+        Engine.GL.Enable(EnableCap.Texture2D);
+        Engine.GL.Enable(EnableCap.Blend);
+        Engine.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
     private float cameraMovement = 10;
@@ -85,22 +85,22 @@ public class GameScene : Scene
     {
         base.Update(dt);
 
-        if (GameManager.Instance.InputManager.DualSenseInputManager.HasController)
-        {
-            GameManager.Instance.InputManager.DualSenseInputManager.OutputState.R2Effect = 
-            GameManager.Instance.InputManager.DualSenseInputManager.OutputState.L2Effect = 
-                new DualSenseAPI.TriggerEffect.Vibrate((byte)speed, start, middle, end, false);
-        }
+        //if (GameManager.Instance.InputManager.DualSenseInputManager.HasController)
+        //{
+        //    GameManager.Instance.InputManager.DualSenseInputManager.OutputState.R2Effect = 
+        //    GameManager.Instance.InputManager.DualSenseInputManager.OutputState.L2Effect = 
+        //        new DualSenseAPI.TriggerEffect.Vibrate((byte)speed, start, middle, end, false);
+        //}
 
         // Move camera with Q and E keys
-        if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.Q))
-        {
-            cameraMovement += dt * 10.0f;
-        }
-        else if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.E))
-        {
-            cameraMovement += -dt * 10.0f;
-        }
+        //if (Engine.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.Q))
+        //{
+        //    cameraMovement += dt * 10.0f;
+        //}
+        //else if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.E))
+        //{
+        //    cameraMovement += -dt * 10.0f;
+        //}
 
         cam.Position = new Vector3(player.Position.X, player.Position.Y, cameraMovement);
 

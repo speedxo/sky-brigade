@@ -34,7 +34,7 @@ uniform sampler2D uDepth;
 
             if (finalIndex < 0)
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Warning,
                     "An empty EffectStack was created!"
                 );
@@ -99,7 +99,7 @@ void main()
             Technique.Use();
             foreach (var effect in Effects)
             {
-                effect.BindingPoint = GameManager.Instance.Gl.GetUniformBlockIndex(
+                effect.BindingPoint = Engine.GL.GetUniformBlockIndex(
                     Technique.Handle,
                     getUniformBufferName(effect.Source)
                 );

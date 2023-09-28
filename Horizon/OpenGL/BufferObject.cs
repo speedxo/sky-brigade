@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using Horizon.GameEntity;
+using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL;
 
@@ -18,7 +19,8 @@ public class BufferObject<T> : IDisposable
     {
         _bufferType = bufferType;
 
-        Handle = GameManager.Instance.Gl.GenBuffer();
+        // FIXME cross static ref to Entity.Engine
+        Handle = Entity.Engine.GL.GenBuffer();
     }
 
     public virtual unsafe void BufferData(ReadOnlySpan<T> data)
@@ -26,28 +28,32 @@ public class BufferObject<T> : IDisposable
         Bind();
         fixed (void* d = data)
         {
-            GameManager.Instance.Gl.BufferData(
+            // FIXME cross static ref to Entity.Engine
+            Entity.Engine.GL.BufferData(
                 _bufferType,
                 (nuint)(data.Length * sizeof(T)),
                 d,
                 BufferUsageARB.StaticDraw
             );
         }
-        GameManager.Instance.Gl.BindBuffer(_bufferType, 0);
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(_bufferType, 0);
     }
 
     public virtual void Bind()
     {
         /* Binding the buffer object, with the correct buffer type.
          */
-        GameManager.Instance.Gl.BindBuffer(_bufferType, Handle);
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(_bufferType, Handle);
     }
 
     public virtual void Dispose()
     {
         try
         {
-            GameManager.Instance.Gl.DeleteBuffer(Handle);
+            // FIXME cross static ref to Entity.Engine
+            Entity.Engine.GL.DeleteBuffer(Handle);
         }
         catch
         {

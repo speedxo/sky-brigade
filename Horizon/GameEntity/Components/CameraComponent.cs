@@ -37,7 +37,6 @@ namespace Horizon.GameEntity.Components
         public void Initialize()
         {
             Locked = false;
-
             // again we can do this (see Entity.cs lines 17 & 18)
             Transform = Parent.GetComponent<TransformComponent>();
         }
@@ -48,7 +47,7 @@ namespace Horizon.GameEntity.Components
 
         private void UpdateMouse()
         {
-            var controller = GameManager.Instance.InputManager.GetVirtualController();
+            var controller = Entity.Engine.Input.GetVirtualController();
 
             var xOffset = (controller.LookingAxis.X) * lookSensitivity;
             var yOffset = (controller.LookingAxis.Y) * lookSensitivity;
@@ -81,7 +80,9 @@ namespace Horizon.GameEntity.Components
         /// <param name="dt">Delta time.</param>
         public override void Update(float dt)
         {
-            if (!GameManager.Instance.IsInputCaptured)
+            // FIXME somehow figure out a better way to pass around the Engine.
+
+            if (!Entity.Engine.Input.CaptureInput)
                 return;
 
             UpdateMouse();
@@ -90,10 +91,11 @@ namespace Horizon.GameEntity.Components
                 Transform.Position + Transform.Front,
                 CameraUp
             );
+
             Projection = Matrix4x4.CreatePerspectiveFieldOfView(
                 MathHelper.DegreesToRadians(CameraZoom),
-                (float)GameManager.Instance.ViewportSize.X
-                    / (float)GameManager.Instance.ViewportSize.Y,
+                (float)Entity.Engine.Window.ViewportSize.X
+                    / (float)Entity.Engine.Window.ViewportSize.Y,
                 0.1f,
                 100.0f
             );

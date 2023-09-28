@@ -34,7 +34,7 @@ public class SpriteBatchMesh
     {
         this.Shader = shader;
         UniformBuffer = new UniformBufferObject(
-            GameManager.Instance.Gl.GetUniformBlockIndex(shader.Handle, "SpriteUniforms")
+            GameEntity.Entity.Engine.GL.GetUniformBlockIndex(shader.Handle, "SpriteUniforms")
         );
 
         unsafe
@@ -88,8 +88,8 @@ public class SpriteBatchMesh
 
         Shader.Use();
 
-        GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, sheet.Texture.Handle);
+        GameEntity.Entity.Engine.GL.ActiveTexture(TextureUnit.Texture0);
+        GameEntity.Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, sheet.Texture.Handle);
         Shader.SetUniform("uTexture", 0);
 
         if (ShouldUniformBufferUpdate)
@@ -114,9 +114,9 @@ public class SpriteBatchMesh
         {
             // Turn on wireframe mode
             if (options.IsWireframeEnabled)
-                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                GameEntity.Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
-            GameManager.Instance.Gl.DrawElements(
+            GameEntity.Entity.Engine.GL.DrawElements(
                 PrimitiveType.Triangles,
                 ElementCount,
                 DrawElementsType.UnsignedInt,
@@ -125,7 +125,7 @@ public class SpriteBatchMesh
 
             // Turn off wireframe mode
             if (options.IsWireframeEnabled)
-                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                GameEntity.Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
         Vbo.Unbind();

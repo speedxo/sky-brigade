@@ -18,7 +18,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
     public Entity Parent { get; set; }
     public bool Enabled { get; set; } = true;
 
-    private class DebugDrawIntermediaryMeshData : IDrawable, IDisposable
+    private class DebugDrawIntermediaryMeshData : Entity
     {
         public VertexBufferObject<Vertex> VBO { get; init; }
 
@@ -72,7 +72,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             // Once again, I really don't want to make the whole method unsafe for one call.
             unsafe
             {
-                GameManager.Instance.Gl.DrawElements(
+                Entity.Engine.GL.DrawElements(
                     primitive,
                     (uint)Indices.Count,
                     DrawElementsType.UnsignedInt,
@@ -114,8 +114,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         segmentMesh = new(PrimitiveType.LineStrip);
         circleMesh = new(PrimitiveType.TriangleFan);
         polygonMesh = new(PrimitiveType.Triangles);
-
-        Technique = new Technique(GameManager.Instance.ContentManager.GetShader("basic"));
+        Technique = new Technique(Entity.Engine.Content.GetShader("basic"));
     }
 
     public void Initialize() { }

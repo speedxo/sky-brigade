@@ -16,12 +16,12 @@ namespace Horizon.Rendering.Effects.Components
             : base(shader.Handle) { }
 
         public ShaderComponent(string vertPath, string fragPath)
-            : base(GameManager.Instance.ContentManager.LoadShader(vertPath, fragPath).Handle) { }
+            : base(Entity.Engine.Content.LoadShader(vertPath, fragPath).Handle) { }
 
         public static ShaderComponent FromSource(string vertSource, string fragSource)
         {
             return new ShaderComponent(
-                GameManager.Instance.ContentManager.LoadShaderFromSource(vertSource, fragSource)
+                Entity.Engine.Content.LoadShaderFromSource(vertSource, fragSource)
             );
         }
 

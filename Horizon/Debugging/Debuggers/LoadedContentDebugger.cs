@@ -14,7 +14,7 @@ namespace Horizon.Debugging.Debuggers
         public override void Initialize()
         {
             Debugger = (SkylineDebugger)Parent!;
-            ContentManager = GameManager.Instance.ContentManager;
+            ContentManager = GameEntity.Entity.Engine.Content;
 
             Name = "Content Manager";
         }

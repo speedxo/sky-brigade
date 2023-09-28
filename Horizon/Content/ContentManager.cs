@@ -72,7 +72,7 @@ namespace Horizon.Content
             if (!unnamedTextures.ContainsKey(internedPath))
                 unnamedTextures.TryAdd(internedPath, new Texture(internedPath));
             else
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     LogLevel.Warning,
                     $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned."
                 );
@@ -132,7 +132,7 @@ namespace Horizon.Content
             }
             else
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     LogLevel.Error,
                     $"An attempt to load Shader({internedVertexPath}, {internedFragmentPath}) was made even though an instance of Shader({internedVertexPath}, {internedFragmentPath}) already exists, a reference to the already loaded shader will be returned."
                 );
@@ -156,7 +156,7 @@ namespace Horizon.Content
             }
             else
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     LogLevel.Error,
                     $"Whoah partner, you just tried to compile the same shader twice?"
                 );
@@ -245,7 +245,7 @@ namespace Horizon.Content
         public void DeleteTexture(string name)
         {
             if (!namedTextures.Remove(name, out var texture))
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     LogLevel.Error,
                     $"Attempt to delete nonexistent Texture({name})"
                 );
@@ -256,7 +256,7 @@ namespace Horizon.Content
         public void DeleteShader(string name)
         {
             if (!namedShaders.Remove(name, out var shader))
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     LogLevel.Error,
                     $"Attempt to delete nonexistent Shader({name})"
                 );

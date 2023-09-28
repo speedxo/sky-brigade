@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using Horizon.GameEntity;
+using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL
 {
@@ -9,14 +10,14 @@ namespace Horizon.OpenGL
 
         public UniformBufferObject(uint bindingPoint)
         {
-            Handle = GameManager.Instance.Gl.GenBuffer();
+            Handle = Entity.Engine.GL.GenBuffer();
 
             _bindingPoint = bindingPoint;
         }
 
         public void BindToUniformBlockBindingPoint()
         {
-            GameManager.Instance.Gl.BindBufferBase(
+            Entity.Engine.GL.BindBufferBase(
                 BufferTargetARB.UniformBuffer,
                 _bindingPoint,
                 Handle
@@ -29,7 +30,7 @@ namespace Horizon.OpenGL
             Bind();
             fixed (void* d = data)
             {
-                GameManager.Instance.Gl.BufferData(
+                Entity.Engine.GL.BufferData(
                     BufferTargetARB.UniformBuffer,
                     (nuint)(data.Length * sizeof(T)),
                     d,
@@ -43,7 +44,7 @@ namespace Horizon.OpenGL
             where T : unmanaged
         {
             Bind();
-            GameManager.Instance.Gl.BufferData(
+            Entity.Engine.GL.BufferData(
                 BufferTargetARB.UniformBuffer,
                 (nuint)(sizeof(T)),
                 data,
@@ -57,7 +58,7 @@ namespace Horizon.OpenGL
             where T : unmanaged
         {
             Bind();
-            GameManager.Instance.Gl.BufferData(
+            Entity.Engine.GL.BufferData(
                 BufferTargetARB.UniformBuffer,
                 (nuint)(sizeof(T) * data.Length),
                 in data[0],
@@ -69,19 +70,19 @@ namespace Horizon.OpenGL
 
         public void Bind()
         {
-            GameManager.Instance.Gl.BindBuffer(BufferTargetARB.UniformBuffer, Handle);
+            Entity.Engine.GL.BindBuffer(BufferTargetARB.UniformBuffer, Handle);
         }
 
         public void Unbind()
         {
-            GameManager.Instance.Gl.BindBuffer(BufferTargetARB.UniformBuffer, 0);
+            Entity.Engine.GL.BindBuffer(BufferTargetARB.UniformBuffer, 0);
         }
 
         public void Dispose()
         {
             try
             {
-                GameManager.Instance.Gl.DeleteBuffer(Handle);
+                Entity.Engine.GL.DeleteBuffer(Handle);
             }
             catch
             {

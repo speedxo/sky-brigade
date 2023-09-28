@@ -50,7 +50,7 @@ public class Player2D : Sprite
 
     private void AttachDebugWatches()
     {
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch("State", this.Name, () => State);
+        Engine.Debugger.GeneralDebugger.AddWatch("State", this.Name, () => State);
     }
 
     private void CreateStateController()
@@ -94,7 +94,7 @@ public class Player2D : Sprite
     {
         var sheet = (
             new Spritesheet(
-                GameManager.Instance.ContentManager.LoadTexture("content/spritesheet.png"),
+                Engine.Content.LoadTexture("content/spritesheet.png"),
                 new Vector2(16)
             )
         );

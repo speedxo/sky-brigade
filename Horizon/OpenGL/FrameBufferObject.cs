@@ -1,10 +1,11 @@
-﻿using Silk.NET.OpenGL;
+﻿using Horizon.GameEntity;
+using Silk.NET.OpenGL;
 using System.Diagnostics.Contracts;
 using System.Numerics;
 
 namespace Horizon.OpenGL;
 
-public class FrameBufferObject : IDisposable
+public class FrameBufferObject : Entity, IDisposable
 {
     public Dictionary<FramebufferAttachment, uint> Attachments { get; init; }
 
@@ -57,43 +58,43 @@ public class FrameBufferObject : IDisposable
         this.Height = height;
 
         // Create a framebuffer object
-        Handle = GameManager.Instance.Gl.GenFramebuffer();
+        Handle = Engine.GL.GenFramebuffer();
 
         Attachments = new Dictionary<FramebufferAttachment, uint>();
     }
 
     public bool ContructFrameBuffer()
     {
-        GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
+        Engine.GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
 
-        //Debug.Assert(GameManager.Instance.Gl.GetError() == GLEnum.None);
+        //Debug.Assert(Engine.GL.GetError() == GLEnum.None);
 
         foreach (var (attachment, texture) in Attachments)
         {
-            GameManager.Instance.Gl.FramebufferTexture2D(
+            Engine.GL.FramebufferTexture2D(
                 FramebufferTarget.Framebuffer,
                 attachment,
                 TextureTarget.Texture2D,
                 texture,
                 0
             );
-            GameManager.Instance.Gl.DrawBuffer((DrawBufferMode)attachment);
+            Engine.GL.DrawBuffer((DrawBufferMode)attachment);
         }
         // Check if the framebuffer is complete
         if (
-            GameManager.Instance.Gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
+            Engine.GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
             != GLEnum.FramebufferComplete
         )
         {
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 Logging.LogLevel.Error,
-                "Framebuffer is incomplete." + GameManager.Instance.Gl.GetError().ToString()
+                "Framebuffer is incomplete." + Engine.GL.GetError().ToString()
             );
             return false;
         }
 
         // Unbind the framebuffer
-        GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        Engine.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         return true;
     }
 
@@ -114,11 +115,11 @@ public class FrameBufferObject : IDisposable
         PixelFormat pixelFormat = PixelFormat.Rgba
     )
     {
-        uint texture = GameManager.Instance.Gl.GenTexture();
+        uint texture = Engine.GL.GenTexture();
 
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, texture);
+        Engine.GL.BindTexture(TextureTarget.Texture2D, texture);
 
-        GameManager.Instance.Gl.TexImage2D(
+        Engine.GL.TexImage2D(
             GLEnum.Texture2D,
             0,
             (int)internalFormat,
@@ -129,20 +130,20 @@ public class FrameBufferObject : IDisposable
             pixelType,
             null
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMinFilter,
             (int)TextureMinFilter.Linear
         );
-        GameManager.Instance.Gl.TexParameter(
+        Engine.GL.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMagFilter,
             (int)TextureMagFilter.Linear
         );
 
-        GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, 0);
+        Engine.GL.BindTexture(TextureTarget.Texture2D, 0);
 
-        GameManager.Instance.ContentManager.AddUnmanagedTexture(texture);
+        Engine.Content.AddUnmanagedTexture(texture);
 
         return texture;
     }
@@ -151,22 +152,22 @@ public class FrameBufferObject : IDisposable
     {
         if (_requiresResize)
         {
-            GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            Engine.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
             List<FramebufferAttachment> attachmentTypes = new();
             foreach (var (type, texture) in Attachments)
             {
-                GameManager.Instance.Gl.DeleteTexture(texture);
+                Engine.GL.DeleteTexture(texture);
                 attachmentTypes.Add(type);
             }
-            GameManager.Instance.Gl.DeleteFramebuffer(Handle);
+            Engine.GL.DeleteFramebuffer(Handle);
 
             this.Width = (int)_newSize.X;
             this.Height = (int)_newSize.Y;
 
             Attachments.Clear();
             // Create a framebuffer object
-            Handle = GameManager.Instance.Gl.GenFramebuffer();
+            Handle = Engine.GL.GenFramebuffer();
 
             foreach (var attachment in attachmentTypes)
             {
@@ -178,16 +179,16 @@ public class FrameBufferObject : IDisposable
             ContructFrameBuffer();
         }
 
-        GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
+        Engine.GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
         foreach (var (attachment, _) in Attachments)
         {
-            GameManager.Instance.Gl.DrawBuffer((DrawBufferMode)attachment);
+            Engine.GL.DrawBuffer((DrawBufferMode)attachment);
         }
     }
 
     public void Unbind()
     {
-        GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        Engine.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
     }
 
     public void Dispose()
@@ -196,7 +197,7 @@ public class FrameBufferObject : IDisposable
 
         foreach (var (_, texture) in Attachments)
         {
-            GameManager.Instance.Gl.DeleteTexture(texture);
+            Engine.GL.DeleteTexture(texture);
         }
     }
 }

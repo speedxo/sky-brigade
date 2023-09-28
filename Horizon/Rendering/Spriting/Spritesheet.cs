@@ -61,7 +61,7 @@ namespace Horizon.Rendering.Spriting
         {
             if (Sprites.ContainsKey(name))
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Attempt to add sprite '{name}' which already exists!"
                 );
@@ -79,7 +79,7 @@ namespace Horizon.Rendering.Spriting
         {
             if (!AnimationManager.Animations.TryGetValue(name, out var sprite))
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Attempt to get sprite '{name}' which doesn't exist!"
                 );
@@ -106,7 +106,7 @@ namespace Horizon.Rendering.Spriting
         {
             if (!Sprites.TryGetValue(name, out var sprite))
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Attempt to get sprite '{name}' which doesn't exist!"
                 );

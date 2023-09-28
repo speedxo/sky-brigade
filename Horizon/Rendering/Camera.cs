@@ -1,8 +1,9 @@
 ﻿using System.Numerics;
+using Horizon.GameEntity;
 
 namespace Horizon.Rendering;
 
-public class Camera
+public class Camera : Entity
 {
     //Setup the camera's location, directions, and movement speed
     protected Vector3 CameraFront = new Vector3(0.0f, 0.0f, -1.0f);
@@ -26,34 +27,28 @@ public class Camera
 
     public Camera()
     {
-        View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
-        Projection = Matrix4x4.CreatePerspectiveFieldOfView(
-            MathHelper.DegreesToRadians(CameraZoom),
-            GameManager.Instance.AspectRatio,
-            1.0f,
-            1000.0f
-        );
+        CalculateMatricesAndUpdateBounds(Engine.Window.AspectRatio);
     }
 
-    public virtual void Update(float dt)
+    protected virtual void CalculateMatricesAndUpdateBounds(float aspectRatio)
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
         Projection = Matrix4x4.CreatePerspectiveFieldOfView(
             MathHelper.DegreesToRadians(CameraZoom),
-            GameManager.Instance.AspectRatio,
+            aspectRatio,
             1.0f,
             1000.0f
         );
 
-        UpdateBounds(dt);
-    }
-
-    protected virtual void UpdateBounds(float dt)
-    {
         var h = MathF.Tan(CameraZoom / 2.0f) * Position.Z * 1.5f;
-        var w = h * GameManager.Instance.AspectRatio;
+        var w = h * aspectRatio;
 
         Bounds = new RectangleF(Position.X - w / 2.0f, Position.Y - h / 2.0f, w, h);
+    }
+
+    public override void Update(float dt)
+    {
+        CalculateMatricesAndUpdateBounds(Engine.Window.AspectRatio);
     }
 
     public bool IsPointInFrustum(Vector2 point) => IsPointInFrustum(new Vector3(point, 0.0f));

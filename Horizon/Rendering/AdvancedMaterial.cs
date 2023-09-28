@@ -33,40 +33,40 @@ namespace Horizon.Rendering
             ubo.BufferSingleData(matOptions);
 
             // Bind the albedo texture to texture unit 0
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-            GameManager.Instance.Gl.BindTexture(
+            Engine.GL.ActiveTexture(TextureUnit.Texture0);
+            Engine.GL.BindTexture(
                 TextureTarget.Texture2D,
                 MaterialDescription.Albedo.Handle
             );
             Technique.SetUniform("uAlbedo", 0);
 
             // Bind the metallicness texture to texture unit 1
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture1);
-            GameManager.Instance.Gl.BindTexture(
+            Engine.GL.ActiveTexture(TextureUnit.Texture1);
+            Engine.GL.BindTexture(
                 TextureTarget.Texture2D,
                 MaterialDescription.Metallicness.Handle
             );
             Technique.SetUniform("uMetallicness", 1);
 
             // Bind the roughness texture to texture unit 2
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture2);
-            GameManager.Instance.Gl.BindTexture(
+            Engine.GL.ActiveTexture(TextureUnit.Texture2);
+            Engine.GL.BindTexture(
                 TextureTarget.Texture2D,
                 MaterialDescription.Roughness.Handle
             );
             Technique.SetUniform("uRoughness", 2);
 
             // Bind the ambient occlusion texture to texture unit 3
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture3);
-            GameManager.Instance.Gl.BindTexture(
+            Engine.GL.ActiveTexture(TextureUnit.Texture3);
+            Engine.GL.BindTexture(
                 TextureTarget.Texture2D,
                 MaterialDescription.AmbientOcclusion.Handle
             );
             Technique.SetUniform("uAo", 3);
 
             // Bind the normals texture to texture unit 4
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture4);
-            GameManager.Instance.Gl.BindTexture(
+            Engine.GL.ActiveTexture(TextureUnit.Texture4);
+            Engine.GL.BindTexture(
                 TextureTarget.Texture2D,
                 MaterialDescription.Normals.Handle
             );
@@ -102,11 +102,11 @@ namespace Horizon.Rendering
 
         //    MaterialDescription = new AdvancedMaterialDescription()
         //    {
-        //        Metallicness = GameManager.Instance.ContentManager.GetTexture(serializable.MetallicnessTexturePath),
-        //        Roughness = GameManager.Instance.ContentManager.GetTexture(serializable.RoughnessTexturePath),
-        //        AmbientOcclusion = GameManager.Instance.ContentManager.GetTexture(serializable.AmbientOcclusionTexturePath),
-        //        Albedo = GameManager.Instance.ContentManager.GetTexture(serializable.AlbedoTexturePath),
-        //        Normals = GameManager.Instance.ContentManager.GetTexture(serializable.NormalsTexturePath)
+        //        Metallicness = Engine.ContentManager.GetTexture(serializable.MetallicnessTexturePath),
+        //        Roughness = Engine.ContentManager.GetTexture(serializable.RoughnessTexturePath),
+        //        AmbientOcclusion = Engine.ContentManager.GetTexture(serializable.AmbientOcclusionTexturePath),
+        //        Albedo = Engine.ContentManager.GetTexture(serializable.AlbedoTexturePath),
+        //        Normals = Engine.ContentManager.GetTexture(serializable.NormalsTexturePath)
         //    };
         //}
 
@@ -123,7 +123,7 @@ namespace Horizon.Rendering
         {
             // check if the file at path exists, and load it if it does
             if (!System.IO.File.Exists(path))
-                GameManager.Instance.Logger.Log(Logging.LogLevel.Fatal, $"File({path}) not found");
+                Engine.Logger.Log(Logging.LogLevel.Fatal, $"File({path}) not found");
 
             // extract the zip file to a temporary directory
             string tempDirectory =
@@ -137,7 +137,7 @@ namespace Horizon.Rendering
 
             if (missingFiles.Count > 0)
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Material({path}) is invalid!\n\nThe following textures could not be located:\n{string.Join(", ", missingFiles)}.\n"
                 );
@@ -159,23 +159,23 @@ namespace Horizon.Rendering
             {
                 MaterialDescription = new AdvancedMaterialDescription()
                 {
-                    Metallicness = GameManager.Instance.ContentManager.GenerateNamedTexture(
+                    Metallicness = Engine.Content.GenerateNamedTexture(
                         Path.Combine(realPath, "metallicness.png"),
                         Path.Combine(path, "metallicness.png")
                     ),
-                    Roughness = GameManager.Instance.ContentManager.GenerateNamedTexture(
+                    Roughness = Engine.Content.GenerateNamedTexture(
                         Path.Combine(realPath, "roughness.png"),
                         Path.Combine(path, "roughness.png")
                     ),
-                    AmbientOcclusion = GameManager.Instance.ContentManager.GenerateNamedTexture(
+                    AmbientOcclusion = Engine.Content.GenerateNamedTexture(
                         Path.Combine(realPath, "ao.png"),
                         Path.Combine(path, "ao.png")
                     ),
-                    Albedo = GameManager.Instance.ContentManager.GenerateNamedTexture(
+                    Albedo = Engine.Content.GenerateNamedTexture(
                         Path.Combine(realPath, "albedo.png"),
                         Path.Combine(path, "albedo.png")
                     ),
-                    Normals = GameManager.Instance.ContentManager.GenerateNamedTexture(
+                    Normals = Engine.Content.GenerateNamedTexture(
                         Path.Combine(realPath, "normals.png"),
                         Path.Combine(path, "normals.png")
                     )
@@ -194,7 +194,7 @@ namespace Horizon.Rendering
                 Path.Combine(realPath, "normals.png")
             };
             foreach (var item in textureNames)
-                GameManager.Instance.ContentManager.DeleteTexture(item);
+                Engine.Content.DeleteTexture(item);
         }
     }
 }

@@ -37,11 +37,11 @@ public class RenderTarget : Entity
 
     public override void Draw(float dt, RenderOptions? renderOptions = null)
     {
-        GameManager.Instance.Gl.Viewport(
+        Engine.GL.Viewport(
             0,
             0,
-            (uint)GameManager.Instance.ViewportSize.X,
-            (uint)GameManager.Instance.ViewportSize.Y
+            (uint)Engine.Window.ViewportSize.X,
+            (uint)Engine.Window.ViewportSize.Y
         );
         Technique.Use();
 
@@ -64,8 +64,8 @@ public class RenderRectangle : Entity
     public RenderRectangle(Technique technique, int width = 0, int height = 0)
     {
         FrameBuffer = new FrameBufferObject(
-            width == 0 ? (int)GameManager.Instance.ViewportSize.X : width,
-            height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height
+            width == 0 ? (int)Engine.Window.ViewportSize.X : width,
+            height == 0 ? (int)Engine.Window.ViewportSize.Y : height
         );
         Technique = AddEntity(technique);
 
@@ -78,8 +78,8 @@ public class RenderRectangle : Entity
     public RenderRectangle(Shader shader, int width = 0, int height = 0)
     {
         FrameBuffer = new FrameBufferObject(
-            width == 0 ? (int)GameManager.Instance.ViewportSize.X : width,
-            height == 0 ? (int)GameManager.Instance.ViewportSize.Y : height
+            width == 0 ? (int)Engine.Window.ViewportSize.X : width,
+            height == 0 ? (int)Engine.Window.ViewportSize.Y : height
         );
         Technique = AddEntity(new Technique(shader));
 
@@ -122,8 +122,8 @@ public class RenderRectangle : Entity
             )
         )
         {
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, albedo);
+            Engine.GL.ActiveTexture(TextureUnit.Texture0);
+            Engine.GL.BindTexture(TextureTarget.Texture2D, albedo);
             Technique.SetUniform("uAlbedo", 0);
         }
 
@@ -134,8 +134,8 @@ public class RenderRectangle : Entity
             )
         )
         {
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture1);
-            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, depth);
+            Engine.GL.ActiveTexture(TextureUnit.Texture1);
+            Engine.GL.BindTexture(TextureTarget.Texture2D, depth);
             Technique.SetUniform("uDepth", 1);
         }
 

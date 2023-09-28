@@ -1,5 +1,6 @@
 using System.Numerics;
 using Horizon;
+using Horizon.GameEntity;
 
 namespace Game2D.Player.Behaviour.States;
 
@@ -14,11 +15,11 @@ public class PlayerWalkingBehaviour : Player2DStateBehaviour
 
     public override Player2DStateIdentifier Update(in float dt)
     {
-        if (GameManager.Instance.InputManager.GetVirtualController().MovementAxis.LengthSquared() == 0)
+        if (Entity.Engine.Input.GetVirtualController().MovementAxis.LengthSquared() == 0)
             return Player2DStateIdentifier.Idle;
 
         // Move player with input manager :).
-        var movementDir = GameManager.Instance.InputManager.GetVirtualController().MovementAxis;
+        var movementDir = Entity.Engine.Input.GetVirtualController().MovementAxis;
 
         Player.PhysicsBody.ApplyForce(movementDir * MOVEMENT_SPEED, Player.Position);
         Player.PhysicsBody.SetLinearVelocity(

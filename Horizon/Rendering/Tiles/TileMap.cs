@@ -103,7 +103,7 @@ public abstract partial class Tiling<TTextureID>
                     if (!string.IsNullOrEmpty(tileset.Image?.Source))
                     {
                         var set = new TileSet(
-                            GameManager.Instance.ContentManager.LoadTexture(tileset.Image.Source),
+                            Engine.Content.LoadTexture(tileset.Image.Source),
                             new Vector2(tileset.TileWidth, tileset.TileHeight)
                         )
                         {
@@ -160,7 +160,7 @@ public abstract partial class Tiling<TTextureID>
             }
             catch (Exception ex)
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Error loading Tiled map: + {ex.Message}"
                 );
@@ -224,9 +224,9 @@ public abstract partial class Tiling<TTextureID>
                 World = Parent!.GetComponent<Box2DWorldComponent>();
             ChunkManager = AddComponent<TileMapChunkManager>();
 
-            GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Size", "Tilemap", () => $"{Width}, {Height}, {Depth}");
-            GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Chunk Count", "Tilemap", () => $"{ChunkManager.Chunks.GetLength(0)}");
-            GameManager.Instance.Debugger.GeneralDebugger.AddWatch("Total Tiles", "Tilemap", () => TileUpdateCount);
+            Engine.Debugger.GeneralDebugger.AddWatch("Size", "Tilemap", () => $"{Width}, {Height}, {Depth}");
+            Engine.Debugger.GeneralDebugger.AddWatch("Chunk Count", "Tilemap", () => $"{ChunkManager.Chunks.GetLength(0)}");
+            Engine.Debugger.GeneralDebugger.AddWatch("Total Tiles", "Tilemap", () => TileUpdateCount);
         }
 
         /// <summary>
@@ -371,7 +371,7 @@ public abstract partial class Tiling<TTextureID>
                 }
             }
 
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 Logging.LogLevel.Fatal,
                 $"[TileMap] No TileSet is bound to the texture ID '{textureID}'!"
             );

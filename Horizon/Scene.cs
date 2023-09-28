@@ -24,14 +24,19 @@ public abstract class Scene : Entity, IDisposable
     protected void InitializeRenderingPipeline()
     {
         if (hasRenderPipelineBeenInitialized)
-            GameManager.Instance.Logger.Log(
+        {
+            Engine.Logger.Log(
                 Logging.LogLevel.Fatal,
                 "The scenes render pipeline has already been initialized!"
             );
+            throw new Exception("The scenes render pipeline has already been initialized!");
+        }
 
         hasRenderPipelineBeenInitialized = (
             InitializeFrameBuffer() && InitializeEffectStack() && InitializeRenderFrame()
         );
+        if (!hasRenderPipelineBeenInitialized)
+            throw new Exception();
     }
 
     protected virtual Effect[] GeneratePostProccessingEffects()
@@ -51,8 +56,8 @@ public abstract class Scene : Entity, IDisposable
     protected virtual bool InitializeFrameBuffer()
     {
         FrameBuffer = FrameBufferManager.CreateFrameBuffer(
-            (int)GameManager.Instance.ViewportSize.X,
-            (int)GameManager.Instance.ViewportSize.Y
+            (int)Engine.Window.ViewportSize.X,
+            (int)Engine.Window.ViewportSize.Y
         );
 
         FrameBuffer.AddAttachment(FramebufferAttachment.ColorAttachment0);
@@ -75,7 +80,7 @@ public abstract class Scene : Entity, IDisposable
             return;
 
         if (!hasRenderPipelineBeenInitialized)
-            GameManager.Instance.Logger.Log(
+            Engine.Logger.Log(
                 Logging.LogLevel.Fatal,
                 "The scenes render pipeline has not been initialized!"
             );
@@ -93,17 +98,17 @@ public abstract class Scene : Entity, IDisposable
         //{
         FrameBuffer.Bind();
 
-        GameManager.Instance.Gl.Clear(
+        Engine.GL.Clear(
             ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit
         );
-        GameManager.Instance.Gl.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
+        Engine.GL.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
         //}
         //else
         //{
-        //    GameManager.Instance.Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        //    Engine.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-        //    GameManager.Instance.Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        //    GameManager.Instance.Gl.Viewport(0, 0, (uint)GameManager.Instance.WindowSize.X, (uint)GameManager.Instance.WindowSize.Y);
+        //    Engine.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        //    Engine.GL.Viewport(0, 0, (uint)Engine.WindowSize.X, (uint)Engine.WindowSize.Y);
         //}
 
         for (int i = 0; i < Components.Count; i++)
@@ -122,17 +127,17 @@ public abstract class Scene : Entity, IDisposable
 
     public virtual void RenderPost(float dt, RenderOptions? renderOptions = null)
     {
-        if (GameManager.Instance.Debugger.GameContainerDebugger.Visible)
-            GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Bind();
+        if (Engine.Debugger.GameContainerDebugger.Visible)
+            Engine.Debugger.GameContainerDebugger.FrameBuffer.Bind();
 
-        GameManager.Instance.Gl.Clear(
+        Engine.GL.Clear(
             ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit
         );
-        GameManager.Instance.Gl.Viewport(
+        Engine.GL.Viewport(
             0,
             0,
-            (uint)(GameManager.Instance.ViewportSize.X),
-            (uint)GameManager.Instance.ViewportSize.Y
+            (uint)(Engine.Window.ViewportSize.X),
+            (uint)Engine.Window.ViewportSize.Y
         );
 
         var options = renderOptions ?? RenderOptions.Default;
@@ -141,8 +146,8 @@ public abstract class Scene : Entity, IDisposable
         else
             defaultSceneRect!.RenderScene(dt); // we do a test on hasRenderPipelineBeenInitialized in Draw
 
-        if (GameManager.Instance.Debugger.GameContainerDebugger.Visible)
-            GameManager.Instance.Debugger.GameContainerDebugger.FrameBuffer.Unbind();
+        if (Engine.Debugger.GameContainerDebugger.Visible)
+            Engine.Debugger.GameContainerDebugger.FrameBuffer.Unbind();
     }
 
     /// <summary>

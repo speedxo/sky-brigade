@@ -53,7 +53,7 @@ namespace Horizon.Rendering
 
             BufferManager.Dispose();
             Shader.Dispose();
-            GameManager.Instance.Gl.DeleteProgram(Handle);
+            Engine.GL.DeleteProgram(Handle);
         }
     }
 }

@@ -43,10 +43,11 @@ public class InstanceManager<InstanceType>
     {
         if (!typeof(InstanceType).IsAssignableFrom(type))
         {
-            GameManager.Instance.Logger.Log(
-                Logging.LogLevel.Fatal,
-                $"The specified type must implement {nameof(InstanceType)}."
-            );
+            // FIXME: !we gotta throw some kind of exception or atleast desing a subscription model for these types of errors.
+            // Logger.Log(
+            //     Logging.LogLevel.Fatal,
+            //     $"The specified type must implement {nameof(InstanceType)}."
+            // );
         }
 
         var instance = (InstanceType)Activator.CreateInstance(type)!;

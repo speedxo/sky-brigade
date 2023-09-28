@@ -186,8 +186,8 @@ public abstract partial class Tiling<TTextureID>
 
             Shader.Use();
 
-            GameManager.Instance.Gl.ActiveTexture(TextureUnit.Texture0);
-            GameManager.Instance.Gl.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
+            Engine.GL.ActiveTexture(TextureUnit.Texture0);
+            Engine.GL.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
             Shader.SetUniform("uTexture", 0);
 
             Shader.SetUniform("uView", options.Camera.View);
@@ -198,12 +198,12 @@ public abstract partial class Tiling<TTextureID>
 
             if (options.IsWireframeEnabled)
             {
-                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
             }
 
             unsafe // i dont wanna make the whole methud unsafe just for this
             {
-                GameManager.Instance.Gl.DrawElements(
+                Engine.GL.DrawElements(
                     PrimitiveType.Triangles,
                     ElementCount,
                     DrawElementsType.UnsignedInt,
@@ -213,7 +213,7 @@ public abstract partial class Tiling<TTextureID>
 
             if (options.IsWireframeEnabled)
             {
-                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
             }
 
             Vbo.Unbind();

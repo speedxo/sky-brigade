@@ -1,4 +1,5 @@
 ﻿using Horizon.Data;
+using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
 
@@ -125,9 +126,9 @@ public class Mesh : IDisposable
         {
             // Turn on wireframe mode
             if (options.IsWireframeEnabled)
-                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
-            GameManager.Instance.Gl.DrawElements(
+            Entity.Engine.GL.DrawElements(
                 PrimitiveType.Triangles,
                 ElementCount,
                 DrawElementsType.UnsignedInt,
@@ -136,7 +137,7 @@ public class Mesh : IDisposable
 
             // Turn off wireframe mode
             if (options.IsWireframeEnabled)
-                GameManager.Instance.Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
         Vbo.Unbind();

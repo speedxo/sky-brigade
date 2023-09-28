@@ -26,7 +26,7 @@ public abstract partial class Tiling<TTextureID>
         {
             if (Tiles.ContainsKey(key))
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Attempt to add sprite '{key}' which already exists!"
                 );
@@ -73,7 +73,7 @@ public abstract partial class Tiling<TTextureID>
         {
             if (!Tiles.TryGetValue(key, out var sprite))
             {
-                GameManager.Instance.Logger.Log(
+                Engine.Logger.Log(
                     Logging.LogLevel.Error,
                     $"Attempt to get sprite '{key}' which doesn't exist!"
                 );

@@ -2,6 +2,7 @@
 using DualSenseAPI.State;
 using Horizon.GameEntity;
 using Horizon.Input.Components;
+using Silk.NET.Input;
 using System.Numerics;
 
 namespace Horizon.Input
@@ -16,6 +17,11 @@ namespace Horizon.Input
         /// Gets or sets a value indicating whether input is captured by the InputManager.
         /// </summary>
         public bool CaptureInput { get; set; }
+
+        /// <summary>
+        /// The window's native input context.
+        /// </summary>
+        public IInputContext NativeInputContext { get; init; }
 
         /// <summary>
         /// Gets the KeyboardManager responsible for handling keyboard input.
@@ -43,14 +49,16 @@ namespace Horizon.Input
         /// <summary>
         /// Initializes a new instance of the InputManager class with default values.
         /// </summary>
-        public InputManager()
+        public InputManager(in EngineWindowManager window)
         {
+            NativeInputContext = window.GetInput();
+
             KeyboardManager = AddComponent<KeyboardManager>();
             MouseManager = AddComponent<MouseInputManager>();
             XInputJoystickManager = AddComponent<XInputJoystickInputManager>();
             DualSenseInputManager = AddComponent<DualSenseInputManager>();
 
-            CaptureInput = true;
+            CaptureInput = false;
         }
 
         /// <summary>

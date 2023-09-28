@@ -56,7 +56,7 @@ public partial class CharacterController
         {
             var moveSpeed = Config.BaseMovementSpeed * dt;
 
-            var virtualController = GameManager.Instance.InputManager.GetVirtualController();
+            var virtualController = Engine.Input.GetVirtualController();
 
             Position +=
                 Vector3.Normalize(Vector3.Cross(Front, Vector3.UnitY))

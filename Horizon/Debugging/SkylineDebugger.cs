@@ -47,7 +47,7 @@ namespace Horizon.Debugging
                 if (ImGui.BeginMenu(DebuggerCatagoryNames.Home))
                 {
                     if (ImGui.MenuItem("Close"))
-                        GameManager.Instance.Window.Close();
+                        Engine.Window.Close();
 
                     ImGui.EndMenu();
                 }

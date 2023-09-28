@@ -26,8 +26,8 @@ namespace Horizon.Debugging.Debuggers
             if (ImGui.Begin(Name))
             {
                 Entity mainNode = DebugInstance
-                    ? GameManager.Instance
-                    : GameManager.Instance.GameScreenManager.GetCurrentInstance();
+                    ? global::Horizon.GameEntity.Entity.Engine
+                    : global::Horizon.GameEntity.Entity.Engine.GameScreen.GetCurrentInstance();
 
                 ImGui.Text($"Total Entities: {mainNode.TotalEntities}");
                 ImGui.Text($"Total Components: {mainNode.TotalComponents}");
@@ -41,7 +41,7 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        private void DrawEntityTree(IEntity? entity)
+        private void DrawEntityTree(Entity? entity)
         {
             if (entity is null)
                 return;

@@ -1,4 +1,5 @@
-﻿using Silk.NET.OpenGL;
+﻿using Horizon.GameEntity;
+using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL;
 
@@ -40,7 +41,8 @@ public class VertexBufferObject<T> : IDisposable
          * the structure of the data, thats where the VAO comes in. It
          * stores the structure of the vertex data, how it is in RAM.
          */
-        vao = new(GameManager.Instance.Gl, vbo, ebo);
+        // FIXME cross static ref to Entity.Engine
+        vao = new(Entity.Engine.GL, vbo, ebo);
     }
 
     /* Forwarding this method.
