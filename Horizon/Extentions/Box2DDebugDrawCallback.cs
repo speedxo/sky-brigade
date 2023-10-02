@@ -114,7 +114,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         segmentMesh = new(PrimitiveType.LineStrip);
         circleMesh = new(PrimitiveType.TriangleFan);
         polygonMesh = new(PrimitiveType.Triangles);
-        Technique = new Technique(Entity.Engine.Content.GetShader("basic"));
+        Technique = new Technique(Entity.Engine.Content.Shaders["basic"]!);
     }
 
     public void Initialize() { }

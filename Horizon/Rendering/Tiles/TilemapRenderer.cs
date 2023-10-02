@@ -1,5 +1,5 @@
-﻿using Horizon.GameEntity;
-using Horizon.Rendering.Effects.Components;
+﻿using Horizon.Content;
+using Horizon.GameEntity;
 
 namespace Horizon.Rendering;
 
@@ -67,7 +67,7 @@ public abstract partial class Tiling<TTextureID>
             }
         }
 
-        private static ShaderComponent _shader;
+        private static Shader _shader;
         
         public TileMapChunk Chunk { get; init; }
         
@@ -75,13 +75,7 @@ public abstract partial class Tiling<TTextureID>
 
         public TilemapRenderer(in TileMapChunk chunk)
         {
-            // FIXME cross static ref to Entity.Engine
-            _shader ??= new ShaderComponent(
-                Entity.Engine.Content.LoadShader(
-                    "Assets/tilemap_shaders/tiles.vert",
-                    "Assets/tilemap_shaders/tiles.frag"
-                )
-            );
+            _shader ??= ShaderFactory.CompileNamed("Assets/tilemap_shaders", "tiles");
 
             this.Chunk = chunk;
             this.TileMapChunkSliceTileMeshesKeyPairs = new();

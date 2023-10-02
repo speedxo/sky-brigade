@@ -14,8 +14,8 @@ using Silk.NET.OpenGL.Extensions.ImGui;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-// Namespace declaration for the GameManager class
 namespace Horizon;
+
 public abstract class GameEngine : Entity, IDisposable
 {
     #region Components
@@ -98,8 +98,8 @@ public abstract class GameEngine : Entity, IDisposable
 
     protected virtual void LoadEssentialEngineComponents()
     {
-
         // Non ECS
+        AssetFactory.SetGameEngine(this);
         Logger = new Logger(LogOutput.Console);
         InitializeImGui();
 
@@ -110,7 +110,9 @@ public abstract class GameEngine : Entity, IDisposable
         Debugger = AddEntity<SkylineDebugger>();
 
         /// Injected Entities
-        Input = AddEntity(new InputManager(Window));
+        Input = AddEntity(new InputManager(Window) {
+            CaptureInput = true
+        });
 
         // Components
         GameScreen = AddComponent<GameScreenManagerComponent>();
@@ -129,10 +131,12 @@ public abstract class GameEngine : Entity, IDisposable
     // Method to load essential assets required for the game.
     private void LoadEssentialAssets()
     {
-        Content.GenerateNamedShader(
+        Content.Shaders.AddNamed(
             "default",
-            OpenGL.Shader.CompileShaderFromSource(
-                @"#version 410 core
+            ShaderFactory.CompileFromDefinitions(
+               new ShaderDefinition {
+                   Type = ShaderType.VertexShader,
+                   Source = @"#version 410 core
 
      layout (location = 0) in vec3 vPos;
      layout (location = 1) in vec3 vNorm;
@@ -150,8 +154,10 @@ public abstract class GameEngine : Entity, IDisposable
 
          // Trying to understand the universe through vertex manipulation!
          gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
-     }",
-                @"#version 410 core
+     }"
+               }, new ShaderDefinition {
+                   Type = ShaderType.FragmentShader,
+                   Source = @"#version 410 core
      out vec4 FinalFragColor;
 
      in vec2 texCoords;
@@ -163,23 +169,13 @@ public abstract class GameEngine : Entity, IDisposable
          FinalFragColor = texture(uAlbedo, texCoords);
      }}
      "
+               }
             )
         );
-        Content.GenerateNamedShader(
-            "material_basic",
-            "Assets/material_shader/basic.vert",
-            "Assets/material_shader/basic.frag"
-        );
-        Content.GenerateNamedShader(
-            "basic",
-            "Assets/basic_shader/basic.vert",
-            "Assets/basic_shader/basic.frag"
-        );
-        Content.GenerateNamedShader(
-            "material_advanced",
-            "Assets/material_shader/advanced.vert",
-            "Assets/material_shader/advanced.frag"
-        );
+
+        Content.Shaders.AddNamed("basic", ShaderFactory.CompileNamed("Assets/basic_shader/", "basic"));
+        Content.Shaders.AddNamed("material_basic", ShaderFactory.CompileNamed("Assets/material_shader/", "basic"));
+        Content.Shaders.AddNamed("material_advanced", ShaderFactory.CompileNamed("Assets/material_shader/", "advanced"));
 
         Content.GenerateNamedTexture("debug", "Assets/among.png");
         Content.GenerateNamedTexture("gray", "Assets/gray.png");
@@ -197,7 +193,6 @@ public abstract class GameEngine : Entity, IDisposable
 
         if (Input.WasPressed(VirtualAction.Pause))
         {
-            Input.CaptureInput = !Input.CaptureInput;
             for (int i = 0; i < Input.NativeInputContext.Mice.Count; i++)
                 Input.NativeInputContext.Mice[i].Cursor.CursorMode = Input.CaptureInput
                     ? CursorMode.Raw
@@ -242,6 +237,8 @@ public abstract class GameEngine : Entity, IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
+
         foreach (var entity in Entities)
         {
             if (entity is IDisposable disposable)
@@ -257,7 +254,6 @@ public abstract class GameEngine : Entity, IDisposable
             }
         }
 
-        GC.SuppressFinalize(this);
     }
 }
 

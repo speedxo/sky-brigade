@@ -1,4 +1,5 @@
-﻿using Horizon.GameEntity;
+﻿using System.IO;
+using Horizon.GameEntity;
 using Horizon.Logging;
 using Horizon.OpenGL;
 
@@ -7,29 +8,26 @@ namespace Horizon.Content
     public class ContentManager : Entity, IDisposable
     {
         private Dictionary<string, Texture> namedTextures;
-        private Dictionary<string, Shader> namedShaders;
         private Dictionary<string, Texture> unnamedTextures;
-        private Dictionary<string, Shader> unnamedShaders;
         private List<Texture> unmanagedTextures;
+
+        public ShaderContentManager Shaders { get; private set; }
+
+        public void AddShader(in string name, in Shader shader)
+            => Shaders.AddNamed(name, shader);
 
         public override void Initialize()
         {
+            Shaders = AddEntity<ShaderContentManager>();
+
             namedTextures = new Dictionary<string, Texture>();
-            namedShaders = new Dictionary<string, Shader>();
-
-            unnamedShaders = new Dictionary<string, Shader>();
             unnamedTextures = new Dictionary<string, Texture>();
-
             unmanagedTextures = new List<Texture>();
         }
 
         public int TotalTextures
         {
             get => namedTextures.Count + unnamedTextures.Count + unmanagedTextures.Count;
-        }
-        public int TotalShaders
-        {
-            get => namedShaders.Count + unnamedShaders.Count;
         }
 
         public IEnumerable<Texture> GetTextures()
@@ -50,19 +48,7 @@ namespace Horizon.Content
             }
         }
 
-        public IEnumerable<Shader> GetShaders()
-        {
-            foreach (var shader in namedShaders.Values)
-            {
-                yield return shader;
-            }
-
-            foreach (var shader in unnamedShaders.Values)
-            {
-                yield return shader;
-            }
-        }
-
+     
         #region Textures
 
         public Texture LoadTexture(string path)
@@ -117,84 +103,6 @@ namespace Horizon.Content
 
         #endregion Textures
 
-        #region Shaders
-
-        public Shader LoadShader(string vertexPath, string fragmentPath)
-        {
-            string internedVertexPath = string.Intern(vertexPath);
-            string internedFragmentPath = string.Intern(fragmentPath);
-            string uniqueKey = internedVertexPath + internedFragmentPath;
-
-            if (!unnamedShaders.TryGetValue(uniqueKey, out var shader))
-            {
-                shader = Shader.CompileShader(internedVertexPath, internedFragmentPath);
-                unnamedShaders.TryAdd(uniqueKey, shader);
-            }
-            else
-            {
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"An attempt to load Shader({internedVertexPath}, {internedFragmentPath}) was made even though an instance of Shader({internedVertexPath}, {internedFragmentPath}) already exists, a reference to the already loaded shader will be returned."
-                );
-            }
-
-            return shader;
-        }
-
-        public Shader LoadShaderFromSource(string vertSource, string fragSource)
-        {
-            ;
-            string uniqueKey = (vertSource.GetHashCode() + fragSource.GetHashCode())
-                .ToString()
-                .GetHashCode()
-                .ToString();
-
-            if (!unnamedShaders.TryGetValue(uniqueKey, out var shader))
-            {
-                shader = Shader.CompileShaderFromSource(vertSource, fragSource);
-                unnamedShaders.TryAdd(uniqueKey, shader);
-            }
-            else
-            {
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Whoah partner, you just tried to compile the same shader twice?"
-                );
-            }
-
-            return shader;
-        }
-
-        public Shader GenerateNamedShader(string name, Shader shader)
-        {
-            string internedName = string.Intern(name);
-
-            namedShaders.TryAdd(internedName, shader);
-
-            return shader;
-        }
-
-        public Shader GenerateNamedShader(string name, string vertexPath, string fragmentPath)
-        {
-            string internedName = string.Intern(name);
-            string internedVertexPath = string.Intern(vertexPath);
-            string internedFragmentPath = string.Intern(fragmentPath);
-
-            return GenerateNamedShader(
-                internedName,
-                Shader.CompileShader(internedVertexPath, internedFragmentPath)
-            );
-        }
-
-        public Shader GetShader(string name)
-        {
-            string internedName = string.Intern(name);
-            return namedShaders.TryGetValue(internedName, out var shader)
-                ? shader
-                : throw new Exception($"Key {internedName} not found in stored shaders.");
-        }
-
-        #endregion Shaders
 
         // Implement IDisposable pattern
         private bool disposed = false;
@@ -205,10 +113,6 @@ namespace Horizon.Content
             {
                 if (disposing)
                 {
-                    foreach (var item in namedShaders.Values)
-                        item.Dispose();
-                    namedShaders.Clear();
-
                     foreach (var item in namedTextures.Values)
                         item.Dispose();
                     namedTextures.Clear();
@@ -216,10 +120,6 @@ namespace Horizon.Content
                     foreach (var item in unnamedTextures.Values)
                         item.Dispose();
                     unnamedTextures.Clear();
-
-                    foreach (var item in unnamedShaders.Values)
-                        item.Dispose();
-                    unnamedShaders.Clear();
 
                     foreach (var item in unmanagedTextures)
                         item.Dispose();
@@ -232,6 +132,8 @@ namespace Horizon.Content
 
         public void Dispose()
         {
+            Shaders.Dispose();
+
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -251,17 +153,6 @@ namespace Horizon.Content
                 );
             else
                 texture?.Dispose();
-        }
-
-        public void DeleteShader(string name)
-        {
-            if (!namedShaders.Remove(name, out var shader))
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Attempt to delete nonexistent Shader({name})"
-                );
-            else
-                shader?.Dispose();
         }
 
         public Texture AddUnmanagedTexture(uint texture)

@@ -1,10 +1,11 @@
-﻿using Horizon.GameEntity;
+﻿using Horizon.Content;
+using Horizon.GameEntity;
 using Horizon.OpenGL;
-using Horizon.Rendering.Effects.Components;
 using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Shader = Horizon.Content.Shader;
 
 namespace Horizon.Rendering;
 
@@ -30,7 +31,7 @@ public abstract partial class Tiling<TTextureID>
 
         public uint ElementCount { get; private set; }
 
-        public ShaderComponent Shader { get; init; }
+        public Shader Shader { get; init; }
         public TileMap Map { get; init; }
         public VertexBufferObject<TileVertex> Vbo { get; private set; }
         public TileSet Set { get; init; }
@@ -41,7 +42,7 @@ public abstract partial class Tiling<TTextureID>
         private bool _uploadData,
             _isUpdatingMesh;
 
-        public TileMesh(ShaderComponent shader, TileSet set, TileMap map)
+        public TileMesh(Shader shader, TileSet set, TileMap map)
         {
             Set = set;
             Shader = shader;

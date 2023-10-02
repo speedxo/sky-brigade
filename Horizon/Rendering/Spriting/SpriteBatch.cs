@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using Horizon.Content;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using Horizon.Rendering.Effects.Components;
 using Horizon.Rendering.Spriting.Components;
 using Horizon.Rendering.Spriting.Data;
 
@@ -10,7 +10,7 @@ namespace Horizon.Rendering.Spriting;
 public class SpriteBatch : Entity
 {
     public TransformComponent Transform { get; init; }
-    public ShaderComponent Shader { get; init; }
+    public Shader Shader { get; init; }
     public Dictionary<
         Spritesheet,
         (List<Sprite> sprites, SpriteBatchMesh mesh)
@@ -19,14 +19,10 @@ public class SpriteBatch : Entity
     private bool _requiresVboUpdate = false;
     public int Count { get; private set;}
 
-    public SpriteBatch(ShaderComponent? shader = null)
+    public SpriteBatch(Shader? shader = null)
     {
-        this.Shader =
-            shader
-            ?? new ShaderComponent(
-                "Assets/sprite_shaders/sprites.vert",
-                "Assets/sprite_shaders/sprites.frag"
-            );
+        this.Shader = Engine.Content.Shaders.AddNamed("sprite", ShaderFactory.CompileNamed("Assets/sprite_shaders/", "sprites"));
+        
         this.SpritesheetSprites = new();
 
         this.Transform = AddComponent<TransformComponent>();

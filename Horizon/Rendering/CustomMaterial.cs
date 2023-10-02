@@ -1,4 +1,5 @@
-﻿using Horizon.OpenGL;
+﻿using Horizon.Content;
+using Horizon.OpenGL;
 
 namespace Horizon.Rendering
 {

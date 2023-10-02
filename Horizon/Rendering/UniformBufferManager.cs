@@ -1,11 +1,10 @@
-﻿using Horizon.GameEntity;
+﻿using Horizon.Content;
+using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
-using Horizon.Rendering.Effects.Components;
 
 namespace Horizon.Rendering
 {
-    [RequiresComponent(typeof(ShaderComponent))]
     public class UniformBufferManager : IGameComponent, IDisposable
     {
         private readonly Dictionary<uint, UniformBufferObject> _bufferObjects = new();
@@ -22,8 +21,7 @@ namespace Horizon.Rendering
 
         public void Initialize()
         {
-            // We attach a [RequiresComponent(typeof(ShaderComponent))]
-            Shader ??= Parent.GetComponent<ShaderComponent>()!;
+
         }
 
         public UniformBufferObject AddUniformBuffer(uint bindingPoint)

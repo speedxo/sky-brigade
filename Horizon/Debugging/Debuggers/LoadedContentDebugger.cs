@@ -27,7 +27,7 @@ namespace Horizon.Debugging.Debuggers
             if (ImGui.Begin(Name))
             {
                 DrawTextureSection();
-                DrawShaderSection();
+                //DrawShaderSection();
 
                 ImGui.End();
             }
@@ -87,18 +87,18 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        private void DrawShaderSection()
-        {
-            if (ImGui.TreeNode("Shaders"))
-            {
-                foreach (var shader in ContentManager.GetShaders())
-                {
-                    ImGui.Text($"Shader: {shader.ToString()}");
-                    // Add more shader preview UI elements here
-                }
-                ImGui.TreePop();
-            }
-        }
+        //private void DrawShaderSection()
+        //{
+        //    if (ImGui.TreeNode("Shaders"))
+        //    {
+        //        foreach (var shader in ContentManager.GetShaders())
+        //        {
+        //            ImGui.Text($"Shader: {shader.ToString()}");
+        //            // Add more shader preview UI elements here
+        //        }
+        //        ImGui.TreePop();
+        //    }
+        //}
 
         public override void Update(float dt) { }
     }

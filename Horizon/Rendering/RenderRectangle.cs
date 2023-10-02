@@ -1,8 +1,9 @@
-﻿using Horizon.GameEntity;
+﻿using Horizon.Content;
+using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
-using Shader = Horizon.OpenGL.Shader;
+using Shader = Horizon.Content.Shader;
 
 namespace Horizon.Rendering;
 

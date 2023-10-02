@@ -46,7 +46,6 @@
     <None Remove="Debugging\" />
     <None Remove="Debugging\Debuggers\" />
     <None Remove="Rendering\Effects\" />
-    <None Remove="Rendering\Effects\Components\" />
     <None Remove="Assets\DemoEffectStack\" />
     <None Remove="Assets\DemoEffectStack\stage1.frag" />
     <None Remove="Assets\fbo_shader\" />
@@ -85,7 +84,6 @@
     <Folder Include="Debugging\" />
     <Folder Include="Debugging\Debuggers\" />
     <Folder Include="Rendering\Effects\" />
-    <Folder Include="Rendering\Effects\Components\" />
     <Folder Include="Assets\DemoEffectStack\" />
     <Folder Include="Assets\fbo_shader\" />
     <Folder Include="Assets\effects\" />

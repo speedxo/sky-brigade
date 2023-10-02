@@ -1,12 +1,12 @@
 ﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
-using Horizon.Rendering.Effects.Components;
+using Horizon.Content;
 
 namespace Horizon.Rendering
 {
     public class Technique : Entity, IDisposable
     {
-        public ShaderComponent Shader { get; set; }
+        public Shader Shader { get; set; }
         public UniformBufferManager BufferManager { get; init; }
 
         public uint Handle
@@ -14,25 +14,22 @@ namespace Horizon.Rendering
             get => Shader.Handle;
         }
 
-        public void SetUniform(string name, object? value) => Shader.SetUniform(name, value);
+        public void SetUniform(in string name, in object? value) => Shader.SetUniform(name, value);
 
         public static Technique Default { get; private set; } =
-            new Technique(OpenGL.Shader.Default);
+            new Technique(Engine.Content.Shaders["basic"]!);
 
-        public Technique(string path, string name)
+        public Technique(in string path, in string name)
         {
-            Shader = AddComponent(
-                new ShaderComponent(
-                    Path.Combine(path, name + ".vert"),
-                    Path.Combine(path, name + ".frag")
-                )
+            Shader = AddEntity(
+                ShaderFactory.CompileNamed(path, name)
             );
             BufferManager = AddComponent(new UniformBufferManager(Shader));
         }
 
-        public Technique(Shader shader)
+        public Technique(in Shader shader)
         {
-            Shader = AddComponent(new ShaderComponent(shader));
+            Shader = AddEntity(shader);
             BufferManager = AddComponent(new UniformBufferManager(Shader));
         }
 

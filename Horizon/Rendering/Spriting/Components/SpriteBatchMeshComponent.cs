@@ -1,9 +1,10 @@
 ﻿using Horizon.OpenGL;
-using Horizon.Rendering.Effects.Components;
 using Horizon.Rendering.Spriting.Data;
 using Silk.NET.OpenGL;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Horizon.Content;
+using Shader = Horizon.Content.Shader;
 
 namespace Horizon.Rendering.Spriting.Components;
 
@@ -22,7 +23,7 @@ public class SpriteBatchMesh
 
     private SpriteData[] data = new SpriteData[MAX_SPRITES];
 
-    public ShaderComponent Shader { get; init; }
+    public Shader Shader { get; init; }
     public UniformBufferObject UniformBuffer { get; init; }
 
     public bool ShouldUniformBufferUpdate { get; set; }
@@ -30,7 +31,7 @@ public class SpriteBatchMesh
     public uint ElementCount { get; private set; }
     public VertexBufferObject<Vertex2D> Vbo { get; private set; }
 
-    public SpriteBatchMesh(ShaderComponent shader)
+    public SpriteBatchMesh(Shader shader)
     {
         this.Shader = shader;
         UniformBuffer = new UniformBufferObject(

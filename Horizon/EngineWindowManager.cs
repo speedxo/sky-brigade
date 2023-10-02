@@ -66,6 +66,7 @@ public class EngineWindowManager : Entity, IDisposable
         };
 
         ViewportSize = WindowSize = windowSize;
+
         // Create the window.
         this._window = Window.Create(_options);
         SubscribeWindowEvents();
@@ -81,7 +82,7 @@ public class EngineWindowManager : Entity, IDisposable
             UpdateViewport();
             UpdateFrame?.Invoke(dt);
         };
-        this._window.Resize += _windowResize;
+        this._window.Resize += WindowResize;
 
         this._window.Load += () =>
         {
@@ -106,7 +107,7 @@ public class EngineWindowManager : Entity, IDisposable
         AspectRatio = WindowSize.X / WindowSize.Y;
     }
 
-    private void _windowResize(Silk.NET.Maths.Vector2D<int> size)
+    private void WindowResize(Silk.NET.Maths.Vector2D<int> size)
     {
         FrameBufferManager.ResizeAll((int)ViewportSize.X, (int)ViewportSize.Y);
     }

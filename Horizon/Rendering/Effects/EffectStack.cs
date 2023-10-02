@@ -1,5 +1,5 @@
-﻿using Horizon.GameEntity;
-using Horizon.Rendering.Effects.Components;
+﻿using Horizon.Content;
+using Horizon.GameEntity;
 using System.Diagnostics.Contracts;
 using System.Text;
 
@@ -82,7 +82,14 @@ void main()
                 : File.ReadAllText(vertexPath);
 
             Technique = AddEntity(
-                new Technique(ShaderComponent.FromSource(vertexSource, fragmentSource))
+                new Technique(Engine.Content.Shaders.AddFromDefinitions(new ShaderDefinition {
+                    Type = Silk.NET.OpenGL.ShaderType.FragmentShader,
+                    Source = fragmentSource
+                }, new ShaderDefinition
+                {
+                    Type = Silk.NET.OpenGL.ShaderType.VertexShader,
+                    Source = vertexSource
+                }))
             );
 
             SetBindingPoints();
