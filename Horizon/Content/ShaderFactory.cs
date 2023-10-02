@@ -61,9 +61,10 @@ namespace Horizon.Content
                 throw new InvalidOperationException("[ShaderFactory] You are required to specify a vertex and fragment shader in order to compile a program.");
             }
 
-            //Create the shader program.
+            // Create the shader program.
             var handle = Engine.GL.CreateProgram();
 
+            // Program compilation result.
             var result = new CompilationResult(handle, CompilationStatus.Pass, "");
 
             // Enumerate and compile each program in the source.

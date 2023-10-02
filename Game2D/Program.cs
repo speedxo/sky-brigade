@@ -12,7 +12,7 @@ internal class TestEngine : GameEngine
 
     private static void Main(string[] args)
     {
-        using var engine = new TestEngine(GameInstanceParameters.Default with
+        var engine = new TestEngine(GameInstanceParameters.Default with
              {
                  InitialGameScreen = typeof(GameScene)
              });
