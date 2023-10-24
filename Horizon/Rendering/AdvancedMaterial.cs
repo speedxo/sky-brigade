@@ -15,9 +15,9 @@ namespace Horizon.Rendering
             MaterialDescription = AdvancedMaterialDescription.Default;
         }
 
-        public override void Use(RenderOptions? renderOptions = null)
+        public override void Use(ref RenderOptions options)
         {
-            var options = renderOptions ?? RenderOptions.Default;
+            
 
             Technique.Use();
 

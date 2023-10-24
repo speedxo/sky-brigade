@@ -74,7 +74,7 @@ public abstract class Scene : Entity, IDisposable
         return true;
     }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, ref RenderOptions options)
     {
         if (!Enabled)
             return;
@@ -85,14 +85,14 @@ public abstract class Scene : Entity, IDisposable
                 "The scenes render pipeline has not been initialized!"
             );
 
-        RenderScene(dt, renderOptions);
+        RenderScene(dt, ref options);
         PostEffects.PreDraw(dt);
-        RenderPost(dt, renderOptions);
+        RenderPost(dt, ref options);
 
         DrawGui(dt);
     }
 
-    public virtual void RenderScene(float dt, RenderOptions? renderOptions = null)
+    public virtual void RenderScene(float dt, ref RenderOptions options)
     {
         //if (options.IsPostProcessingEnabled)
         //{
@@ -112,20 +112,20 @@ public abstract class Scene : Entity, IDisposable
         //}
 
         for (int i = 0; i < Components.Count; i++)
-            Components.Values.ElementAt(i).Draw(dt, renderOptions);
+            Components.Values.ElementAt(i).Draw(dt, ref options);
 
         for (int i = 0; i < Entities.Count; i++)
-            Entities[i].Draw(dt, renderOptions);
+            Entities[i].Draw(dt, ref options);
 
-        DrawOther(dt, renderOptions);
+        DrawOther(dt, ref options);
 
         //if (options.IsPostProcessingEnabled)
         FrameBuffer.Unbind();
     }
 
-    public abstract void DrawOther(float dt, RenderOptions? renderOptions = null);
+    public abstract void DrawOther(float dt, ref RenderOptions options);
 
-    public virtual void RenderPost(float dt, RenderOptions? renderOptions = null)
+    public virtual void RenderPost(float dt, ref RenderOptions options)
     {
         if (Engine.Debugger.GameContainerDebugger.Visible)
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Bind();
@@ -140,11 +140,11 @@ public abstract class Scene : Entity, IDisposable
             (uint)Engine.Window.ViewportSize.Y
         );
 
-        var options = renderOptions ?? RenderOptions.Default;
+        
         if (options.IsPostProcessingEnabled)
-            SceneRect.RenderScene(dt);
+            SceneRect.RenderScene(dt, ref options);
         else
-            defaultSceneRect!.RenderScene(dt); // we do a test on hasRenderPipelineBeenInitialized in Draw
+            defaultSceneRect!.RenderScene(dt, ref options); // we do a test on hasRenderPipelineBeenInitialized in Draw
 
         if (Engine.Debugger.GameContainerDebugger.Visible)
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Unbind();

@@ -29,10 +29,10 @@ public class GameScreenManagerComponent : InstanceManager<Scene>, IGameComponent
     /// Draws the currently selected game screen
     /// </summary>
     /// <param name="dt">Delta time</param>
-    /// <param name="renderOptions">Render Options</param>
-    public void Draw(float dt, RenderOptions? renderOptions = null)
+    /// <param name="options">Render Options</param>
+    public void Draw(float dt, ref RenderOptions options)
     {
-        GetCurrentInstance().Draw(dt, renderOptions);
+        GetCurrentInstance().Draw(dt, ref options);
     }
 
     public void Initialize() { }

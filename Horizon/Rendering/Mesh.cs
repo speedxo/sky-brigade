@@ -95,9 +95,9 @@ public class Mesh : IDisposable
     /// Prepares the mesh for rendering with the provided render options.
     /// </summary>
     /// <param name="options">The render options containing camera and other parameters.</param>
-    public virtual void Use(RenderOptions options)
+    public virtual void Use(ref RenderOptions options)
     {
-        Material.Use(options);
+        Material.Use(ref options);
 
         SetUniform("uView", options.Camera.View);
         SetUniform("uProjection", options.Camera.Projection);
@@ -109,15 +109,13 @@ public class Mesh : IDisposable
     /// Draws the mesh with the provided render options.
     /// </summary>
     /// <param name="dt">The elapsed time since the last draw call.</param>
-    /// <param name="renderOptions">Optional render options. If not provided, the default options will be used.</param>
-    public virtual void Draw(float dt, RenderOptions? renderOptions = null)
+    /// <param name="options">Optional render options. If not provided, the default options will be used.</param>
+    public virtual void Draw(float dt, ref RenderOptions options)
     {
         if (ElementCount < 1)
             return; // Don't render if there is nothing to render to improve performance.
 
-        var options = renderOptions ?? RenderOptions.Default;
-
-        Use(options);
+        Use(ref options);
 
         Vbo.Bind();
 

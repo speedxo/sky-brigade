@@ -33,6 +33,6 @@ namespace Horizon.GameEntity.Components
         /// </summary>
         /// <param name="dt">Delta time.</param>
         /// <param name="options">Render options (optional).</param>
-        void Draw(float dt, RenderOptions? options = null);
+        void Draw(float dt, ref RenderOptions options);
     }
 }

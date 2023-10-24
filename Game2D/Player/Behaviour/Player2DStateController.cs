@@ -3,7 +3,7 @@ using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
 
-namespace Game2D.Player.Behaviour;
+namespace TileBash.Player.Behaviour;
 
 public class Player2DStateController : IGameComponent
 {
@@ -37,7 +37,7 @@ public class Player2DStateController : IGameComponent
         CurrentState = StateBehaviours[CurrentState].Update(dt);
     }
 
-    public void Draw(float dt, RenderOptions? options = null)
+    public void Draw(float dt, ref RenderOptions options)
     {
         
     }

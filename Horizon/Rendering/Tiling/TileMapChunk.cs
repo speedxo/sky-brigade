@@ -129,9 +129,9 @@ public abstract partial class Tiling<TTextureID>
             Renderer = new TilemapRenderer(this);
 
             Bounds = new RectangleF(
-                pos * new Vector2(WIDTH - 1, HEIGHT - 1)
+                pos * new Vector2(WIDTH, HEIGHT)
                     - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
-                new(WIDTH - 1, HEIGHT - 1)
+                new(WIDTH, HEIGHT)
             );
                  
 
@@ -191,10 +191,10 @@ public abstract partial class Tiling<TTextureID>
         /// Draws the chunk.
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
-        /// <param name="renderOptions">Optional rendering options.</param>
-        public void Draw(float dt, RenderOptions? renderOptions = null)
+        /// <param name="options">Optional rendering options.</param>
+        public void Draw(float dt, ref RenderOptions options)
         {
-            Renderer.Draw(dt, renderOptions);
+            Renderer.Draw(dt, ref options);
         }
 
         /// <summary>

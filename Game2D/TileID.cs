@@ -1,4 +1,4 @@
-﻿namespace Game2D;
+﻿namespace TileBash;
 
 public enum TileID
 {

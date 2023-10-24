@@ -1,4 +1,4 @@
-﻿global using static Horizon.Rendering.Tiling<Game2D.TileTextureID>;
+﻿global using static Horizon.Rendering.Tiling<TileBash.TileTextureID>;
 
 using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
@@ -13,10 +13,10 @@ using ImGuiNET;
 using Silk.NET.Core.Attributes;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using Silk.NET.Input;
+using TileBash.Player;
 
-using Game2D.Player;
-
-namespace Game2D;
+namespace TileBash;
 
 public class GameScene : Scene
 {
@@ -25,6 +25,7 @@ public class GameScene : Scene
     private Camera cam;
     private TileMap tilemap;
     private World world;
+    private RenderOptions charOptions;
 
     private readonly Box2DDebugDrawCallback debugDrawCallback;
 
@@ -85,40 +86,26 @@ public class GameScene : Scene
     {
         base.Update(dt);
 
-        //if (GameManager.Instance.InputManager.DualSenseInputManager.HasController)
-        //{
-        //    GameManager.Instance.InputManager.DualSenseInputManager.OutputState.R2Effect = 
-        //    GameManager.Instance.InputManager.DualSenseInputManager.OutputState.L2Effect = 
-        //        new DualSenseAPI.TriggerEffect.Vibrate((byte)speed, start, middle, end, false);
-        //}
-
-        // Move camera with Q and E keys
-        //if (Engine.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.Q))
-        //{
-        //    cameraMovement += dt * 10.0f;
-        //}
-        //else if (GameManager.Instance.Input.Keyboards[0].IsKeyPressed(Silk.NET.Input.Key.E))
-        //{
-        //    cameraMovement += -dt * 10.0f;
-        //}
-
+        if (Engine.Input.KeyboardManager.IsKeyPressed(Key.F3))
+            Engine.Debugger.Enabled = !Engine.Debugger.Enabled;
+        
         cam.Position = new Vector3(player.Position.X, player.Position.Y, cameraMovement);
 
         cam.Update(dt);
     }
-
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+     
+    public override void Draw(float dt, ref RenderOptions options)
     {
+        charOptions = options with { Camera = cam };
         world.DrawDebugData();
 
-        var options = (renderOptions ?? RenderOptions.Default) with { Camera = cam };
         debugDrawCallback.Enabled = options.IsBox2DDebugDrawEnabled;
-        base.Draw(dt, options);
+        base.Draw(dt, ref charOptions);
     }
 
-    public override void DrawOther(float dt, RenderOptions? renderOptions = null)
+    public override void DrawOther(float dt, ref RenderOptions options)
     {
-        debugDrawCallback.Draw(dt, renderOptions);
+        debugDrawCallback.Draw(dt, ref options);
     }
 
     public override void Dispose()
@@ -126,19 +113,7 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    float start = 1, middle = 1, end = 1;
-    int speed = 20;
-    readonly float sens = 0.001f;
     public override void DrawGui(float dt) 
-    {
-        if (ImGui.Begin("DualSense Controller Test"))
-        {
-            ImGui.DragFloat("Start", ref start, sens, 0.0f, 1.0f);
-            ImGui.DragFloat("Middle", ref middle, sens, 0.0f, 1.0f);
-            ImGui.DragFloat("End", ref end, sens, 0.0f, 1.0f);
-            ImGui.DragInt("Freq.", ref speed, 0.1f, 1, 255);
-
-            ImGui.End();
-        }           
+    {         
     }
 }

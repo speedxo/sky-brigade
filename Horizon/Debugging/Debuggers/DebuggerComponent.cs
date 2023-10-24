@@ -5,7 +5,7 @@ using Horizon.Rendering;
 
 namespace Horizon.Debugging.Debuggers
 {
-    public abstract class DebuggerComponent : IGameComponent
+    public abstract class DebuggerComponent : IGameComponent, IDisposable
     {
         public string Name { get; set; }
         public Entity Parent { get; set; }
@@ -16,11 +16,12 @@ namespace Horizon.Debugging.Debuggers
 
         public abstract void Update(float dt);
 
-        public abstract void Draw(float dt, RenderOptions? options = null);
+        public abstract void Draw(float dt, ref RenderOptions options);
 
         protected void Log(LogLevel level, string msg)
         {
             Entity.Engine.Logger.Log(level, $"({Name}) {msg}");
         }
+        public abstract void Dispose();
     }
 }

@@ -11,7 +11,7 @@ namespace Horizon
         public static GameInstanceParameters Default { get; } =
             new GameInstanceParameters
             {
-                WindowTitle = "SkyBrigade Engine Test",
+                WindowTitle = "Horizon Game",
                 InitialWindowSize = new Vector2(1280, 720)
             };
     }

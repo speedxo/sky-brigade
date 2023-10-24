@@ -16,9 +16,9 @@ namespace Horizon.GameEntity.Components
             // ! We attached a [RequiresComponent(typeof(TransformComponent))]
         }
 
-        public override void Use(RenderOptions options)
+        public override void Use(ref RenderOptions options)
         {
-            base.Use(options);
+            base.Use(ref options);
             SetUniform("uModel", Transform.ModelMatrix);
         }
 

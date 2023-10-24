@@ -1,7 +1,7 @@
 using Horizon;
 using Horizon.GameEntity;
 
-namespace Game2D.Player.Behaviour.States;
+namespace TileBash.Player.Behaviour.States;
 
 public class PlayerIdleBehaviour : Player2DStateBehaviour
 {

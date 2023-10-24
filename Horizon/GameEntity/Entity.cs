@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity.Components;
 using Horizon.Primitives;
 using Horizon.Rendering;
+using Silk.NET.OpenAL;
 
 namespace Horizon.GameEntity
 {
@@ -239,17 +240,17 @@ namespace Horizon.GameEntity
         /// Draws the entity and its components.
         /// </summary>
         /// <param name="dt">Delta time.</param>
-        /// <param name="renderOptions">Render options (optional).</param>
-        public virtual void Draw(float dt, RenderOptions? renderOptions = null)
+        /// <param name="options">Render options (optional).</param>
+        public virtual void Draw(float dt, ref RenderOptions options)
         {
             if (!Enabled)
                 return;
 
             for (int i = 0; i < Components.Count; i++)
-                Components.Values.ElementAt(i).Draw(dt, renderOptions);
+                Components.Values.ElementAt(i).Draw(dt, ref options);
 
             for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Draw(dt, renderOptions);
+                Entities[i].Draw(dt, ref options);
         }
     }
 }

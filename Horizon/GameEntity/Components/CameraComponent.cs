@@ -69,7 +69,7 @@ namespace Horizon.GameEntity.Components
             Front = Vector3.Normalize(Transform.Rotation);
         }
 
-        public void Draw(float dt, RenderOptions? options = null)
+        public void Draw(float dt, ref RenderOptions options)
         {
             // Not used.
         }

@@ -79,13 +79,13 @@ public class SpriteBatchMesh
         Spritesheet sheet,
         Matrix4x4 modelMatrix,
         IEnumerable<Sprite> sprites,
-        RenderOptions? renderOptions = null
+        ref RenderOptions options
     )
     {
         if (ElementCount < 1)
             return; // Don't render if there is nothing to render to improve performance.
 
-        var options = renderOptions ?? RenderOptions.Default;
+        
 
         Shader.Use();
 

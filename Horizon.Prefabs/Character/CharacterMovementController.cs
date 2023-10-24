@@ -70,6 +70,6 @@ public partial class CharacterController
                 Position = new Vector3(0, 5, -2);
         }
 
-        public void Draw(float dt, RenderOptions? options = null) { }
+        public void Draw(float dt, ref RenderOptions options) { }
     }
 }

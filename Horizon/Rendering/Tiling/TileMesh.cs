@@ -164,7 +164,7 @@ public abstract partial class Tiling<TTextureID>
             };
         }
 
-        public override void Draw(float dt, RenderOptions? renderOptions = null)
+        public override void Draw(float dt, ref RenderOptions options)
         {
             if (_uploadData)
             {
@@ -183,7 +183,7 @@ public abstract partial class Tiling<TTextureID>
                 return;
             }
 
-            var options = renderOptions ?? RenderOptions.Default;
+            
 
             Shader.Use();
 

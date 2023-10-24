@@ -72,7 +72,7 @@ public class SpritesheetAnimationManager : IGameComponent
         );
     }
 
-    public void Draw(float dt, RenderOptions? options = null) { }
+    public void Draw(float dt, ref RenderOptions options) { }
 
     public void Initialize()
     {

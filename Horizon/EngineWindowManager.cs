@@ -8,13 +8,14 @@ using System.Numerics;
 // Namespace declaration for the GameManager class
 namespace Horizon;
 
-public class EngineWindowManager : Entity, IDisposable
+public class EngineWindowManager : Entity
 {
     private IWindow _window;
     private IInputContext _input;
 
     public Action<double>? UpdateFrame;
     public Action<double>? RenderFrame;
+    public Action? Closing;
     public Action? Load;
 
     public bool IsRunning { get; private set; }
@@ -92,6 +93,7 @@ public class EngineWindowManager : Entity, IDisposable
             Load?.Invoke();
             UpdateViewport();
         };
+        this._window.Closing += () => Closing?.Invoke();
     }
 
     private void UpdateViewport()
@@ -130,9 +132,18 @@ public class EngineWindowManager : Entity, IDisposable
     }
 
     public void Dispose()
-    {
+    {   
         GC.SuppressFinalize(this);
         _window.Dispose();
+    }
+
+    /// <summary>
+    /// Updates the windows title to the specified string <paramref name="title"/>.
+    /// </summary>
+    /// <param name="title">The new window title.</param>
+    public void UpdateTitle(string title)
+    {
+        _window.Title = title;
     }
 }
 
@@ -512,7 +523,7 @@ public class EngineWindowManager : Entity, IDisposable
 //         MemoryUsage = GC.GetTotalMemory(false) / 1000000;
 //     }
 
-//     public override void Draw(float dt, RenderOptions? renderOptions = null)
+//     public override void Draw(float dt, ref RenderOptions options)
 //     {
 //         Debugger.PerformanceDebugger.RenderStart(dt);
 
@@ -523,7 +534,7 @@ public class EngineWindowManager : Entity, IDisposable
 //         Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 //         // Render all entities
-//         base.Draw(dt, renderOptions);
+//         base.Draw(dt, options);
 
 //         // Render ImGui UI on top of the game screen.
 //         imguiController.Render();

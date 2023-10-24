@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Game2D;
+namespace TileBash;
 
 public class CobblestoneTile : Tile
 {

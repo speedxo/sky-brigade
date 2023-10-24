@@ -11,7 +11,7 @@ namespace Horizon.Rendering
 
         public Technique Technique { get; protected set; }
 
-        public abstract void Use(RenderOptions? options = null);
+        public abstract void Use(ref RenderOptions options);
 
         public static void End() => Engine.GL.UseProgram(0);
     }

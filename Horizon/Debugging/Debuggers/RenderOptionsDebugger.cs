@@ -34,7 +34,7 @@ namespace Horizon.Debugging.Debuggers
 
         public RenderOptions RenderOptions { get; private set; }
 
-        public override void Draw(float dt, RenderOptions? options = null)
+        public override void Draw(float dt, ref RenderOptions options)
         {
             if (!Visible)
                 return;
@@ -54,6 +54,11 @@ namespace Horizon.Debugging.Debuggers
 
                 ImGui.End();
             }
+        }
+
+        public override void Dispose()
+        {
+            
         }
 
         public override void Update(float dt)

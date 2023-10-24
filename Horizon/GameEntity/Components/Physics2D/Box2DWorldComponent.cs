@@ -17,5 +17,5 @@ public class Box2DWorldComponent : Box2D.NetStandard.Dynamics.World.World, IGame
         Step(dt, 8, 3);
     }
 
-    public void Draw(float dt, RenderOptions? options = null) { }
+    public void Draw(float dt, ref RenderOptions options) { }
 }

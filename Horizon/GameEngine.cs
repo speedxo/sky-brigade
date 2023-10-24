@@ -53,8 +53,24 @@ public abstract class GameEngine : Entity
     #region Fields & Members
     private readonly GameInstanceParameters instanceParameters;
     private ImGuiController _imGuiController;
+    private RenderOptions _options;
     #endregion
 
+    #region Event Delegates
+
+    public delegate void PreUpdate(float dt);
+    public delegate void PreDraw(float dt, ref RenderOptions options);
+    public delegate void PostUpdate(float dt);
+    public delegate void PostDraw(float dt, ref RenderOptions options);
+
+    public event PreDraw? OnPreDraw;    
+    public event PreUpdate? OnPreUpdate;    
+    public event PostDraw? OnPostDraw;
+    public event PostUpdate? OnPostUpdate;
+
+
+    #endregion
+        
     public GameEngine(GameInstanceParameters parameters)
     {
         this.instanceParameters = parameters;
@@ -70,32 +86,55 @@ public abstract class GameEngine : Entity
 
     private void SubscribeWindowEvents()
     {
+        Window.RenderFrame += WindowDraw;
+        Window.UpdateFrame += (delta) =>
+        {
+            Update((float)delta);
+        };
+        Window.Closing += DisposeECS;
         Window.Load += Load;
-        Window.RenderFrame += (delta) => { };
-        Window.UpdateFrame += (delta) => { };
     }
 
     protected virtual void Load()
     {
         LoadEssentialEngineComponents();
 
-        Window.RenderFrame += (delta) =>
+        _options = Debugger.RenderOptionsDebugger.RenderOptions with
         {
-            Draw(
-                (float)delta,
-                Debugger.RenderOptionsDebugger.RenderOptions with
-                {
-                    GL = Window.GL
-                }
-            );
+            GL = Window.GL
         };
-        Window.UpdateFrame += (delta) =>
+
+
+        if (Debugger.Enabled)
         {
-            Update((float)delta);
-        };
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            var buildDate = (new DateTime(2000, 1, 1)
+                                    .AddDays(version.Build).AddSeconds(version.Revision * 2)).ToString("dd/MM/yyyy");
+
+            Window.UpdateTitle($"{instanceParameters.WindowTitle} - Horizon ({version}) {buildDate}");
+        }
     }
 
-
+    /// <summary>
+    /// Helper method to dispose the entity-component system.
+    /// </summary>
+    private void DisposeECS()
+    {
+        foreach (var entity in Entities)
+        {
+            if (entity is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+        foreach (var component in Components.Values)
+        {
+            if (component is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+    }
 
     protected virtual void LoadEssentialEngineComponents()
     {
@@ -226,30 +265,12 @@ public abstract class GameEngine : Entity
         Content.GenerateNamedTexture("gray", "Assets/gray.png");
         Content.GenerateNamedTexture("white", "Assets/white.png");
     }
-    public void Run()
-    {
-        Window.Run();
-
-        foreach (var entity in Entities)
-        {
-            if (entity is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
-        }
-        foreach (var component in Components.Values)
-        {
-            if (component is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
-        }
-    }
+    public void Run() => Window.Run();
 
     // Variables and method used for non-essential updates that run once per second.
     public override void Update(float dt)
     {
-        Debugger.PerformanceDebugger.UpdateStart(dt);
+        OnPreUpdate?.Invoke(dt);
 
         if (Input.WasPressed(VirtualAction.Pause))
         {
@@ -268,7 +289,7 @@ public abstract class GameEngine : Entity
 
 
         base.Update(dt);
-        Debugger.PerformanceDebugger.UpdateEnd();
+        OnPostUpdate?.Invoke(dt);
     }
 
     //// Update method for non-essential tasks, such as measuring memory usage.
@@ -276,10 +297,10 @@ public abstract class GameEngine : Entity
     //{
     //    MemoryUsage = GC.GetTotalMemory(false) / 1000000;
     //}
-
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    private void WindowDraw(double dt) => Draw((float)dt, ref _options);
+    public override void Draw(float dt, ref RenderOptions options)
     {
-        Debugger.PerformanceDebugger.RenderStart(dt);
+        OnPreDraw?.Invoke(dt, ref options);
 
         // Make sure ImGui is up-to-date before rendering.
         _imGuiController.Update(dt);
@@ -288,10 +309,10 @@ public abstract class GameEngine : Entity
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         // Render all entities
-        base.Draw(dt, renderOptions);
+        base.Draw(dt, ref options);
 
         // Render ImGui UI on top of the game screen.
         _imGuiController.Render();
-        Debugger.PerformanceDebugger.RenderEnd();
+        OnPostDraw?.Invoke(dt, ref options);
     }
 }

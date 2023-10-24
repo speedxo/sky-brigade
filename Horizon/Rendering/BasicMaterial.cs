@@ -50,9 +50,9 @@ namespace Horizon.Rendering
         //    System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(MaterialDescription));
         //}
 
-        public override void Use(RenderOptions? renderOptions = null)
+        public override void Use(ref RenderOptions options)
         {
-            var options = renderOptions ?? RenderOptions.Default;
+            
 
             Technique.Use();
 

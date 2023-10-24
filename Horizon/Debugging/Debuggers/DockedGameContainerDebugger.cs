@@ -19,7 +19,7 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Update(float dt) { }
 
-        public override void Draw(float dt, RenderOptions? options = null)
+        public override void Draw(float dt, ref RenderOptions options)
         {
             if (Visible && ImGui.Begin("Game Container"))
             {
@@ -35,6 +35,11 @@ namespace Horizon.Debugging.Debuggers
 
                 ImGui.End();
             }
+        }
+
+        public override void Dispose()
+        {
+            
         }
     }
 }

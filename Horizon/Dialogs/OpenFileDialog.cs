@@ -192,8 +192,8 @@ namespace Horizon.Dialogs
         /// Draws the open file dialog (IEntity implementation).
         /// </summary>
         /// <param name="dt">Time elapsed since the last update.</param>
-        /// <param name="renderOptions">Optional render options (unused in this implementation).</param>
-        public override void Draw(float dt, RenderOptions? renderOptions = null)
+        /// <param name="options">Optional render options (unused in this implementation).</param>
+        public override void Draw(float dt, ref RenderOptions options)
         {
             // Show the open file dialog on the screen.
             ShowDialog();

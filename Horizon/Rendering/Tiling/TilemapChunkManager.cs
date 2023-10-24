@@ -56,11 +56,11 @@ public abstract partial class Tiling<TTextureID>
                     Chunks[x + y * Map.Width].Update(dt);
         }
 
-        public void Draw(float dt, RenderOptions? options = null)
+        public void Draw(float dt, ref RenderOptions options)
         {
             for (int x = 0; x < Map.Width; x++)
                 for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].Draw(dt, options);
+                    Chunks[x + y * Map.Width].Draw(dt, ref options);
         }
 
         public void GenerateMeshes()

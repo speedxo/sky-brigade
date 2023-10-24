@@ -1,4 +1,4 @@
-namespace Game2D.Player.Behaviour;
+namespace TileBash.Player.Behaviour;
 
 public abstract class Player2DStateBehaviour
 {

@@ -44,17 +44,17 @@ public class SpriteBatch : Entity
         _requiresVboUpdate = true;
     }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, ref RenderOptions options)
     {
         if (_requiresVboUpdate)
             UpdateVBO();
 
-        var options = (renderOptions ?? RenderOptions.Default);
+        
 
-        base.Draw(dt, options);
+        base.Draw(dt, ref options);
 
         foreach (var (spritesheet, (sprites, mesh)) in SpritesheetSprites)
-            mesh.Draw(spritesheet, Transform.ModelMatrix, sprites, options);
+            mesh.Draw(spritesheet, Transform.ModelMatrix, sprites, ref options);
     }
 
     public void UpdateVBO()

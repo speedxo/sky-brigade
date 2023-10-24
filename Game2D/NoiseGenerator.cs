@@ -4,7 +4,7 @@ using Horizon.Rendering;
 using Silk.NET.OpenGL;
 using System.Numerics;
 
-namespace Game2D;
+namespace TileBash;
 
 //public class NoiseGenerator
 //{

@@ -25,7 +25,7 @@ public struct RenderOptions
 
     public DebugRenderOptions DebugOptions { get; set; }
 
-    public static RenderOptions Default { get; } =
+    public static RenderOptions Default=
         new RenderOptions
         {
             Camera = new Camera() { Position = new Vector3(0, 0, 10) },

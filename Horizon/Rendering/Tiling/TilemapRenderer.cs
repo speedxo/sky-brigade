@@ -112,10 +112,8 @@ public abstract partial class Tiling<TTextureID>
             }
         }
         float _dirtyChunkUpdateTimer = 0.0f;
-        public void Draw(float dt, RenderOptions? renderOptions = null)
+        public void Draw(float dt, ref RenderOptions options)
         {
-            var options = (renderOptions ?? RenderOptions.Default);
-
             Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
             if (!Chunk.IsVisibleByCamera) return;
 
@@ -129,11 +127,11 @@ public abstract partial class Tiling<TTextureID>
             }
             
             // TODO find a better way as to not have several n^2 accesses.
-            foreach ((_, var sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
+            foreach (var (_, sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
             {
-                foreach ((_, var mesh) in sliceMeshes.TileMeshPairs)
+                foreach (var (_, mesh) in sliceMeshes.TileMeshPairs)
                 {
-                    mesh.Draw(dt, options);
+                    mesh.Draw(dt, ref options);
                 }
             }
         }

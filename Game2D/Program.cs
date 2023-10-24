@@ -1,6 +1,6 @@
 ﻿using Horizon;
 
-namespace Game2D;
+namespace TileBash;
 
 internal class TestEngine : GameEngine
 {
@@ -12,9 +12,13 @@ internal class TestEngine : GameEngine
 
     private static void Main(string[] args)
     {
+        var assemName = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+        var version = assemName.Version;
+
         var engine = new TestEngine(GameInstanceParameters.Default with
              {
-                 InitialGameScreen = typeof(GameScene)
+                 InitialGameScreen = typeof(GameScene),
+                 WindowTitle = $"{assemName.Name} ({version})"
              });
         engine.Run();
         

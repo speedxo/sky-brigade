@@ -106,7 +106,7 @@ namespace Horizon.Input.Components
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, RenderOptions? options = null)
+        public void Draw(float dt, ref RenderOptions options)
         {
             // Not used for joystick input.
         }

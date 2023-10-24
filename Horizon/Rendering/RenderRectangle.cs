@@ -36,7 +36,7 @@ public class RenderTarget : Entity
 
     public void RenderScene(float dt) { }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, ref RenderOptions options)
     {
         Engine.GL.Viewport(
             0,
@@ -46,7 +46,7 @@ public class RenderTarget : Entity
         );
         Technique.Use();
 
-        Mesh.Draw(dt);
+        Mesh.Draw(dt, ref options);
 
         Technique.End();
     }
@@ -112,7 +112,7 @@ public class RenderRectangle : Entity
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
     }
 
-    public void RenderScene(float dt)
+    public void RenderScene(float dt, ref RenderOptions options)
     {
         Technique.Use();
 
@@ -140,13 +140,13 @@ public class RenderRectangle : Entity
             Technique.SetUniform("uDepth", 1);
         }
 
-        Mesh.Use(RenderOptions.Default);
-        Mesh.Draw(dt);
+        Mesh.Use(ref RenderOptions.Default);
+        Mesh.Draw(dt, ref options);
 
         Technique.End();
     }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null) { }
+    public override void Draw(float dt, ref RenderOptions options) { }
 
     public override void Update(float dt) { }
 }

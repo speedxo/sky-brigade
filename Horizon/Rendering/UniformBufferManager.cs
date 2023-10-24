@@ -69,7 +69,7 @@ namespace Horizon.Rendering
             // Update logic here if needed
         }
 
-        public void Draw(float dt, RenderOptions? options = null)
+        public void Draw(float dt, ref RenderOptions options)
         {
             // Drawing logic here if needed
         }

@@ -16,31 +16,54 @@ namespace Horizon.Debugging
             public static string Content { get; } = "Content";
         }
 
-        public RenderOptionsDebugger RenderOptionsDebugger { get; init; }
-        public SceneEntityDebugger SceneEntityDebugger { get; init; }
-        public LoadedContentDebugger LoadedContentDebugger { get; init; }
-        public DockedGameContainerDebugger GameContainerDebugger { get; init; }
-        public PerformanceProfilerDebugger PerformanceDebugger { get; init; }
-        public GeneralDebugger GeneralDebugger { get; init; }
+        private List<DebuggerComponent> _components;
+        public RenderOptionsDebugger RenderOptionsDebugger { get; private set; }
+        public SceneEntityDebugger SceneEntityDebugger { get; private set; }
+        public LoadedContentDebugger LoadedContentDebugger { get; private set; }
+        public DockedGameContainerDebugger GameContainerDebugger { get; private set; }
+        public PerformanceProfilerDebugger PerformanceDebugger { get; private set; }
+        public GeneralDebugger GeneralDebugger { get; private set; }
 
         public bool RenderToConatiner { get; private set; }
 
         public SkylineDebugger()
         {
-            RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>();
-            SceneEntityDebugger = AddComponent<SceneEntityDebugger>();
-            LoadedContentDebugger = AddComponent<LoadedContentDebugger>();
-            GameContainerDebugger = AddComponent<DockedGameContainerDebugger>();
-            PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>();
-            GeneralDebugger = AddComponent<GeneralDebugger>();
+            CreateDebugComponents();
+        }
+        
+        private void CreateDebugComponents()
+        {
+            _components = new List<DebuggerComponent>
+            {
+                (RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>()),
+                (SceneEntityDebugger = AddComponent<SceneEntityDebugger>()), 
+                (LoadedContentDebugger = AddComponent<LoadedContentDebugger>()),
+                (GameContainerDebugger = AddComponent<DockedGameContainerDebugger>()),
+                (PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>()),
+                (GeneralDebugger = AddComponent<GeneralDebugger>())
+            };
         }
 
-        public override void Draw(float dt, RenderOptions? renderOptions = null)
+        private void DestroyDebugComponents()
+        {
+            foreach (var comp in _components)
+            {
+                Components.Remove(comp.GetType());
+                comp.Dispose();
+            }
+            _components.Clear();
+        }
+
+        public override void Draw(float dt, ref RenderOptions options)
         {
             RenderToConatiner = Enabled && GameContainerDebugger.Visible;
 
             if (!Enabled)
+            {
+                if (_components.Any()) DestroyDebugComponents();
                 return;
+            }
+            if (!_components.Any()) CreateDebugComponents();
 
             if (ImGui.BeginMainMenuBar())
             {
@@ -94,7 +117,7 @@ namespace Horizon.Debugging
                 ImGui.EndMainMenuBar();
             }
 
-            base.Draw(dt, renderOptions);
+            base.Draw(dt, ref options);
         }
     }
 }

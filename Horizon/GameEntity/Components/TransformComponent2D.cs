@@ -111,6 +111,6 @@ namespace Horizon.GameEntity.Components
         /// </summary>
         /// <param name="dt">The elapsed time since the last draw call.</param>
         /// <param name="options">Optional render options.</param>
-        public void Draw(float dt, RenderOptions? options = null) { }
+        public void Draw(float dt, ref RenderOptions options) { }
     }
 }

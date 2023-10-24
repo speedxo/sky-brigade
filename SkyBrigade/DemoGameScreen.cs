@@ -57,9 +57,9 @@ internal class DemoGameScreen : Scene
         return new Effect[] { vingette = new VingetteEffect() };
     }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, ref RenderOptions options)
     {
-        var options = (renderOptions ?? RenderOptions.Default) with { Camera = character.Camera };
+        var options = (options ?? RenderOptions.Default) with { Camera = character.Camera };
 
         base.Draw(dt, options);
     }
@@ -94,5 +94,5 @@ internal class DemoGameScreen : Scene
 
     public override void Dispose() { }
 
-    public override void DrawOther(float dt, RenderOptions? renderOptions = null) { }
+    public override void DrawOther(float dt, ref RenderOptions options) { }
 }

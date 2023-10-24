@@ -143,8 +143,8 @@ public partial class Tiling<TTextureID>
         /// Draws the tile.
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
-        /// <param name="renderOptions">Optional rendering options.</param>
-        public virtual void Draw(float dt, RenderOptions? renderOptions = null)
+        /// <param name="options">Optional rendering options.</param>
+        public virtual void Draw(float dt, ref RenderOptions options)
         {
             // Implement drawing logic here.
         }

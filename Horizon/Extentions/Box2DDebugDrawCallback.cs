@@ -59,7 +59,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             this.primitive = primitive;
         }
 
-        public void Draw(float dt, RenderOptions? renderOptions = null)
+        public void Draw(float dt, ref RenderOptions options)
         {
             if (Indices.Count < 1)
                 return;
@@ -121,7 +121,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void Update(float dt) { }
 
-    public void Draw(float dt, RenderOptions? renderOptions = null)
+    public void Draw(float dt, ref RenderOptions options)
     {
         if (!Enabled)
         {
@@ -131,7 +131,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             return;
         }
 
-        var options = renderOptions ?? RenderOptions.Default;
+        
 
         Technique.Use();
 
@@ -140,9 +140,9 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         Technique.SetUniform("uModel", Matrix4x4.Identity);
         Technique.SetUniform("useNormalAsColor", true);
 
-        polygonMesh.Draw(dt, options);
-        circleMesh.Draw(dt, options);
-        segmentMesh.Draw(dt, options);
+        polygonMesh.Draw(dt, ref options);
+        circleMesh.Draw(dt, ref options);
+        segmentMesh.Draw(dt, ref options);
 
         Technique.End();
 

@@ -18,7 +18,7 @@ namespace Horizon.Debugging.Debuggers
             Name = "Scene Tree";
         }
 
-        public override void Draw(float dt, RenderOptions? options = null)
+        public override void Draw(float dt, ref RenderOptions options)
         {
             if (!Visible)
                 return;
@@ -39,6 +39,11 @@ namespace Horizon.Debugging.Debuggers
 
                 ImGui.End();
             }
+        }
+
+        public override void Dispose()
+        {
+            
         }
 
         private void DrawEntityTree(Entity? entity)

@@ -9,9 +9,9 @@ using Horizon.Rendering.Spriting;
 using ImGuiNET;
 using System.Collections;
 using System.Numerics;
-using Game2D.Player.Behaviour;
+using TileBash.Player.Behaviour;
 
-namespace Game2D.Player;
+namespace TileBash.Player;
 
 public class Player2D : Sprite
 {
@@ -121,12 +121,12 @@ public class Player2D : Sprite
         base.Update(dt);
     }
 
-    public override void Draw(float dt, RenderOptions? renderOptions = null)
+    public override void Draw(float dt, ref RenderOptions options)
     {
         foreach (var tile in visibleTiles)
-            tile.Draw(dt, renderOptions);
+            tile.Draw(dt, ref options);
 
-        base.Draw(dt, renderOptions);
+        base.Draw(dt, ref options);
     }
 
     private void GenerateTileColliders()
