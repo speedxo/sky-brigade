@@ -55,7 +55,6 @@ public abstract class GameEngine : Entity
     private ImGuiController _imGuiController;
     private RenderOptions _options;
     #endregion
-
     #region Event Delegates
 
     public delegate void PreUpdate(float dt);

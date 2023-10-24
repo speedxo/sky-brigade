@@ -50,9 +50,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     public override void Initialize()
     {
-#pragma warning disable CS8601 // SID, SHIT THE FUCK UP
-        Debugger = Parent as SkylineDebugger;
-#pragma warning restore CS8601 // SID, SHIT THE FUCK UP
+        Debugger = (Parent as SkylineDebugger)!;
 
         _renderStopwatch = new Stopwatch();
         _updateStopwatch = new Stopwatch();

@@ -188,6 +188,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\bogz\bogz.csproj" />
     <ProjectReference Include="..\DualSenseAPI\DualSenseAPI.csproj" />
   </ItemGroup>
   <ItemGroup>

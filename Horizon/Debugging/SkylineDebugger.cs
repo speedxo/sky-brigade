@@ -16,7 +16,7 @@ namespace Horizon.Debugging
             public static string Content { get; } = "Content";
         }
 
-        private List<DebuggerComponent> _components;
+        private List<DebuggerComponent> _components = new();
         public RenderOptionsDebugger RenderOptionsDebugger { get; private set; }
         public SceneEntityDebugger SceneEntityDebugger { get; private set; }
         public LoadedContentDebugger LoadedContentDebugger { get; private set; }
@@ -33,7 +33,7 @@ namespace Horizon.Debugging
         
         private void CreateDebugComponents()
         {
-            _components = new List<DebuggerComponent>
+            _components.AddRange(new DebuggerComponent[]
             {
                 (RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>()),
                 (SceneEntityDebugger = AddComponent<SceneEntityDebugger>()), 
@@ -41,7 +41,7 @@ namespace Horizon.Debugging
                 (GameContainerDebugger = AddComponent<DockedGameContainerDebugger>()),
                 (PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>()),
                 (GeneralDebugger = AddComponent<GeneralDebugger>())
-            };
+            });
         }
 
         private void DestroyDebugComponents()
