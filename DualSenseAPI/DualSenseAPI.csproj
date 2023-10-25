@@ -13,6 +13,7 @@
     <PackageTags>DualSense PS5 PlayStation</PackageTags>
     <RepositoryUrl>https://github.com/The-Demp/DualSenseAPI</RepositoryUrl>
     <Version>1.0.2</Version>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

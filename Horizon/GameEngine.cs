@@ -6,11 +6,11 @@ using Horizon.Input;
 using Horizon.Logging;
 using Horizon.Rendering;
 using ImGuiNET;
+using ImPlotNET;
 using Microsoft.Extensions.Options;
 using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using Silk.NET.OpenGL.Extensions.ImGui;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -52,15 +52,15 @@ public abstract class GameEngine : Entity
     #endregion
     #region Fields & Members
     private readonly GameInstanceParameters instanceParameters;
-    private ImGuiController _imGuiController;
+    private CustomImguiController _imGuiController;
     private RenderOptions _options;
     #endregion
     #region Event Delegates
 
     public delegate void PreUpdate(float dt);
-    public delegate void PreDraw(float dt, ref RenderOptions options);
+    public delegate void PreDraw(float dt);
     public delegate void PostUpdate(float dt);
-    public delegate void PostDraw(float dt, ref RenderOptions options);
+    public delegate void PostDraw(float dt);
 
     public event PreDraw? OnPreDraw;    
     public event PreUpdate? OnPreUpdate;    
@@ -161,16 +161,21 @@ public abstract class GameEngine : Entity
 
     private void InitializeImGui()
     {
-        _imGuiController = new ImGuiController(GL, Window.GetWindow(), Window.GetInput());
+        _imGuiController = new CustomImguiController(GL, Window.GetWindow(), Window.GetInput());
 
         // Enable docking for a more streamlined UI
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
-        LoadImGuiStyle();
+        //LoadImGuiStyle();
     }
     private static void LoadImGuiStyle()
     {
         ImGuiStylePtr style = ImGui.GetStyle();
+        
+        style.AntiAliasedLines = true;
+        style.AntiAliasedFill = true;
+        style.AntiAliasedLinesUseTex = true;
+
         style.WindowRounding = 5.3f;
         style.FrameRounding = 2.3f;
         style.ScrollbarRounding = 0;
@@ -286,8 +291,10 @@ public abstract class GameEngine : Entity
         //    nonEssentialUpdate();
         //}
 
+        Debugger.PerformanceDebugger.CpuMetrics.TimeAndTrackMethod(() => {
+            base.Update(dt);
+        }, "Engine", "CPU");
 
-        base.Update(dt);
         OnPostUpdate?.Invoke(dt);
     }
 
@@ -297,9 +304,31 @@ public abstract class GameEngine : Entity
     //    MemoryUsage = GC.GetTotalMemory(false) / 1000000;
     //}
     private void WindowDraw(double dt) => Draw((float)dt, ref _options);
+
+    public void DrawWithMetrics(in Entity entity, in float dt, ref RenderOptions options)
+    {
+        var startTime = Stopwatch.GetTimestamp();
+        entity.Draw(dt, ref options);
+        var endTime = Stopwatch.GetTimestamp();
+        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", entity.Name, (double)(endTime - startTime) / Stopwatch.Frequency);
+    }
+    
+    public void DrawWithMetrics(in IGameComponent component, in float dt, ref RenderOptions options)
+    {
+        var startTime = Stopwatch.GetTimestamp();
+        component.Draw(dt, ref options);
+        var endTime = Stopwatch.GetTimestamp();
+        if (component.Name == "Scene Manager") return;
+        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", component.Name, (double)(endTime - startTime) / Stopwatch.Frequency);
+    }
+
     public override void Draw(float dt, ref RenderOptions options)
     {
-        OnPreDraw?.Invoke(dt, ref options);
+        if (!Enabled)
+            return;
+
+        var startTime = Stopwatch.GetTimestamp();
+        OnPreDraw?.Invoke(dt);
 
         // Make sure ImGui is up-to-date before rendering.
         _imGuiController.Update(dt);
@@ -307,11 +336,20 @@ public abstract class GameEngine : Entity
         // Clear the screen buffer before rendering the game screen.
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        // Render all entities
-        base.Draw(dt, ref options);
+        // Render all entities & components
+        for (int i = 0; i < Components.Count; i++)
+            DrawWithMetrics(Components.Values.ElementAt(i), dt, ref options);
+
+        for (int i = 0; i < Entities.Count; i++)
+            DrawWithMetrics(Entities[i], dt, ref options);
 
         // Render ImGui UI on top of the game screen.
         _imGuiController.Render();
-        OnPostDraw?.Invoke(dt, ref options);
+        OnPostDraw?.Invoke(dt);
+
+        // Collect Metrics
+        var endTime = Stopwatch.GetTimestamp();
+        var elapsedSeconds = (double)(endTime - startTime) / Stopwatch.Frequency;
+        Debugger.PerformanceDebugger.GpuMetrics.AddCustom("Engine", "GPU", elapsedSeconds);
     }
 }

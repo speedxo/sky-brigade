@@ -7,6 +7,11 @@ using System.Numerics;
 using System.Security.Cryptography;
 using Horizon.GameEntity;
 using Monitor = System.Threading.Monitor;
+using Horizon.Data;
+using System.Diagnostics.CodeAnalysis;
+using ImPlotNET;
+using System.Xml.Serialization;
+using System.Reflection.Emit;
 
 namespace Horizon.Debugging.Debuggers;
 
@@ -22,207 +27,153 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     }
 
     private float _updateRate = 1.0f / 50.0f;
+    private float _updateTimer = 0.0f;
 
     private SkylineDebugger Debugger { get; set; }
 
-    private Stopwatch _renderStopwatch;
-    private Stopwatch _updateStopwatch;
+    public readonly Metrika CpuMetrics = new ();
+    public readonly Metrika GpuMetrics = new();
 
-    private LinearBuffer<float> _updateFrameTimes;
-    private LinearBuffer<float> _renderFrameTimes;
-    private LinearBuffer<float> _memoryUsage;
-    private LinearBuffer<float> _frameTimers;
+
+    private LinearBuffer<double> _updateFrameTimes;
+    private LinearBuffer<double> _renderFrameTimes;
 
     private long _prevTimestamp;
-    private float _cpuUsage;
     private long _prevCpuTime;
-    private float _memoryFootprint;
-
-    private readonly object _updateLock = new object();
-    private readonly object _renderLock = new object();
-    private readonly object _memoryLock = new object();
-
-    private float _updateTimer;
-    private float _renderTimer;
-
-    private bool _pauseRenderMetrics;
-    private bool _pauseUpdateMetrics;
 
     public override void Initialize()
     {
+        Name = "Profiler";
+        
         Debugger = (Parent as SkylineDebugger)!;
-
-        _renderStopwatch = new Stopwatch();
-        _updateStopwatch = new Stopwatch();
 
         _updateFrameTimes = new(100);
         _renderFrameTimes = new(100);
-        _frameTimers = new(100);
-        _memoryUsage = new(100);
 
-        _prevTimestamp = Stopwatch.GetTimestamp();
-        _prevCpuTime = Process.GetCurrentProcess().TotalProcessorTime.Ticks;
 
-        Name = "Performance Metrics";
+        // Initialize requried dictionaries by inference.
+        CpuMetrics.AddCustom("Engine", "CPU", 0.0);
+        GpuMetrics.AddCustom("Engine", "GPU", 0.0);
 
-        SubscribeEvents();
+        //// Spritebatches (for 2d)
+        CpuMetrics.CreateCategory("EngineComponents");
+        GpuMetrics.CreateCategory("EngineComponents");
+
+        Entity.Engine.OnPreDraw += (_) => {
+            CpuMetrics.ResetMetrics();
+        };
+        Entity.Engine.OnPreUpdate += (_) => {
+            GpuMetrics.ResetMetrics();
+        };
+
+        Entity.Engine.OnPostUpdate += UpdateMetrics;
     }
 
-    private void SubscribeEvents()
+    private void UpdateMetrics(float dt)
     {
-        Entity.Engine.OnPreDraw += RenderStart;
-        Entity.Engine.OnPostDraw += RenderEnd;
-        Entity.Engine.OnPreUpdate += UpdateStart;
-        Entity.Engine.OnPostUpdate += UpdateEnd;
-    }
+        if (!Visible) return;
 
-    protected void UpdateStart(float dt)
-    {
-        if (!Visible)
-            return;
         _updateTimer += dt;
 
-        if (_pauseUpdateMetrics = (_updateTimer < _updateRate))
-            return;
-
-        _updateTimer = 0.0f;
-        Monitor.Enter(_updateLock);
-        _updateStopwatch.Restart();
-    }
-
-    protected  void UpdateEnd(float dt)
-    {
-        if (!Visible || _pauseUpdateMetrics)
-            return;
-
-        _updateStopwatch.Stop();
-
-        _cpuUsage = CalculateCpuUsage();
-        _memoryFootprint = GetMemoryUsage();
-
-        lock (_updateLock)
+        if (_updateTimer > _updateRate)
         {
-            _updateFrameTimes.Append((float)_updateStopwatch.Elapsed.TotalMilliseconds);
-        }
-        lock (_memoryLock)
-        {
-            _memoryUsage.Append(_memoryFootprint);
+            _updateTimer = 0.0f;
+            _updateFrameTimes.Append((CpuMetrics.Categories["Engine"]["CPU"] * 1000.0));
+            _renderFrameTimes.Append((GpuMetrics.Categories["Engine"]["GPU"] * 1000.0));
         }
     }
-
-    protected  void RenderStart(float dt, ref RenderOptions options)
-    {
-        if (!Visible)
-            return;
-        _renderTimer += dt;
-        _pauseRenderMetrics = _renderTimer < _updateRate;
-        if (_pauseRenderMetrics)
-            return;
-        _renderTimer = 0.0f;
-
-        Monitor.Enter(_renderLock);
-        _renderStopwatch.Restart();
-    }
-
-    protected  void RenderEnd(float dt, ref RenderOptions options)
-    {
-        if (!Visible || _pauseRenderMetrics)
-            return;
-
-        _renderStopwatch.Stop();
-        lock (_renderLock)
-        {
-            _renderFrameTimes.Append((float)_renderStopwatch.Elapsed.TotalMilliseconds);
-        }
-    }
-
     public override void Draw(float dt, ref RenderOptions options)
     {
-        if (!Visible)
-            return;
-
-        _frameTimers.Append(dt);
-
-        ImGui.SetNextWindowSize(new Vector2(400, 300), ImGuiCond.FirstUseEver);
+        if (!Visible) return;
 
         if (ImGui.Begin(Name))
         {
-            float maxUpdateFrameTime,
-                maxRenderFrameTime,
-                maxMemoryUsage;
-            lock (_updateLock)
-                maxUpdateFrameTime = _updateFrameTimes.Buffer.Max();
-            lock (_renderLock)
-                maxRenderFrameTime = _renderFrameTimes.Buffer.Max();
-            lock (_memoryLock)
-                maxMemoryUsage = _memoryUsage.Buffer.Max();
-
-            ImGui.Text($"Max Update Frame Time: {maxUpdateFrameTime:0.00} ms");
-            ImGui.Text($"Max Render Frame Time: {maxRenderFrameTime:0.00} ms");
-            ImGui.Text($"CPU Usage: {_cpuUsage:0.00}%");
-            ImGui.Text($"Memory Usage: {_memoryFootprint:0.00} MB");
-
-            ImGui.Text($"{1.0f / _frameTimers.Buffer.Average():0}FPS");
-
-            PlotValues("Update Frame Times", _updateFrameTimes, maxUpdateFrameTime);
-            PlotValues("Render Frame Times", _renderFrameTimes, maxRenderFrameTime);
-            PlotValues("Memory Usage", _memoryUsage, maxMemoryUsage, "MB");
+            if (ImGui.CollapsingHeader("Logic Profiler"))
+                DrawCpuProfiling();
+            if (ImGui.CollapsingHeader("Render Profiler"))
+                DrawGpuProfling();
 
             ImGui.End();
         }
     }
 
-    /// <summary>
-    /// Clean up via unsubscribing performance profiling events.
-    /// </summary>
-    public override void Dispose()
+    private void DrawGpuProfling()
     {
-        Entity.Engine.OnPreDraw -= RenderStart;
-        Entity.Engine.OnPostDraw -= RenderEnd;
-        Entity.Engine.OnPreUpdate -= UpdateStart;
-        Entity.Engine.OnPostUpdate -= UpdateEnd;
+        PlotValues("Frametime (GPU)", in _renderFrameTimes);
+        DrawProfiler(GpuMetrics);
+
+        if (GpuMetrics.Categories["EngineComponents"].Keys.Any() && ImPlot.BeginPlot(
+          "Test",
+           new Vector2(ImGui.GetContentRegionAvail().X, 200.0f), ImPlotFlags.Equal))
+        {
+            string[] names = GpuMetrics.Categories["EngineComponents"].Keys.ToArray();
+            double[] values = GpuMetrics.Categories["EngineComponents"].Values.ToArray().Select((r) => { return r * 1000.0; }).ToArray();
+
+            ImPlot.SetupAxes(null, null, ImPlotAxisFlags.AutoFit, ImPlotAxisFlags.AutoFit);
+            ImPlot.PlotPieChart(names, ref values[0], names.Length, 0.0, 0.0, 1.0, "", 0.0, ImPlotPieChartFlags.Normalize);
+
+            ImPlot.EndPlot();
+        }
+    }
+
+    private void DrawCpuProfiling()
+    {
+        PlotValues("Frametime (CPU)", in _updateFrameTimes);
+        DrawProfiler(CpuMetrics);
+    }
+
+    private void DrawProfiler(Metrika gpuMetrics)
+    {
+        foreach (var categoryEntry in gpuMetrics.Categories)
+        {
+            if (categoryEntry.Key.CompareTo("Engine") == 0) continue;
+
+            ImGui.Text(categoryEntry.Key);
+
+            foreach (var valueEntry in categoryEntry.Value)
+            {
+                ImGui.Columns(2, "ProfilerTimerValueColumns", true);
+
+                ImGui.Text(valueEntry.Key);
+                ImGui.NextColumn();
+                ImGui.Text((valueEntry.Value * 1000.0).ToString("0.00"));
+
+                ImGui.Columns(1);
+            }
+        }
+
     }
 
     [Pure]
     private static void PlotValues(
-        in string label,
-        in LinearBuffer<float> frameTimes,
-        in float maxValue,
-        in string unit = "ms"
-    )
+      in string label,
+      in LinearBuffer<double> frameTimes,
+      in string unit = "ms"
+  )
     {
         var windowWidth = ImGui.GetContentRegionAvail().X;
         var averageFrameTime = frameTimes.Buffer.Average();
         var minFrameTime = frameTimes.Buffer.Min();
         var maxFrameTime = frameTimes.Buffer.Max();
 
-        ImGui.PlotLines(
-            "",
-            ref frameTimes.Buffer[0],
-            frameTimes.Length,
-            frameTimes.Index,
-            $"{label} - Avg: {averageFrameTime:0.00} {unit} - Min: {minFrameTime:0.00} {unit} - Max: {maxFrameTime:0.00} {unit}",
-            0.0f,
-            maxValue * 1.2f,
-            new Vector2(windowWidth, 80)
-        );
+        ImPlot.SetNextAxisLimits(ImAxis.X1, 0, frameTimes.Length);
+        ImPlot.SetNextAxisLimits(ImAxis.Y1, minFrameTime, maxFrameTime * 1.2);
+
+        if (ImPlot.BeginPlot(
+            $"{label} - Avg: {averageFrameTime:0.00}{unit} - Max Diff: {(maxFrameTime - minFrameTime):0.00}{unit} - Excp. FPS: {1.0f / (averageFrameTime / 1000.0f):0}FPS",
+            new Vector2(windowWidth, 200.0f)))
+        {
+            ImPlot.PlotLine("", ref frameTimes.Buffer[0], frameTimes.Length, 1.0f, 0.0, ImPlotLineFlags.Shaded, frameTimes.Index);
+
+            ImPlot.EndPlot();
+        }
     }
 
-
-
-    private float CalculateCpuUsage()
+    public override void Dispose()
     {
-        var currentCpuTime = Process.GetCurrentProcess().TotalProcessorTime.Ticks;
-        var elapsedCpuTime = currentCpuTime - _prevCpuTime;
-        var elapsedTimestamps = Stopwatch.GetTimestamp() - _prevTimestamp;
-        _prevCpuTime = currentCpuTime;
-        _prevTimestamp = Stopwatch.GetTimestamp();
-
-        // Calculate CPU usage as a percentage of time spent by the process
-        // on all available CPU cores.
-        float cpuUsage = (float)(100.0 * elapsedCpuTime / elapsedTimestamps);
-
-        return cpuUsage;
+        // Metrika subscribes to engine events, so we need to make sure to clean 'em up.
+        CpuMetrics.Dispose();
+        GpuMetrics.Dispose();
     }
 
     [Pure]
@@ -231,5 +182,6 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         return (float)(GC.GetTotalMemory(false) / (1024.0 * 1024.0)); // in MB
     }
 
-    public override void Update(float dt) { }
+    public override void Update(float dt) 
+    {  }
 }
