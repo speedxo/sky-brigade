@@ -4,7 +4,7 @@
  * be fast
  */
 
-public class LinearBuffer<T>
+public class LinearBuffer<T> 
 {
     private T[] buffer;
     public int Index { get; private set; }
@@ -31,6 +31,9 @@ public class LinearBuffer<T>
         if (Length < buffer.Length)
             Length++;
     }
+
+    public void Clear() 
+        => Array.Clear(buffer);
 
     public T[] Buffer
     {

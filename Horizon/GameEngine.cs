@@ -310,7 +310,9 @@ public abstract class GameEngine : Entity
         var startTime = Stopwatch.GetTimestamp();
         entity.Draw(dt, ref options);
         var endTime = Stopwatch.GetTimestamp();
-        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", entity.Name, (double)(endTime - startTime) / Stopwatch.Frequency);
+        
+        var val = (double)(endTime - startTime) / Stopwatch.Frequency;
+        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", entity.Name, val);
     }
     
     public void DrawWithMetrics(in IGameComponent component, in float dt, ref RenderOptions options)
@@ -319,7 +321,9 @@ public abstract class GameEngine : Entity
         component.Draw(dt, ref options);
         var endTime = Stopwatch.GetTimestamp();
         if (component.Name == "Scene Manager") return;
-        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", component.Name, (double)(endTime - startTime) / Stopwatch.Frequency);
+
+        var val = (double)(endTime - startTime) / Stopwatch.Frequency;
+        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", component.Name, val);
     }
 
     public override void Draw(float dt, ref RenderOptions options)

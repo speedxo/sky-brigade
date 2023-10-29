@@ -26,14 +26,13 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         set => _updateRate = 1.0f / value;
     }
 
-    private float _updateRate = 1.0f / 50.0f;
+    private float _updateRate = 1.0f / 10.0f;
     private float _updateTimer = 0.0f;
 
     private SkylineDebugger Debugger { get; set; }
 
-    public readonly Metrika CpuMetrics = new ();
+    public readonly Metrika CpuMetrics = new();
     public readonly Metrika GpuMetrics = new();
-
 
     private LinearBuffer<double> _updateFrameTimes;
     private LinearBuffer<double> _renderFrameTimes;
@@ -44,12 +43,11 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     public override void Initialize()
     {
         Name = "Profiler";
-        
+
         Debugger = (Parent as SkylineDebugger)!;
 
         _updateFrameTimes = new(100);
         _renderFrameTimes = new(100);
-
 
         // Initialize requried dictionaries by inference.
         CpuMetrics.AddCustom("Engine", "CPU", 0.0);
@@ -59,11 +57,13 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         CpuMetrics.CreateCategory("EngineComponents");
         GpuMetrics.CreateCategory("EngineComponents");
 
-        Entity.Engine.OnPreDraw += (_) => {
-            CpuMetrics.ResetMetrics();
-        };
-        Entity.Engine.OnPreUpdate += (_) => {
+        Entity.Engine.OnPreDraw += (_) =>
+        {
             GpuMetrics.ResetMetrics();
+        };
+        Entity.Engine.OnPreUpdate += (_) =>
+        {
+            CpuMetrics.ResetMetrics();
         };
 
         Entity.Engine.OnPostUpdate += UpdateMetrics;
@@ -71,20 +71,27 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     private void UpdateMetrics(float dt)
     {
-        if (!Visible) return;
+        if (!Visible)
+            return;
 
         _updateTimer += dt;
 
         if (_updateTimer > _updateRate)
         {
             _updateTimer = 0.0f;
-            _updateFrameTimes.Append((CpuMetrics.Categories["Engine"]["CPU"] * 1000.0));
-            _renderFrameTimes.Append((GpuMetrics.Categories["Engine"]["GPU"] * 1000.0));
+            _updateFrameTimes.Append(GetAverage(CpuMetrics["Engine"]["CPU"]) * 1000.0);
+            _renderFrameTimes.Append(GetAverage(GpuMetrics["Engine"]["GPU"]) * 1000.0);
         }
     }
+
+    private double GetAverage(LinearBuffer<double> linearBuffer)
+        => linearBuffer.Buffer.Average();
+    
+
     public override void Draw(float dt, ref RenderOptions options)
     {
-        if (!Visible) return;
+        if (!Visible)
+            return;
 
         if (ImGui.Begin(Name))
         {
@@ -102,15 +109,38 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         PlotValues("Frametime (GPU)", in _renderFrameTimes);
         DrawProfiler(GpuMetrics);
 
-        if (GpuMetrics.Categories["EngineComponents"].Keys.Any() && ImPlot.BeginPlot(
-          "Test",
-           new Vector2(ImGui.GetContentRegionAvail().X, 200.0f), ImPlotFlags.Equal))
+        if (
+            GpuMetrics.Categories["EngineComponents"].Keys.Any()
+            && ImPlot.BeginPlot(
+                "Test",
+                new Vector2(ImGui.GetContentRegionAvail().X, 200.0f),
+                ImPlotFlags.Equal
+            )
+        )
         {
             string[] names = GpuMetrics.Categories["EngineComponents"].Keys.ToArray();
-            double[] values = GpuMetrics.Categories["EngineComponents"].Values.ToArray().Select((r) => { return r * 1000.0; }).ToArray();
+            double[] values = GpuMetrics.Categories["EngineComponents"].Values
+                .ToArray()
+                .Select(
+                    (r) =>
+                    {
+                        return GetAverage(r) * 1000.0;
+                    }
+                )
+                .ToArray();
 
             ImPlot.SetupAxes(null, null, ImPlotAxisFlags.AutoFit, ImPlotAxisFlags.AutoFit);
-            ImPlot.PlotPieChart(names, ref values[0], names.Length, 0.0, 0.0, 1.0, "", 0.0, ImPlotPieChartFlags.Normalize);
+            ImPlot.PlotPieChart(
+                names,
+                ref values[0],
+                names.Length,
+                0.0,
+                0.0,
+                1.0,
+                "",
+                0.0,
+                ImPlotPieChartFlags.Normalize
+            );
 
             ImPlot.EndPlot();
         }
@@ -126,7 +156,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     {
         foreach (var categoryEntry in gpuMetrics.Categories)
         {
-            if (categoryEntry.Key.CompareTo("Engine") == 0) continue;
+            if (categoryEntry.Key.CompareTo("Engine") == 0)
+                continue;
 
             ImGui.Text(categoryEntry.Key);
 
@@ -136,20 +167,19 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
                 ImGui.Text(valueEntry.Key);
                 ImGui.NextColumn();
-                ImGui.Text((valueEntry.Value * 1000.0).ToString("0.00"));
+                ImGui.Text((GetAverage(valueEntry.Value) * 1000.0).ToString("0.00"));
 
                 ImGui.Columns(1);
             }
         }
-
     }
 
     [Pure]
     private static void PlotValues(
-      in string label,
-      in LinearBuffer<double> frameTimes,
-      in string unit = "ms"
-  )
+        in string label,
+        in LinearBuffer<double> frameTimes,
+        in string unit = "ms"
+    )
     {
         var windowWidth = ImGui.GetContentRegionAvail().X;
         var averageFrameTime = frameTimes.Buffer.Average();
@@ -159,11 +189,22 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         ImPlot.SetNextAxisLimits(ImAxis.X1, 0, frameTimes.Length);
         ImPlot.SetNextAxisLimits(ImAxis.Y1, minFrameTime, maxFrameTime * 1.2);
 
-        if (ImPlot.BeginPlot(
-            $"{label} - Avg: {averageFrameTime:0.00}{unit} - Max Diff: {(maxFrameTime - minFrameTime):0.00}{unit} - Excp. FPS: {1.0f / (averageFrameTime / 1000.0f):0}FPS",
-            new Vector2(windowWidth, 200.0f)))
+        if (
+            ImPlot.BeginPlot(
+                $"{label} - Avg: {averageFrameTime:0.00}{unit} - Max Diff: {(maxFrameTime - minFrameTime):0.00}{unit} - Excp. FPS: {1.0f / (averageFrameTime / 1000.0f):0}FPS",
+                new Vector2(windowWidth, 200.0f)
+            )
+        )
         {
-            ImPlot.PlotLine("", ref frameTimes.Buffer[0], frameTimes.Length, 1.0f, 0.0, ImPlotLineFlags.Shaded, frameTimes.Index);
+            ImPlot.PlotLine(
+                "",
+                ref frameTimes.Buffer[0],
+                frameTimes.Length,
+                1.0f,
+                0.0,
+                ImPlotLineFlags.Shaded,
+                frameTimes.Index
+            );
 
             ImPlot.EndPlot();
         }
@@ -182,6 +223,5 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         return (float)(GC.GetTotalMemory(false) / (1024.0 * 1024.0)); // in MB
     }
 
-    public override void Update(float dt) 
-    {  }
+    public override void Update(float dt) { }
 }

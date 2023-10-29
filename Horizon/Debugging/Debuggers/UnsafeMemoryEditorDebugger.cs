@@ -255,7 +255,7 @@ namespace Horizon.Debugging.Debuggers
             if (ItemsHeight > 0.0f)
             {
                 int dispStart, dispEnd;
-               // ImGuiNative.igCalcListClipping(ItemsCount, ItemsHeight, &dispStart, &dispEnd);
+                //ImGuiNative.igCalcListClipping(ItemsCount, ItemsHeight, &dispStart, &dispEnd);
                 //DisplayStart = dispStart;
                 //DisplayEnd = dispEnd;
                 if (DisplayStart > 0)
