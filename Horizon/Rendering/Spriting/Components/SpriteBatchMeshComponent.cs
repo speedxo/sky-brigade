@@ -5,11 +5,15 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Horizon.Content;
 using Shader = Horizon.Content.Shader;
+using System.Diagnostics;
 
 namespace Horizon.Rendering.Spriting.Components;
 
 public class SpriteBatchMesh
 {
+    /// <summary>
+    /// This limit is set at 750 to meet the 64kb UBO limit (we should instead pack into a TBO)
+    /// </summary>
     public static readonly int MAX_SPRITES = 750;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -40,8 +44,10 @@ public class SpriteBatchMesh
 
         unsafe
         {
-            Console.WriteLine(sizeof(SpriteData) % 16 == 0);
+            // Ensure our buffer object has correct memory alignment of 16
+            Debug.Assert(sizeof(SpriteData) % 16 == 0);
         }
+
         Vbo = new();
 
         Vbo.VertexAttributePointer(
