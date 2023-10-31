@@ -33,7 +33,7 @@ internal class Program : Scene
     private readonly Vert2D[] quadVerts;
     private readonly uint[] indices;
     private readonly Vector2[] offsets;
-    private readonly int count = 1000000;
+    private readonly int count = 100000000;
 
     private InstancedVertexBufferObject<Vert2D, Vector2> vbo;
     private Technique shader;
@@ -47,7 +47,7 @@ internal class Program : Scene
             throw new Exception("count must be a square number");
 
         // Construct testing data
-        float size = 0.0005f;
+        float size = 5.0f / ((count / 100.0f));
         quadVerts = new[] {
             new Vert2D(new Vector2(-size, -size), new Vector3(1.0f, 0, 0)),
             new Vert2D(new Vector2(size, -size), new Vector3(0, 1.0f, 0)),
