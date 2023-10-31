@@ -13,6 +13,7 @@ public class FrameBufferObject : Entity, IDisposable
 
     public int Width { get; protected set; }
     public int Height { get; protected set; }
+    public bool IsFixed { get; set; } = false;
 
     private bool _requiresResize = false;
     private Vector2 _newSize;

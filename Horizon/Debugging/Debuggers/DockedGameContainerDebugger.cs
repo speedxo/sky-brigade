@@ -11,6 +11,7 @@ namespace Horizon.Debugging.Debuggers
         public override void Initialize()
         {
             FrameBuffer = FrameBufferManager.CreateFrameBuffer(800, 600);
+            FrameBuffer.IsFixed = true;
             FrameBuffer.AddAttachment(Silk.NET.OpenGL.FramebufferAttachment.ColorAttachment0);
             FrameBuffer.ContructFrameBuffer();
 
