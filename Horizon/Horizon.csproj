@@ -40,6 +40,11 @@
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Rendering\NewFolder\**" />
+    <EmbeddedResource Remove="Rendering\NewFolder\**" />
+    <None Remove="Rendering\NewFolder\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="OpenGL\" />
     <None Remove="Content\" />
     <None Remove="Data\" />
@@ -91,7 +96,6 @@
     <None Remove="Extentions\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="OpenGL\" />
     <Folder Include="Content\" />
     <Folder Include="Assets\basic_shader\" />
     <Folder Include="Collections\" />
@@ -103,7 +107,6 @@
     <Folder Include="Assets\DemoEffectStack\" />
     <Folder Include="Assets\fbo_shader\" />
     <Folder Include="Assets\effects\" />
-    <Folder Include="Rendering\Spriting\" />
     <Folder Include="Rendering\Spriting\Data\" />
     <Folder Include="Assets\sprite_shaders\" />
     <Folder Include="Rendering\Spriting\Components\" />

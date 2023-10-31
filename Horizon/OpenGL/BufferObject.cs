@@ -47,6 +47,11 @@ public class BufferObject<T> : IDisposable
         // FIXME cross static ref to Entity.Engine
         Entity.Engine.GL.BindBuffer(_bufferType, Handle);
     }
+    public virtual void Unbind()
+    {
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(_bufferType, 0);
+    }
 
     public virtual void Dispose()
     {

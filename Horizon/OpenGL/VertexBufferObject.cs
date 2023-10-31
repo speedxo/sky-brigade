@@ -3,6 +3,10 @@ using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL;
 
+/// <summary>
+/// An abstraction around a simple vbo providing an element buffer, a vertex buffer and a vertex array object.
+/// </summary>
+/// <typeparam name="T">The vertex type.</typeparam>
 public class VertexBufferObject<T> : IDisposable
     where T : unmanaged
 {
@@ -13,36 +17,27 @@ public class VertexBufferObject<T> : IDisposable
      * buffers to contruct.
      */
 
-    private BufferObject<T> vbo;
-    private BufferObject<uint> ebo;
-    private VertexArrayObject<T, uint> vao;
-
-    public BufferObject<T> VertexBuffer
-    {
-        get => vbo;
-    }
-    public BufferObject<uint> ElementBuffer
-    {
-        get => ebo;
-    }
+    public BufferObject<T> VertexBuffer { get; init; }
+    public BufferObject<uint> ElementBuffer { get; init; }
+    public VertexArrayObject VertexArray { get; init; }
 
     public VertexBufferObject()
     {
         /* The EBO (element buffer object) stores our element array
          * ie. the order in which to draw vertices.
          */
-        ebo = new(BufferTargetARB.ElementArrayBuffer);
+        ElementBuffer = new(BufferTargetARB.ElementArrayBuffer);
 
         /* The Vertex Buffer Object stores the raw vertices data
          */
-        vbo = new(BufferTargetARB.ArrayBuffer);
+        VertexBuffer = new(BufferTargetARB.ArrayBuffer);
 
         /* The VBO and EBO would be useless without a way of understanding
          * the structure of the data, thats where the VAO comes in. It
          * stores the structure of the vertex data, how it is in RAM.
          */
-        // FIXME cross static ref to Entity.Engine
-        vao = new(Entity.Engine.GL, vbo, ebo);
+        // FIXME static cross ref to Entity.Engine
+        VertexArray = new(VertexBuffer.Handle, ElementBuffer.Handle);
     }
 
     /* Forwarding this method.
@@ -56,21 +51,31 @@ public class VertexBufferObject<T> : IDisposable
         int offSet
     )
     {
-        vao.VertexAttributePointer(index, count, type, vertexSize, offSet);
+        VertexArray.VertexAttributePointer(index, count, type, vertexSize, offSet);
+    }
+    public void VertexAttributeDivisor(uint index, uint divisor) => VertexArray.VertexAttributeDivisor(index, divisor);
+
+    public virtual void Bind() 
+    {
+        VertexArray.Bind();
+        VertexBuffer.Bind();
+        ElementBuffer.Bind();
     }
 
-    public void Bind() => vao.Bind();
-
-    public void Unbind() => vao.Unbind();
+    public virtual void Unbind()
+    {
+        VertexBuffer.Unbind();
+        ElementBuffer.Unbind();
+        VertexArray.Unbind();
+    }
 
     /* I guess the benifit of using a managed language is that i can
      * trust the garbage collector to dispose of these. (fatal mistake)
      */
-
-    public void Dispose()
+    public virtual void Dispose()
     {
-        vao.Dispose();
-        ebo.Dispose();
-        vbo.Dispose();
+        VertexArray.Dispose();
+        ElementBuffer.Dispose();
+        VertexBuffer.Dispose();
     }
 }

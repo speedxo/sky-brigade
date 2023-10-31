@@ -8,7 +8,7 @@ using Horizon.Rendering.Spriting.Data;
 
 namespace Horizon.Rendering.Spriting;
 
-public class SpriteBatch : Entity
+public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
 {
     public TransformComponent Transform { get; init; }
     public Shader Shader { get; init; }
@@ -30,7 +30,7 @@ public class SpriteBatch : Entity
         Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
     }
 
-    public void AddSprite(Sprite sprite)
+    public void Add(Sprite sprite)
     {
         if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet))
             SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(Shader)));

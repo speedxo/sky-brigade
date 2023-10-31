@@ -60,7 +60,7 @@ public class GameScene : Scene
         AddEntity(player = new Player2D(world, tilemap));
 
         spriteBatch = AddEntity(new SpriteBatch());
-        spriteBatch.AddSprite(player);
+        spriteBatch.Add(player);
 
         cam = new Camera() { Position = new Vector3(0, 0, 100) };
 

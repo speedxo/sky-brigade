@@ -2,7 +2,8 @@
   "profiles": {
     "Horizon": {
       "commandName": "Project",
-      "nativeDebugging": false
+      "nativeDebugging": false,
+      "hotReloadEnabled": true
     }
   }
 }
