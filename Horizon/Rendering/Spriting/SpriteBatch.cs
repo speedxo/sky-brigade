@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Horizon.Content;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
@@ -48,8 +49,6 @@ public class SpriteBatch : Entity
     {
         if (_requiresVboUpdate)
             UpdateVBO();
-
-        
 
         base.Draw(dt, ref options);
 

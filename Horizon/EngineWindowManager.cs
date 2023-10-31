@@ -254,7 +254,7 @@ public class EngineWindowManager : Entity
 
 //     #region Private Properties
 
-//     private ImGuiController imguiController;
+//     private CustomImguiController imguiController;
 //     private Type initialGameScreen;
 //     private float oneSecondTimer;
 
@@ -331,7 +331,7 @@ public class EngineWindowManager : Entity
 //     private void onLoad()
 //     {
 //         // Initialize ImGui controller for UI rendering.
-//         imguiController = new ImGuiController(
+//         imguiController = new CustomImguiController(
 //             Gl = Window.CreateOpenGL(), // Load OpenGL
 //             Window, // Pass in our window
 //             Input = Window.CreateInput() // Create an input context
