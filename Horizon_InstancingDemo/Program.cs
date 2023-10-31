@@ -33,7 +33,7 @@ internal class Program : Scene
     private readonly Vert2D[] quadVerts;
     private readonly uint[] indices;
     private readonly Vector2[] offsets;
-    private readonly int count = 100000000;
+    private readonly int count = 1000000;
 
     private InstancedVertexBufferObject<Vert2D, Vector2> vbo;
     private Technique shader;
@@ -84,7 +84,7 @@ internal class Program : Scene
 
         // create camera
         controller = AddEntity(new CharacterController(CharacterMovementControllerConfig.Default with { 
-            BaseMovementSpeed = CharacterMovementControllerConfig.Default.BaseMovementSpeed * (count / 1000000)
+            BaseMovementSpeed = CharacterMovementControllerConfig.Default.BaseMovementSpeed * (count / 10000)
         }));
         
 
