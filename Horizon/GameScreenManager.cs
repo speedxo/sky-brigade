@@ -35,6 +35,12 @@ public class GameScreenManagerComponent : InstanceManager<Scene>, IGameComponent
         GetCurrentInstance().Draw(dt, ref options);
     }
 
+    public override void AddInstance<T>(Scene instance)
+    {
+        base.AddInstance<T>(instance);
+        instance.Initialize();
+    }
+
     public void Initialize() { }
 
     public void RemoveComponent<T>()

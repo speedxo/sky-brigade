@@ -17,6 +17,8 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Initialize()
         {
+            RenderOptions = RenderOptions.Default;
+
             // Initialize the properties
             gamma = RenderOptions.Default.Gamma;
             ambientStrength = RenderOptions.Default.AmbientLightingStrength;

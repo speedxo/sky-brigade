@@ -1,4 +1,6 @@
-﻿namespace Horizon.Collections;
+﻿using Horizon.GameEntity;
+
+namespace Horizon.Collections;
 
 /// <summary>
 /// A niche class that specialises in managing object instances that all decsend from a parent class.
@@ -20,7 +22,7 @@ public class InstanceManager<InstanceType>
     /// </summary>
     /// <typeparam name="T">The type (has to be descended from InstanceType)</typeparam>
     /// <param name="instance">The instance.</param>
-    public void AddInstance<T>(InstanceType instance)
+    public virtual void AddInstance<T>(InstanceType instance)
         where T : InstanceType
     {
         Instances[typeof(T)] = instance;
@@ -44,10 +46,10 @@ public class InstanceManager<InstanceType>
         if (!typeof(InstanceType).IsAssignableFrom(type))
         {
             // FIXME: !we gotta throw some kind of exception or atleast desing a subscription model for these types of errors.
-            // Logger.Log(
-            //     Logging.LogLevel.Fatal,
-            //     $"The specified type must implement {nameof(InstanceType)}."
-            // );
+            Entity.Engine.Logger.Log(
+                Logging.LogLevel.Fatal,
+                $"The specified type must implement {nameof(InstanceType)}."
+            );
         }
 
         var instance = (InstanceType)Activator.CreateInstance(type)!;

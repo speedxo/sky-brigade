@@ -80,10 +80,12 @@ public abstract class Scene : Entity, IDisposable
             return;
 
         if (!hasRenderPipelineBeenInitialized)
+        {
             Engine.Logger.Log(
                 Logging.LogLevel.Fatal,
                 "The scenes render pipeline has not been initialized!"
             );
+        }
 
         RenderScene(dt, ref options);
         PostEffects.PreDraw(dt);
