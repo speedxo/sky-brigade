@@ -7,10 +7,11 @@ out vec3 fColor;
 
 uniform mat4 uView;
 uniform mat4 uProjection;
+uniform mat4 uModel;
 
 void main()
 {
     fColor = aColor;
     vec2 pos = aPos * (gl_InstanceID / 100.0);
-    gl_Position = uProjection * uView * vec4(pos + aOffset, 0.0, 1.0);
+    gl_Position = uProjection * uView * uModel * vec4(pos + aOffset, 0.0, 1.0);
 }

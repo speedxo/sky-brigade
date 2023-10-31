@@ -23,11 +23,11 @@ public partial class CharacterController : Entity
         set => Transform.Rotation = value;
     }
 
-    public CharacterController()
+    public CharacterController(CharacterMovementControllerConfig config)
     {
         Transform = AddComponent<TransformComponent>();
         Camera = AddComponent<CameraComponent>();
-        MovementController = AddComponent<CharacterMovementController>();
+        MovementController = AddComponent(new CharacterMovementController(config));
     }
 
     public override void Update(float dt)

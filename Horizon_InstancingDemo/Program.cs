@@ -8,6 +8,7 @@ using Horizon.Rendering.Spriting.Data;
 using ImGuiNET;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using static Horizon.Prefabs.Character.CharacterController;
 
 namespace Horizon_InstancingDemo;
 
@@ -32,20 +33,21 @@ internal class Program : Scene
     private readonly Vert2D[] quadVerts;
     private readonly uint[] indices;
     private readonly Vector2[] offsets;
-    private readonly int count = 10000;
+    private readonly int count = 1000000;
 
     private InstancedVertexBufferObject<Vert2D, Vector2> vbo;
     private Technique shader;
     private CharacterController controller;
-
+    private Matrix4x4 model;
+    float totalTime;
 
     public Program()
     {
-        //if (Math.Sqrt(count) % 1 != 0)
-        //    throw new Exception("count must be a square number");
+        if (Math.Sqrt(count) % 1 != 0)
+            throw new Exception("count must be a square number");
 
         // Construct testing data
-        float size = 0.005f;
+        float size = 0.0005f;
         quadVerts = new[] {
             new Vert2D(new Vector2(-size, -size), new Vector3(1.0f, 0, 0)),
             new Vert2D(new Vector2(size, -size), new Vector3(0, 1.0f, 0)),
@@ -59,13 +61,13 @@ internal class Program : Scene
 
         offsets = new Vector2[count];
         int index = 0;
-        float offset = 1f;
+        float offset = 10f;
 
         int dimention = (int)Math.Sqrt(count) / 2;
 
-        for (int y = -50; y < 50; y++)
+        for (int y = -dimention; y < dimention; y++)
         {
-            for (int x = -50; x < 50; x++)
+            for (int x = -dimention; x < dimention; x++)
             {
                 offsets[index++] = new Vector2(x / 10.0f + (offset * x), y / 10.0f+ (offset * y));
             }
@@ -81,7 +83,9 @@ internal class Program : Scene
         shader = new Technique("shaders", "instancing");
 
         // create camera
-        controller = AddEntity<CharacterController>();
+        controller = AddEntity(new CharacterController(CharacterMovementControllerConfig.Default with { 
+            BaseMovementSpeed = CharacterMovementControllerConfig.Default.BaseMovementSpeed * 10.0f
+        }));
         
 
         InitializeRenderingPipeline();
@@ -109,17 +113,20 @@ internal class Program : Scene
 
     public override void Update(float dt)
     {
+        totalTime += dt;
+        model = Matrix4x4.CreateRotationZ((MathF.PI / 180.0f) * totalTime * MathF.PI * 60);
+
         base.Update(dt);
     }
-    int counter = 100;
+
     public override void DrawOther(float dt, ref RenderOptions options)
     {
         shader.Use();
         
         shader.SetUniform("uView", controller.Camera.View);
         shader.SetUniform("uProjection", controller.Camera.Projection);
+        shader.SetUniform("uModel", model);
 
-        //shader.SetUniform("uModel", modelMatrix);
         vbo.VertexArray.Bind();
         unsafe
         {
@@ -131,11 +138,6 @@ internal class Program : Scene
 
     public override void DrawGui(float dt)
     {
-        if(ImGui.Begin("debug"))
-        {
-            ImGui.SliderInt("count", ref counter, 100, 200);
-            ImGui.End();
-        }
     }
 
     public override void Dispose()

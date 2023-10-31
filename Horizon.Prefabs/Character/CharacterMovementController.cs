@@ -15,7 +15,9 @@ public partial class CharacterController
         public Entity Parent { get; set; }
         public CharacterController Controller { get; private set; }
         public TransformComponent Transform { get; private set; }
-        public CharacterMovementControllerConfig Config { get; private set; }
+        public CharacterMovementControllerConfig Config { get; init; }
+
+        public float MovementSpeedMultiplier { get; set; } = 1.0f;
 
         public Vector3 Position
         {
@@ -32,15 +34,14 @@ public partial class CharacterController
             get => Transform.Front;
         }
 
-        public CharacterMovementController()
+        public CharacterMovementController(CharacterMovementControllerConfig config)
         {
             Name = "Character Movement controller";
+            Config = config;
         }
 
         public void Initialize()
         {
-            Config = CharacterMovementControllerConfig.Default;
-
             Controller = (CharacterController)Parent;
 
             Transform = Parent.GetComponent<TransformComponent>()!;
@@ -54,7 +55,7 @@ public partial class CharacterController
 
         private void DoLocomotion(float dt)
         {
-            var moveSpeed = Config.BaseMovementSpeed * dt;
+            var moveSpeed = (Config.BaseMovementSpeed * MovementSpeedMultiplier) * dt;
 
             var virtualController = Engine.Input.GetVirtualController();
 
