@@ -45,6 +45,6 @@ namespace Horizon.Rendering.Spriting.Data
         /// <summary>
         /// The size of the vertex in bytes, used for defining the vertex array object's memory layout for use in shaders.
         /// </summary>
-        public static readonly unsafe int SizeInBytes = (sizeof(Vector2) * 2 + sizeof(int));
+        public static readonly int SizeInBytes = (sizeof(float) * 4 + sizeof(int));
     }
 }

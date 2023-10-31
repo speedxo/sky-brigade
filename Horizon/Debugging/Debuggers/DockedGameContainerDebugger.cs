@@ -10,7 +10,7 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Initialize()
         {
-            FrameBuffer = new FrameBufferObject(800, 600);
+            FrameBuffer = FrameBufferManager.CreateFrameBuffer(800, 600);
             FrameBuffer.AddAttachment(Silk.NET.OpenGL.FramebufferAttachment.ColorAttachment0);
             FrameBuffer.ContructFrameBuffer();
 

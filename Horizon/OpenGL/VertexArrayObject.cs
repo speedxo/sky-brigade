@@ -39,13 +39,8 @@ public class VertexArrayObject : IDisposable
         int offSet
     )
     {
-        // Setting up a vertex attribute pointer
-        Bind();
-
         Entity.Engine.GL.VertexAttribPointer(index, count, type, false, vertexSize, (void*)(offSet));
         Entity.Engine.GL.EnableVertexAttribArray(index);
-
-        Unbind();
     }
 
     public void VertexAttributeDivisor(uint index, uint divisor)

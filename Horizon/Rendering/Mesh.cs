@@ -11,7 +11,7 @@ namespace Horizon.Rendering;
 public class Mesh : IDisposable
 {
     /// <summary>
-    /// Delegate used to obtain mesh data for the mesh.
+    /// Delegate used to obtain data for the mesh.
     /// </summary>
     /// <returns>The mesh data containing vertices and elements of the mesh.</returns>
     public delegate MeshData MeshDataDelegate();
@@ -43,7 +43,8 @@ public class Mesh : IDisposable
     public Mesh()
     {
         Vbo = new();
-
+        Vbo.VertexArray.Bind();
+        Vbo.VertexBuffer.Bind();
         // Telling the VAO object how to lay out the attribute pointers
         Vbo.VertexAttributePointer(
             0,
@@ -66,6 +67,8 @@ public class Mesh : IDisposable
             (uint)Vertex.SizeInBytes,
             6 * sizeof(float)
         );
+        Vbo.VertexBuffer.Unbind();
+        Vbo.VertexArray.Unbind();
     }
 
     /// <summary>

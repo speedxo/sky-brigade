@@ -18,6 +18,17 @@ public class InstancedVertexBufferObject<TData, TInstancedData> : VertexBufferOb
         InstanceBuffer = new BufferObject<TInstancedData>(BufferTargetARB.ArrayBuffer);
     }
 
+    public override void Bind()
+    {
+        base.Bind();
+        InstanceBuffer.Bind();
+    }
+    public override void Unbind()
+    {
+        base.Unbind();
+        InstanceBuffer.Unbind();
+    }
+
     public override void Dispose()
     {
         base.Dispose();

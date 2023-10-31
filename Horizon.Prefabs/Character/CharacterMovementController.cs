@@ -44,7 +44,7 @@ public partial class CharacterController
             Controller = (CharacterController)Parent;
 
             Transform = Parent.GetComponent<TransformComponent>()!;
-            Transform.Position = new Vector3(0, 5, -2);
+            Transform.Position = new Vector3(0, 0, 0);
         }
 
         public void Update(float dt)
@@ -67,7 +67,7 @@ public partial class CharacterController
             // there apears to be some funky wunky happenings with the underlying
             // glfw window wrapper silk.net is using sooooooooooooo
             if (float.IsNaN(Position.X) || float.IsNaN(Position.Y) || float.IsNaN(Position.Z))
-                Position = new Vector3(0, 5, -2);
+                Position = new Vector3(0, 0, 0);
         }
 
         public void Draw(float dt, ref RenderOptions options) { }

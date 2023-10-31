@@ -49,6 +49,8 @@ public class SpriteBatchMesh
         }
 
         Vbo = new();
+        Vbo.VertexArray.Bind();
+        Vbo.VertexBuffer.Bind();
 
         Vbo.VertexAttributePointer(
             0,
@@ -71,6 +73,8 @@ public class SpriteBatchMesh
             (uint)Vertex2D.SizeInBytes,
             4 * sizeof(float)
         );
+        Vbo.VertexArray.Unbind();
+        Vbo.VertexBuffer.Unbind();
     }
 
     public void Upload(ReadOnlySpan<Vertex2D> vertices, ReadOnlySpan<uint> elements)

@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Horizon.Content;
+using System.Xml.Linq;
 
 namespace Horizon.Rendering
 {
@@ -25,12 +26,14 @@ namespace Horizon.Rendering
                 ShaderFactory.CompileNamed(path, name)
             );
             BufferManager = AddComponent(new UniformBufferManager(Shader));
+            Engine.Logger.Log(Logging.LogLevel.Debug, $"[Technique({Shader.Handle})] Created from '{name}' succesfully!");
         }
 
         public Technique(in Shader shader)
         {
             Shader = AddEntity(shader);
             BufferManager = AddComponent(new UniformBufferManager(Shader));
+            Engine.Logger.Log(Logging.LogLevel.Debug, $"[Technique({Shader.Handle})] Created succesfully!");
         }
 
         public void Use()

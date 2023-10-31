@@ -64,10 +64,10 @@ public class RenderRectangle : Entity
 
     public RenderRectangle(Technique technique, int width = 0, int height = 0)
     {
-        FrameBuffer = new FrameBufferObject(
+        FrameBuffer = FrameBufferManager.CreateFrameBuffer(
             width == 0 ? (int)Engine.Window.ViewportSize.X : width,
             height == 0 ? (int)Engine.Window.ViewportSize.Y : height
-        );
+            );
         Technique = AddEntity(technique);
 
         Transform = AddComponent<TransformComponent>();
@@ -78,10 +78,10 @@ public class RenderRectangle : Entity
 
     public RenderRectangle(Shader shader, int width = 0, int height = 0)
     {
-        FrameBuffer = new FrameBufferObject(
+          FrameBuffer = FrameBufferManager.CreateFrameBuffer(
             width == 0 ? (int)Engine.Window.ViewportSize.X : width,
             height == 0 ? (int)Engine.Window.ViewportSize.Y : height
-        );
+            );
         Technique = AddEntity(new Technique(shader));
 
         Transform = AddComponent<TransformComponent>();

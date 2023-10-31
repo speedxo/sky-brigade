@@ -80,7 +80,6 @@ public class EngineWindowManager : Entity
         };
         this._window.Update += (dt) =>
         {
-            UpdateViewport();
             UpdateFrame?.Invoke(dt);
         };
         this._window.Resize += WindowResize;
@@ -111,7 +110,8 @@ public class EngineWindowManager : Entity
 
     private void WindowResize(Silk.NET.Maths.Vector2D<int> size)
     {
-        FrameBufferManager.ResizeAll((int)ViewportSize.X, (int)ViewportSize.Y);
+        FrameBufferManager.ResizeAll(size.X, size.Y);
+        UpdateViewport();
     }
 
     public void Close()

@@ -49,6 +49,8 @@ public abstract partial class Tiling<TTextureID>
             Map = map;
 
             Vbo = new();
+            Vbo.VertexArray.Bind();
+            Vbo.VertexBuffer.Bind();
 
             Vbo.VertexAttributePointer(
                 0,
@@ -74,6 +76,8 @@ public abstract partial class Tiling<TTextureID>
 
             _indices = new();
             _vertices = new();
+            Vbo.VertexArray.Unbind();
+            Vbo.VertexBuffer.Unbind();
         }
 
         protected void Upload(ReadOnlySpan<TileVertex> vertices, ReadOnlySpan<uint> elements)

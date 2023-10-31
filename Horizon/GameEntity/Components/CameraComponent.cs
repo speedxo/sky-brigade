@@ -26,7 +26,7 @@ namespace Horizon.GameEntity.Components
         /// </summary>
         public TransformComponent Transform { get; private set; }
 
-        private float CameraYaw = -90f;
+        private float CameraYaw = 0f;
         private float CameraPitch = 0f;
 
 #pragma warning disable CS8601 // ooo woo im Roslyn sheesh fancy c# lexer
