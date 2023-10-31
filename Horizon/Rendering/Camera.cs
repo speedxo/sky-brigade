@@ -37,7 +37,7 @@ public class Camera : Entity
             MathHelper.DegreesToRadians(CameraZoom),
             aspectRatio,
             1.0f,
-            1000.0f
+            10000.0f
         );
 
         var h = MathF.Tan(CameraZoom / 2.0f) * Position.Z * 1.5f;

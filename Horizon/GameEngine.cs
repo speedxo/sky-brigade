@@ -276,8 +276,9 @@ public abstract class GameEngine : Entity
     {
         OnPreUpdate?.Invoke(dt);
 
-        if (Input.WasPressed(VirtualAction.Pause))
+        if (Input.KeyboardManager.IsKeyPressed(Key.Escape))
         {
+            Input.CaptureInput = !Input.CaptureInput;
             for (int i = 0; i < Input.NativeInputContext.Mice.Count; i++)
                 Input.NativeInputContext.Mice[i].Cursor.CursorMode = Input.CaptureInput
                     ? CursorMode.Raw

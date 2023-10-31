@@ -97,7 +97,7 @@ namespace Horizon.GameEntity.Components
                 (float)Entity.Engine.Window.ViewportSize.X
                     / (float)Entity.Engine.Window.ViewportSize.Y,
                 0.1f,
-                100.0f
+                1000.0f
             );
         }
     }
