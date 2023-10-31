@@ -84,7 +84,7 @@ internal class Program : Scene
 
         // create camera
         controller = AddEntity(new CharacterController(CharacterMovementControllerConfig.Default with { 
-            BaseMovementSpeed = CharacterMovementControllerConfig.Default.BaseMovementSpeed * 10.0f
+            BaseMovementSpeed = CharacterMovementControllerConfig.Default.BaseMovementSpeed * (count / 1000000)
         }));
         
 
