@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering.Spriting
 {
-    public class Spritesheet : Entity
+    public class Spritesheet : Texture
     {
         private static int _idCounter = 0;
         private int SpriteCounter = 0;
@@ -15,7 +15,6 @@ namespace Horizon.Rendering.Spriting
             return SpriteCounter++;
         }
 
-        public Texture Texture { get; init; }
         public Dictionary<string, SpriteDefinition> Sprites { get; init; }
 
         public Vector2 SpriteSize { get; init; }
@@ -24,16 +23,15 @@ namespace Horizon.Rendering.Spriting
 
         public SpritesheetAnimationManager AnimationManager { get; init; }
 
-        public Spritesheet(Texture texture, Vector2 spriteSize)
-            : base()
+        public Spritesheet(string path, Vector2 spriteSize)
+            : base(path)
         {
             this.ID = _idCounter++;
 
-            this.Texture = texture;
             this.SpriteSize = spriteSize;
             this.Sprites = new();
 
-            SingleSpriteSize = SpriteSize / Texture.Size;
+            SingleSpriteSize = SpriteSize / Size;
 
             AnimationManager = this.AddComponent<SpritesheetAnimationManager>();
         }
@@ -88,9 +86,9 @@ namespace Horizon.Rendering.Spriting
 
             // Calculate texture coordinates for the sprite
             Vector2 topLeftTexCoord =
-                sprite.FirstFrame.Position / Texture.Size
+                sprite.FirstFrame.Position / Size
                 - new Vector2(SingleSpriteSize.X / 4.0f, 0);
-            Vector2 bottomRightTexCoord = topLeftTexCoord + (sprite.FirstFrame.Size / Texture.Size);
+            Vector2 bottomRightTexCoord = topLeftTexCoord + (sprite.FirstFrame.Size / Size);
 
             return new Vector2[]
             {
@@ -114,8 +112,8 @@ namespace Horizon.Rendering.Spriting
             }
 
             // Calculate texture coordinates for the sprite
-            Vector2 topLeftTexCoord = sprite.Position / Texture.Size;
-            Vector2 bottomRightTexCoord = (sprite.Position + sprite.Size) / Texture.Size;
+            Vector2 topLeftTexCoord = sprite.Position / Size;
+            Vector2 bottomRightTexCoord = (sprite.Position + sprite.Size) / Size;
 
             return new Vector2[]
             {

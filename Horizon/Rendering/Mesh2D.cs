@@ -99,13 +99,15 @@ public class Mesh2D : Mesh<Vertex2D>
 
         Buffer.Dispose();
     }
-
+    /// <summary>
+    /// Loads mesh data into the mesh, please note that material is only set if it is null.
+    /// </summary>
     public override void Load(in IMeshData<Vertex2D> data, in Material? mat = null)
     {
         Buffer.VertexBuffer.BufferData(data.Vertices.Span);
         Buffer.ElementBuffer.BufferData(data.Elements.Span);
 
         ElementCount = (uint)data.Elements.Length;
-        Material = mat ?? new EmptyMaterial();
+        Material ??= mat ?? new EmptyMaterial();
     }
 }

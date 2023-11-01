@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Runtime.InteropServices;
 using Horizon.Content;
 using Horizon.GameEntity;
@@ -14,7 +15,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     public Shader Shader { get; init; }
     public Dictionary<
         Spritesheet,
-        (List<Sprite> sprites, SpriteBatchMesh mesh)
+        (List<Sprite> sprites, NewSpriteBatchMesh mesh)
     > SpritesheetSprites { get; init; }
 
     private bool _requiresVboUpdate = false;
@@ -33,7 +34,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     public void Add(Sprite sprite)
     {
         if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet))
-            SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(Shader)));
+            SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(sprite.Spritesheet, Shader)));
 
         if (SpritesheetSprites[sprite.Spritesheet].sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
             Engine.Logger.Log(
@@ -61,20 +62,17 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         Count = 0;
         foreach (var (_, (sprites, mesh)) in SpritesheetSprites)
         {
-            GenerateAndUploadSpriteMesh(CollectionsMarshal.AsSpan(sprites), mesh);
+            mesh.Load(GenerateSpriteMeshData(CollectionsMarshal.AsSpan(sprites)));
             Count += sprites.Count;
         }
 
         _requiresVboUpdate = false;
     }
 
-    private static void GenerateAndUploadSpriteMesh(
-        ReadOnlySpan<Sprite> sprites,
-        SpriteBatchMesh mesh
-    )
+    private IMeshData<Vertex2D> GenerateSpriteMeshData(Span<Sprite> sprites)
     {
-        List<Vertex2D> vertices = new();
-        List<uint> elements = new();
+        Vertex2D[] vertices = new Vertex2D[sprites.Length * 4];
+        uint[] elements = new uint[sprites.Length * 6];
         uint vertexCounter = 0;
 
         uint[] getElements()
@@ -91,15 +89,21 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         }
         sprites[0].Spritesheet.ResetSpriteCounter();
 
-        foreach (var sprite in sprites)
+        for (int i = 0; i < sprites.Length; i++)
         {
-            vertices.AddRange(sprite.GetVertices());
-            elements.AddRange(getElements());
+            var spriteVertices = sprites[i].GetVertices();
+            for (int j = 0; j < spriteVertices.Length; j++)
+                vertices[i + j] = spriteVertices[j];
+            var spritesElements = getElements();
+            for (int j = 0; j < spritesElements.Length; j++)
+                elements[i + j] = spritesElements[j];
+            
             vertexCounter += 4;
         }
 
-        mesh.Upload(CollectionsMarshal.AsSpan(vertices), CollectionsMarshal.AsSpan(elements));
-        vertices.Clear();
-        elements.Clear();
+        return new MeshData2D { 
+            Vertices = vertices,
+            Elements = elements
+        };
     }
 }

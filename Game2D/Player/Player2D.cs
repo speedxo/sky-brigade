@@ -94,7 +94,7 @@ public class Player2D : Sprite
     {
         var sheet = (
             new Spritesheet(
-                Engine.Content.LoadTexture("content/spritesheet.png"),
+                "content/spritesheet.png",
                 new Vector2(16)
             )
         );
