@@ -15,7 +15,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     public Shader Shader { get; init; }
     public Dictionary<
         Spritesheet,
-        (List<Sprite> sprites, NewSpriteBatchMesh mesh)
+        (List<Sprite> sprites, SpriteBatchMesh mesh)
     > SpritesheetSprites { get; init; }
 
     private bool _requiresVboUpdate = false;
