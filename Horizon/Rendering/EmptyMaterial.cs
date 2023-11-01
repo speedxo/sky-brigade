@@ -17,10 +17,8 @@ namespace Horizon.Rendering
             Color = Vector4.One;
         }
 
-        public override void Use(ref RenderOptions options)
+        public override void Use(in RenderOptions options)
         {
-            
-
             Technique.Use();
             Technique.SetUniform("uColor", Color * options.Color);
 

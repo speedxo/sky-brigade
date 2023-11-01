@@ -21,7 +21,7 @@ public class ParticleRenderer2D : I2DBatchedRenderer<Particle2D>
     private record struct Particle2DDefinition(Particle2D Particle, TransformComponent2D Transform);
     private List<Particle2DDefinition> Particles { get; init; }
 
-    //private VertexBufferObject<>
+    //private Buffer<>
 
     public ParticleRenderer2D()
     {

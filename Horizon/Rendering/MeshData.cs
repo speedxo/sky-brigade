@@ -2,8 +2,8 @@
 
 namespace Horizon.Rendering;
 
-public readonly struct MeshData
+public readonly struct MeshData : IMeshData<Vertex>
 {
-    public required ReadOnlyMemory<Vertex> Vertices { get; init; }
-    public required ReadOnlyMemory<uint> Elements { get; init; }
+    public readonly ReadOnlyMemory<Vertex> Vertices { get; init; }
+    public readonly ReadOnlyMemory<uint> Elements { get; init; }
 }

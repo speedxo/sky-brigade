@@ -140,7 +140,6 @@ public class RenderRectangle : Entity
             Technique.SetUniform("uDepth", 1);
         }
 
-        Mesh.Use(ref RenderOptions.Default);
         Mesh.Draw(dt, ref options);
 
         Technique.End();

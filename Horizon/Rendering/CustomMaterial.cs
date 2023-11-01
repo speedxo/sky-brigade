@@ -15,6 +15,6 @@ namespace Horizon.Rendering
             this.Technique = technique;
         }
 
-        public override void Use(ref RenderOptions options) { }
+        public override void Use(in RenderOptions options) { }
     }
 }

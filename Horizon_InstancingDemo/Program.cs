@@ -33,7 +33,7 @@ internal class Program : Scene
     private readonly Vert2D[] quadVerts;
     private readonly uint[] indices;
     private readonly Vector2[] offsets;
-    private readonly int count = 1000000;
+    private readonly int count = 10000;
 
     private InstancedVertexBufferObject<Vert2D, Vector2> vbo;
     private Technique shader;

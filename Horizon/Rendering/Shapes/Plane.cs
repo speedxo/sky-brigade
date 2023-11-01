@@ -48,7 +48,7 @@ public class Plane : GameObject
     /// </summary>
     private void UpdateVertices()
     {
-        MeshRenderer.Vbo.VertexBuffer.BufferData(
+        MeshRenderer.Buffer.VertexBuffer.BufferData(
             new Vertex[]
             {
                 new Vertex(-Size.X, -Size.Y, 0, 0, 1),

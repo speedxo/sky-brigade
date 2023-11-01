@@ -50,10 +50,8 @@ namespace Horizon.Rendering
         //    System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(MaterialDescription));
         //}
 
-        public override void Use(ref RenderOptions options)
+        public override void Use(in RenderOptions options)
         {
-            
-
             Technique.Use();
 
             Technique.SetUniform("uMetallicness", MaterialDescription.Metallicness);

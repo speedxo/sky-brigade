@@ -12,7 +12,7 @@ namespace Horizon.Rendering.Spriting.Components;
 public class SpriteBatchMesh
 {
     /// <summary>
-    /// This limit is set at 750 to meet the 64kb UBO limit (we should instead pack into a TBO)
+    /// This limit is set at 750 to meet the 64kb UBO limit (we should instead pack into a TBO, UPDATE: we will use instancing instead.)
     /// </summary>
     public static readonly int MAX_SPRITES = 750;
 

@@ -6,7 +6,7 @@ namespace Horizon.Rendering
     public static class MeshGenerators
     {
         // write code to generate a cube
-        public static MeshData CreateCube(float size = 1)
+        public static IMeshData<Vertex> CreateCube(float size = 1)
         {
             var verts = new Vertex[4 * 6];
             var indices = new uint[6 * 6];
@@ -146,7 +146,7 @@ namespace Horizon.Rendering
             return new MeshData { Vertices = verts, Elements = indices };
         }
 
-        public static MeshData CreateRectangle()
+        public static IMeshData<Vertex> CreateRectangle()
         {
             return new MeshData
             {
@@ -162,7 +162,7 @@ namespace Horizon.Rendering
         }
 
         // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
-        public static MeshData CreateSphere(float radius = 1.0f, int vertexCount = 10)
+        public static IMeshData<Vertex> CreateSphere(float radius = 1.0f, int vertexCount = 10)
         {
             int vertexCountSquared = vertexCount * vertexCount;
             Memory<Vertex> verts = new Vertex[vertexCountSquared];
@@ -209,7 +209,7 @@ namespace Horizon.Rendering
         }
 
         //// dont even bother
-        //public static Mesh FromObj(string path)
+        //public static DeprecatedMesh FromObj(string path)
         //{
         //    var lines = File.ReadAllLines(path);
 
