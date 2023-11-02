@@ -7,9 +7,13 @@ using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Prefabs.Effects;
 using Horizon.Rendering;
 using Horizon.Rendering.Effects;
+using Horizon.Rendering.Particles;
+using Horizon.Rendering.Particles.Materials;
 using Horizon.Rendering.Spriting;
+using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
+using System;
 using System.Numerics;
 using TileBash.Player;
 
@@ -17,11 +21,13 @@ namespace TileBash;
 
 public class GameScene : Scene
 {
+    private Random random;
     private Player2D player;
     private SpriteBatch spriteBatch;
     private Camera cam;
     private TileMap tilemap;
     private World world;
+    private ParticleRenderer2D particles;
     private RenderOptions charOptions;
 
     private readonly Box2DDebugDrawCallback debugDrawCallback;
@@ -29,6 +35,8 @@ public class GameScene : Scene
     public GameScene()
     {
         InitializeGl();
+
+        random = new Random(Environment.TickCount);
 
         debugDrawCallback = new();
         debugDrawCallback.Parent = this;
@@ -62,6 +70,8 @@ public class GameScene : Scene
         cam = new Camera() { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
+
+        AddEntity(particles = new ParticleRenderer2D(new BasicParticle2DMaterial()));
     }
 
     protected override Effect[] GeneratePostProccessingEffects()
@@ -110,5 +120,28 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    public override void DrawGui(float dt) { }
+    private void SpawnParticle()
+    {
+        float val = (random.NextSingle() * 2.0f) * MathF.PI;
+
+        particles.Add(
+            new Particle2D(new Vector2(MathF.Sin(val), MathF.Cos(val)), player.Position, val * val)
+        );
+    }
+
+    public override void DrawGui(float dt)
+    {
+        if (ImGui.Begin("Particles"))
+        {
+            ImGui.Text($"Count: {particles.Count}");
+
+            if (ImGui.Button("Spawn 1"))
+                SpawnParticle();
+            if (ImGui.Button("Spawn 100"))
+                for (int i = 0; i < 100; i++)
+                    SpawnParticle();
+
+            ImGui.End();
+        }
+    }
 }

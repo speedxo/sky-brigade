@@ -77,7 +77,7 @@ public class Mesh2D : Mesh<Vertex2D>
         Buffer.Bind();
 
         // Once again, I really don't want to make the whole method unsafe for one call.
-        //unsafe
+        unsafe
         {
             // Turn on wireframe mode
             if (options.IsWireframeEnabled)
@@ -87,7 +87,7 @@ public class Mesh2D : Mesh<Vertex2D>
                 PrimitiveType.Triangles,
                 ElementCount,
                 DrawElementsType.UnsignedInt,
-                new IntPtr()
+                null
             );
 
             // Turn off wireframe mode

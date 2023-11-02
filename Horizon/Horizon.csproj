@@ -45,6 +45,8 @@
     <None Remove="Rendering\NewFolder\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\particle2d\basic.frag" />
+    <None Remove="Assets\particle2d\basic.vert" />
     <None Remove="OpenGL\" />
     <None Remove="Content\" />
     <None Remove="Data\" />
@@ -138,6 +140,12 @@
     <PackageReference Include="Twizzle.ImPlot.NET" Version="1.89.4" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\particle2d\basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\particle2d\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\basic_shader\basic.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

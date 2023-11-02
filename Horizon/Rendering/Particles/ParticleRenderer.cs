@@ -1,45 +1,48 @@
-﻿using Horizon.GameEntity;
+﻿using Box2D.NetStandard.Common;
+using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Horizon.Rendering.Spriting;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Horizon.Rendering.Particles;
 
-public readonly struct Particle2D
-{
-    public readonly Vector2 Direction { get; }
-    public readonly Vector2 InitialPosition { get; }
-}
-
-public readonly struct ParticleVertex
-{
-    public readonly Vector2 Position { get; init; }
-
-    public static uint SizeInBytes { get; } = sizeof(float) * 2;
-}
-
 /// <summary>
-/// A 2D instanced particle systems renderer.
+/// A batched and instanced 2D particle systems renderer.
 /// </summary>
 /// <seealso cref="Horizon.GameEntity.Entity" />
 /// <seealso cref="Horizon.Rendering.Spriting.I2DBatchedRenderer&lt;Horizon.Rendering.Particles.Particle2D&gt;" />
 /// <seealso cref="System.IDisposable" />
 public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDisposable
 {
-    private record struct Particle2DDefinition(Particle2D Particle, TransformComponent2D Transform);
+    private static Random random;
 
-    private List<Particle2DDefinition> Particles { get; init; }
+    private List<Particle2D> Particles { get; init; }
+    private List<Vector2> Offsets { get; init; }
 
     private InstancedVertexBufferObject<ParticleVertex, Vector2> buffer;
+    private readonly ParticleVertex[] quadVerts;
+    private readonly uint[] indices;
+
     public Material Material { get; set; }
     public uint Count { get; protected set; }
+    public TransformComponent2D Transform { get; init; }
+    public float MaxAge { get; set; } = 2.5f;
+
+    static ParticleRenderer2D()
+    {
+        random = new Random(Environment.TickCount);
+    }
 
     public ParticleRenderer2D(Material material)
     {
         this.Material = material;
 
+        Transform = AddComponent<TransformComponent2D>();
+
         Particles = new();
+        Offsets = new();
         buffer = new InstancedVertexBufferObject<ParticleVertex, Vector2>();
 
         // Configure VAO layout
@@ -64,38 +67,81 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         );
         buffer.VertexAttributeDivisor(1, 1); // Each particle has its own offset.
         buffer.Unbind();
+
+        float size = 0.1f;
+        quadVerts = new ParticleVertex[]
+        {
+            new ParticleVertex(new Vector2(-size, -size)),
+            new ParticleVertex(new Vector2(size, -size)),
+            new ParticleVertex(new Vector2(size, size)),
+            new ParticleVertex(new Vector2(-size, size))
+        };
+        indices = new uint[] { 0, 1, 2, 0, 2, 3 };
+
+        buffer.VertexBuffer.BufferData(quadVerts);
+        buffer.ElementBuffer.BufferData(indices);
     }
 
     public void Add(Particle2D input)
     {
-        Particles.Add(
-            new Particle2DDefinition(
-                input,
-                new TransformComponent2D() { Position = input.InitialPosition }
-            )
-        );
+        input.Random = random.NextSingle() / 5.0f + 0.5f;
+        Particles.Add(input);
+        Offsets.Add(input.InitialPosition);
+
+        Count++;
     }
 
     public void Remove(Particle2D input)
     {
         // TODO: better(((
-        Particles.Remove(
-            Particles.Find((item) => item.Particle.InitialPosition == input.InitialPosition)
-        );
+        if (
+            Particles.Remove(
+                Particles.Find((item) => item.InitialPosition == input.InitialPosition)
+            )
+        )
+            Count--;
+        Offsets.RemoveAt(0);
+    }
+
+    public override void Update(float dt)
+    {
+        base.Update(dt);
+
+        var span = CollectionsMarshal.AsSpan(Particles);
+        for (int i = 0; i < Particles.Count; i++)
+        {
+            span[i].Age += dt * span[i].Random;
+            if (span[i].Age > MaxAge)
+            {
+                Particles.RemoveAt(i);
+                Offsets.RemoveAt(i);
+                Count--;
+                continue;
+            }
+
+            Offsets[i] += span[i].Direction * dt * span[i].Random;
+        }
     }
 
     public override void Draw(float dt, ref RenderOptions options)
     {
+        if (Count < 1)
+            return;
+
         Material.Use(in options);
+        Material.SetModel(Transform.ModelMatrix);
+
+        buffer.VertexArray.Bind();
+        buffer.InstanceBuffer.BufferData(CollectionsMarshal.AsSpan(Offsets));
         buffer.VertexArray.Bind();
 
-        //unsafe
+        unsafe
         {
             Engine.GL.DrawElementsInstanced(
                 Silk.NET.OpenGL.PrimitiveType.Triangles,
                 6,
                 Silk.NET.OpenGL.DrawElementsType.UnsignedInt,
-                new IntPtr(),
+                null,
                 Count
             );
         }

@@ -126,9 +126,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DearImPlot" Version="0.14.0.1" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="content\sprites.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
