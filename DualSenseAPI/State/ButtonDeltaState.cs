@@ -2,6 +2,8 @@
 {
     public enum ButtonDeltaState
     {
-        Pressed, Released, NoChange
+        Pressed,
+        Released,
+        NoChange
     }
 }

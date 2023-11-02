@@ -1,8 +1,6 @@
-﻿using Device.Net;
-using DualSenseAPI.State;
+﻿using DualSenseAPI.State;
 using DualSenseAPI.Util;
 using HidSharp;
-using HidSharp.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,6 +57,7 @@ namespace DualSenseAPI
     {
         // IO parameters
         private readonly UnderlyingDevice underlyingDevice;
+
         private readonly int? readBufferSize;
         private readonly int? writeBufferSize;
 
@@ -119,7 +118,9 @@ namespace DualSenseAPI
             };
             if (IoMode == IoMode.Unknown)
             {
-                throw new InvalidOperationException("Can't initialize device - supported IO modes are USB and Bluetooth.");
+                throw new InvalidOperationException(
+                    "Can't initialize device - supported IO modes are USB and Bluetooth."
+                );
             }
         }
 
@@ -128,7 +129,8 @@ namespace DualSenseAPI
         /// </summary>
         public void Acquire()
         {
-            if (underlyingDevice.HasBeenOpened) return;
+            if (underlyingDevice.HasBeenOpened)
+                return;
             underlyingDevice.Open();
         }
 
@@ -162,7 +164,6 @@ namespace DualSenseAPI
             };
             return new DualSenseInputState(bytes.Skip(offset).ToArray(), IoMode, JoystickDeadZone);
 
-
             throw new IOException("Failed to read data - buffer size mismatch");
         }
 
@@ -189,8 +190,11 @@ namespace DualSenseAPI
             // don't take up the burden to diff the changes unless someone cares
             if (OnButtonStateChanged != null)
             {
-                DualSenseInputStateButtonDelta delta = new DualSenseInputStateButtonDelta(prevState, nextState);
-                if (delta.HasChanges) 
+                DualSenseInputStateButtonDelta delta = new DualSenseInputStateButtonDelta(
+                    prevState,
+                    nextState
+                );
+                if (delta.HasChanges)
                 {
                     OnButtonStateChanged.Invoke(this, delta);
                 }
@@ -203,22 +207,25 @@ namespace DualSenseAPI
         /// </summary>
         /// <param name="pollingIntervalMs">How long to wait between each I/O loop, in milliseconds</param>
         /// <remarks>
-        /// Instance state is not thread safe. In other words, when using polling, updating instance state 
+        /// Instance state is not thread safe. In other words, when using polling, updating instance state
         /// (such as <see cref="OutputState"/>) both inside and outside of <see cref="OnStatePolled"/>
         /// may create unexpected results. When using polling, it is generally expected you will only make
         /// modifications to state inside the <see cref="OnStatePolled"/> handler in response to input, or
         /// outside of the handler in response to external events (for example, game logic). It's also
-        /// expected that you will only use the <see cref="DualSense"/> instance passed as an argument to 
+        /// expected that you will only use the <see cref="DualSense"/> instance passed as an argument to
         /// the sender, rather than external references to instance.
         /// </remarks>
         public void BeginPolling(uint pollingIntervalMs)
         {
             if (pollerSubscription != null)
             {
-                throw new InvalidOperationException("Can't begin polling after it's already started.");
+                throw new InvalidOperationException(
+                    "Can't begin polling after it's already started."
+                );
             }
 
-            IObservable<DualSenseInputState> stateObserver = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(pollingIntervalMs))
+            IObservable<DualSenseInputState> stateObserver = Observable
+                .Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(pollingIntervalMs))
                 .SelectMany(Observable.FromAsync(() => ReadWriteOnceAsync()));
             // TODO: figure how we can leverage DistinctUntilChanged (or similar) so we can do filtered eventing (e.g. button pressed only)
             // how would we allow both to modify state in a smart way (i.e. without overriding each other?) if needed?
@@ -234,7 +241,9 @@ namespace DualSenseAPI
         {
             if (pollerSubscription == null)
             {
-                throw new InvalidOperationException("Can't end polling without starting polling first");
+                throw new InvalidOperationException(
+                    "Can't end polling without starting polling first"
+                );
             }
             pollerSubscription.Dispose();
             pollerSubscription = null;
@@ -265,7 +274,9 @@ namespace DualSenseAPI
             }
             else
             {
-                throw new InvalidOperationException("Can't send data - supported IO modes are USB and Bluetooth.");
+                throw new InvalidOperationException(
+                    "Can't send data - supported IO modes are USB and Bluetooth."
+                );
             }
             return bytes;
         }
@@ -283,7 +294,11 @@ namespace DualSenseAPI
         {
             foreach (var device in HidScanner.ListDevices())
             {
-                yield return new DualSense(device, device.GetMaxInputReportLength(), device.GetMaxOutputReportLength());
+                yield return new DualSense(
+                    device,
+                    device.GetMaxInputReportLength(),
+                    device.GetMaxOutputReportLength()
+                );
             }
         }
     }

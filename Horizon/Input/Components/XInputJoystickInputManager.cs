@@ -22,17 +22,16 @@ namespace Horizon.Input.Components
         /// Gets the first connected joystick/gamepad, or null if none is connected.
         /// </summary>
         public static IJoystick? Joystick =>
-            Entity.Engine.Input.NativeInputContext.Joysticks.Count > 0
-                ? GetController()
-                : null;
+            Entity.Engine.Input.NativeInputContext.Joysticks.Count > 0 ? GetController() : null;
 
         private static IJoystick? GetController()
         {
             // FIXME yea....
-            return
-                (from stick in Entity.Engine.Input.NativeInputContext.Joysticks
+            return (
+                from stick in Entity.Engine.Input.NativeInputContext.Joysticks
                 where stick.IsConnected
-                select stick).FirstOrDefault();
+                select stick
+            ).FirstOrDefault();
         }
 
         /// <summary>
@@ -46,6 +45,7 @@ namespace Horizon.Input.Components
         public bool IsConnected => Joystick?.IsConnected ?? false;
 
         private VirtualAction actions;
+
         private Vector2 primaryAxis,
             secondaryAxis,
             triggers;

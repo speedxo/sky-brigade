@@ -6,7 +6,7 @@ public abstract partial class Tiling<TTextureID>
     where TTextureID : Enum
 {
     /// <summary>
-    /// Contains complementary data for Box2D integration.
+    /// Contains complementary data for Box2D integration. TODO: CHANGE!!!!
     /// </summary>
     public struct TilePhysicsData
     {

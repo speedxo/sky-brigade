@@ -17,11 +17,7 @@ namespace Horizon.OpenGL
 
         public void BindToUniformBlockBindingPoint()
         {
-            Entity.Engine.GL.BindBufferBase(
-                BufferTargetARB.UniformBuffer,
-                _bindingPoint,
-                Handle
-            );
+            Entity.Engine.GL.BindBufferBase(BufferTargetARB.UniformBuffer, _bindingPoint, Handle);
         }
 
         public unsafe void BufferData<T>(ReadOnlySpan<T> data)

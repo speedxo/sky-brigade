@@ -1,13 +1,10 @@
 ﻿using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.World;
-using Horizon;
 using Horizon.Extentions;
 using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
-using ImGuiNET;
-using System.Collections;
 using System.Numerics;
 using TileBash.Player.Behaviour;
 
@@ -28,6 +25,7 @@ public class Player2D : Sprite
     {
         get => stateController.CurrentState;
     }
+
     public override string Name { get; set; } = "Player2D";
     private readonly World world;
     private readonly TileMap map;
@@ -92,21 +90,19 @@ public class Player2D : Sprite
 
     private void CreateSprite()
     {
-        var sheet = (
-            new Spritesheet(
-                "content/spritesheet.png",
-                new Vector2(16)
-            )
-        );
+        var sheet = (new SpriteSheet("content/spritesheet.png", new Vector2(16)));
 
-        sheet.AddAnimationRange(new (string, Vector2, int, float, Vector2?)[] {
-            ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
-            ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
-            ("walk_down", new Vector2(4, 0), 4, 0.1f, null),
-            ("walk_left", new Vector2(0, 1), 4, 0.1f, null),
-            ("walk_right", new Vector2(4, 1), 4, 0.1f, null),
-            ("idle", new Vector2(4, 0), 1, 0.1f, null)
-        });
+        sheet.AddAnimationRange(
+            new (string, Vector2, int, float, Vector2?)[]
+            {
+                ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
+                ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
+                ("walk_down", new Vector2(4, 0), 4, 0.1f, null),
+                ("walk_left", new Vector2(0, 1), 4, 0.1f, null),
+                ("walk_right", new Vector2(4, 1), 4, 0.1f, null),
+                ("idle", new Vector2(4, 0), 1, 0.1f, null)
+            }
+        );
 
         ConfigureSpritesheetAndDefaultAnimation(sheet, "idle");
 

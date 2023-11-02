@@ -17,8 +17,11 @@ namespace Horizon.Content
         /// <param name="key">The unique key used to identify this item.</param>
         public virtual TValue AddNamed(in TKey key, in TValue asset)
         {
-            if(!NamedAssets.TryAdd(key, asset))
-                Engine.Logger.Log(LogLevel.Error, $"[{Name}] Failed to add asset '{key}' as it is already managed.");
+            if (!NamedAssets.TryAdd(key, asset))
+                Engine.Logger.Log(
+                    LogLevel.Error,
+                    $"[{Name}] Failed to add asset '{key}' as it is already managed."
+                );
 
             return asset;
         }
@@ -31,7 +34,10 @@ namespace Horizon.Content
         {
             if (UnnamedAssets.Contains(asset))
             {
-                Engine.Logger.Log(LogLevel.Error, $"[{Name}] Failed to add asset as it is already managed.");
+                Engine.Logger.Log(
+                    LogLevel.Error,
+                    $"[{Name}] Failed to add asset as it is already managed."
+                );
                 return asset;
             }
 

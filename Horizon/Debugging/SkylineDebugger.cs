@@ -30,18 +30,20 @@ namespace Horizon.Debugging
         {
             CreateDebugComponents();
         }
-        
+
         private void CreateDebugComponents()
         {
-            _components.AddRange(new DebuggerComponent[]
-            {
-                (RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>()),
-                (SceneEntityDebugger = AddComponent<SceneEntityDebugger>()), 
-                (LoadedContentDebugger = AddComponent<LoadedContentDebugger>()),
-                (GameContainerDebugger = AddComponent<DockedGameContainerDebugger>()),
-                (PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>()),
-                (GeneralDebugger = AddComponent<GeneralDebugger>())
-            });
+            _components.AddRange(
+                new DebuggerComponent[]
+                {
+                    (RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>()),
+                    (SceneEntityDebugger = AddComponent<SceneEntityDebugger>()),
+                    (LoadedContentDebugger = AddComponent<LoadedContentDebugger>()),
+                    (GameContainerDebugger = AddComponent<DockedGameContainerDebugger>()),
+                    (PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>()),
+                    (GeneralDebugger = AddComponent<GeneralDebugger>())
+                }
+            );
         }
 
         private void DestroyDebugComponents()
@@ -60,10 +62,12 @@ namespace Horizon.Debugging
 
             if (!Enabled)
             {
-                if (_components.Any()) DestroyDebugComponents();
+                if (_components.Any())
+                    DestroyDebugComponents();
                 return;
             }
-            if (!_components.Any()) CreateDebugComponents();
+            if (!_components.Any())
+                CreateDebugComponents();
 
             if (ImGui.BeginMainMenuBar())
             {

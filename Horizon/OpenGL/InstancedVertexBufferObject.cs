@@ -5,15 +5,17 @@ namespace Horizon.OpenGL;
 /// <summary>
 /// An abstraction around a vbo supporting a secondary buffer for instanced rendering.
 /// </summary>
-/// <typeparam name="TData">The vertex data.</typeparam>
+/// <typeparam name="VertexData">The vertex data.</typeparam>
 /// <typeparam name="TInstancedData">The instancing data.</typeparam>
-public class InstancedVertexBufferObject<TData, TInstancedData> : VertexBufferObject<TData>
-    where TData : unmanaged
+public class InstancedVertexBufferObject<VertexData, TInstancedData>
+    : VertexBufferObject<VertexData>
+    where VertexData : unmanaged
     where TInstancedData : unmanaged
 {
     public BufferObject<TInstancedData> InstanceBuffer { get; init; }
 
-    public InstancedVertexBufferObject() : base()
+    public InstancedVertexBufferObject()
+        : base()
     {
         InstanceBuffer = new BufferObject<TInstancedData>(BufferTargetARB.ArrayBuffer);
     }
@@ -23,6 +25,7 @@ public class InstancedVertexBufferObject<TData, TInstancedData> : VertexBufferOb
         base.Bind();
         InstanceBuffer.Bind();
     }
+
     public override void Unbind()
     {
         base.Unbind();

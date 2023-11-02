@@ -17,15 +17,28 @@ namespace Horizon.Content
             Fail = 1
         }
 
-        private record struct CompilationResult(uint Handle, CompilationStatus Status, string ErrorMessage);
+        private record struct CompilationResult(
+            uint Handle,
+            CompilationStatus Status,
+            string ErrorMessage
+        );
 
-        private static CompilationResult CompileShaderFromSource(in ShaderType type, in string source)
+        private static CompilationResult CompileShaderFromSource(
+            in ShaderType type,
+            in string source
+        )
         {
             // Create a shader handle.
             uint handle = Engine.GL.CreateShader(type);
 
             // Shader compilation result.
-            CompilationResult result = new () { ErrorMessage = "", Status = CompilationStatus.Pass, Handle = handle };
+            CompilationResult result =
+                new()
+                {
+                    ErrorMessage = "",
+                    Status = CompilationStatus.Pass,
+                    Handle = handle
+                };
 
             // Stream shader source into the gl shader.
             Engine.GL.ShaderSource(handle, source);
@@ -39,9 +52,11 @@ namespace Horizon.Content
             // If the result is empty then the compilation was a success.
             if (!string.IsNullOrWhiteSpace(infoLog))
             {
-                return result with {
+                return result with
+                {
                     Status = CompilationStatus.Fail,
-                    ErrorMessage = $"[ShaderFactory] Error compiling shader of type {type}: {infoLog}"
+                    ErrorMessage =
+                        $"[ShaderFactory] Error compiling shader of type {type}: {infoLog}"
                 };
             }
 
@@ -55,10 +70,14 @@ namespace Horizon.Content
         private static CompilationResult CompileProgram(params ShaderDefinition[] shaderDefinitions)
         {
             // Ensure that both a fragment and vertex shader have been specified.
-            if (!shaderDefinitions.Any(s => s.Type == ShaderType.FragmentShader) &&
-                shaderDefinitions.Any(s => s.Type == ShaderType.VertexShader))
+            if (
+                !shaderDefinitions.Any(s => s.Type == ShaderType.FragmentShader)
+                && shaderDefinitions.Any(s => s.Type == ShaderType.VertexShader)
+            )
             {
-                throw new InvalidOperationException("[ShaderFactory] You are required to specify a vertex and fragment shader in order to compile a program.");
+                throw new InvalidOperationException(
+                    "[ShaderFactory] You are required to specify a vertex and fragment shader in order to compile a program."
+                );
             }
 
             // Create the shader program.
@@ -73,8 +92,10 @@ namespace Horizon.Content
             // If any of our shaders failed to compile throw an error.
             if (aggregatedResults.Any(res => res.Status == CompilationStatus.Fail))
             {
-                return result with {
-                    ErrorMessage = $"[ShaderFactory] Cannot compile Program({handle}) with failed shaders!",
+                return result with
+                {
+                    ErrorMessage =
+                        $"[ShaderFactory] Cannot compile Program({handle}) with failed shaders!",
                     Status = CompilationStatus.Fail
                 };
             }
@@ -97,8 +118,10 @@ namespace Horizon.Content
             Entity.Engine.GL.GetProgram(handle, GLEnum.LinkStatus, out var status);
             if (status == 0)
             {
-                return result with {
-                    ErrorMessage = $"Shader[{handle}] Failed to link with error: {Entity.Engine.GL.GetProgramInfoLog(handle)}",
+                return result with
+                {
+                    ErrorMessage =
+                        $"Shader[{handle}] Failed to link with error: {Entity.Engine.GL.GetProgramInfoLog(handle)}",
                     Status = CompilationStatus.Fail
                 };
             }
@@ -111,7 +134,9 @@ namespace Horizon.Content
         /// <summary>
         /// Helper method to attempt to compile all the shaders in a program, returning an intermediate <see cref="CompilationResult"/>.
         /// </summary>
-        private static IEnumerable<CompilationResult> CompileShaderSources(params ShaderDefinition[] shaderDefinitions)
+        private static IEnumerable<CompilationResult> CompileShaderSources(
+            params ShaderDefinition[] shaderDefinitions
+        )
         {
             foreach (var (type, source) in shaderDefinitions)
             {
@@ -174,15 +199,10 @@ namespace Horizon.Content
             var frag = File.ReadAllText(fragPath);
 
             // We can reuse this method.
-            return CompileFromDefinitions(new ShaderDefinition
-            {
-                Source = vert,
-                Type = ShaderType.VertexShader
-            }, new ShaderDefinition
-            {
-                Source = frag,
-                Type = ShaderType.FragmentShader
-            });
+            return CompileFromDefinitions(
+                new ShaderDefinition { Source = vert, Type = ShaderType.VertexShader },
+                new ShaderDefinition { Source = frag, Type = ShaderType.FragmentShader }
+            );
         }
     }
 }

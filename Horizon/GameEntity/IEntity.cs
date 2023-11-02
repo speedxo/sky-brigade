@@ -5,7 +5,6 @@
 
 // public interface IEntity : IDrawable, IUpdateable
 // {
-
 //     public int ID { get; set; }
 //     public string Name { get; set; }
 //     public int TotalEntities { get; }

@@ -10,7 +10,8 @@ public class VertexArrayObject : IDisposable
     //Most of the time you would want to abstract items to make things like this invisible.
     private uint _handle;
 
-    private uint _vboHandle, _eboHandle;
+    private uint _vboHandle,
+        _eboHandle;
 
     public VertexArrayObject(in uint vboHandle, in uint eboHandle)
     {
@@ -30,7 +31,6 @@ public class VertexArrayObject : IDisposable
         Unbind();
     }
 
-
     public unsafe void VertexAttributePointer(
         uint index,
         int count,
@@ -39,7 +39,14 @@ public class VertexArrayObject : IDisposable
         int offSet
     )
     {
-        Entity.Engine.GL.VertexAttribPointer(index, count, type, false, vertexSize, (void*)(offSet));
+        Entity.Engine.GL.VertexAttribPointer(
+            index,
+            count,
+            type,
+            false,
+            vertexSize,
+            (void*)(offSet)
+        );
         Entity.Engine.GL.EnableVertexAttribArray(index);
     }
 

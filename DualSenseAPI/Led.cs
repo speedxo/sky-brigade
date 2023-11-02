@@ -94,6 +94,7 @@
         /// Default behavior. Pulses the lightbar blue and stays on.
         /// </summary>
         PulseBlue = 0x1,
+
         /// <summary>
         /// Allows the lightbar to be set a custom color.
         /// </summary>

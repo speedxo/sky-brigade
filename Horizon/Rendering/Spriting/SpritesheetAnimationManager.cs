@@ -5,16 +5,20 @@ using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering.Spriting;
 
-public class SpritesheetAnimationManager : IGameComponent
+/// <summary>
+/// An internal component used to keep track of animated regions of a spritesheet.
+/// </summary>
+/// <seealso cref="Horizon.GameEntity.Components.IGameComponent" />
+public class SpriteSheetAnimationManager : IGameComponent
 {
-    public string Name { get; set; } = "Spritesheet Animation Manager";
+    public string Name { get; set; } = "SpriteSheet Animation Manager";
     public Entity Parent { get; set; }
 
-    public Spritesheet Spritesheet { get; private set; }
+    public SpriteSheet Spritesheet { get; private set; }
 
     public Dictionary<string, SpriteAnimationDefinition> Animations { get; init; }
 
-    public SpritesheetAnimationManager()
+    public SpriteSheetAnimationManager()
     {
         this.Animations = new();
     }
@@ -76,7 +80,7 @@ public class SpritesheetAnimationManager : IGameComponent
 
     public void Initialize()
     {
-        Spritesheet = (Spritesheet)Parent;
+        Spritesheet = (SpriteSheet)Parent;
     }
 
     public void Update(float dt)

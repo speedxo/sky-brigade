@@ -34,10 +34,7 @@ uniform sampler2D uDepth;
 
             if (finalIndex < 0)
             {
-                Engine.Logger.Log(
-                    Logging.LogLevel.Warning,
-                    "An empty EffectStack was created!"
-                );
+                Engine.Logger.Log(Logging.LogLevel.Warning, "An empty EffectStack was created!");
                 return $@"
 out vec4 FinalFragColor;
 
@@ -82,14 +79,20 @@ void main()
                 : File.ReadAllText(vertexPath);
 
             Technique = AddEntity(
-                new Technique(Engine.Content.Shaders.AddFromDefinitions(new ShaderDefinition {
-                    Type = Silk.NET.OpenGL.ShaderType.FragmentShader,
-                    Source = fragmentSource
-                }, new ShaderDefinition
-                {
-                    Type = Silk.NET.OpenGL.ShaderType.VertexShader,
-                    Source = vertexSource
-                }))
+                new Technique(
+                    Engine.Content.Shaders.AddFromDefinitions(
+                        new ShaderDefinition
+                        {
+                            Type = Silk.NET.OpenGL.ShaderType.FragmentShader,
+                            Source = fragmentSource
+                        },
+                        new ShaderDefinition
+                        {
+                            Type = Silk.NET.OpenGL.ShaderType.VertexShader,
+                            Source = vertexSource
+                        }
+                    )
+                )
             );
 
             SetBindingPoints();

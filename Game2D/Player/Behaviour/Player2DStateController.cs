@@ -1,4 +1,3 @@
-using Horizon;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
@@ -7,7 +6,10 @@ namespace TileBash.Player.Behaviour;
 
 public class Player2DStateController : IGameComponent
 {
-    public Dictionary<Player2DStateIdentifier, Player2DStateBehaviour> StateBehaviours { get; init; }
+    public Dictionary<
+        Player2DStateIdentifier,
+        Player2DStateBehaviour
+    > StateBehaviours { get; init; }
     public string Name { get; set; } = "Player2D State Controller";
     public Entity Parent { get; set; }
     public Player2D Player { get; private set; }
@@ -21,13 +23,19 @@ public class Player2DStateController : IGameComponent
         CurrentState = Player2DStateIdentifier.Idle;
     }
 
-    public void RegisterBehaviour(Player2DStateIdentifier identifier, Player2DStateBehaviour behaviour)
+    public void RegisterBehaviour(
+        Player2DStateIdentifier identifier,
+        Player2DStateBehaviour behaviour
+    )
     {
         if (!StateBehaviours.TryAdd(identifier, behaviour))
-            Entity.Engine.Logger.Log(Horizon.Logging.LogLevel.Error, $"[State Controller] Failed to register state {identifier}!");
+            Entity.Engine.Logger.Log(
+                Horizon.Logging.LogLevel.Error,
+                $"[State Controller] Failed to register state {identifier}!"
+            );
     }
 
-    public void Initialize() 
+    public void Initialize()
     {
         Player = (Player2D)Parent;
     }
@@ -37,8 +45,5 @@ public class Player2DStateController : IGameComponent
         CurrentState = StateBehaviours[CurrentState].Update(dt);
     }
 
-    public void Draw(float dt, ref RenderOptions options)
-    {
-        
-    }
+    public void Draw(float dt, ref RenderOptions options) { }
 }

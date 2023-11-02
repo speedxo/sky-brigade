@@ -1,5 +1,4 @@
 using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
 using Horizon.Rendering;
 using ImGuiNET;
 
@@ -29,8 +28,10 @@ namespace Horizon.Dialogs
         private DirectoryInfo? currentDirectory;
         private string[] fileNames = Array.Empty<string>();
         private string[] selectedFileNames = Array.Empty<string>();
+
         private int index = 0,
             selectedFileIndex = 0;
+
         private List<FileItem> selectedFiles = new();
 
         /// <summary>

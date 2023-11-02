@@ -38,9 +38,6 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Dispose()
-        {
-            
-        }
+        public override void Dispose() { }
     }
 }

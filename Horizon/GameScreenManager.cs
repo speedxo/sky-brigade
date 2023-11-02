@@ -17,6 +17,7 @@ public class GameScreenManagerComponent : InstanceManager<Scene>, IGameComponent
     public int ID { get; set; }
     public string Name { get; set; } = "Scene Manager";
     public Entity Parent { get; set; }
+
     public void Dispose()
     {
         foreach (var (_, instance) in Instances)

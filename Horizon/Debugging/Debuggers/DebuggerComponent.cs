@@ -22,6 +22,7 @@ namespace Horizon.Debugging.Debuggers
         {
             Entity.Engine.Logger.Log(level, $"({Name}) {msg}");
         }
+
         public abstract void Dispose();
     }
 }

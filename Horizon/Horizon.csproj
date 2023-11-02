@@ -111,7 +111,6 @@
     <Folder Include="Assets\sprite_shaders\" />
     <Folder Include="Rendering\Spriting\Components\" />
     <Folder Include="Assets\tilemap_shaders\" />
-    <Folder Include="Rendering\Tiling\" />
     <Folder Include="GameEntity\Components\Physics2D\" />
     <Folder Include="Assets\line_shader\" />
   </ItemGroup>

@@ -1,5 +1,4 @@
-﻿using Box2D.NetStandard.Common;
-using Horizon.Content;
+﻿using Horizon.Content;
 using Horizon.OpenGL;
 
 namespace Horizon.Rendering
@@ -10,11 +9,11 @@ namespace Horizon.Rendering
         {
             this.Technique = new Technique(shader);
         }
+
         public CustomMaterial(in Technique technique)
         {
             this.Technique = technique;
         }
-
 
         public CustomMaterial(in Texture texture, in Shader shader)
         {
@@ -28,12 +27,12 @@ namespace Horizon.Rendering
             this.Technique = technique;
         }
 
-        public override void Use(in RenderOptions options) 
+        public override void Use(in RenderOptions options)
         {
             Technique.Use();
-            Technique.SetUniform("uView", options.Camera.View);
-            Technique.SetUniform("uProjection", options.Camera.Projection);
-            Technique.SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
+            Technique.SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+            Technique.SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+            Technique.SetUniform(UNIFORM_USE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
             Texture?.Bind(Silk.NET.OpenGL.TextureUnit.Texture0);
         }
     }

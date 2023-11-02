@@ -1,17 +1,11 @@
 ﻿using Horizon.Collections;
+using Horizon.Data;
+using Horizon.GameEntity;
 using Horizon.Rendering;
 using ImGuiNET;
-using System.Diagnostics;
+using ImPlotNET;
 using System.Diagnostics.Contracts;
 using System.Numerics;
-using System.Security.Cryptography;
-using Horizon.GameEntity;
-using Monitor = System.Threading.Monitor;
-using Horizon.Data;
-using System.Diagnostics.CodeAnalysis;
-using ImPlotNET;
-using System.Xml.Serialization;
-using System.Reflection.Emit;
 
 namespace Horizon.Debugging.Debuggers;
 
@@ -84,9 +78,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         }
     }
 
-    private double GetAverage(LinearBuffer<double> linearBuffer)
-        => linearBuffer.Buffer.Average();
-    
+    private double GetAverage(LinearBuffer<double> linearBuffer) => linearBuffer.Buffer.Average();
 
     public override void Draw(float dt, ref RenderOptions options)
     {

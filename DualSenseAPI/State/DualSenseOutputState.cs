@@ -1,5 +1,5 @@
-﻿using System;
-using DualSenseAPI.Util;
+﻿using DualSenseAPI.Util;
+using System;
 
 namespace DualSenseAPI.State
 {
@@ -74,10 +74,12 @@ namespace DualSenseAPI.State
                     bytes[1] = props.InternalStartPosition.UnsignedToByte();
                     bytes[2] = props.InternalStartForce.UnsignedToByte();
                     break;
+
                 case TriggerEffectType.SectionResistance:
                     bytes[1] = props.InternalStartPosition.UnsignedToByte();
                     bytes[2] = props.InternalEndPosition.UnsignedToByte();
                     break;
+
                 case TriggerEffectType.Vibrate:
                     bytes[1] = 0xFF;
                     if (props.InternalKeepEffect)
@@ -89,6 +91,7 @@ namespace DualSenseAPI.State
                     bytes[6] = props.InternalEndForce.UnsignedToByte();
                     bytes[9] = props.InternalVibrationFrequency;
                     break;
+
                 default:
                     // leave other bytes as 0. this handles Default/No-resist and calibration modes.
                     break;

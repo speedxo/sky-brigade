@@ -12,13 +12,14 @@ public class Mesh3D : Mesh<Vertex>
 {
     public VertexBufferObject<Vertex> Buffer { get; init; }
 
-    private uint ElementCount = 0; 
+    private uint ElementCount = 0;
 
     public Mesh3D()
     {
         Buffer = new();
         SetVboLayout();
     }
+
     /// <summary>
     /// Telling the VAO object how to lay out the attributes.
     /// </summary>
@@ -88,9 +89,9 @@ public class Mesh3D : Mesh<Vertex>
     {
         Material.Use(in options);
 
-        SetUniform("uView", options.Camera.View);
-        SetUniform("uProjection", options.Camera.Projection);
-        SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
+        SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+        SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+        SetUniform(UNIFORM_USE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
     }
 
     public override void Dispose()

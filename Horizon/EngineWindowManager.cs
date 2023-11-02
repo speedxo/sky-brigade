@@ -24,6 +24,7 @@ public class EngineWindowManager : Entity
     /// The screen aspect ratio (w/h)
     /// </summary>
     public float AspectRatio { get; private set; }
+
     /// <summary>
     /// The viewport size.
     /// </summary>
@@ -35,11 +36,13 @@ public class EngineWindowManager : Entity
     public Vector2 WindowSize { get; private set; }
 
     public GL GL { get; private set; }
+
     /// <summary>
     /// Gets the underlying native window.
     /// </summary>
     /// <returns>The GLFW IWindow.</returns>
     public IWindow GetWindow() => _window;
+
     /// <summary>
     /// Gets the windows native input context.
     /// </summary>
@@ -75,7 +78,8 @@ public class EngineWindowManager : Entity
 
     private void SubscribeWindowEvents()
     {
-        this._window.Render += (dt) => {
+        this._window.Render += (dt) =>
+        {
             RenderFrame?.Invoke(dt);
         };
         this._window.Update += (dt) =>
@@ -132,7 +136,7 @@ public class EngineWindowManager : Entity
     }
 
     public void Dispose()
-    {   
+    {
         GC.SuppressFinalize(this);
         _window.Dispose();
     }
@@ -146,8 +150,6 @@ public class EngineWindowManager : Entity
         _window.Title = title;
     }
 }
-
-
 
 /// <summary>
 /// The GameManager class manages the main game loop and essential components for a game.

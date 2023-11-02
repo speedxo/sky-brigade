@@ -1,30 +1,31 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
-namespace Horizon.Rendering
+namespace Horizon.Rendering;
+
+public partial class Tiling<TTextureID>
 {
-    public partial class Tiling<TTextureID>
+    /// <summary>
+    /// An implementation of <see cref="Tile"/> used for rendering Tiled maps.
+    /// </summary>
+    public class StaticTile : Tile
     {
-        public class StaticTile : Tile
+        public readonly struct TiledTileConfig
         {
-            public struct TiledTileConfig
-            {
-                public int ID { get; set; }
-                public TileSet Set { get; set; }
-                public bool IsCollidable { get; set; }
-                public bool IsVisible { get; set; }
-            }
+            public readonly int ID { get; init; }
+            public readonly TileSet Set { get; init; }
+            public readonly bool IsCollidable { get; init; }
+            public readonly bool IsVisible { get; init; }
+        }
 
-            public int ID { get; init; }
+        public int ID { get; init; }
 
-            public StaticTile(TiledTileConfig config, TileMapChunk chunk, Vector2 local)
-                : base(chunk, local)
-            {
-                this.ID = config.ID;
-                this.Set = config.Set;
-                this.PhysicsData.IsCollidable = config.IsCollidable;
-                this.RenderingData.IsVisible = config.IsVisible;
-            }
+        public StaticTile(TiledTileConfig config, TileMapChunk chunk, Vector2 local)
+            : base(chunk, local)
+        {
+            this.ID = config.ID;
+            this.Set = config.Set;
+            this.PhysicsData.IsCollidable = config.IsCollidable;
+            this.RenderingData.IsVisible = config.IsVisible;
         }
     }
 }

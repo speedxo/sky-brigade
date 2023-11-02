@@ -1,12 +1,6 @@
 ﻿using Horizon.Collections;
 using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Horizon.Data;
 
@@ -64,7 +58,7 @@ public class Metrika : Entity, IDisposable
 
         Categories.TryAdd(category, new Dictionary<string, LinearBuffer<double>>());
         Categories[category].TryAdd(name, new LinearBuffer<double>(AVG_LEN));
-            Categories[category][name].Append(time);
+        Categories[category][name].Append(time);
     }
 
     public void ResetMetrics()

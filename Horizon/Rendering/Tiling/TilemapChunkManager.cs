@@ -1,6 +1,5 @@
 ﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using System;
 using System.Numerics;
 
 namespace Horizon.Rendering;
@@ -25,6 +24,7 @@ public abstract partial class Tiling<TTextureID>
                 return Chunks[index];
             }
         }
+
         public TileMapChunk? this[int x, int y]
         {
             get
@@ -66,7 +66,7 @@ public abstract partial class Tiling<TTextureID>
         public void GenerateMeshes()
         {
             for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++) 
+                for (int y = 0; y < Map.Height; y++)
                     Chunks[x + y * Map.Width].Renderer.GenerateMesh();
         }
 

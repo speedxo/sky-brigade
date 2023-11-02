@@ -9,8 +9,10 @@ namespace Horizon.Debugging.Debuggers
 
         private float gamma,
             ambientStrength;
+
         private string[] renderModes;
         private int renderModeIndex;
+
         private bool isPostProcessingEnabled,
             isWireframeEnabled,
             isBox2DDebugDrawEnabled;
@@ -58,10 +60,7 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Dispose()
-        {
-            
-        }
+        public override void Dispose() { }
 
         public override void Update(float dt)
         {

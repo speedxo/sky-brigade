@@ -8,7 +8,7 @@ using PixelFormat = Silk.NET.OpenGL.PixelFormat;
 
 namespace Horizon.OpenGL;
 
-public class Texture : Entity,  IDisposable
+public class Texture : Entity, IDisposable
 {
     public uint Handle { get; }
     public string? Path { get; init; }
@@ -26,10 +26,7 @@ public class Texture : Entity,  IDisposable
     public unsafe Texture(string path)
     {
         if (!File.Exists(path))
-            Engine.Logger.Log(
-                LogLevel.Fatal,
-                $"[Texture] There is no file at location '{path}'!"
-            );
+            Engine.Logger.Log(LogLevel.Fatal, $"[Texture] There is no file at location '{path}'!");
 
         var fileName = System.IO.Path.GetFileName(path)!;
         var lastFolder = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(path))!;
@@ -88,10 +85,7 @@ public class Texture : Entity,  IDisposable
         count++;
         SetParameters();
 
-        Engine.Logger.Log(
-            LogLevel.Info,
-            $"Texture[{Handle}] loaded from file '{path}'!"
-        );
+        Engine.Logger.Log(LogLevel.Info, $"Texture[{Handle}] loaded from file '{path}'!");
     }
 
     public Texture(uint handle)
@@ -201,16 +195,8 @@ public class Texture : Entity,  IDisposable
             TextureParameterName.TextureMagFilter,
             (int)GLEnum.Nearest
         );
-        Engine.GL.TexParameter(
-            TextureTarget.Texture2D,
-            TextureParameterName.TextureBaseLevel,
-            0
-        );
-        Engine.GL.TexParameter(
-            TextureTarget.Texture2D,
-            TextureParameterName.TextureMaxLevel,
-            8
-        );
+        Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
         //Generating mipmaps.
         Engine.GL.GenerateMipmap(TextureTarget.Texture2D);
     }

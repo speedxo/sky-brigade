@@ -1,5 +1,4 @@
-﻿using Horizon.Content;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
@@ -67,7 +66,7 @@ public class RenderRectangle : Entity
         FrameBuffer = FrameBufferManager.CreateFrameBuffer(
             width == 0 ? (int)Engine.Window.ViewportSize.X : width,
             height == 0 ? (int)Engine.Window.ViewportSize.Y : height
-            );
+        );
         Technique = AddEntity(technique);
 
         Transform = AddComponent<TransformComponent>();
@@ -78,10 +77,10 @@ public class RenderRectangle : Entity
 
     public RenderRectangle(Shader shader, int width = 0, int height = 0)
     {
-          FrameBuffer = FrameBufferManager.CreateFrameBuffer(
+        FrameBuffer = FrameBufferManager.CreateFrameBuffer(
             width == 0 ? (int)Engine.Window.ViewportSize.X : width,
             height == 0 ? (int)Engine.Window.ViewportSize.Y : height
-            );
+        );
         Technique = AddEntity(new Technique(shader));
 
         Transform = AddComponent<TransformComponent>();
@@ -112,6 +111,9 @@ public class RenderRectangle : Entity
         Mesh.Load(MeshGenerators.CreateRectangle, new CustomMaterial(Technique.Shader));
     }
 
+    protected const string UNIFORM_ALBEDO = "uAlbedo";
+    protected const string UNIFORM_DEPTH = "uDepth";
+
     public void RenderScene(float dt, ref RenderOptions options)
     {
         Technique.Use();
@@ -125,7 +127,7 @@ public class RenderRectangle : Entity
         {
             Engine.GL.ActiveTexture(TextureUnit.Texture0);
             Engine.GL.BindTexture(TextureTarget.Texture2D, albedo);
-            Technique.SetUniform("uAlbedo", 0);
+            Technique.SetUniform(UNIFORM_ALBEDO, 0);
         }
 
         if (
@@ -137,7 +139,7 @@ public class RenderRectangle : Entity
         {
             Engine.GL.ActiveTexture(TextureUnit.Texture1);
             Engine.GL.BindTexture(TextureTarget.Texture2D, depth);
-            Technique.SetUniform("uDepth", 1);
+            Technique.SetUniform(UNIFORM_DEPTH, 1);
         }
 
         Mesh.Draw(dt, ref options);

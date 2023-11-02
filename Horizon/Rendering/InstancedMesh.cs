@@ -1,7 +1,6 @@
 ﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Horizon.Rendering;
 
@@ -10,7 +9,7 @@ namespace Horizon.Rendering;
 /// </summary>
 public abstract class InstancedMesh<VertexType, InstancedDataType> : Mesh<VertexType>
     where InstancedDataType : unmanaged
-    where VertexType: unmanaged
+    where VertexType : unmanaged
 {
     public InstancedVertexBufferObject<VertexType, InstancedDataType> Buffer { get; init; }
 
@@ -45,7 +44,6 @@ public abstract class InstancedMesh<VertexType, InstancedDataType> : Mesh<Vertex
             if (options.IsWireframeEnabled)
                 Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
-
             Entity.Engine.GL.DrawElementsInstanced(
                 PrimitiveType.Triangles,
                 ElementCount,
@@ -66,9 +64,9 @@ public abstract class InstancedMesh<VertexType, InstancedDataType> : Mesh<Vertex
     {
         Material.Use(in options);
 
-        SetUniform("uView", options.Camera.View);
-        SetUniform("uProjection", options.Camera.Projection);
-        SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
+        SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+        SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+        SetUniform(UNIFORM_USE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
     }
 
     public override void Dispose()
@@ -77,6 +75,7 @@ public abstract class InstancedMesh<VertexType, InstancedDataType> : Mesh<Vertex
 
         Buffer.Dispose();
     }
+
     public override void Load(in IMeshData<VertexType> data, in Material? mat = null)
     {
         Buffer.VertexBuffer.BufferData(data.Vertices.Span);
@@ -86,5 +85,8 @@ public abstract class InstancedMesh<VertexType, InstancedDataType> : Mesh<Vertex
         Material = mat ?? new EmptyMaterial();
     }
 
-    public abstract void Load(in InstancedMeshData<VertexType, InstancedDataType> data, in Material? mat = null);
+    public abstract void Load(
+        in InstancedMeshData<VertexType, InstancedDataType> data,
+        in Material? mat = null
+    );
 }

@@ -1,5 +1,4 @@
 ﻿using Box2D.NetStandard.Dynamics.Bodies;
-using Horizon.OpenGL;
 using Horizon.Primitives;
 using System.Numerics;
 
@@ -28,7 +27,6 @@ public abstract partial class Tiling<TTextureID>
         public const int HEIGHT = 32;
 
         public TileMapChunkSlice[] Slices { get; init; }
-
 
         /// <summary>
         /// Gets the position of the chunk in the tile map.
@@ -84,7 +82,6 @@ public abstract partial class Tiling<TTextureID>
                     - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
                 new(WIDTH, HEIGHT)
             );
-                 
 
             IsDirty = true;
         }
@@ -169,7 +166,7 @@ public abstract partial class Tiling<TTextureID>
 
         /// <summary>
         /// Performs post-generation actions for the chunk.
-        /// </summary>  
+        /// </summary>
         public void PostGenerate()
         {
             for (int s = 0; s < Slices.Length; s++)

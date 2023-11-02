@@ -1,5 +1,4 @@
-﻿using Horizon.GameEntity;
-using Silk.NET.OpenGL;
+﻿using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL;
 
@@ -53,9 +52,11 @@ public class VertexBufferObject<T> : IDisposable
     {
         VertexArray.VertexAttributePointer(index, count, type, vertexSize, offSet);
     }
-    public void VertexAttributeDivisor(uint index, uint divisor) => VertexArray.VertexAttributeDivisor(index, divisor);
 
-    public virtual void Bind() 
+    public void VertexAttributeDivisor(uint index, uint divisor) =>
+        VertexArray.VertexAttributeDivisor(index, divisor);
+
+    public virtual void Bind()
     {
         VertexArray.Bind();
         VertexBuffer.Bind();
@@ -72,6 +73,7 @@ public class VertexBufferObject<T> : IDisposable
     /* I guess the benifit of using a managed language is that i can
      * trust the garbage collector to dispose of these. (fatal mistake)
      */
+
     public virtual void Dispose()
     {
         VertexArray.Dispose();

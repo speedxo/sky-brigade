@@ -1,6 +1,4 @@
-﻿using DualSenseAPI;
-using DualSenseAPI.State;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Input.Components;
 using Silk.NET.Input;
 using System.Numerics;
@@ -37,7 +35,7 @@ namespace Horizon.Input
         /// Gets the XInputJoystickManager responsible for handling joystick input.
         /// </summary>
         public XInputJoystickInputManager XInputJoystickManager { get; init; }
-        
+
         /// <summary>
         /// Gets the DualSenseInputManager responsible for handling joystick input.
         /// </summary>
@@ -80,7 +78,10 @@ namespace Horizon.Input
             PreviousVirtualController = VirtualController;
 
             VirtualController.Actions =
-                keyboardData.Actions | mouseData.Actions | joystickData.Actions | dualsenseData.Actions;
+                keyboardData.Actions
+                | mouseData.Actions
+                | joystickData.Actions
+                | dualsenseData.Actions;
 
             VirtualController.MovementAxis =
                 keyboardData.MovementDirection
@@ -90,7 +91,9 @@ namespace Horizon.Input
             VirtualController.LookingAxis =
                 mouseData.LookingAxis
                 + (XInputJoystickManager.IsConnected ? joystickData.SecondaryAxis : Vector2.Zero)
-                + (DualSenseInputManager.HasController ? dualsenseData.SecondaryAxis : Vector2.Zero);
+                + (
+                    DualSenseInputManager.HasController ? dualsenseData.SecondaryAxis : Vector2.Zero
+                );
         }
 
         /// <summary>

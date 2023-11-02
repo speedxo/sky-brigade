@@ -19,7 +19,7 @@
         /// The level of the battery, from 1 to 10.
         /// </summary>
         /// <remarks>
-        /// Typically, <see cref="IsFullyCharged"/> is set sometime when this is between 8 and 10. 
+        /// Typically, <see cref="IsFullyCharged"/> is set sometime when this is between 8 and 10.
         /// Exactly when the flag is set varies and is likely due to the battery's overcharge protection.
         /// </remarks>
         public float Level;

@@ -1,17 +1,20 @@
 ﻿using Horizon.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Horizon.Rendering.Spriting
+namespace Horizon.Rendering.Spriting;
+
+/// <summary>
+/// Abstract interface providing a basic layout for different batched rendering systems.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface I2DBatchedRenderer<T> : IDrawable
 {
-    public interface I2DBatchedRenderer<T> : IDrawable
-    {
-        /// <summary>
-        /// Commits an object to be rendered.
-        /// </summary>
-        public void Add(T input);
-    }
+    /// <summary>
+    /// Commits an object to be rendered.
+    /// </summary>
+    public void Add(T input);
+
+    /// <summary>
+    /// Remove an object from management.
+    /// </summary>
+    public void Remove(T input);
 }

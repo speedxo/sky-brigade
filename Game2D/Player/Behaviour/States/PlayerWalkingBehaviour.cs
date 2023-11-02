@@ -1,17 +1,14 @@
-using System.Numerics;
-using Horizon;
 using Horizon.GameEntity;
+using System.Numerics;
 
 namespace TileBash.Player.Behaviour.States;
 
 public class PlayerWalkingBehaviour : Player2DStateBehaviour
 {
     public const float MOVEMENT_SPEED = 50.0f;
- 
-    public PlayerWalkingBehaviour(Player2DStateController controller) 
-        : base(controller, Player2DStateIdentifier.Walking)
-    {
-    }
+
+    public PlayerWalkingBehaviour(Player2DStateController controller)
+        : base(controller, Player2DStateIdentifier.Walking) { }
 
     public override Player2DStateIdentifier Update(in float dt)
     {

@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -11,6 +11,7 @@ public class Camera : Entity
     protected Vector3 CameraUp = Vector3.UnitY;
     protected Vector3 _camDir = Vector3.Zero;
     protected float CameraZoom = 45f;
+    protected Matrix4x4 viewProj;
 
     public Vector3 Rotation
     {
@@ -40,6 +41,8 @@ public class Camera : Entity
             10000.0f
         );
 
+        viewProj = View * Projection;
+
         var h = MathF.Tan(CameraZoom / 2.0f) * Position.Z * 1.5f;
         var w = h * aspectRatio;
 
@@ -55,10 +58,8 @@ public class Camera : Entity
 
     public bool IsPointInFrustum(Vector3 point)
     {
-        Matrix4x4 viewProjection = View * Projection;
-
         // Calculate the transformed point in homogeneous coordinates
-        Vector4 transformedPoint = Vector4.Transform(new Vector4(point, 1.0f), viewProjection);
+        Vector4 transformedPoint = Vector4.Transform(new Vector4(point, 1.0f), viewProj);
 
         // Check if the transformed point is within the normalized device coordinates
         bool insideFrustum =

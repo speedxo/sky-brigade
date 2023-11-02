@@ -2,9 +2,7 @@
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering;
-using Silk.NET.Input;
 using System.Numerics;
-using System.Security.Cryptography;
 
 namespace Horizon.Input.Components
 {
@@ -24,8 +22,11 @@ namespace Horizon.Input.Components
         /// Gets the first connected joystick/gamepad, or null if none is connected.
         /// </summary>
         public DualSense? Controller { get; private set; }
+
         public bool HasController { get; private set; } = false;
-        public DualSenseAPI.State.DualSenseOutputState OutputState { get; set; } = new DualSenseAPI.State.DualSenseOutputState();
+        public DualSenseAPI.State.DualSenseOutputState OutputState { get; set; } =
+            new DualSenseAPI.State.DualSenseOutputState();
+
         private DualSense? AttachController()
         {
             var controller = DualSense.EnumerateControllers().FirstOrDefault();
@@ -46,7 +47,7 @@ namespace Horizon.Input.Components
             lock (_updateLock)
             {
                 var state = sender.InputState;
-                
+
                 // TODO: implement keybinds for controller
                 actions = VirtualAction.None;
 
@@ -66,6 +67,7 @@ namespace Horizon.Input.Components
         public JoystickBindings Bindings { get; private set; }
 
         private VirtualAction actions;
+
         private Vector2 primaryAxis,
             secondaryAxis,
             triggers;

@@ -1,5 +1,4 @@
-﻿using Horizon.Content;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -11,24 +10,25 @@ namespace Horizon.Rendering;
 
 public abstract partial class Tiling<TTextureID>
 {
-    public class TileMesh : Entity
+    public struct TileVertex
     {
-        public struct TileVertex
+        public Vector2 Position { get; set; }
+        public Vector2 TexCoords { get; set; }
+        public Vector3 Color { get; set; }
+
+        public TileVertex(float x, float y, float uvX, float uvY, Vector3 color)
         {
-            public Vector2 Position { get; set; }
-            public Vector2 TexCoords { get; set; }
-            public Vector3 Color { get; set; }
-
-            public TileVertex(float x, float y, float uvX, float uvY, Vector3 color)
-            {
-                Color = new Vector3(color.X, color.Y, color.Z);
-                TexCoords = new Vector2(uvX, uvY);
-                Position = new Vector2(x, y);
-            }
-
-            public static readonly int SizeInBytes = sizeof(float) * 7;
+            Color = new Vector3(color.X, color.Y, color.Z);
+            TexCoords = new Vector2(uvX, uvY);
+            Position = new Vector2(x, y);
         }
 
+        public static readonly int SizeInBytes = sizeof(float) * 7;
+    }
+
+    public class TileMesh : Mesh<TileVertex>
+    {
+        protected const string UNIFORM_TEXTURE = "uTexture";
         public uint ElementCount { get; private set; }
 
         public Shader Shader { get; init; }
@@ -38,10 +38,14 @@ public abstract partial class Tiling<TTextureID>
 
         private readonly List<TileVertex> _vertices;
         private readonly List<uint> _indices;
-        private uint _vertexCounter;
+
         private bool _uploadData,
             _isUpdatingMesh;
 
+        /// <summary>Initializes a new instance of the <see cref="TileMesh" /> class.</summary>
+        /// <param name="shader">The shader.</param>
+        /// <param name="set">The set.</param>
+        /// <param name="map">The map.</param>
         public TileMesh(Shader shader, TileSet set, TileMap map)
         {
             Set = set;
@@ -80,47 +84,41 @@ public abstract partial class Tiling<TTextureID>
             Vbo.VertexBuffer.Unbind();
         }
 
-        protected void Upload(ReadOnlySpan<TileVertex> vertices, ReadOnlySpan<uint> elements)
-        {
-            Vbo.VertexBuffer.BufferData(vertices);
-            Vbo.ElementBuffer.BufferData(elements);
-
-            ElementCount = (uint)elements.Length;
-        }
-
         /// <summary>
         /// Constructs a mesh from a Span<Tile>. No null checking is performed.
         /// </summary>
         /// <param name="tiles">a span of tiles to generate the mesh from.</param>
-        public void GenerateMeshFromTiles(ReadOnlySpan<Tile> tiles)
+        public void GenerateMeshFromTiles(in ReadOnlySpan<Tile> tiles)
         {
+            uint _vertexCounter = 0;
+            static uint[] getElements(uint _offset) =>
+                new uint[] { _offset, _offset + 1, _offset + 2, _offset, _offset + 2, _offset + 3 };
+
             if (_isUpdatingMesh)
                 return;
 
             _isUpdatingMesh = true;
+
+            int tileCount = 0;
+            for (int i = 0; i < tiles.Length; i++)
+                if (tiles[i].RenderingData.IsVisible)
+                    tileCount++;
+
+            _vertices.Capacity = tileCount * 4;
+            _indices.Capacity = tileCount * 6;
 
             for (int i = 0; i < tiles.Length; i++)
             {
                 if (!tiles[i].RenderingData.IsVisible)
                     continue;
 
-                AddTile(tiles[i]);
+                _vertices.AddRange(GetVertices(tiles[i]));
+                _indices.AddRange(getElements(_vertexCounter));
+                _vertexCounter += 4;
             }
 
+            ElementCount = (uint)_indices.Count;
             _uploadData = true;
-        }
-
-        [MethodImpl(
-            MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization
-        )]
-        private void AddTile(in Tile tile)
-        {
-            static uint[] getElements(uint _offset) =>
-                new uint[] { _offset, _offset + 1, _offset + 2, _offset, _offset + 2, _offset + 3 };
-
-            _vertices.AddRange(GetVertices(tile));
-            _indices.AddRange(getElements(_vertexCounter));
-            _vertexCounter += 4;
         }
 
         [MethodImpl(
@@ -175,11 +173,11 @@ public abstract partial class Tiling<TTextureID>
                 _uploadData = false;
                 _isUpdatingMesh = false;
 
-                Upload(CollectionsMarshal.AsSpan(_vertices), CollectionsMarshal.AsSpan(_indices));
+                Vbo.VertexBuffer.BufferData(CollectionsMarshal.AsSpan(_vertices));
+                Vbo.ElementBuffer.BufferData(CollectionsMarshal.AsSpan(_indices));
 
-                _indices.Clear();
                 _vertices.Clear();
-                _vertexCounter = 0;
+                _indices.Clear();
             }
 
             if (ElementCount < 1)
@@ -187,28 +185,26 @@ public abstract partial class Tiling<TTextureID>
                 return;
             }
 
-            
-
             Shader.Use();
 
-            Engine.GL.ActiveTexture(TextureUnit.Texture0);
-            Engine.GL.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
-            Shader.SetUniform("uTexture", 0);
+            Entity.Engine.GL.ActiveTexture(TextureUnit.Texture0);
+            Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
+            Shader.SetUniform(UNIFORM_TEXTURE, 0);
 
-            Shader.SetUniform("uView", options.Camera.View);
-            Shader.SetUniform("uProjection", options.Camera.Projection);
-            Shader.SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
+            Shader.SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+            Shader.SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+            Shader.SetUniform(UNIFORM_USE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
 
-            Vbo.Bind();
+            Vbo.VertexArray.Bind();
 
             if (options.IsWireframeEnabled)
             {
-                Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
             }
 
             unsafe // i dont wanna make the whole methud unsafe just for this
             {
-                Engine.GL.DrawElements(
+                Entity.Engine.GL.DrawElements(
                     PrimitiveType.Triangles,
                     ElementCount,
                     DrawElementsType.UnsignedInt,
@@ -218,11 +214,19 @@ public abstract partial class Tiling<TTextureID>
 
             if (options.IsWireframeEnabled)
             {
-                Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
             }
 
-            Vbo.Unbind();
+            Vbo.VertexArray.Unbind();
             Shader.End();
         }
+
+        public override void Load(in IMeshData<TileVertex> data, in Material? mat = null)
+        {
+            Vbo.VertexBuffer.BufferData(data.Vertices.Span);
+            Vbo.ElementBuffer.BufferData(data.Elements.Span);
+        }
+
+        public override void Dispose() { }
     }
 }

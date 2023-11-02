@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using Horizon.Logging;
+﻿using Horizon.Logging;
+using System.Numerics;
 
 namespace Horizon.Content
 {
@@ -48,6 +48,20 @@ namespace Horizon.Content
             return uniformBlockIndexes[blockName];
         }
 
+        public void SetUniform(in string name, in Matrix4x4 value)
+        {
+            int location = GetUniformLocation(name);
+            if (location == -1) // If GetUniformLocation returns -1, the uniform is not found.
+            {
+                Engine.Logger.Log(
+                    LogLevel.Error,
+                    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
+                );
+                return;
+            }
+            Engine.GL.UniformMatrix4(location, 1, false, value.M11);
+        }
+
         /// <summary>
         /// Sets the specified uniform to a specified value. This is a high performance method and the uniform index is guaranteed to be cached.
         /// </summary>
@@ -56,7 +70,10 @@ namespace Horizon.Content
             int location = GetUniformLocation(name);
             if (location == -1 || value is null) // If GetUniformLocation returns -1, the uniform is not found.
             {
-                Engine.Logger.Log(LogLevel.Error, $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!");
+                Engine.Logger.Log(
+                    LogLevel.Error,
+                    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
+                );
                 return;
             }
 
@@ -79,12 +96,7 @@ namespace Horizon.Content
                     break;
 
                 case Vector3 vector3Value:
-                    Engine.GL.Uniform3(
-                        location,
-                        vector3Value.X,
-                        vector3Value.Y,
-                        vector3Value.Z
-                    );
+                    Engine.GL.Uniform3(location, vector3Value.X, vector3Value.Y, vector3Value.Z);
                     break;
 
                 case Vector4 vector4Value:
@@ -129,6 +141,7 @@ namespace Horizon.Content
         }
 
         public virtual void Use() => Engine.GL.UseProgram(Handle);
+
         public virtual void End() => Engine.GL.UseProgram(0);
 
         public override void Dispose()

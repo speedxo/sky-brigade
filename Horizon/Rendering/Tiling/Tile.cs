@@ -12,6 +12,9 @@ namespace Horizon.Rendering;
 public partial class Tiling<TTextureID>
     where TTextureID : Enum
 {
+    /// <summary>
+    /// An abstract class representing a dynamic 2D tile.
+    /// </summary>
     public abstract class Tile : IUpdateable, IDrawable
     {
         /// <summary>

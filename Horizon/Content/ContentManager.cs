@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Logging;
 using Horizon.OpenGL;
 
@@ -13,8 +12,7 @@ namespace Horizon.Content
 
         public ShaderContentManager Shaders { get; private set; }
 
-        public void AddShader(in string name, in Shader shader)
-            => Shaders.AddNamed(name, shader);
+        public void AddShader(in string name, in Shader shader) => Shaders.AddNamed(name, shader);
 
         public override void Initialize()
         {
@@ -48,7 +46,6 @@ namespace Horizon.Content
             }
         }
 
-     
         #region Textures
 
         public Texture LoadTexture(string path)
@@ -103,7 +100,6 @@ namespace Horizon.Content
 
         #endregion Textures
 
-
         // Implement IDisposable pattern
         private bool disposed = false;
 
@@ -147,10 +143,7 @@ namespace Horizon.Content
         public void DeleteTexture(string name)
         {
             if (!namedTextures.Remove(name, out var texture))
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Attempt to delete nonexistent Texture({name})"
-                );
+                Engine.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Texture({name})");
             else
                 texture?.Dispose();
         }

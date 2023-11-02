@@ -32,26 +32,17 @@ namespace Horizon.Rendering
 
             // Bind the albedo texture to texture unit 0
             Engine.GL.ActiveTexture(TextureUnit.Texture0);
-            Engine.GL.BindTexture(
-                TextureTarget.Texture2D,
-                MaterialDescription.Albedo.Handle
-            );
+            Engine.GL.BindTexture(TextureTarget.Texture2D, MaterialDescription.Albedo.Handle);
             Technique.SetUniform("uAlbedo", 0);
 
             // Bind the metallicness texture to texture unit 1
             Engine.GL.ActiveTexture(TextureUnit.Texture1);
-            Engine.GL.BindTexture(
-                TextureTarget.Texture2D,
-                MaterialDescription.Metallicness.Handle
-            );
+            Engine.GL.BindTexture(TextureTarget.Texture2D, MaterialDescription.Metallicness.Handle);
             Technique.SetUniform("uMetallicness", 1);
 
             // Bind the roughness texture to texture unit 2
             Engine.GL.ActiveTexture(TextureUnit.Texture2);
-            Engine.GL.BindTexture(
-                TextureTarget.Texture2D,
-                MaterialDescription.Roughness.Handle
-            );
+            Engine.GL.BindTexture(TextureTarget.Texture2D, MaterialDescription.Roughness.Handle);
             Technique.SetUniform("uRoughness", 2);
 
             // Bind the ambient occlusion texture to texture unit 3
@@ -64,10 +55,7 @@ namespace Horizon.Rendering
 
             // Bind the normals texture to texture unit 4
             Engine.GL.ActiveTexture(TextureUnit.Texture4);
-            Engine.GL.BindTexture(
-                TextureTarget.Texture2D,
-                MaterialDescription.Normals.Handle
-            );
+            Engine.GL.BindTexture(TextureTarget.Texture2D, MaterialDescription.Normals.Handle);
             Technique.SetUniform("uNormals", 4);
         }
 

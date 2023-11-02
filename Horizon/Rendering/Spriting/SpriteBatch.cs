@@ -1,36 +1,62 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Runtime.InteropServices;
-using Horizon.Content;
+﻿using Horizon.Content;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.Rendering.Spriting.Components;
 using Horizon.Rendering.Spriting.Data;
+using System.Runtime.InteropServices;
 
 namespace Horizon.Rendering.Spriting;
 
+/// <summary>
+/// An alternative (high performance) rendering back end for rendering a collection of dynamic sprites.
+/// </summary>
+/// <seealso cref="Horizon.GameEntity.Entity" />
+/// <seealso cref="Horizon.Rendering.Spriting.I2DBatchedRenderer&lt;Horizon.Rendering.Spriting.Sprite&gt;" />
 public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
 {
+    /// <summary>
+    /// The global transform for all sprite meshes.
+    /// </summary>
     public TransformComponent Transform { get; init; }
+
+    /// <summary>
+    /// Gets the shader.
+    /// </summary>
     public Shader Shader { get; init; }
+
+    /// <summary>
+    /// TODO please remind me to make a custom datastruct for this shit
+    /// </summary>
+    /// <value>
     public Dictionary<
-        Spritesheet,
+        SpriteSheet,
         (List<Sprite> sprites, SpriteBatchMesh mesh)
     > SpritesheetSprites { get; init; }
 
     private bool _requiresVboUpdate = false;
-    public int Count { get; private set;}
+    public int Count { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpriteBatch"/> class.
+    /// </summary>
+    /// <param name="shader">A custom shader used to render sprites. It is recommended to leave default and apply effects using the post processing pipeline.</param>
     public SpriteBatch(Shader? shader = null)
     {
-        this.Shader = Engine.Content.Shaders.AddNamed("sprite", ShaderFactory.CompileNamed("Assets/sprite_shaders/", "sprites"));
-        
+        this.Shader = Engine.Content.Shaders.AddNamed(
+            "sprite",
+            ShaderFactory.CompileNamed("Assets/sprite_shaders/", "sprites")
+        );
+
         this.SpritesheetSprites = new();
 
         this.Transform = AddComponent<TransformComponent>();
         Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
     }
 
+    /// <summary>
+    /// Commits an object to be rendered.
+    /// </summary>
+    /// <param name="sprite"></param>
     public void Add(Sprite sprite)
     {
         if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet))
@@ -46,6 +72,11 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         _requiresVboUpdate = true;
     }
 
+    /// <summary>
+    /// Draws all the sprites commited to this instance.
+    /// </summary>
+    /// <param name="dt">Delta time.</param>
+    /// <param name="options">Render options (optional).</param>
     public override void Draw(float dt, ref RenderOptions options)
     {
         if (_requiresVboUpdate)
@@ -57,6 +88,9 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
             mesh.Draw(spritesheet, Transform.ModelMatrix, sprites, ref options);
     }
 
+    /// <summary>
+    /// Forces a recalculation of the sprite meshes.
+    /// </summary>
     public void UpdateVBO()
     {
         Count = 0;
@@ -97,13 +131,12 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
             var spritesElements = getElements();
             for (int j = 0; j < spritesElements.Length; j++)
                 elements[i + j] = spritesElements[j];
-            
+
             vertexCounter += 4;
         }
 
-        return new MeshData2D { 
-            Vertices = vertices,
-            Elements = elements
-        };
+        return new MeshData2D { Vertices = vertices, Elements = elements };
     }
+
+    public void Remove(Sprite input) { }
 }

@@ -4,7 +4,6 @@ using Horizon.Rendering;
 using ImGuiNET;
 using System.Collections;
 using System.Numerics;
-using System.Reflection;
 
 namespace Horizon.Debugging.Debuggers
 {
@@ -41,10 +40,7 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Dispose()
-        {
-            
-        }
+        public override void Dispose() { }
 
         private void DrawEntityTree(Entity? entity)
         {
@@ -128,8 +124,7 @@ namespace Horizon.Debugging.Debuggers
             }
 
             Type type = component.GetType();
-            var properties = type
-                .GetProperties()
+            var properties = type.GetProperties()
                 .Where(p => p.GetIndexParameters().Length == 0)
                 .ToArray();
             try
@@ -238,7 +233,8 @@ namespace Horizon.Debugging.Debuggers
                     }
                 }
             }
-            catch { 
+            catch
+            {
                 ImGui.Text("EISH MY MAN");
                 throw;
             }

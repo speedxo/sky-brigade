@@ -19,10 +19,7 @@ namespace Horizon.Rendering
             Shader = shader;
         }
 
-        public void Initialize()
-        {
-
-        }
+        public void Initialize() { }
 
         public UniformBufferObject AddUniformBuffer(uint bindingPoint)
         {

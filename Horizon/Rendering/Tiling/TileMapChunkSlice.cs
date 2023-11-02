@@ -26,12 +26,12 @@ public abstract partial class Tiling<TTextureID>
             this.Tiles = new Tile[Width * Height];
         }
 
-        
         public Tile? this[int x, int y]
         {
             get { return Tiles[x + y * Width]; }
             set { Tiles[x + y * Width] = value; }
         }
+
         public Tile? this[int i]
         {
             get

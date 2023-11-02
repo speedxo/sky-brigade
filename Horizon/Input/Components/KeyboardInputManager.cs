@@ -22,13 +22,13 @@ namespace Horizon.Input.Components
         /// <summary>
         /// Represents the current most up to date state of the keyboard.
         /// </summary>
-        public KeyboardState? CurrentState { get; private set; }  
-        
+        public KeyboardState? CurrentState { get; private set; }
+
         /// <summary>
         /// A snapshot of the state of the keyboard one frame ago.
         /// </summary>
         public KeyboardState? PreviousState { get; private set; }
-        
+
         /// <summary>
         /// The parent input manager
         /// </summary>
@@ -58,7 +58,7 @@ namespace Horizon.Input.Components
             Bindings = KeyboardBindings.Default;
             Manager = (InputManager)Parent;
 
-            // Delegate updating of the previous keyboard state to after the main update callback. 
+            // Delegate updating of the previous keyboard state to after the main update callback.
             Entity.Engine.OnPostUpdate += (dt) =>
             {
                 PreviousState = CurrentState;
@@ -72,7 +72,7 @@ namespace Horizon.Input.Components
         /// </summary>
         /// <returns>The KeyboardData containing the keyboard input.</returns>
         public KeyboardData Data { get; private set; } = default;
-        
+
         /// <summary>
         /// Updates the KeyboardManager, processing input from the connected keyboard.
         /// </summary>
@@ -85,7 +85,7 @@ namespace Horizon.Input.Components
             {
                 direction = default;
                 actions = default;
-                
+
                 return;
             }
 
@@ -125,11 +125,12 @@ namespace Horizon.Input.Components
         /// <returns></returns>
         public bool IsKeyPressed(Key key)
         {
-            if (CurrentState is null || PreviousState is null) 
+            if (CurrentState is null || PreviousState is null)
                 return false;
-            
+
             return !PreviousState.IsKeyPressed(key) && CurrentState.IsKeyPressed(key);
-        }            
+        }
+
         /// <summary>
         /// Updates the KeyboardManager, not used for keyboard input.
         /// </summary>
@@ -138,6 +139,7 @@ namespace Horizon.Input.Components
         {
             // Not used for keyboard input.
         }
+
         /// <summary>
         /// Draws the KeyboardManager, not used for keyboard input.
         /// </summary>

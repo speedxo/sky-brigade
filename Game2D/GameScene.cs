@@ -1,5 +1,4 @@
 ﻿global using static Horizon.Rendering.Tiling<TileBash.TileTextureID>;
-
 using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
 using Horizon;
@@ -9,11 +8,9 @@ using Horizon.Prefabs.Effects;
 using Horizon.Rendering;
 using Horizon.Rendering.Effects;
 using Horizon.Rendering.Spriting;
-using ImGuiNET;
-using Silk.NET.Core.Attributes;
+using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using System.Numerics;
-using Silk.NET.Input;
 using TileBash.Player;
 
 namespace TileBash;
@@ -34,7 +31,7 @@ public class GameScene : Scene
         InitializeGl();
 
         debugDrawCallback = new();
-        debugDrawCallback.Parent  =this;
+        debugDrawCallback.Parent = this;
         debugDrawCallback.Initialize();
 
         debugDrawCallback.AppendFlags(
@@ -43,7 +40,7 @@ public class GameScene : Scene
         debugDrawCallback.Enabled = true;
 
         world = AddComponent<Box2DWorldComponent>();
-        
+
         world.SetDebugDraw(debugDrawCallback);
 
         if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
@@ -88,12 +85,12 @@ public class GameScene : Scene
 
         if (Engine.Input.KeyboardManager.IsKeyPressed(Key.F3))
             Engine.Debugger.Enabled = !Engine.Debugger.Enabled;
-        
+
         cam.Position = new Vector3(player.Position.X, player.Position.Y, cameraMovement);
 
         cam.Update(dt);
     }
-     
+
     public override void Draw(float dt, ref RenderOptions options)
     {
         charOptions = options with { Camera = cam };
@@ -113,7 +110,5 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    public override void DrawGui(float dt) 
-    {         
-    }
+    public override void DrawGui(float dt) { }
 }

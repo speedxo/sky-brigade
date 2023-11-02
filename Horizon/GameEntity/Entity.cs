@@ -1,7 +1,6 @@
 ﻿using Horizon.GameEntity.Components;
 using Horizon.Primitives;
 using Horizon.Rendering;
-using Silk.NET.OpenAL;
 
 namespace Horizon.GameEntity
 {
@@ -11,12 +10,14 @@ namespace Horizon.GameEntity
     public abstract class Entity : IDrawable, IUpdateable
     {
         private static GameEngine _engine;
-        public static void SetGameEngine(in GameEngine engine) 
-            => _engine = engine;
+
+        public static void SetGameEngine(in GameEngine engine) => _engine = engine;
+
         /// <summary>
         /// Static instance of the parent game engine.
         /// </summary>
         public static GameEngine Engine => _engine;
+
         internal static int _nextId = 0;
 
         /// <summary>

@@ -10,6 +10,12 @@ namespace Horizon.Rendering;
 /// </summary>
 public class Mesh2D : Mesh<Vertex2D>
 {
+    private const string UNIFORM_VIEW_MATRIX = "uView";
+    private const string UNIFORM_PROJECTION_MATRIX = "uProjection";
+    private const string UNIFORM_ENABLE_WIREFRAME = "uWireframeEnabled";
+
+    /// <summary>The underlying VBO this class encapsulates.</summary>
+    /// <value>The buffer.</value>
     public VertexBufferObject<Vertex2D> Buffer { get; init; }
 
     private uint ElementCount = 0;
@@ -19,6 +25,7 @@ public class Mesh2D : Mesh<Vertex2D>
         Buffer = new();
         SetVboLayout();
     }
+
     /// <summary>
     /// Telling the VAO object how to lay out the attributes.
     /// </summary>
@@ -53,6 +60,13 @@ public class Mesh2D : Mesh<Vertex2D>
         Buffer.VertexArray.Unbind();
     }
 
+    /// <summary>
+    ///   <para>
+    /// Draws the current object using the provided render options.
+    /// </para>
+    /// </summary>
+    /// <param name="dt">The elapsed time since the last render call.</param>
+    /// <param name="options">Optional render options. If not provided, default options will be used.</param>
     public override void Draw(float dt, ref RenderOptions options)
     {
         if (ElementCount < 1)
@@ -63,7 +77,7 @@ public class Mesh2D : Mesh<Vertex2D>
         Buffer.Bind();
 
         // Once again, I really don't want to make the whole method unsafe for one call.
-        unsafe
+        //unsafe
         {
             // Turn on wireframe mode
             if (options.IsWireframeEnabled)
@@ -73,7 +87,7 @@ public class Mesh2D : Mesh<Vertex2D>
                 PrimitiveType.Triangles,
                 ElementCount,
                 DrawElementsType.UnsignedInt,
-                null
+                new IntPtr()
             );
 
             // Turn off wireframe mode
@@ -84,13 +98,15 @@ public class Mesh2D : Mesh<Vertex2D>
         Buffer.Unbind();
     }
 
+    /// <summary>Binds and set shader uniforms.</summary>
+    /// <param name="options">The options.</param>
     protected virtual void BindAndSetUniforms(in RenderOptions options)
     {
         Material.Use(in options);
 
-        SetUniform("uView", options.Camera.View);
-        SetUniform("uProjection", options.Camera.Projection);
-        SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
+        SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+        SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+        SetUniform(UNIFORM_ENABLE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
     }
 
     public override void Dispose()
@@ -99,6 +115,7 @@ public class Mesh2D : Mesh<Vertex2D>
 
         Buffer.Dispose();
     }
+
     /// <summary>
     /// Loads mesh data into the mesh, please note that material is only set if it is null.
     /// </summary>

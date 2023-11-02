@@ -10,7 +10,7 @@ namespace Horizon.Rendering;
 public abstract partial class Tiling<TTextureID>
 {
     /// <summary>
-    /// Represents a tile map in the game world.
+    /// Represents a 2D tile map with multiple layers in the game world.
     /// </summary>
     public class TileMap : Entity
     {
@@ -45,6 +45,7 @@ public abstract partial class Tiling<TTextureID>
         public Dictionary<string, TileSet> TileSets { get; init; }
 
         private int TileUpdateCount = 0;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TileMap"/> class.
         /// </summary>
@@ -66,7 +67,7 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         /// <param name="parent">The gamescreen (necessary if you plan to use Box2D integration).</param>
         /// <param name="tiledMapPath">The path of the tiled map.</param>
-        /// <returns></returns>
+        /// <returns>An instance of <see cref="TileMap"/> based off a specified Tiled map. Null if unsuccessful.</returns>
         public static TileMap? FromTiledMap(Entity parent, string tiledMapPath)
         {
             try
@@ -168,7 +169,11 @@ public abstract partial class Tiling<TTextureID>
             }
         }
 
-        // The reason these are factored out is for future proofing.
+        /// <summary>
+        /// Generates the tiled tile configuration from layer.
+        /// </summary>
+        /// <param name="layer">The layer.</param>
+        /// <returns></returns>
         private static StaticTile.TiledTileConfig GenerateTiledTileConfigFromLayer(TmxLayer layer)
         {
             layer.Properties.TryGetValue("IsCollidable", out var _stringIsCollidable);
@@ -183,6 +188,13 @@ public abstract partial class Tiling<TTextureID>
             };
         }
 
+        /// <summary>
+        /// Generates the tiled tile configuration from tile.
+        /// </summary>
+        /// <param name="layerConfig">The layer configuration.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="tile">The tile.</param>
+        /// <returns></returns>
         private static StaticTile.TiledTileConfig GenerateTiledTileConfigFromTile(
             StaticTile.TiledTileConfig layerConfig,
             TileMap map,
@@ -198,6 +210,11 @@ public abstract partial class Tiling<TTextureID>
             };
         }
 
+        /// <summary>
+        /// Finds the tileset from unique identifier.
+        /// </summary>
+        /// <param name="guid">The unique identifier.</param>
+        /// <returns></returns>
         private (TileSet? tileSet, int localTileId) FindTilesetFromGUID(int guid)
         {
             TileSet? set = null; // Changed the local variable name from "set" to "tileSet" to avoid conflict with the private field name
@@ -224,9 +241,21 @@ public abstract partial class Tiling<TTextureID>
                 World = Parent!.GetComponent<Box2DWorldComponent>();
             ChunkManager = AddComponent<TileMapChunkManager>();
 
-            Engine.Debugger.GeneralDebugger.AddWatch("Size", "Tilemap", () => $"{Width}, {Height}, {Depth}");
-            Engine.Debugger.GeneralDebugger.AddWatch("Chunk Count", "Tilemap", () => $"{ChunkManager.Chunks.GetLength(0)}");
-            Engine.Debugger.GeneralDebugger.AddWatch("Total Tiles", "Tilemap", () => TileUpdateCount);
+            Engine.Debugger.GeneralDebugger.AddWatch(
+                "Size",
+                "Tilemap",
+                () => $"{Width}, {Height}, {Depth}"
+            );
+            Engine.Debugger.GeneralDebugger.AddWatch(
+                "Chunk Count",
+                "Tilemap",
+                () => $"{ChunkManager.Chunks.GetLength(0)}"
+            );
+            Engine.Debugger.GeneralDebugger.AddWatch(
+                "Total Tiles",
+                "Tilemap",
+                () => TileUpdateCount
+            );
         }
 
         /// <summary>
@@ -271,7 +300,8 @@ public abstract partial class Tiling<TTextureID>
         }
 
         /// <summary>
-        /// Gets or sets a tile at the specified coordinates.
+        /// Gets or sets a tile at the specified coordinates. (safely)
+        /// For higher performance please access the ChunkManager.Chunks array directly.
         /// </summary>
         /// <param name="x">The X coordinate of the tile.</param>
         /// <param name="y">The Y coordinate of the tile.</param>

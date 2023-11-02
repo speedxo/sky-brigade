@@ -1,6 +1,6 @@
-﻿using System;
+﻿using DualSenseAPI.Util;
+using System;
 using System.Linq;
-using DualSenseAPI.Util;
 
 namespace DualSenseAPI.State
 {
@@ -60,7 +60,7 @@ namespace DualSenseAPI.State
             // gyro directions seem to follow left-hand rule rather than right, so reverse the directions
             Gyro = -ReadAccelAxes(
                 GetModeSwitch(inputMode, data, 15, -1, 2),
-                GetModeSwitch(inputMode, data, 17, -1, 2), 
+                GetModeSwitch(inputMode, data, 17, -1, 2),
                 GetModeSwitch(inputMode, data, 19, -1, 2)
             );
             Accelerometer = ReadAccelAxes(
@@ -98,7 +98,7 @@ namespace DualSenseAPI.State
         /// values that aren't supported in a given mode).
         /// </returns>
         /// <remarks>
-        /// This was due to a previous issue where controllers connected over Bluetooth were providing data bytes 
+        /// This was due to a previous issue where controllers connected over Bluetooth were providing data bytes
         /// in a different order with some data missing. It resolved itself before I could solve the problem but
         /// keeping this around for when I can find it again. Currently always uses <paramref name="indexIfUsb"/>.
         /// </remarks>
@@ -126,13 +126,21 @@ namespace DualSenseAPI.State
         /// 0's if the index is negative.
         /// </returns>
         /// <remarks>
-        /// This was due to a previous issue where controllers connected over Bluetooth were providing data bytes 
+        /// This was due to a previous issue where controllers connected over Bluetooth were providing data bytes
         /// in a different order with some data missing. It resolved itself before I could solve the problem but
         /// keeping this around for when I can find it again. Currently always uses <paramref name="startIndexIfUsb"/>.
         /// </remarks>
-        private byte[] GetModeSwitch(IoMode inputMode, byte[] data, int startIndexIfUsb, int startIndexIfBt, int size)
+        private byte[] GetModeSwitch(
+            IoMode inputMode,
+            byte[] data,
+            int startIndexIfUsb,
+            int startIndexIfBt,
+            int size
+        )
         {
-            return startIndexIfUsb >= 0 ? data.Skip(startIndexIfUsb).Take(size).ToArray() : new byte[size];
+            return startIndexIfUsb >= 0
+                ? data.Skip(startIndexIfUsb).Take(size).ToArray()
+                : new byte[size];
             //return InputMode switch
             //{
             //    InputMode.USB => startIndexIfUsb >= 0 ? readData.Skip(startIndexIfUsb).Take(size).ToArray() : new byte[size],

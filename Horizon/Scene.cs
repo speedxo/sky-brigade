@@ -100,9 +100,7 @@ public abstract class Scene : Entity, IDisposable
         //{
         FrameBuffer.Bind();
 
-        Engine.GL.Clear(
-            ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit
-        );
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         Engine.GL.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
         //}
         //else
@@ -132,9 +130,7 @@ public abstract class Scene : Entity, IDisposable
         if (Engine.Debugger.GameContainerDebugger.Visible)
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Bind();
 
-        Engine.GL.Clear(
-            ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit
-        );
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         Engine.GL.Viewport(
             0,
             0,
@@ -142,7 +138,6 @@ public abstract class Scene : Entity, IDisposable
             (uint)Engine.Window.ViewportSize.Y
         );
 
-        
         if (options.IsPostProcessingEnabled)
             SceneRect.RenderScene(dt, ref options);
         else

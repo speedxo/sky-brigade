@@ -7,7 +7,12 @@
     {
         public override string Name { get; set; } = "ShaderManager";
 
-        public Shader AddFromDefinitions(params ShaderDefinition[] shaderDefinitions) => Add(ShaderFactory.CompileFromDefinitions(shaderDefinitions));
-        public Shader AddNamedFromDefinitions(string name, params ShaderDefinition[] shaderDefinitions) => AddNamed(name, ShaderFactory.CompileFromDefinitions(shaderDefinitions));
+        public Shader AddFromDefinitions(params ShaderDefinition[] shaderDefinitions) =>
+            Add(ShaderFactory.CompileFromDefinitions(shaderDefinitions));
+
+        public Shader AddNamedFromDefinitions(
+            string name,
+            params ShaderDefinition[] shaderDefinitions
+        ) => AddNamed(name, ShaderFactory.CompileFromDefinitions(shaderDefinitions));
     }
 }

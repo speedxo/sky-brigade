@@ -24,11 +24,13 @@ public partial class CharacterController
             get => Transform.Position;
             set => Transform.Position = value;
         }
+
         public Vector3 Rotation
         {
             get => Transform.Rotation;
             set => Transform.Rotation = value;
         }
+
         public Vector3 Front
         {
             get => Transform.Front;

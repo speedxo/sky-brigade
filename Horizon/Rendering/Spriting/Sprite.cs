@@ -10,7 +10,7 @@ public class Sprite : Entity
     private static int _idCounter = 0;
     private bool _hasBeenSetup = false;
 
-    public Spritesheet Spritesheet { get; private set; }
+    public SpriteSheet Spritesheet { get; private set; }
 
     public bool ShouldDraw { get; set; } = true;
     public bool Flipped { get; set; } = false;
@@ -23,7 +23,7 @@ public class Sprite : Entity
     public TransformComponent2D Transform { get; private set; }
 
     public void ConfigureSpritesheetAndDefaultAnimation(
-        Spritesheet spriteSheet,
+        SpriteSheet spriteSheet,
         string name,
         TransformComponent2D? inTransform = null
     )
@@ -40,10 +40,7 @@ public class Sprite : Entity
     public Vertex2D[] GetVertices()
     {
         if (!_hasBeenSetup)
-            Engine.Logger.Log(
-                Logging.LogLevel.Error,
-                "[Sprite] Setup() has not been called!"
-            );
+            Engine.Logger.Log(Logging.LogLevel.Error, "[Sprite] Setup() has not been called!");
 
         Vector2[] uv = IsAnimated
             ? Spritesheet.GetAnimatedTextureCoordinates(FrameName)
