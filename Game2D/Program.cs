@@ -17,13 +17,5 @@ internal class Program
             }
         );
         engine.Run();
-
-        // GameManager.Instance.Initialize(
-        //     GameInstanceParameters.Default with
-        //     {
-        //         InitialGameScreen = typeof(GameScene)
-        //     }
-        // );
-        // GameManager.Instance.Run();
     }
 }

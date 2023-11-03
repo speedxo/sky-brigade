@@ -20,7 +20,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         set => _updateRate = 1.0f / value;
     }
 
-    private float _updateRate = 1.0f / 10.0f;
+    private float _updateRate = 1.0f / 30.0f;
     private float _updateTimer = 0.0f;
 
     private SkylineDebugger Debugger { get; set; }
@@ -30,6 +30,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     private LinearBuffer<double> _updateFrameTimes;
     private LinearBuffer<double> _renderFrameTimes;
+    private LinearBuffer<double> _renderDeltas;
 
     private long _prevTimestamp;
     private long _prevCpuTime;
@@ -42,6 +43,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
         _updateFrameTimes = new(100);
         _renderFrameTimes = new(100);
+        _renderDeltas = new(100);
 
         // Initialize requried dictionaries by inference.
         CpuMetrics.AddCustom("Engine", "CPU", 0.0);
@@ -73,6 +75,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         if (_updateTimer > _updateRate)
         {
             _updateTimer = 0.0f;
+            _renderDeltas.Append(dt);
             _updateFrameTimes.Append(GetAverage(CpuMetrics["Engine"]["CPU"]) * 1000.0);
             _renderFrameTimes.Append(GetAverage(GpuMetrics["Engine"]["GPU"]) * 1000.0);
         }
@@ -87,6 +90,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
         if (ImGui.Begin(Name))
         {
+            ImGui.Text($"FPS: {1.0f / _renderDeltas.Buffer.Average():0.0}");
+
             if (ImGui.CollapsingHeader("Logic Profiler"))
                 DrawCpuProfiling();
             if (ImGui.CollapsingHeader("Render Profiler"))

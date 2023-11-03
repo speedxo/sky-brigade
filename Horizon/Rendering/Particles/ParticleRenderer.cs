@@ -29,6 +29,7 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
     public uint Count { get; protected set; }
     public TransformComponent2D Transform { get; init; }
     public float MaxAge { get; set; } = 2.5f;
+    public float ParticleSize { get; set; } = 0.05f;
 
     static ParticleRenderer2D()
     {
@@ -68,13 +69,12 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         buffer.VertexAttributeDivisor(1, 1); // Each particle has its own offset.
         buffer.Unbind();
 
-        float size = 0.1f;
         quadVerts = new ParticleVertex[]
         {
-            new ParticleVertex(new Vector2(-size, -size)),
-            new ParticleVertex(new Vector2(size, -size)),
-            new ParticleVertex(new Vector2(size, size)),
-            new ParticleVertex(new Vector2(-size, size))
+            new ParticleVertex(new Vector2(-ParticleSize, -ParticleSize)),
+            new ParticleVertex(new Vector2(ParticleSize, -ParticleSize)),
+            new ParticleVertex(new Vector2(ParticleSize, ParticleSize)),
+            new ParticleVertex(new Vector2(-ParticleSize, ParticleSize))
         };
         indices = new uint[] { 0, 1, 2, 0, 2, 3 };
 
@@ -119,7 +119,7 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
                 continue;
             }
 
-            Offsets[i] += span[i].Direction * dt * span[i].Random;
+            Offsets[i] += span[i].Direction * dt * span[i].Random * span[i].Speed;
         }
     }
 

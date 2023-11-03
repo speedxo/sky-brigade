@@ -87,6 +87,8 @@ namespace Horizon.Input
                 keyboardData.MovementDirection
                 + (XInputJoystickManager.IsConnected ? joystickData.PrimaryAxis : Vector2.Zero)
                 + (DualSenseInputManager.HasController ? dualsenseData.PrimaryAxis : Vector2.Zero);
+            if (VirtualController.MovementAxis.LengthSquared() > 1.0f)
+                VirtualController.MovementAxis = Vector2.Normalize(VirtualController.MovementAxis);
 
             VirtualController.LookingAxis =
                 mouseData.LookingAxis

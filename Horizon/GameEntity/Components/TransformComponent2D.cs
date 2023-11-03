@@ -21,7 +21,7 @@ namespace Horizon.GameEntity.Components
         private float rot;
 
         /// <summary>
-        /// The scale factors of the game entity along each axis (X, Y, and Z).
+        /// The scale factors of the game entity along each axis (X and Y).
         /// </summary>
         private Vector2 scale = Vector2.One;
 

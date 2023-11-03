@@ -159,6 +159,7 @@ public class FrameBufferObject : Entity, IDisposable
             foreach (var (type, texture) in Attachments)
             {
                 Engine.GL.DeleteTexture(texture);
+
                 attachmentTypes.Add(type);
             }
             Engine.GL.DeleteFramebuffer(Handle);
@@ -200,5 +201,6 @@ public class FrameBufferObject : Entity, IDisposable
         {
             Engine.GL.DeleteTexture(texture);
         }
+        Engine.GL.DeleteFramebuffer(Handle);
     }
 }

@@ -28,7 +28,8 @@ public class PlayerWalkingBehaviour : Player2DStateBehaviour
             var v when v.X < 0 => "walk_left",
             var v when v.X > 0 => "walk_right",
             var v when v.Y > 0 => "walk_up",
-            var v when v.Y < 0 => "walk_down"
+            var v when v.Y < 0 => "walk_down",
+            _ => "idle"
         };
 
         return Player2DStateIdentifier.Walking;
