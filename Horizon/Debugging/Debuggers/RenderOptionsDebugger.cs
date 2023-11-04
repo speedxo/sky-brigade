@@ -36,7 +36,7 @@ namespace Horizon.Debugging.Debuggers
             Name = "Render Options";
         }
 
-        public RenderOptions RenderOptions { get; private set; }
+        public RenderOptions RenderOptions;
 
         public override void Draw(float dt, ref RenderOptions options)
         {

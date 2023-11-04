@@ -1,4 +1,6 @@
 ﻿using Horizon.Logging;
+using Horizon.OpenGL;
+using Silk.NET.OpenGL;
 using System.Numerics;
 
 namespace Horizon.Content
@@ -16,6 +18,7 @@ namespace Horizon.Content
 
         private readonly Dictionary<string, int> uniformIndexes;
         private readonly Dictionary<string, uint> uniformBlockIndexes;
+        private readonly Dictionary<string, uint> programResourceIndexes;
 
         /// <summary>
         /// Please initialize using GLShaderFactory.
@@ -26,6 +29,36 @@ namespace Horizon.Content
             Handle = handle;
             uniformIndexes = new();
             uniformBlockIndexes = new();
+            programResourceIndexes = new();
+        }
+
+        /// <summary>
+        /// Gets and caches the index of a program resource.
+        /// TODO: rewrite!
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="interface">The interface.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException">
+        /// Shader program is not created.
+        /// or
+        /// Shader resource '{name}' not found!
+        /// </exception>
+        public uint GetResourceIndex(string name, ProgramInterface @interface)
+        {
+            if (Handle == 0)
+                throw new InvalidOperationException("Shader program is not created.");
+
+            if (programResourceIndexes.TryGetValue(name, out uint ind))
+                return ind;
+
+            uint index = Engine.GL.GetProgramResourceIndex(Handle, @interface, name);
+
+            if (index < 0)
+                throw new InvalidOperationException($"Shader resource '{name}' not found!");
+
+            programResourceIndexes.TryAdd(name, index);
+            return index;
         }
 
         /// <summary>
@@ -138,6 +171,55 @@ namespace Horizon.Content
                 uniformIndexes.Add(name, Engine.GL.GetUniformLocation(Handle, name));
 
             return uniformIndexes[name];
+        }
+
+        public void BindBuffer<T>(in string name, in BufferObject<T> bufferObject)
+            where T : unmanaged => BindBuffer(programResourceIndexes[name], bufferObject);
+
+        public void BindBuffer<T>(in uint bufferBindingPoint, in BufferObject<T> bufferObject)
+            where T : unmanaged
+        {
+            bufferObject.Bind();
+            Engine.GL.BindBufferBase(
+                BufferTargetARB.ShaderStorageBuffer,
+                bufferBindingPoint,
+                bufferObject.Handle
+            );
+        }
+
+        public unsafe void ReadSSBO<T>(
+            uint bufferBindingPoint,
+            BufferObject<T> bufferObject,
+            ref T[] data,
+            int length = 1,
+            int offset = 0
+        )
+            where T : unmanaged
+        {
+            Engine.GL.UseProgram(Handle);
+            Engine.GL.BindBufferBase(BufferTargetARB.ShaderStorageBuffer, bufferBindingPoint, 0);
+            bufferObject.Bind();
+
+            //int bufferSize;
+            //Engine.GL.GetNamedBufferParameter(
+            //    bufferObject.Handle,
+            //    BufferPNameARB.Size,
+            //    &bufferSize
+            //);
+
+            unsafe
+            {
+                fixed (T* dataPtr = data)
+                {
+                    Engine.GL.GetNamedBufferSubData(
+                        bufferObject.Handle,
+                        sizeof(T) * offset,
+                        (nuint)(sizeof(T) * length),
+                        dataPtr
+                    );
+                }
+            }
+            Engine.GL.UseProgram(0);
         }
 
         public virtual void Use() => Engine.GL.UseProgram(Handle);

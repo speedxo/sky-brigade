@@ -65,9 +65,9 @@ public class VertexBufferObject<T> : IDisposable
 
     public virtual void Unbind()
     {
+        VertexArray.Unbind();
         VertexBuffer.Unbind();
         ElementBuffer.Unbind();
-        VertexArray.Unbind();
     }
 
     /* I guess the benifit of using a managed language is that i can

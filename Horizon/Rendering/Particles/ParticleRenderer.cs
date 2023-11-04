@@ -3,6 +3,7 @@ using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Horizon.Rendering.Spriting;
+using System.Collections.Concurrent;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -36,6 +37,10 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         random = new Random(Environment.TickCount);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParticleRenderer2D"/> class.
+    /// </summary>
+    /// <param name="material">The material.</param>
     public ParticleRenderer2D(Material material)
     {
         this.Material = material;
@@ -82,6 +87,10 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         buffer.ElementBuffer.BufferData(indices);
     }
 
+    /// <summary>
+    /// Commits an object to be rendered.
+    /// </summary>
+    /// <param name="input"></param>
     public void Add(Particle2D input)
     {
         input.Random = random.NextSingle() / 5.0f + 0.5f;
@@ -91,6 +100,10 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         Count++;
     }
 
+    /// <summary>
+    /// Remove an object from management.
+    /// </summary>
+    /// <param name="input"></param>
     public void Remove(Particle2D input)
     {
         // TODO: better(((
@@ -103,15 +116,20 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         Offsets.RemoveAt(0);
     }
 
+    /// <summary>
+    /// Updates the entity and its components.
+    /// </summary>
+    /// <param name="dt">Delta time.</param>
     public override void Update(float dt)
     {
         base.Update(dt);
 
-        var span = CollectionsMarshal.AsSpan(Particles);
+        var pSpan = CollectionsMarshal.AsSpan(Particles);
+        //var oSpan = CollectionsMarshal.AsSpan(Offsets);
         for (int i = 0; i < Particles.Count; i++)
         {
-            span[i].Age += dt * span[i].Random;
-            if (span[i].Age > MaxAge)
+            pSpan[i].Age += dt * pSpan[i].Random;
+            if (pSpan[i].Age > MaxAge)
             {
                 Particles.RemoveAt(i);
                 Offsets.RemoveAt(i);
@@ -119,10 +137,15 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
                 continue;
             }
 
-            Offsets[i] += span[i].Direction * dt * span[i].Random * span[i].Speed;
+            Offsets[i] += pSpan[i].Direction * dt * pSpan[i].Random * pSpan[i].Speed;
         }
     }
 
+    /// <summary>
+    /// Draws the entity and its components.
+    /// </summary>
+    /// <param name="dt">Delta time.</param>
+    /// <param name="options">Render options (optional).</param>
     public override void Draw(float dt, ref RenderOptions options)
     {
         if (Count < 1)
@@ -150,6 +173,9 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         Material.End();
     }
 
+    /// <summary>
+    /// Releases unmanaged and - optionally - managed resources.
+    /// </summary>
     public void Dispose()
     {
         GC.SuppressFinalize(this);

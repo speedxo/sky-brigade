@@ -13,11 +13,11 @@ public class BufferObject<T> : IDisposable
      */
     public uint Handle { get; init; }
 
-    private readonly BufferTargetARB _bufferType;
+    public readonly BufferTargetARB Type;
 
     public unsafe BufferObject(BufferTargetARB bufferType)
     {
-        _bufferType = bufferType;
+        Type = bufferType;
 
         // FIXME cross static ref to Entity.Engine
         Handle = Entity.Engine.GL.GenBuffer();
@@ -30,14 +30,14 @@ public class BufferObject<T> : IDisposable
         {
             // FIXME cross static ref to Entity.Engine
             Entity.Engine.GL.BufferData(
-                _bufferType,
+                Type,
                 (nuint)(data.Length * sizeof(T)),
                 d,
                 BufferUsageARB.StaticDraw
             );
         }
         // FIXME cross static ref to Entity.Engine
-        Entity.Engine.GL.BindBuffer(_bufferType, 0);
+        Entity.Engine.GL.BindBuffer(Type, 0);
     }
 
     public virtual void Bind()
@@ -45,13 +45,13 @@ public class BufferObject<T> : IDisposable
         /* Binding the buffer object, with the correct buffer type.
          */
         // FIXME cross static ref to Entity.Engine
-        Entity.Engine.GL.BindBuffer(_bufferType, Handle);
+        Entity.Engine.GL.BindBuffer(Type, Handle);
     }
 
     public virtual void Unbind()
     {
         // FIXME cross static ref to Entity.Engine
-        Entity.Engine.GL.BindBuffer(_bufferType, 0);
+        Entity.Engine.GL.BindBuffer(Type, 0);
     }
 
     public virtual void Dispose()

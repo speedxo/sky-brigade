@@ -611,10 +611,6 @@ public class CustomImguiController : IDisposable
         _gl.Disable(GLEnum.DepthTest);
         _gl.Disable(GLEnum.StencilTest);
         _gl.Enable(GLEnum.ScissorTest);
-#if !GLES && !LEGACY
-        _gl.Disable(GLEnum.PrimitiveRestart);
-        _gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
-#endif
 
         float L = drawDataPtr.DisplayPos.X;
         float R = drawDataPtr.DisplayPos.X + drawDataPtr.DisplaySize.X;
@@ -644,7 +640,6 @@ public class CustomImguiController : IDisposable
         _shader.UseShader();
         _gl.Uniform1(_attribLocationTex, 0);
         _gl.UniformMatrix4(_attribLocationProjMtx, 1, false, orthoProjection);
-        _gl.CheckGlError("Projection");
 
         _gl.BindSampler(0, 0);
 
@@ -653,7 +648,6 @@ public class CustomImguiController : IDisposable
         // The renderer would actually work without any VAO bound, but then our VertexAttrib calls would overwrite the default one currently bound.
         _vertexArrayObject = _gl.GenVertexArray();
         _gl.BindVertexArray(_vertexArrayObject);
-        _gl.CheckGlError("VAO");
 
         // Bind vertex/index buffers and setup attributes for ImDrawVert
         _gl.BindBuffer(GLEnum.ArrayBuffer, _vboHandle);
@@ -752,15 +746,12 @@ public class CustomImguiController : IDisposable
                 (void*)cmdListPtr.VtxBuffer.Data,
                 GLEnum.StreamDraw
             );
-            _gl.CheckGlError($"Data Vert {n}");
             _gl.BufferData(
                 GLEnum.ElementArrayBuffer,
                 (nuint)(cmdListPtr.IdxBuffer.Size * sizeof(ushort)),
                 (void*)cmdListPtr.IdxBuffer.Data,
                 GLEnum.StreamDraw
             );
-            _gl.CheckGlError($"Data Idx {n}");
-
             for (int cmd_i = 0; cmd_i < cmdListPtr.CmdBuffer.Size; cmd_i++)
             {
                 ImDrawCmdPtr cmdPtr = cmdListPtr.CmdBuffer[cmd_i];

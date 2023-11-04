@@ -38,7 +38,7 @@ public class Camera : Entity
             MathHelper.DegreesToRadians(CameraZoom),
             aspectRatio,
             1.0f,
-            10000.0f
+            1000.0f
         );
 
         viewProj = View * Projection;

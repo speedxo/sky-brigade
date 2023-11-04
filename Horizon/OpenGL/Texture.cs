@@ -172,6 +172,29 @@ public class Texture : Entity, IDisposable
         stream.Close();
     }
 
+    public unsafe Texture(uint width, uint height)
+    {
+        Width = (int)width;
+        Height = (int)height;
+
+        //Generating the opengl handle;
+        Handle = Engine.GL.GenTexture();
+        Bind();
+
+        SetParameters();
+        Engine.GL.TexImage2D(
+            TextureTarget.Texture2D,
+            0,
+            (int)InternalFormat.Rgba32f,
+            width,
+            height,
+            0,
+            PixelFormat.Rgba,
+            PixelType.Float,
+            null
+        );
+    }
+
     private void SetParameters()
     {
         //Setting some texture perameters so the texture behaves as expected.
@@ -195,9 +218,9 @@ public class Texture : Entity, IDisposable
             TextureParameterName.TextureMagFilter,
             (int)GLEnum.Nearest
         );
-        Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
-        //Generating mipmaps.
+        //Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        //Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
+        ////Generating mipmaps.
         Engine.GL.GenerateMipmap(TextureTarget.Texture2D);
     }
 

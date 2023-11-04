@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace Horizon;
 
-public abstract class GameEngine : Entity
+public abstract class GameEngine : Entity, IDisposable
 {
     #region Components
 
@@ -336,7 +336,8 @@ public abstract class GameEngine : Entity
     //{
     //    MemoryUsage = GC.GetTotalMemory(false) / 1000000;
     //}
-    private void WindowDraw(double dt) => Draw((float)dt, ref _options);
+    private void WindowDraw(double dt) =>
+        Draw((float)dt, ref Debugger.RenderOptionsDebugger.RenderOptions);
 
     public void DrawWithMetrics(in Entity entity, in float dt, ref RenderOptions options)
     {
@@ -397,5 +398,12 @@ public abstract class GameEngine : Entity
         var endTime = Stopwatch.GetTimestamp();
         var elapsedSeconds = (double)(endTime - startTime) / Stopwatch.Frequency;
         Debugger.PerformanceDebugger.GpuMetrics.AddCustom("Engine", "GPU", elapsedSeconds);
+    }
+
+    public void Dispose()
+    {
+        Window.Dispose();
+        Content.Dispose();
+        GameScreen.Dispose();
     }
 }

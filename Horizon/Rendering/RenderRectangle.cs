@@ -2,7 +2,9 @@
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
+using System.Numerics;
 using Shader = Horizon.Content.Shader;
+using Texture = Horizon.OpenGL.Texture;
 
 namespace Horizon.Rendering;
 
@@ -10,11 +12,13 @@ public class RenderTarget : Entity
 {
     public MeshRendererComponent Mesh { get; init; }
     public Technique Technique { get; set; }
+    public Texture Texture { get; init; }
 
     protected TransformComponent Transform { get; init; }
 
-    public RenderTarget(Technique technique)
+    public RenderTarget(Technique technique, Texture texture)
     {
+        this.Texture = texture;
         Technique = AddEntity(technique);
 
         Transform = AddComponent<TransformComponent>();
@@ -44,6 +48,12 @@ public class RenderTarget : Entity
             (uint)Engine.Window.ViewportSize.Y
         );
         Technique.Use();
+        Technique.SetUniform("useTexture", true);
+        Texture.Bind(TextureUnit.Texture0);
+        Technique.SetUniform("uTexture", 0);
+        Technique.SetUniform("uModel", Matrix4x4.Identity);
+        Technique.SetUniform("uView", Matrix4x4.Identity);
+        Technique.SetUniform("uProjection", Matrix4x4.Identity);
 
         Mesh.Draw(dt, ref options);
 

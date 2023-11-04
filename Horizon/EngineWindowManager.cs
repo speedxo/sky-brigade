@@ -61,7 +61,7 @@ public class EngineWindowManager : Entity
                 Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
                 Profile = ContextProfile.Core,
-                Version = new APIVersion(4, 1) // MacOS compatibility (fuck you apple)
+                Version = new APIVersion(4, 6)
             },
             Title = title,
             Size = new Silk.NET.Maths.Vector2D<int>((int)windowSize.X, (int)windowSize.Y),

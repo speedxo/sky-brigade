@@ -74,15 +74,15 @@ public class GameScene : Scene
         AddEntity(
             particles = new ParticleRenderer2D(new BasicParticle2DMaterial()) { MaxAge = 3.0f }
         );
-        AddEntity(
-            new IntervalRunner(
-                1 / 4.0f,
-                () =>
-                {
-                    SpawnLine();
-                }
-            )
-        );
+        //AddEntity(
+        //    new IntervalRunner(
+        //        1 / 4.0f,
+        //        () =>
+        //        {
+        //            SpawnLine();
+        //        }
+        //    )
+        //);
     }
 
     protected override Effect[] GeneratePostProccessingEffects()
@@ -164,6 +164,23 @@ public class GameScene : Scene
         }
     }
 
+    private void SpawnCircle(int count = 250)
+    {
+        float val = 0.0f;
+        for (int i = 0; i < count; i++)
+        {
+            val = random.NextSingle() * MathF.PI * 2.0f;
+
+            particles.Add(
+                new Particle2D(
+                    new Vector2(MathF.Cos(val), MathF.Sin(val)),
+                    player.Position,
+                    5.0f + random.NextSingle()
+                )
+            );
+        }
+    }
+
     public override void DrawGui(float dt)
     {
         if (ImGui.Begin("Particles"))
@@ -174,6 +191,9 @@ public class GameScene : Scene
                 SpawnParticle();
             if (ImGui.Button("Spawn 100"))
                 SpawnLine();
+
+            if (ImGui.Button("Spawn 100000"))
+                SpawnCircle(100000);
 
             ImGui.End();
         }

@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity;
 using Horizon.Logging;
-
+using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using GLEnum = Silk.NET.OpenGL.GLEnum;
 using ShaderType = Silk.NET.OpenGL.ShaderType;
 
@@ -88,14 +89,21 @@ namespace Horizon.Content
 
             // Enumerate and compile each program in the source.
             var aggregatedResults = CompileShaderSources(shaderDefinitions).ToArray();
+            var failed = aggregatedResults
+                .Where(res => res.Status == CompilationStatus.Fail)
+                .ToArray();
 
             // If any of our shaders failed to compile throw an error.
-            if (aggregatedResults.Any(res => res.Status == CompilationStatus.Fail))
+            if (failed.Any())
             {
+                string errorMessage =
+                    "[ShaderFactory] Cannot compile Program({handle}) with failed shaders:\n\n";
+                foreach (var item in failed)
+                    errorMessage += $"[{item.Handle}:{item.Status}] {item.ErrorMessage}\n";
+
                 return result with
                 {
-                    ErrorMessage =
-                        $"[ShaderFactory] Cannot compile Program({handle}) with failed shaders!",
+                    ErrorMessage = errorMessage,
                     Status = CompilationStatus.Fail
                 };
             }
@@ -138,10 +146,38 @@ namespace Horizon.Content
             params ShaderDefinition[] shaderDefinitions
         )
         {
-            foreach (var (type, source) in shaderDefinitions)
+            foreach (var (type, file, source) in shaderDefinitions)
             {
-                yield return CompileShaderFromSource(type, source);
+                if (file is null)
+                    yield return CompileShaderFromSource(type, source);
+                else
+                    yield return CompileShaderFromSource(type, ProcessSource(file));
             }
+        }
+
+        private static string ProcessSource(string file)
+        {
+            string path = Path.GetDirectoryName(file);
+            StringBuilder source = new StringBuilder();
+
+            var lines = File.ReadAllLines(file);
+            foreach (var rawLine in lines)
+            {
+                var line = rawLine;
+                // Look for preprocessor definitions
+                if (line.StartsWith("#include "))
+                {
+                    // #include "filePath"
+                    int q0 = line.IndexOf('"') + 1;
+                    int q1 = line.LastIndexOf('"');
+                    string filePath = Path.Combine(path, line.Substring(q0, q1 - q0));
+                    if (File.Exists(filePath))
+                        line = File.ReadAllText(filePath).Trim();
+                }
+                source.AppendLine(line);
+            }
+            var s = source.ToString();
+            return s;
         }
 
         /// <summary>
@@ -195,13 +231,10 @@ namespace Horizon.Content
                 throw new FileNotFoundException(message);
             }
 
-            var vert = File.ReadAllText(vertPath);
-            var frag = File.ReadAllText(fragPath);
-
             // We can reuse this method.
             return CompileFromDefinitions(
-                new ShaderDefinition { Source = vert, Type = ShaderType.VertexShader },
-                new ShaderDefinition { Source = frag, Type = ShaderType.FragmentShader }
+                new ShaderDefinition { File = vertPath, Type = ShaderType.VertexShader },
+                new ShaderDefinition { File = fragPath, Type = ShaderType.FragmentShader }
             );
         }
     }
