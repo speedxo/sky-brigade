@@ -247,7 +247,7 @@ public abstract partial class Tiling<TTextureID>
                 () => $"{Width}, {Height}, {Depth}"
             );
             Engine.Debugger.GeneralDebugger.AddWatch(
-                "Chunk Count",
+                "Chunk Maximum",
                 "Tilemap",
                 () => $"{ChunkManager.Chunks.GetLength(0)}"
             );
@@ -401,11 +401,11 @@ public abstract partial class Tiling<TTextureID>
                 }
             }
 
-            Engine.Logger.Log(
-                Logging.LogLevel.Fatal,
-                $"[TileMap] No TileSet is bound to the texture ID '{textureID}'!"
-            );
-            return null!; // Returning null because LogLevel.Fatal throws an exception.
+            //Engine.Logger.Log(
+            //    Logging.LogLevel.Fatal,
+            //    $"[TileMap] No TileSet is bound to the texture ID '{textureID}'!"
+            //);
+            return null!;
         }
     }
 }

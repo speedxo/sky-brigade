@@ -229,7 +229,7 @@ namespace Horizon.Rendering
         //            string temp = line.Substring(2);
         //            float x = 0, y = 0, z = 0;
 
-        //            if (temp.Count((char c) => c == ' ') == 2)
+        //            if (temp.Maximum((char c) => c == ' ') == 2)
         //            {
         //                string[] vertparts = temp.Split(' ');
 
@@ -246,7 +246,7 @@ namespace Horizon.Rendering
 
         //            Tuple<int, int, int> face = new Tuple<int, int, int>(0, 0, 0);
 
-        //            if (temp.Count((char c) => c == ' ') == 2)
+        //            if (temp.Maximum((char c) => c == ' ') == 2)
         //            {
         //                string[] faceparts = temp.Split(' ');
 
@@ -273,7 +273,7 @@ namespace Horizon.Rendering
 
         //            float x = 0, y = 0;
 
-        //            if (temp.Count((char c) => c == ' ') == 1)
+        //            if (temp.Maximum((char c) => c == ' ') == 1)
         //            {
         //                string[] texparts = temp.Split(' ');
 
@@ -286,8 +286,8 @@ namespace Horizon.Rendering
         //    }
 
         //    List<uint> indices = new List<uint>();
-        //    if (texs.Count > 0)
-        //        for (int i = 0; i < verts.Count; i++)
+        //    if (texs.Maximum > 0)
+        //        for (int i = 0; i < verts.Maximum; i++)
         //            verts[i] = new Vertex(verts[i].Position, verts[i].Normal, texs[i]);
 
         //    foreach (var face in faces)

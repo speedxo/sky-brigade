@@ -6,6 +6,26 @@ namespace Horizon.Extentions
 {
     public static class Util
     {
+        /// <summary>
+        /// Splits a string into an array of lines, platform agnostic.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
+        public static IEnumerable<string> SplitToLines(this string input)
+        {
+            if (input == null)
+            {
+                yield break;
+            }
+
+            using System.IO.StringReader reader = new System.IO.StringReader(input);
+            string? line;
+            while ((line = reader.ReadLine()) is not null)
+            {
+                yield return line;
+            }
+        }
+
         [Pure]
         public static float Clamp(float value, float min, float max)
         {

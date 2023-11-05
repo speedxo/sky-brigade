@@ -35,8 +35,8 @@ namespace Horizon.Content
             if (UnnamedAssets.Contains(asset))
             {
                 Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"[{Name}] Failed to add asset as it is already managed."
+                    LogLevel.Warning,
+                    $"[{Name}] Failed to add asset {asset.Name} as it is already managed."
                 );
                 return asset;
             }
@@ -45,7 +45,7 @@ namespace Horizon.Content
             return UnnamedAssets.Last();
         }
 
-        public TValue? this[TKey key]
+        public TValue? this[in TKey key]
         {
             get
             {

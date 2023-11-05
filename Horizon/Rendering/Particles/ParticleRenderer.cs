@@ -15,12 +15,13 @@ namespace Horizon.Rendering.Particles;
 /// <seealso cref="Horizon.GameEntity.Entity" />
 /// <seealso cref="Horizon.Rendering.Spriting.I2DBatchedRenderer&lt;Horizon.Rendering.Particles.Particle2D&gt;" />
 /// <seealso cref="System.IDisposable" />
-public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDisposable
+public class ParticleRenderer2D : Entity, IDisposable
 {
     private static Random random;
 
-    private List<Particle2D> Particles { get; init; }
-    private List<Vector2> Offsets { get; init; }
+    private Particle2D[] Particles { get; init; }
+    private Vector2[] Offsets { get; init; }
+    private Queue<uint> freeIndices;
 
     private InstancedVertexBufferObject<ParticleVertex, Vector2> buffer;
     private readonly ParticleVertex[] quadVerts;
@@ -31,6 +32,7 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
     public TransformComponent2D Transform { get; init; }
     public float MaxAge { get; set; } = 2.5f;
     public float ParticleSize { get; set; } = 0.05f;
+    public uint Maximum { get; private set; }
 
     static ParticleRenderer2D()
     {
@@ -41,14 +43,20 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
     /// Initializes a new instance of the <see cref="ParticleRenderer2D"/> class.
     /// </summary>
     /// <param name="material">The material.</param>
-    public ParticleRenderer2D(Material material)
+    public ParticleRenderer2D(int count, Material material)
     {
+        this.Maximum = (uint)count;
         this.Material = material;
 
         Transform = AddComponent<TransformComponent2D>();
 
-        Particles = new();
-        Offsets = new();
+        Particles = new Particle2D[count];
+        Offsets = new Vector2[count];
+        freeIndices = new(count);
+
+        for (uint i = 0; i < count; i++)
+            freeIndices.Enqueue(i);
+
         buffer = new InstancedVertexBufferObject<ParticleVertex, Vector2>();
 
         // Configure VAO layout
@@ -93,27 +101,18 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
     /// <param name="input"></param>
     public void Add(Particle2D input)
     {
+        if (!freeIndices.Any())
+            return;
+
+        uint index = freeIndices.Dequeue();
+
         input.Random = random.NextSingle() / 5.0f + 0.5f;
-        Particles.Add(input);
-        Offsets.Add(input.InitialPosition);
+        Particles[index] = input;
+        Particles[index].Age = 0.0f;
+        Particles[index].Alive = 1.0f;
+        Offsets[index] = input.InitialPosition;
 
         Count++;
-    }
-
-    /// <summary>
-    /// Remove an object from management.
-    /// </summary>
-    /// <param name="input"></param>
-    public void Remove(Particle2D input)
-    {
-        // TODO: better(((
-        if (
-            Particles.Remove(
-                Particles.Find((item) => item.InitialPosition == input.InitialPosition)
-            )
-        )
-            Count--;
-        Offsets.RemoveAt(0);
     }
 
     /// <summary>
@@ -124,20 +123,21 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
     {
         base.Update(dt);
 
-        var pSpan = CollectionsMarshal.AsSpan(Particles);
-        //var oSpan = CollectionsMarshal.AsSpan(Offsets);
-        for (int i = 0; i < Particles.Count; i++)
+        for (uint i = 0; i < Maximum; i++)
         {
-            pSpan[i].Age += dt * pSpan[i].Random;
-            if (pSpan[i].Age > MaxAge)
+            if (Particles[i].Alive < 0.5f)
+                continue;
+
+            Particles[i].Age += dt * Particles[i].Random;
+            if (Particles[i].Age > MaxAge)
             {
-                Particles.RemoveAt(i);
-                Offsets.RemoveAt(i);
+                Particles[i].Alive = -1f;
+                freeIndices.Enqueue(i);
                 Count--;
                 continue;
             }
 
-            Offsets[i] += pSpan[i].Direction * dt * pSpan[i].Random * pSpan[i].Speed;
+            Offsets[i] += Particles[i].Direction * dt * Particles[i].Random * Particles[i].Speed;
         }
     }
 
@@ -155,7 +155,7 @@ public class ParticleRenderer2D : Entity, I2DBatchedRenderer<Particle2D>, IDispo
         Material.SetModel(Transform.ModelMatrix);
 
         buffer.VertexArray.Bind();
-        buffer.InstanceBuffer.BufferData(CollectionsMarshal.AsSpan(Offsets));
+        buffer.InstanceBuffer.BufferData(Offsets);
         buffer.VertexArray.Bind();
 
         unsafe

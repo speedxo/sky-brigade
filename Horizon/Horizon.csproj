@@ -100,7 +100,6 @@
     <None Remove="Extentions\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\" />
     <Folder Include="Assets\basic_shader\" />
     <Folder Include="Collections\" />
     <Folder Include="GameEntity\Components\" />

@@ -50,7 +50,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         this.SpritesheetSprites = new();
 
         this.Transform = AddComponent<TransformComponent>();
-        Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
+        Engine.Debugger.GeneralDebugger.AddWatch("Sprite Maximum", "SpriteBatch", () => Count);
     }
 
     /// <summary>

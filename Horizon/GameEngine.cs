@@ -150,7 +150,7 @@ public abstract class GameEngine : Entity, IDisposable
     {
         // Non ECS
         AssetFactory.SetGameEngine(this);
-        Logger = new Logger(LogOutput.Console);
+        Logger = AddComponent(new Logger(LogOutput.Console));
         InitializeImGui();
 
         // Parameterless Entities

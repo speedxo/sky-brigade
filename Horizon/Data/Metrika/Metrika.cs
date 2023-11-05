@@ -7,7 +7,7 @@ namespace Horizon.Data;
 /// <summary>
 /// A convience class to very quickly capture basic realtime metrics, integrating the ECS.
 /// </summary>
-public class Metrika : Entity, IDisposable
+public class Metrika : Entity
 {
     private const int AVG_LEN = 50;
 
@@ -71,6 +71,4 @@ public class Metrika : Entity, IDisposable
             }
         }
     }
-
-    public void Dispose() { }
 }

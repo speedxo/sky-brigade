@@ -6,6 +6,8 @@ layout(local_size_x=1024, local_size_y=1) in;
 
 #define PI 3.1415
 
+#import "fastRandom"
+
 uniform float uDt;
 uniform vec2 uSpawnPosition;
 
@@ -20,9 +22,6 @@ layout(std430, binding=1) coherent restrict buffer particle_index_buffer {
 
 layout(location = 0) uniform int uParticlesToSpawn;
 
-float randF(vec2 co){
-    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
-}
 
 vec2 randomDir(float noise)
 {

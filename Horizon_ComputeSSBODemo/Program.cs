@@ -72,7 +72,7 @@ namespace Horizon_ComputeSSBODemo
             if (ImGui.Begin("Particles"))
             {
                 ImGui.SliderInt("Target", ref particles.Target, 0, particles.MaximumCount - 1);
-                ImGui.Text($"Count: {particles.Count}");
+                ImGui.Text($"Maximum: {particles.Count}");
                 ImGui.End();
             }
         }

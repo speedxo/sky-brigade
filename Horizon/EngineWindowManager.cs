@@ -13,10 +13,10 @@ public class EngineWindowManager : Entity
     private IWindow _window;
     private IInputContext _input;
 
-    public Action<double>? UpdateFrame;
-    public Action<double>? RenderFrame;
-    public Action? Closing;
-    public Action? Load;
+    public Action<double> UpdateFrame;
+    public Action<double> RenderFrame;
+    public Action Closing;
+    public Action Load;
 
     public bool IsRunning { get; private set; }
 
@@ -349,7 +349,7 @@ public class EngineWindowManager : Entity
 //         Logger = new Logger(LogOutput.Console);
 
 //         // Check if at least one keyboard is available for input.
-//         if (Input.Keyboards.Count < 1)
+//         if (Input.Keyboards.Maximum < 1)
 //             throw new Exception(
 //                 "Cannot play without a keyboard. A keyboard is required for this game to function."
 //             );
@@ -372,7 +372,7 @@ public class EngineWindowManager : Entity
 //         GameScreenManager.AddInstance<Scene>((Scene)Activator.CreateInstance(initialGameScreen)!);
 
 //         Gl.Enable(EnableCap.VertexArray);
-//         for (int i = 0; i < Input.Mice.Count; i++)
+//         for (int i = 0; i < Input.Mice.Maximum; i++)
 //             Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
 //     }
 
@@ -500,7 +500,7 @@ public class EngineWindowManager : Entity
 //         if (InputManager.WasPressed(VirtualAction.Pause))
 //         {
 //             IsInputCaptured = !IsInputCaptured;
-//             for (int i = 0; i < Input.Mice.Count; i++)
+//             for (int i = 0; i < Input.Mice.Maximum; i++)
 //                 Input.Mice[i].Cursor.CursorMode = IsInputCaptured
 //                     ? CursorMode.Raw
 //                     : CursorMode.Normal;

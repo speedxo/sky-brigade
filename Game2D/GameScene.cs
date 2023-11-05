@@ -21,13 +21,13 @@ namespace TileBash;
 
 public class GameScene : Scene
 {
-    private Random random;
-    private Player2D player;
-    private SpriteBatch spriteBatch;
-    private Camera cam;
-    private TileMap tilemap;
-    private World world;
-    private ParticleRenderer2D particles;
+    private readonly Random random;
+    private readonly Player2D player;
+    private readonly SpriteBatch spriteBatch;
+    private readonly Camera cam;
+    private readonly TileMap tilemap;
+    private readonly World world;
+    private readonly ParticleRenderer2D particles;
     private RenderOptions charOptions;
 
     private readonly Box2DDebugDrawCallback debugDrawCallback;
@@ -72,7 +72,10 @@ public class GameScene : Scene
         InitializeRenderingPipeline();
 
         AddEntity(
-            particles = new ParticleRenderer2D(new BasicParticle2DMaterial()) { MaxAge = 3.0f }
+            particles = new ParticleRenderer2D(100000, new BasicParticle2DMaterial())
+            {
+                MaxAge = 3.0f
+            }
         );
         //AddEntity(
         //    new IntervalRunner(
@@ -98,7 +101,7 @@ public class GameScene : Scene
         Engine.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private float cameraMovement = 15;
+    private readonly float cameraMovement = 15;
     private Vector2 playerDir;
 
     public override void Update(float dt)
@@ -185,7 +188,7 @@ public class GameScene : Scene
     {
         if (ImGui.Begin("Particles"))
         {
-            ImGui.Text($"Count: {particles.Count}");
+            ImGui.Text($"Maximum: {particles.Count}");
 
             if (ImGui.Button("Spawn 1"))
                 SpawnParticle();

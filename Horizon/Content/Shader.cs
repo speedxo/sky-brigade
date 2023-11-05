@@ -16,6 +16,8 @@ namespace Horizon.Content
         /// </summary>
         public uint Handle { get; init; }
 
+        public override string Name => $"Shader({Handle})";
+
         private readonly Dictionary<string, int> uniformIndexes;
         private readonly Dictionary<string, uint> uniformBlockIndexes;
         private readonly Dictionary<string, uint> programResourceIndexes;
@@ -86,10 +88,10 @@ namespace Horizon.Content
             int location = GetUniformLocation(name);
             if (location == -1) // If GetUniformLocation returns -1, the uniform is not found.
             {
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
-                );
+                //Engine.Logger.Log(
+                //    LogLevel.Error,
+                //    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
+                //);
                 return;
             }
             Engine.GL.UniformMatrix4(location, 1, false, value.M11);
@@ -103,10 +105,10 @@ namespace Horizon.Content
             int location = GetUniformLocation(name);
             if (location == -1 || value is null) // If GetUniformLocation returns -1, the uniform is not found.
             {
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
-                );
+                //Engine.Logger.Log(
+                //    LogLevel.Error,
+                //    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
+                //);
                 return;
             }
 
@@ -143,7 +145,7 @@ namespace Horizon.Content
                     break;
 
                 case Matrix4x4 matrixValue:
-                    unsafe // Dont wanna make the whole method unsafe for a single call.
+                    unsafe // Don't wanna make the whole method unsafe for a single call.
                     {
                         Engine.GL.UniformMatrix4(location, 1, false, (float*)&matrixValue);
                     }

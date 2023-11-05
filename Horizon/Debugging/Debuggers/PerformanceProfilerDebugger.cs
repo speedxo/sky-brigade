@@ -9,7 +9,7 @@ using System.Numerics;
 
 namespace Horizon.Debugging.Debuggers;
 
-public class PerformanceProfilerDebugger : DebuggerComponent
+public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 {
     /// <summary>
     /// How many times/s metrics are collected.
@@ -34,6 +34,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
     private long _prevTimestamp;
     private long _prevCpuTime;
+    private bool disposedValue;
 
     public override void Initialize()
     {
@@ -53,16 +54,19 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         CpuMetrics.CreateCategory("EngineComponents");
         GpuMetrics.CreateCategory("EngineComponents");
 
-        Entity.Engine.OnPreDraw += (_) =>
-        {
-            GpuMetrics.ResetMetrics();
-        };
-        Entity.Engine.OnPreUpdate += (_) =>
-        {
-            CpuMetrics.ResetMetrics();
-        };
-
+        Entity.Engine.OnPreDraw += ResetGpuMetrics;
+        Entity.Engine.OnPreUpdate += ResetCpuMetrics;
         Entity.Engine.OnPostUpdate += UpdateMetrics;
+    }
+
+    private void ResetGpuMetrics(float dt)
+    {
+        GpuMetrics.ResetMetrics();
+    }
+
+    private void ResetCpuMetrics(float dt)
+    {
+        CpuMetrics.ResetMetrics();
     }
 
     private void UpdateMetrics(float dt)
@@ -207,13 +211,6 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         }
     }
 
-    public override void Dispose()
-    {
-        // Metrika subscribes to engine events, so we need to make sure to clean 'em up.
-        CpuMetrics.Dispose();
-        GpuMetrics.Dispose();
-    }
-
     [Pure]
     private static float GetMemoryUsage()
     {
@@ -221,4 +218,36 @@ public class PerformanceProfilerDebugger : DebuggerComponent
     }
 
     public override void Update(float dt) { }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                // We subscribed to engine events, so we need to make sure to clean 'em up.
+                Entity.Engine.OnPreDraw -= ResetGpuMetrics;
+                Entity.Engine.OnPreUpdate -= ResetCpuMetrics;
+                Entity.Engine.OnPostUpdate -= UpdateMetrics;
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            disposedValue = true;
+        }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~PerformanceProfilerDebugger()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public override void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 }

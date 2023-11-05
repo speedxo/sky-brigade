@@ -1,29 +1,35 @@
-﻿using Horizon.GameEntity;
+﻿using Horizon.Extentions;
+using Horizon.GameEntity;
 using Horizon.Logging;
 using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using GLEnum = Silk.NET.OpenGL.GLEnum;
 using ShaderType = Silk.NET.OpenGL.ShaderType;
 
 namespace Horizon.Content
 {
-    /// <summary>
-    /// Static Factory to create shaders intended for the ShaderContentManager to manage.
-    /// </summary>
+    /// <summary>Static Factory to instantiate shaders intended for the ShaderContentManager to manage.</summary>
+    /// <seealso cref="Horizon.Content.AssetFactory" />
     public partial class ShaderFactory : AssetFactory
     {
+        /* Internal data structures to help transfer state information between stages. */
         private enum CompilationStatus
         {
             Pass = 0,
             Fail = 1
         }
 
-        private record struct CompilationResult(
+        private readonly record struct CompilationResult(
             uint Handle,
             CompilationStatus Status,
             string ErrorMessage
         );
 
+        /// <summary>
+        /// Compiles the shader from source.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="source">The source.</param>
+        /// <returns>A <see cref="CompilationResult"/> fully encapsulating the result of attempting to compile the shader, including the shader handle if successful.</returns>
         private static CompilationResult CompileShaderFromSource(
             in ShaderType type,
             in string source
@@ -140,48 +146,30 @@ namespace Horizon.Content
         }
 
         /// <summary>
-        /// Helper method to attempt to compile all the shaders in a program, returning an intermediate <see cref="CompilationResult"/>.
+        /// Helper method to attempt to compile all the shaders in a program with directive support, returning an intermediate <see cref="CompilationResult" />.
+        /// If file paths are provided to any shader, #include directive support is added.
         /// </summary>
+        /// <param name="shaderDefinitions">The shader definitions.</param>
         private static IEnumerable<CompilationResult> CompileShaderSources(
             params ShaderDefinition[] shaderDefinitions
         )
         {
+            using var preprocessor = new ShaderDirectiveProcessor();
             foreach (var (type, file, source) in shaderDefinitions)
             {
-                if (file is null)
-                    yield return CompileShaderFromSource(type, source);
-                else
-                    yield return CompileShaderFromSource(type, ProcessSource(file));
+                // If a file is provided we can manually parse #include preprocessor statements for convenience.
+                yield return file is null
+                    ? CompileShaderFromSource(
+                        type,
+                        preprocessor.ProcessSource(string.Empty, source.SplitToLines())
+                    )
+                    : CompileShaderFromSource(type, preprocessor.ProcessFile(file));
             }
-        }
-
-        private static string ProcessSource(string file)
-        {
-            string path = Path.GetDirectoryName(file);
-            StringBuilder source = new StringBuilder();
-
-            var lines = File.ReadAllLines(file);
-            foreach (var rawLine in lines)
-            {
-                var line = rawLine;
-                // Look for preprocessor definitions
-                if (line.StartsWith("#include "))
-                {
-                    // #include "filePath"
-                    int q0 = line.IndexOf('"') + 1;
-                    int q1 = line.LastIndexOf('"');
-                    string filePath = Path.Combine(path, line.Substring(q0, q1 - q0));
-                    if (File.Exists(filePath))
-                        line = File.ReadAllText(filePath).Trim();
-                }
-                source.AppendLine(line);
-            }
-            var s = source.ToString();
-            return s;
         }
 
         /// <summary>
-        /// Compiles a program from an array of shader definitions.
+        /// Compiles a program from a params array of shader definitions.
+        /// If file paths are provided to any shader, pre-processing through the <see cref="ShaderDirectiveProcessor"/> is done here.
         /// </summary>
         public static Shader CompileFromDefinitions(params ShaderDefinition[] shaderDefinitions)
         {
@@ -193,49 +181,49 @@ namespace Horizon.Content
                 throw new Exception(result.ErrorMessage);
             }
 
-            return new Shader(result.Handle);
+            return Engine.Content.Shaders.Add(new Shader(result.Handle));
         }
 
         /// <summary>
         /// Returns a program compiled from an inferred vertex and fragment shader specified in a directory.
+        /// If file paths are provided to any shader, #include directive support is added.
         /// </summary>
         /// <param name="path">The path containing the shaders.</param>
-        /// <param name="name">The matching names of the two shaders ending in .vert and .frag for the vertex and fragment shaders respecively.</param>
-        public static Shader CompileNamed(in string path, in string name)
+        /// <param name="name">The matching names of the two shaders ending in .vert and .frag for the vertex and fragment shaders respectively.</param>
+        public static Shader CompileNamed(string path, string name)
         {
-            // FIXME: alot of repeated code here.
-            if (!Directory.Exists(path))
-            {
-                string message =
-                    $"[ShaderFactory] Directory '{path}' doesn't exist! Therefore we cannot load a shader. unless....";
-                Engine.Logger.Log(LogLevel.Fatal, message);
-                throw new DirectoryNotFoundException(message);
-            }
+            string vertPath = Path.Combine(path, $"{name}.vert");
+            string fragPath = Path.Combine(path, $"{name}.frag");
 
-            var vertPath = Path.Combine(path, name + ".vert");
-            var fragPath = Path.Combine(path, name + ".frag");
+            EnsureFileExists(vertPath, "vertex");
+            EnsureFileExists(fragPath, "fragment");
 
-            if (!File.Exists(vertPath))
-            {
-                string message =
-                    $"[ShaderFactory] Cannot compile a program without a vertex shader.";
-                Engine.Logger.Log(LogLevel.Fatal, message);
-                throw new FileNotFoundException(message);
-            }
-
-            if (!File.Exists(fragPath))
-            {
-                string message =
-                    $"[ShaderFactory] Cannot compile a program without a fragment shader.";
-                Engine.Logger.Log(LogLevel.Fatal, message);
-                throw new FileNotFoundException(message);
-            }
-
-            // We can reuse this method.
             return CompileFromDefinitions(
                 new ShaderDefinition { File = vertPath, Type = ShaderType.VertexShader },
                 new ShaderDefinition { File = fragPath, Type = ShaderType.FragmentShader }
             );
+        }
+
+        private static void EnsureFileExists(string filePath, string shaderType)
+        {
+            if (!File.Exists(filePath))
+            {
+                string message =
+                    $"[ShaderFactory] Cannot compile a program without a {shaderType} shader.";
+                Engine.Logger.Log(LogLevel.Fatal, message);
+                throw new FileNotFoundException(message);
+            }
+        }
+
+        private static void EnsureDirectoryExists(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                string message =
+                    $"[ShaderFactory] Directory '{directoryPath}' doesn't exist! Therefore we cannot load a shader.";
+                Engine.Logger.Log(LogLevel.Fatal, message);
+                throw new DirectoryNotFoundException(message);
+            }
         }
     }
 }
