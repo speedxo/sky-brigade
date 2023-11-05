@@ -72,7 +72,7 @@ public class GameScene : Scene
         InitializeRenderingPipeline();
 
         AddEntity(
-            particles = new ParticleRenderer2D(100000, new BasicParticle2DMaterial())
+            particles = new ParticleRenderer2D(100_000, new BasicParticle2DMaterial())
             {
                 MaxAge = 3.0f
             }

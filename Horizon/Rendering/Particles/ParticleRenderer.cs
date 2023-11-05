@@ -17,13 +17,21 @@ namespace Horizon.Rendering.Particles;
 /// <seealso cref="System.IDisposable" />
 public class ParticleRenderer2D : Entity, IDisposable
 {
+    private struct ParticleRenderData
+    {
+        public Vector2 offset;
+        public float alive;
+
+        public static uint SizeInBytes { get; } = sizeof(float) * 3;
+    }
+
     private static Random random;
 
     private Particle2D[] Particles { get; init; }
-    private Vector2[] Offsets { get; init; }
+    private ParticleRenderData[] RenderData { get; init; }
     private Queue<uint> freeIndices;
 
-    private InstancedVertexBufferObject<ParticleVertex, Vector2> buffer;
+    private InstancedVertexBufferObject<ParticleVertex, ParticleRenderData> buffer;
     private readonly ParticleVertex[] quadVerts;
     private readonly uint[] indices;
 
@@ -51,13 +59,13 @@ public class ParticleRenderer2D : Entity, IDisposable
         Transform = AddComponent<TransformComponent2D>();
 
         Particles = new Particle2D[count];
-        Offsets = new Vector2[count];
+        RenderData = new ParticleRenderData[count];
         freeIndices = new(count);
 
         for (uint i = 0; i < count; i++)
             freeIndices.Enqueue(i);
 
-        buffer = new InstancedVertexBufferObject<ParticleVertex, Vector2>();
+        buffer = new();
 
         // Configure VAO layout
         buffer.VertexArray.Bind();
@@ -76,10 +84,18 @@ public class ParticleRenderer2D : Entity, IDisposable
             1,
             2,
             Silk.NET.OpenGL.VertexAttribPointerType.Float,
-            sizeof(float) * 2,
+            ParticleRenderData.SizeInBytes,
             0
         );
+        buffer.VertexAttributePointer(
+            2,
+            1,
+            Silk.NET.OpenGL.VertexAttribPointerType.Float,
+            ParticleRenderData.SizeInBytes,
+            sizeof(float) * 2
+        );
         buffer.VertexAttributeDivisor(1, 1); // Each particle has its own offset.
+        buffer.VertexAttributeDivisor(2, 1); // Each particle has its own offset.
         buffer.Unbind();
 
         quadVerts = new ParticleVertex[]
@@ -109,8 +125,9 @@ public class ParticleRenderer2D : Entity, IDisposable
         input.Random = random.NextSingle() / 5.0f + 0.5f;
         Particles[index] = input;
         Particles[index].Age = 0.0f;
-        Particles[index].Alive = 1.0f;
-        Offsets[index] = input.InitialPosition;
+
+        RenderData[index].alive = 1.0f;
+        RenderData[index].offset = input.InitialPosition;
 
         Count++;
     }
@@ -125,19 +142,20 @@ public class ParticleRenderer2D : Entity, IDisposable
 
         for (uint i = 0; i < Maximum; i++)
         {
-            if (Particles[i].Alive < 0.5f)
+            if (RenderData[i].alive < 0.5f)
                 continue;
 
             Particles[i].Age += dt * Particles[i].Random;
             if (Particles[i].Age > MaxAge)
             {
-                Particles[i].Alive = -1f;
+                RenderData[i].alive = -1f;
                 freeIndices.Enqueue(i);
                 Count--;
                 continue;
             }
 
-            Offsets[i] += Particles[i].Direction * dt * Particles[i].Random * Particles[i].Speed;
+            RenderData[i].offset +=
+                Particles[i].Direction * dt * Particles[i].Random * Particles[i].Speed;
         }
     }
 
@@ -155,7 +173,7 @@ public class ParticleRenderer2D : Entity, IDisposable
         Material.SetModel(Transform.ModelMatrix);
 
         buffer.VertexArray.Bind();
-        buffer.InstanceBuffer.BufferData(Offsets);
+        buffer.InstanceBuffer.BufferData(RenderData);
         buffer.VertexArray.Bind();
 
         unsafe
@@ -165,7 +183,7 @@ public class ParticleRenderer2D : Entity, IDisposable
                 6,
                 Silk.NET.OpenGL.DrawElementsType.UnsignedInt,
                 null,
-                Count
+                Maximum
             );
         }
 
