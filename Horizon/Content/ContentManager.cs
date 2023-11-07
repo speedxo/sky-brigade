@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity;
 using Horizon.Logging;
 using Horizon.OpenGL;
+using Horizon.Rendering.Spriting;
 
 namespace Horizon.Content
 {
@@ -159,6 +160,12 @@ namespace Horizon.Content
         {
             unnamedTextures.TryAdd(texture.Handle.ToString(), texture);
             return unnamedTextures[texture.Handle.ToString()];
+        }
+
+        public SpriteSheet AddTexture(SpriteSheet texture)
+        {
+            unnamedTextures.TryAdd(texture.Handle.ToString(), texture);
+            return texture;
         }
     }
 }

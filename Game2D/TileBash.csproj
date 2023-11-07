@@ -126,6 +126,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Update="content\cat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="content\sprites.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

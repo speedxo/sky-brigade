@@ -36,17 +36,19 @@ public class BasicParticle2DMaterialdev : CustomMaterial
 /// <seealso cref="System.IDisposable" />
 public class ParticleRenderer2Ddev : Entity, IDisposable
 {
-    private VertexBufferObject<ParticleVertex> buffer;
     private readonly ParticleVertex[] quadVerts;
     private readonly uint[] indices;
 
     private Shader spawnParticles,
         updateParticles;
 
+    private VertexBufferObject<ParticleVertex> buffer;
     private BufferObject<Particle> particleBuffer;
     private BufferObject<int> particleIndexBuffer;
 
     private Particle[] particles;
+    private int[] data;
+    private float timer = 0;
 
     public Material Material { get; set; }
     public int MaximumCount { get; init; }
@@ -57,7 +59,6 @@ public class ParticleRenderer2Ddev : Entity, IDisposable
     public float MaxAge { get; set; } = 2.5f;
     public float ParticleSize { get; set; } = 0.05f;
     public Vector2 SpawnPosition { get; set; }
-    private int[] data;
 
     public ParticleRenderer2Ddev(int max)
     {
@@ -155,8 +156,6 @@ public class ParticleRenderer2Ddev : Entity, IDisposable
         );
         buffer.Unbind();
     }
-
-    float timer = 0;
 
     public override void Update(float dt)
     {

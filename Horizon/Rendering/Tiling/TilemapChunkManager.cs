@@ -44,30 +44,26 @@ public abstract partial class Tiling<TTextureID>
 
             Chunks = new TileMapChunk[Map.Width * Map.Height];
 
-            for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width] = new TileMapChunk(Map, new Vector2(x, y));
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i] = new TileMapChunk(Map, new Vector2(i % Map.Width, i / Map.Width));
         }
 
         public void Update(float dt)
         {
-            for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].Update(dt);
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i].Update(dt);
         }
 
         public void Draw(float dt, ref RenderOptions options)
         {
-            for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].Draw(dt, ref options);
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i].Draw(dt, ref options);
         }
 
         public void GenerateMeshes()
         {
-            for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].Renderer.GenerateMesh();
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i].Renderer.GenerateMesh();
         }
 
         /// <summary>
@@ -76,18 +72,16 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="action">The populator action</param>
         public void PopulateTiles(Action<TileMapChunkSlice[], TileMapChunk> action)
         {
-            for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].Populate(action);
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i].Populate(action);
 
             PostGenerateTiles();
         }
 
         internal void PostGenerateTiles()
         {
-            for (int x = 0; x < Map.Width; x++)
-                for (int y = 0; y < Map.Height; y++)
-                    Chunks[x + y * Map.Width].PostGenerate();
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i].PostGenerate();
         }
     }
 }

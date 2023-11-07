@@ -59,7 +59,7 @@ public class FrameBufferObject : Entity, IDisposable
         this.Height = height;
 
         // Create a framebuffer object
-        Handle = Engine.GL.GenFramebuffer();
+        Handle = Engine.GL.CreateFramebuffer();
 
         Attachments = new Dictionary<FramebufferAttachment, uint>();
     }
@@ -72,14 +72,7 @@ public class FrameBufferObject : Entity, IDisposable
 
         foreach (var (attachment, texture) in Attachments)
         {
-            Engine.GL.FramebufferTexture2D(
-                FramebufferTarget.Framebuffer,
-                attachment,
-                TextureTarget.Texture2D,
-                texture,
-                0
-            );
-            Engine.GL.DrawBuffer((DrawBufferMode)attachment);
+            Engine.GL.NamedFramebufferTexture(Handle, attachment, texture, 0);
         }
         // Check if the framebuffer is complete
         if (
@@ -169,7 +162,7 @@ public class FrameBufferObject : Entity, IDisposable
 
             Attachments.Clear();
             // Create a framebuffer object
-            Handle = Engine.GL.GenFramebuffer();
+            Handle = Engine.GL.CreateFramebuffer();
 
             foreach (var attachment in attachmentTypes)
             {

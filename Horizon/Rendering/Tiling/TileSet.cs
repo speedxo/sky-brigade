@@ -37,7 +37,7 @@ public abstract partial class Tiling<TTextureID>
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Vector2[] GetTextureCoordinatesFromTiledMapId(int id)
+        public Vector2 GetNormalizedTextureCoordinatesFromTiledMapId(int id)
         {
             // Calculate the number of columns in the tileset
             int columns = Texture.Width / (int)TileSize.X;
@@ -54,18 +54,12 @@ public abstract partial class Tiling<TTextureID>
             float normalizedY = tileY / Texture.Height;
 
             // Calculate the texture coordinates
-            float left = normalizedX;
-            float right = normalizedX + TileSize.X / Texture.Width;
-            float top = normalizedY;
-            float bottom = normalizedY + TileSize.Y / Texture.Height;
+            //float left = normalizedX;
+            //float right = normalizedX + TileSize.X / Texture.Width;
+            //float top = normalizedY;
+            //float bottom = normalizedY + TileSize.Y / Texture.Height;
 
-            return new Vector2[]
-            {
-                new Vector2(left, top),
-                new Vector2(right, top),
-                new Vector2(right, bottom),
-                new Vector2(left, bottom)
-            };
+            return new Vector2(normalizedX, normalizedY);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -28,12 +28,12 @@ void main() {
   bool isFlipped = spriteData.data[vId].isFlipped;
 
   // Calculate the base texture coordinates
-  vec2 baseTexCoords = vTexCoords + uSingleFrameSize * spriteOffset;
+  vec2 baseTexCoords = vTexCoords + spriteOffset * uSingleFrameSize;
 
   // Apply horizontal flipping if necessary
-  texCoords =
-      isFlipped ? vec2(1.0 - baseTexCoords.x, baseTexCoords.y) : baseTexCoords;
-
+  //texCoords =
+  //    isFlipped ? vec2(1.0 - baseTexCoords.x, baseTexCoords.y) : baseTexCoords;
+  texCoords = baseTexCoords;
   // Retrieve the model matrix and ID for the current sprite
   mat4 modelMatrix = spriteData.data[vId].modelMatrix;
 

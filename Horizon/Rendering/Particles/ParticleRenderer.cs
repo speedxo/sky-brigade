@@ -140,23 +140,30 @@ public class ParticleRenderer2D : Entity, IDisposable
     {
         base.Update(dt);
 
-        for (uint i = 0; i < Maximum; i++)
-        {
-            if (RenderData[i].alive < 0.5f)
-                continue;
-
-            Particles[i].Age += dt * Particles[i].Random;
-            if (Particles[i].Age > MaxAge)
+        // TODO: completely ditch this or at very least reuse a thread pool
+        Parallel.For(
+            0,
+            Maximum,
+            i =>
             {
-                RenderData[i].alive = -1f;
-                freeIndices.Enqueue(i);
-                Count--;
-                continue;
+                if (RenderData[i].alive >= 0.5f)
+                {
+                    Particles[i].Age += dt * Particles[i].Random;
+                    if (Particles[i].Age > MaxAge)
+                    {
+                        RenderData[i].alive = -1f;
+                        freeIndices.Enqueue((uint)i);
+                        Count--;
+                    }
+                    else
+                    {
+                        RenderData[i].offset +=
+                            Particles[i].Direction * dt * Particles[i].Random * Particles[i].Speed;
+                    }
+                }
             }
-
-            RenderData[i].offset +=
-                Particles[i].Direction * dt * Particles[i].Random * Particles[i].Speed;
-        }
+        );
+        //for (uint i = 0; i < Maximum; i++) { }
     }
 
     /// <summary>

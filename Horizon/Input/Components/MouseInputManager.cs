@@ -35,7 +35,8 @@ namespace Horizon.Input.Components
         private VirtualAction actions;
 
         private Vector2 direction,
-            previousPosition;
+            previousPosition,
+            position;
 
         /// <summary>
         /// Initializes the MouseInputManager by setting the default MouseBindings.
@@ -51,7 +52,12 @@ namespace Horizon.Input.Components
         /// <returns>The MouseData containing the mouse input.</returns>
         public MouseData GetData()
         {
-            return new MouseData { Actions = actions, LookingAxis = direction };
+            return new MouseData
+            {
+                Actions = actions,
+                LookingAxis = direction,
+                Position = position
+            };
         }
 
         /// <summary>
@@ -77,10 +83,8 @@ namespace Horizon.Input.Components
                 }
             }
 
-            var position = Mouse.Position;
-
+            position = Mouse.Position;
             direction = position - previousPosition;
-
             previousPosition = position;
         }
 

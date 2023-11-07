@@ -12,6 +12,8 @@ namespace TileBash.Player;
 
 public class Player2D : Sprite
 {
+    public static Player2D Current { get; private set; }
+
     public Body PhysicsBody
     {
         get => box2DBodyComponent.Body;
@@ -35,6 +37,7 @@ public class Player2D : Sprite
 
     public Player2D(World world, TileMap map)
     {
+        Current = this;
         this.world = world;
         this.map = map;
 
@@ -96,18 +99,15 @@ public class Player2D : Sprite
             new (string, Vector2, int, float, Vector2?)[]
             {
                 ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
-                ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
-                ("walk_down", new Vector2(4, 0), 4, 0.1f, null),
-                ("walk_left", new Vector2(0, 1), 4, 0.1f, null),
-                ("walk_right", new Vector2(4, 1), 4, 0.1f, null),
-                ("idle", new Vector2(4, 0), 1, 0.1f, null)
+                ("walk_down", new Vector2(0, 3), 4, 0.1f, null),
+                ("walk_side", new Vector2(0, 1), 4, 0.1f, null),
+                ("idle", new Vector2(0, 3), 0, 0.1f, null)
             }
         );
 
-        ConfigureSpritesheetAndDefaultAnimation(sheet, "idle");
+        ConfigureSpriteSheet(sheet, "idle");
 
         IsAnimated = true;
-        Size = new Vector2(1.0f);
     }
 
     public override void Update(float dt)
@@ -127,7 +127,7 @@ public class Player2D : Sprite
 
     private void GenerateTileColliders()
     {
-        // Enumerate the enumerable so its only itterated once.
+        // Enumerate the enumerable so its only iterated _once_.
         visibleTiles = map.FindVisibleTiles(Position - Size / 2.0f, 8.0f)
             .Where(e => e.PhysicsData.IsCollidable)
             .ToArray();

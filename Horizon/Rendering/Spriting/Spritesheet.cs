@@ -90,7 +90,7 @@ public class SpriteSheet : Texture
     }
 
     /// <summary>
-    /// Gets the animated texture coordinates.
+    /// Gets the texture coordinates with respect to the configured sprite sheet.
     /// </summary>
     /// <param name="name">The name.</param>
     /// <returns></returns>
@@ -107,9 +107,8 @@ public class SpriteSheet : Texture
         }
 
         // Calculate texture coordinates for the sprite
-        Vector2 topLeftTexCoord =
-            sprite.FirstFrame.Position / Size - new Vector2(SingleSpriteSize.X / 4.0f, 0);
-        Vector2 bottomRightTexCoord = topLeftTexCoord + (sprite.FirstFrame.Size / Size);
+        Vector2 topLeftTexCoord = Vector2.Zero;
+        Vector2 bottomRightTexCoord = topLeftTexCoord + SingleSpriteSize;
 
         return new Vector2[]
         {

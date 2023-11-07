@@ -92,7 +92,7 @@ public abstract partial class Tiling<TTextureID>
         /// </remarks>
         public void GenerateMesh()
         {
-            // Update the tileset/tile associations.
+            // Update tileset/tile associations.
             foreach (var slice in Chunk.Slices)
             {
                 if (!TileMapChunkSliceTileMeshesKeyPairs.ContainsKey(slice))

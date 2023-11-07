@@ -371,10 +371,7 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// Generates meshes for the tile map.
         /// </summary>
-        public void GenerateMeshes()
-        {
-            ChunkManager.GenerateMeshes();
-        }
+        public void GenerateMeshes() => ChunkManager.GenerateMeshes();
 
         /// <summary>
         /// Populates tiles in the tile map using a custom action.

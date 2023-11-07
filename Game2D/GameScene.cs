@@ -15,6 +15,7 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using System;
 using System.Numerics;
+using TileBash.Animals;
 using TileBash.Player;
 
 namespace TileBash;
@@ -63,11 +64,13 @@ public class GameScene : Scene
             Entities.Add(tilemap);
 
         AddEntity(player = new Player2D(world, tilemap));
+        AddEntity(cat = new Cat());
 
         spriteBatch = AddEntity(new SpriteBatch());
         spriteBatch.Add(player);
+        spriteBatch.Add(cat);
 
-        cam = new Camera() { Position = new Vector3(0, 0, 100) };
+        cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
 
@@ -77,15 +80,18 @@ public class GameScene : Scene
                 MaxAge = 3.0f
             }
         );
-        //AddEntity(
-        //    new IntervalRunner(
-        //        1 / 4.0f,
-        //        () =>
-        //        {
-        //            SpawnLine();
-        //        }
-        //    )
-        //);
+        AddEntity(
+            new IntervalRunner(
+                1 / 25.0f,
+                () =>
+                {
+                    var x = random.NextSingle() * Engine.Window.WindowSize.X;
+                    var y = random.NextSingle() * Engine.Window.WindowSize.Y;
+
+                    SpawnParticle(cam.ScreenToWorld(new Vector2(x, y)));
+                }
+            )
+        );
     }
 
     protected override Effect[] GeneratePostProccessingEffects()
@@ -101,8 +107,9 @@ public class GameScene : Scene
         Engine.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private readonly float cameraMovement = 15;
+    private readonly float cameraMovement = 16;
     private Vector2 playerDir;
+    private Animal cat;
 
     public override void Update(float dt)
     {
@@ -116,6 +123,18 @@ public class GameScene : Scene
         cam.Position = new Vector3(player.Position.X, player.Position.Y, cameraMovement);
 
         cam.Update(dt);
+
+        //var mousePos = cam.ScreenToWorld(Engine.Input.MouseManager.GetData().Position);
+        //for (int i = 0; i < tilemap.Depth; i++)
+        //{
+        //    if (tilemap[(int)mousePos.X, (int)mousePos.Y, i] is null)
+        //        continue;
+        //    tilemap[(int)mousePos.X, (int)mousePos.Y, i].RenderingData.Color = new Vector3(
+        //        1.0f,
+        //        0.0f,
+        //        0.0f
+        //    );
+        //}
     }
 
     public override void Draw(float dt, ref RenderOptions options)
@@ -137,16 +156,12 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    private void SpawnParticle(float x = 0)
+    private void SpawnParticle(Vector2 pos)
     {
         float val = (random.NextSingle() * 2.0f) * MathF.PI;
 
         particles.Add(
-            new Particle2D(
-                new Vector2(MathF.Sin(val), MathF.Cos(val)) + playerDir,
-                player.Position + new Vector2(x * particles.ParticleSize, 0.0f),
-                val * val
-            )
+            new Particle2D(new Vector2(MathF.Sin(val), MathF.Cos(val)) + playerDir, pos, val)
         );
     }
 
@@ -190,14 +205,11 @@ public class GameScene : Scene
         {
             ImGui.Text($"Maximum: {particles.Count}");
 
-            if (ImGui.Button("Spawn 1"))
-                SpawnParticle();
             if (ImGui.Button("Spawn 100"))
                 SpawnLine();
 
             if (ImGui.Button("Spawn 100000"))
                 SpawnCircle(100000);
-
             ImGui.End();
         }
     }

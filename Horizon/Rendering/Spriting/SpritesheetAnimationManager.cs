@@ -15,12 +15,17 @@ public class SpriteSheetAnimationManager : IGameComponent
     public Entity Parent { get; set; }
 
     public SpriteSheet Spritesheet { get; private set; }
-
+    public string FrameName { get; private set; }
     public Dictionary<string, SpriteAnimationDefinition> Animations { get; init; }
 
     public SpriteSheetAnimationManager()
     {
         this.Animations = new();
+    }
+
+    public void SetAnimation(string name)
+    {
+        this.FrameName = name;
     }
 
     public (SpriteDefinition definition, int index) this[string name]
@@ -88,6 +93,12 @@ public class SpriteSheetAnimationManager : IGameComponent
         foreach (var name in Animations.Keys)
         {
             var frame = Animations[name];
+
+            if (frame.Length < 1)
+            {
+                frame.Index = 0;
+                continue;
+            }
 
             frame.Timer += dt;
 

@@ -111,7 +111,11 @@ public abstract class GameEngine : Entity, IDisposable
         LoadEssentialEngineComponents();
 
         _options = Debugger.RenderOptionsDebugger.RenderOptions with { GL = Window.GL };
-
+        unsafe
+        {
+            GL.Enable(EnableCap.DebugOutput);
+            GL.DebugMessageCallback(debugCallback, null);
+        }
         if (Debugger.Enabled)
         {
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -123,6 +127,25 @@ public abstract class GameEngine : Entity, IDisposable
                 $"{instanceParameters.WindowTitle} - Horizon ({version}) {buildDate}"
             );
         }
+    }
+
+    private void debugCallback(
+        GLEnum source,
+        GLEnum type,
+        int id,
+        GLEnum severity,
+        int length,
+        nint message,
+        nint userParam
+    )
+    {
+        if (id == 131185 || id == 1280)
+            return;
+
+        Logger.Log(
+            LogLevel.Debug,
+            $"[{source}] [{severity}] [{type}] [{id}] {Marshal.PtrToStringAnsi(message)}"
+        );
     }
 
     /// <summary>

@@ -741,16 +741,16 @@ public class CustomImguiController : IDisposable
             // Upload vertex/index buffers
 
             _gl.BufferData(
-                GLEnum.ArrayBuffer,
+                BufferTargetARB.ArrayBuffer,
                 (nuint)(cmdListPtr.VtxBuffer.Size * sizeof(ImDrawVert)),
                 (void*)cmdListPtr.VtxBuffer.Data,
-                GLEnum.StreamDraw
+                BufferUsageARB.StaticRead
             );
             _gl.BufferData(
-                GLEnum.ElementArrayBuffer,
+                BufferTargetARB.ElementArrayBuffer,
                 (nuint)(cmdListPtr.IdxBuffer.Size * sizeof(ushort)),
                 (void*)cmdListPtr.IdxBuffer.Data,
-                GLEnum.StreamDraw
+                BufferUsageARB.StaticRead
             );
             for (int cmd_i = 0; cmd_i < cmdListPtr.CmdBuffer.Size; cmd_i++)
             {

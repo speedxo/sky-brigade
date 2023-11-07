@@ -5,6 +5,7 @@ layout(local_size_x=1024, local_size_y=1) in;
 #include "particle.h"
 
 uniform float uDt;
+uniform mat4 mvp;
 
 layout(std430, binding=0) coherent restrict buffer particle_buffer
 {

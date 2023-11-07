@@ -22,15 +22,17 @@ public class PlayerWalkingBehaviour : Player2DStateBehaviour
         Player.PhysicsBody.SetLinearVelocity(
             Vector2.Clamp(Player.PhysicsBody.GetLinearVelocity(), Vector2.One * -5, Vector2.One * 5)
         );
+        Player.Flipped = movementDir.X > 0;
 
-        Player.FrameName = movementDir switch
-        {
-            var v when v.X < 0 => "walk_left",
-            var v when v.X > 0 => "walk_right",
-            var v when v.Y > 0 => "walk_up",
-            var v when v.Y < 0 => "walk_down",
-            _ => "idle"
-        };
+        Player.SetAnimation(
+            movementDir switch
+            {
+                var v when v.X != 0.0f => "walk_side",
+                var v when v.Y > 0 => "walk_up",
+                var v when v.Y < 0 => "walk_down",
+                _ => "idle"
+            }
+        );
 
         return Player2DStateIdentifier.Walking;
     }

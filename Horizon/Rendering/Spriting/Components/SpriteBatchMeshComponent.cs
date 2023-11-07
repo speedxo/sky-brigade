@@ -127,8 +127,8 @@ public class SpriteBatchMesh : Mesh2D
             {
                 modelMatrix = sprite.Transform.ModelMatrix,
                 spriteOffset = sprite.GetFrameOffset(),
-                spriteId = sprite.ID,
-                isFlipped = sprite.Flipped
+                spriteId = sprite.ID
+                //isFlipped = sprite.Flipped
             };
             i++;
         }
