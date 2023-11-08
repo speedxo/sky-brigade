@@ -21,7 +21,7 @@ internal class GenericWanderState : AnimalState
 
         // Random direction
         float value = Random.NextSingle() * 2.0f * MathF.PI;
-        _targetDir = new Vector2(MathF.Cos(value), MathF.Sin(value) * 0.5f);
+        _targetDir = new Vector2(MathF.Cos(value), MathF.Sin(value) * 0.25f);
     }
 
     public override void Exit() { }

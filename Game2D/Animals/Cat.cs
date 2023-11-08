@@ -15,7 +15,7 @@ namespace TileBash.Animals
         public Cat()
             : base("content/cat.png", new Vector2(32))
         {
-            Spritesheet.AddAnimationRange(
+            AddAnimationRange(
                 new (string name, Vector2 position, int length, float frameTime, Vector2? inSize)[]
                 {
                     ("idle", new Vector2(0, 0), 4, 0.25f, null),
@@ -25,6 +25,7 @@ namespace TileBash.Animals
 
             IsAnimated = true;
             Size = new Vector2(2.0f);
+            SetAnimation("idle");
 
             StateMachine.AddState(AnimalBehavior.Idle, new GenericIdleState(this, StateMachine));
             StateMachine.AddState(

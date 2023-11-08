@@ -64,6 +64,7 @@ public class GameScene : Scene
             Entities.Add(tilemap);
 
         AddEntity(player = new Player2D(world, tilemap));
+
         AddEntity(cat = new Cat());
 
         spriteBatch = AddEntity(new SpriteBatch());
@@ -124,6 +125,19 @@ public class GameScene : Scene
 
         cam.Update(dt);
 
+        if (Engine.Input.KeyboardManager.IsKeyPressed(Key.G))
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var x = random.NextSingle() * Engine.Window.WindowSize.X;
+                var y = random.NextSingle() * Engine.Window.WindowSize.Y;
+
+                var cat = new Cat();
+                cat.Transform.Position = cam.ScreenToWorld(new Vector2(x, y));
+
+                spriteBatch.Add(AddEntity(cat));
+            }
+        }
         //var mousePos = cam.ScreenToWorld(Engine.Input.MouseManager.GetData().Position);
         //for (int i = 0; i < tilemap.Depth; i++)
         //{
@@ -201,9 +215,10 @@ public class GameScene : Scene
 
     public override void DrawGui(float dt)
     {
-        if (ImGui.Begin("Particles"))
+        if (ImGui.Begin("Particles (& cats)"))
         {
-            ImGui.Text($"Maximum: {particles.Count}");
+            ImGui.Text($"Particles Max: {particles.Count}");
+            ImGui.Text($"Cats: {spriteBatch.Count}");
 
             if (ImGui.Button("Spawn 100"))
                 SpawnLine();

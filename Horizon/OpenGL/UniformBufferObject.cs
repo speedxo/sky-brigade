@@ -20,7 +20,7 @@ namespace Horizon.OpenGL
             Entity.Engine.GL.BindBufferBase(BufferTargetARB.UniformBuffer, _bindingPoint, Handle);
         }
 
-        public unsafe void BufferData<T>(ReadOnlySpan<T> data)
+        public unsafe void BufferData<T>(in ReadOnlySpan<T> data)
             where T : unmanaged
         {
             Bind();
@@ -36,7 +36,36 @@ namespace Horizon.OpenGL
             Unbind();
         }
 
-        public unsafe void BufferSingleData<T>(T data)
+        public unsafe void BufferSubData<T>(in ReadOnlySpan<T> data)
+            where T : unmanaged
+        {
+            Bind();
+            Entity.Engine.GL.BufferSubData(
+                BufferTargetARB.UniformBuffer,
+                0,
+                (nuint)(data.Length * sizeof(T)),
+                data
+            );
+            Unbind();
+        }
+
+        public unsafe void BufferSubData<T>(in T[] data)
+            where T : unmanaged
+        {
+            Bind();
+            fixed (void* d = data)
+            {
+                Entity.Engine.GL.BufferSubData(
+                    BufferTargetARB.UniformBuffer,
+                    0,
+                    (nuint)(data.Length * sizeof(T)),
+                    d
+                );
+            }
+            Unbind();
+        }
+
+        public unsafe void BufferSingleData<T>(in T data)
             where T : unmanaged
         {
             Bind();
@@ -50,7 +79,7 @@ namespace Horizon.OpenGL
             Unbind();
         }
 
-        public unsafe void BufferSingleData<T>(T[] data)
+        public unsafe void BufferSingleData<T>(in T[] data)
             where T : unmanaged
         {
             Bind();

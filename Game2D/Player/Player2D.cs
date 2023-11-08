@@ -95,7 +95,9 @@ public class Player2D : Sprite
     {
         var sheet = (new SpriteSheet("content/spritesheet.png", new Vector2(16)));
 
-        sheet.AddAnimationRange(
+        ConfigureSpriteSheet(sheet, "idle");
+
+        AddAnimationRange(
             new (string, Vector2, int, float, Vector2?)[]
             {
                 ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
@@ -104,8 +106,6 @@ public class Player2D : Sprite
                 ("idle", new Vector2(0, 3), 0, 0.1f, null)
             }
         );
-
-        ConfigureSpriteSheet(sheet, "idle");
 
         IsAnimated = true;
     }

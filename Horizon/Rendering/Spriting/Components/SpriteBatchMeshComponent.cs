@@ -11,28 +11,21 @@ public class SpriteBatchMesh : Mesh2D
 {
     private const string UNIFORM_SINGLE_BUFFER_SIZE = "uSingleFrameSize";
 
-    /// <summary>
-    /// This limit is set at 750 to meet the 64kb UBO limit (we should instead pack into a TBO, UPDATE: we will use instancing instead.)
-    /// </summary>
-    public static readonly int MAX_SPRITES = 750;
-
     [StructLayout(LayoutKind.Sequential)]
     private struct SpriteData
     {
         public Matrix4x4 modelMatrix;
         public Vector2 spriteOffset;
-        public int spriteId;
-        public bool isFlipped;
     }
 
     private readonly SpriteSheet sheet;
 
-    public UniformBufferObject UniformBuffer { get; init; }
+    private BufferObject<SpriteData> storageBuffer { get; init; }
 
-    public bool ShouldUniformBufferUpdate { get; set; }
     public uint ElementCount { get; private set; }
+    private uint bufferLength = 0;
 
-    private SpriteData[] data = new SpriteData[MAX_SPRITES];
+    private SpriteData[] data = new SpriteData[16];
 
     public SpriteBatchMesh(SpriteSheet sheet, Shader shader)
         : base()
@@ -40,8 +33,10 @@ public class SpriteBatchMesh : Mesh2D
         this.sheet = sheet;
         this.Material = new CustomMaterial(this.sheet, in shader);
 
-        UniformBuffer = new UniformBufferObject(
-            GameEntity.Entity.Engine.GL.GetUniformBlockIndex(shader.Handle, "SpriteUniforms")
+        storageBuffer = new(BufferTargetARB.ShaderStorageBuffer);
+        Material.Technique.Shader.GetResourceIndex(
+            "SpriteUniforms",
+            ProgramInterface.ShaderStorageBlock
         );
     }
 
@@ -51,9 +46,9 @@ public class SpriteBatchMesh : Mesh2D
     }
 
     public void Draw(
-        SpriteSheet sheet,
-        Matrix4x4 modelMatrix,
-        IEnumerable<Sprite> sprites,
+        in SpriteSheet sheet,
+        in Matrix4x4 modelMatrix,
+        in ReadOnlySpan<Sprite> sprites,
         ref RenderOptions options
     )
     {
@@ -66,20 +61,26 @@ public class SpriteBatchMesh : Mesh2D
         Material.Technique.SetUniform(UNIFORM_MODEL_MATRIX, modelMatrix);
         Material.Technique.SetUniform(UNIFORM_SINGLE_BUFFER_SIZE, sheet.SingleSpriteSize);
 
-        if (ShouldUniformBufferUpdate)
-        {
-            ShouldUniformBufferUpdate = false;
-        }
+        //storageBuffer.BufferData(new ReadOnlySpan<SpriteData>(AggregateSpriteData(sprites)));
 
-        //UniformBuffer.BufferData(new ReadOnlySpan<SpriteData>(AggregateSpriteData(sprites)));
-        UniformBuffer.BufferSingleData(AggregateSpriteData(sprites));
-        UniformBuffer.BindToUniformBlockBindingPoint();
+        // I AM TESING STUFF!!!!
+
+        AggregateSpriteData(in sprites);
+        if (data.Length > bufferLength)
+        {
+            storageBuffer.BufferData(new ReadOnlySpan<SpriteData>(data));
+            bufferLength = (uint)data.Length;
+        }
+        else
+            storageBuffer.BufferSubData(new ReadOnlySpan<SpriteData>(data));
+
+        Material.Technique.Shader.BindBuffer("SpriteUniforms", storageBuffer);
         Buffer.VertexArray.Bind();
 
         // Once again, I really don't want to make the whole method unsafe for one call.
         unsafe
         {
-            // Turn on wireframe mode
+            // Turn on wire-frame mode
             if (options.IsWireframeEnabled)
                 GameEntity.Entity.Engine.GL.PolygonMode(
                     TriangleFace.FrontAndBack,
@@ -93,7 +94,7 @@ public class SpriteBatchMesh : Mesh2D
                 null
             );
 
-            // Turn off wireframe mode
+            // Turn off wire-frame mode
             if (options.IsWireframeEnabled)
                 GameEntity.Entity.Engine.GL.PolygonMode(
                     TriangleFace.FrontAndBack,
@@ -118,20 +119,15 @@ public class SpriteBatchMesh : Mesh2D
         SetUniform(UNIFORM_SINGLE_BUFFER_SIZE, sheet.SingleSpriteSize);
     }
 
-    private SpriteData[] AggregateSpriteData(IEnumerable<Sprite> sprites)
+    private void AggregateSpriteData(in ReadOnlySpan<Sprite> sprites)
     {
-        int i = 0;
-        foreach (var sprite in sprites)
+        if (sprites.Length > data.Length)
+            Array.Resize(ref data, sprites.Length);
+
+        for (int i = 0; i < sprites.Length; i++)
         {
-            data[i] = new SpriteData
-            {
-                modelMatrix = sprite.Transform.ModelMatrix,
-                spriteOffset = sprite.GetFrameOffset(),
-                spriteId = sprite.ID
-                //isFlipped = sprite.Flipped
-            };
-            i++;
+            data[i].modelMatrix = sprites[i].Transform.ModelMatrix;
+            data[i].spriteOffset = sprites[i].GetFrameOffset();
         }
-        return data;
     }
 }

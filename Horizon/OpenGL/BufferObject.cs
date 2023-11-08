@@ -23,9 +23,51 @@ public class BufferObject<T> : IDisposable
         Handle = Entity.Engine.GL.GenBuffer();
     }
 
-    public virtual unsafe void BufferData(ReadOnlySpan<T> data)
+    public virtual unsafe void BufferData(in ReadOnlySpan<T> data)
     {
         Bind();
+
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BufferData(
+            Type,
+            (nuint)(data.Length * sizeof(T)),
+            data,
+            BufferUsageARB.DynamicDraw
+        );
+
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(Type, 0);
+    }
+
+    public virtual unsafe void BufferSubData(in ReadOnlySpan<T> data, int offset = 0)
+    {
+        Bind();
+
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BufferSubData(Type, offset, (nuint)(sizeof(T) * data.Length), data);
+
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(Type, 0);
+    }
+
+    public virtual unsafe void BufferSubData(in T[] data, int offset = 0)
+    {
+        Bind();
+
+        fixed (void* d = data)
+        {
+            // FIXME cross static ref to Entity.Engine
+            Entity.Engine.GL.BufferSubData(Type, offset, (nuint)(sizeof(T) * data.Length), d);
+        }
+
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(Type, 0);
+    }
+
+    public virtual unsafe void BufferData(in T[] data)
+    {
+        Bind();
+
         fixed (void* d = data)
         {
             // FIXME cross static ref to Entity.Engine
@@ -33,7 +75,7 @@ public class BufferObject<T> : IDisposable
                 Type,
                 (nuint)(data.Length * sizeof(T)),
                 d,
-                BufferUsageARB.StaticDraw
+                BufferUsageARB.DynamicDraw
             );
         }
         // FIXME cross static ref to Entity.Engine

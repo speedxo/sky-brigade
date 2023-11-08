@@ -62,12 +62,13 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet))
             SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(sprite.Spritesheet, Shader)));
 
-        if (SpritesheetSprites[sprite.Spritesheet].sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
-            Engine.Logger.Log(
-                Logging.LogLevel.Fatal,
-                $"You are attempting to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit. Please create another sprite batch."
-            );
+        //if (SpritesheetSprites[sprite.Spritesheet].sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
+        //    Engine.Logger.Log(
+        //        Logging.LogLevel.Fatal,
+        //        $"You are attempting to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit. Please create another sprite batch."
+        //    );
 
+        Count++;
         SpritesheetSprites[sprite.Spritesheet].sprites.Add(sprite);
         _requiresVboUpdate = true;
     }
@@ -85,7 +86,12 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         base.Draw(dt, ref options);
 
         foreach (var (spritesheet, (sprites, mesh)) in SpritesheetSprites)
-            mesh.Draw(spritesheet, Transform.ModelMatrix, sprites, ref options);
+            mesh.Draw(
+                spritesheet,
+                Transform.ModelMatrix,
+                CollectionsMarshal.AsSpan(sprites),
+                ref options
+            );
     }
 
     /// <summary>
@@ -121,8 +127,6 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
                 vertexCounter + 3
             };
         }
-        sprites[0].Spritesheet.ResetSpriteCounter();
-
         for (int i = 0; i < sprites.Length; i++)
         {
             var spriteVertices = sprites[i].GetVertices();

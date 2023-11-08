@@ -2,6 +2,7 @@
 using Horizon.Logging;
 using Horizon.OpenGL;
 using Horizon.Rendering.Spriting;
+using System.Numerics;
 
 namespace Horizon.Content
 {
@@ -9,6 +10,7 @@ namespace Horizon.Content
     {
         private Dictionary<string, Texture> namedTextures;
         private Dictionary<string, Texture> unnamedTextures;
+        private Dictionary<string, SpriteSheet> unnamedSpritesheets;
         private List<Texture> unmanagedTextures;
 
         public ShaderContentManager Shaders { get; private set; }
@@ -22,6 +24,7 @@ namespace Horizon.Content
             namedTextures = new Dictionary<string, Texture>();
             unnamedTextures = new Dictionary<string, Texture>();
             unmanagedTextures = new List<Texture>();
+            unnamedSpritesheets = new();
         }
 
         public int TotalTextures
@@ -62,6 +65,19 @@ namespace Horizon.Content
                 );
 
             return unnamedTextures[internedPath];
+        }
+
+        public SpriteSheet LoadSpriteSheet(string path, Vector2 size)
+        {
+            if (!unnamedSpritesheets.ContainsKey(path))
+                unnamedSpritesheets.TryAdd(path, new SpriteSheet(LoadTexture(path).Handle, size));
+            else
+                Engine.Logger.Log(
+                    LogLevel.Warning,
+                    $"An attempt to load SpriteSheet({path}) was made even though an instance of SpriteSheet({path}) already exists, a reference to the already loaded sheet will be returned."
+                );
+
+            return unnamedSpritesheets[path];
         }
 
         public Texture GenerateNamedTexture(string name, Texture texture)

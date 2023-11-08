@@ -18,12 +18,8 @@ namespace TileBash.Animals
         public Animal(string spriteSheetPath, Vector2 spriteSize)
         {
             ConfigureSpriteSheet(
-                Engine.Content.AddTexture(new SpriteSheet(spriteSheetPath, spriteSize)),
-                "",
-                new Horizon.GameEntity.Components.TransformComponent2D()
-                {
-                    Position = new Vector2(32)
-                }
+                new SpriteSheet(Engine.Content.LoadTexture(spriteSheetPath).Handle, spriteSize),
+                "idle"
             );
 
             StateMachine = AddComponent<AnimalBehaviorStateMachineComponent>();

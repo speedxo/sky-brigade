@@ -15,17 +15,12 @@ public class SpriteSheetAnimationManager : IGameComponent
     public Entity Parent { get; set; }
 
     public SpriteSheet Spritesheet { get; private set; }
-    public string FrameName { get; private set; }
     public Dictionary<string, SpriteAnimationDefinition> Animations { get; init; }
 
-    public SpriteSheetAnimationManager()
+    public SpriteSheetAnimationManager(in SpriteSheet sheet)
     {
+        Spritesheet = sheet;
         this.Animations = new();
-    }
-
-    public void SetAnimation(string name)
-    {
-        this.FrameName = name;
     }
 
     public (SpriteDefinition definition, int index) this[string name]
@@ -83,10 +78,7 @@ public class SpriteSheetAnimationManager : IGameComponent
 
     public void Draw(float dt, ref RenderOptions options) { }
 
-    public void Initialize()
-    {
-        Spritesheet = (SpriteSheet)Parent;
-    }
+    public void Initialize() { }
 
     public void Update(float dt)
     {
