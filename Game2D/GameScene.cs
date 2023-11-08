@@ -65,11 +65,8 @@ public class GameScene : Scene
 
         AddEntity(player = new Player2D(world, tilemap));
 
-        AddEntity(cat = new Cat());
-
         spriteBatch = AddEntity(new SpriteBatch());
         spriteBatch.Add(player);
-        spriteBatch.Add(cat);
 
         cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
 
@@ -110,7 +107,6 @@ public class GameScene : Scene
 
     private readonly float cameraMovement = 16;
     private Vector2 playerDir;
-    private Animal cat;
 
     public override void Update(float dt)
     {
@@ -218,7 +214,7 @@ public class GameScene : Scene
         if (ImGui.Begin("Particles (& cats)"))
         {
             ImGui.Text($"Particles Max: {particles.Count}");
-            ImGui.Text($"Cats: {spriteBatch.Count}");
+            ImGui.Text($"Cats: {spriteBatch.Count - 1}");
 
             if (ImGui.Button("Spawn 100"))
                 SpawnLine();
