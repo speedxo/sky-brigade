@@ -37,6 +37,76 @@ Horizon's current sprite batch implementation batches sprites by texture and onl
 
 However, be it my lazyness or some other force guiding me towards optimization, I need to do better! My first instinct is something I've only seen on paper, and thats the AZDO (approaching zero driver overhead) technique called persistent buffering, it allows one to map a region of memory once and keep the pointer, and the driver will handle when the data is uploaded, this is in contrast to my current technique in which I have a struct array which I populate with sprite rendering data (model transforms and frame offsets), I then check if the buffer size has changed (ie. a sprite was added or removed) and then either glBufferData or glBufferSubData, however there is a compounded overhead between aggregaring the sprite data and then copying it all over to the GPU, so I look forward to trying it out, let's see how this all works, and lets see some actual code!
 
-![4000 cats at 60FPS](image-2.png)
+## Current Implementation
+
+```c#
+...
+public void Render(...in ReadOnlySpan<Sprite> sprites...)
+{
+    // Setup state and prepare shader uniforms.
+    ...
+
+    // This is the actual meat of the function.
+    UniformBuffer.BufferData(AggregateSpriteData(sprites));
+    
+    // Actually render the vertex array.
+    ...
+}
+/// <summary>
+/// Helper func to update the struct[] we copy to the GPU.
+/// </summary>
+private SpriteData[] AggregateSpriteData(in ReadOnlySpan<Sprite> sprites)
+{
+    // Perhaps swapping out for a Parallel.For or a custom thread pool implementation?
+    for (uint i = 0; i < sprites.Length)
+    {
+        data[i] = new SpriteData
+        {
+            modelMatrix = sprites[i].Transform.ModelMatrix,
+            spriteOffset = sprites[i].GetFrameOffset()
+        };
+    }
+    return data;
+}
+...
+```
+At first glance there are obvious optimizations we can make, for starters we can ditch this seperate structs array, if we are smart about things we can transition the entire sprite batch rendering system to have an array-of-structs data driven approach, however I don't like this for many reasons, my main deal breaker is that the object and the data are seperated. However I feel like we can work our away around this problem, firstly we can implement a persistent buffer, to which we can write our sprite data into each frame, we need to track and appropriatly resize the buffer as the number of sprites changes, but other than that there really isn't that much else to change.
+
+## The shiny new AZDO technique
+```c#
+public void Draw()
+{
+    ...
+
+    if (sprites.Length > bufferLength) // Check if array has been resized.
+    {
+        bufferLength = (uint)sprites.Length;
+
+        storageBuffer.UnmapBuffer();
+        dataPtr = (SpriteData*)
+            storageBuffer.MapBufferRange(
+                (nuint)(bufferLength * sizeof(SpriteData)),
+                MapBufferAccessMask.WriteBit | MapBufferAccessMask.PersistentBit
+            );
+    }
+    AggregateSpriteData(in sprites);
+
+    ...
+}
+private unsafe void AggregateSpriteData(in ReadOnlySpan<Sprite> sprites)
+{
+    for (int i = 0; i < sprites.Length; i++)
+    {
+        dataPtr[i].modelMatrix = sprites[i].Transform.ModelMatrix;
+        dataPtr[i].spriteOffset = sprites[i].GetFrameOffset();
+    }
+}
+```
+As you can see it's really not that hard (specifically because i've ommited the syncing code, but thats because _i haven't written it yet_) however I am yet to implement buffer mapping natively into my BufferObject class, so for now I'm using a seperate implementation. Lets look at the improvement:
+
+## 1000 Cats @ 200+ FPS  
 ![1000 cats at 210FPS](image-3.png)
+## 2500 Cats @ 90+ FPS
 ![2500 cats at 90FPS](image-4.png)
+## 4000 Cats at ~60 FPS
+![4000 cats at 60FPS](image-2.png)
