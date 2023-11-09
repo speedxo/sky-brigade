@@ -36,3 +36,7 @@ Horizon's current sprite batch implementation batches sprites by texture and onl
 ![2500 cats at 70FPS](image-1.png)
 
 However, be it my lazyness or some other force guiding me towards optimization, I need to do better! My first instinct is something I've only seen on paper, and thats the AZDO (approaching zero driver overhead) technique called persistent buffering, it allows one to map a region of memory once and keep the pointer, and the driver will handle when the data is uploaded, this is in contrast to my current technique in which I have a struct array which I populate with sprite rendering data (model transforms and frame offsets), I then check if the buffer size has changed (ie. a sprite was added or removed) and then either glBufferData or glBufferSubData, however there is a compounded overhead between aggregaring the sprite data and then copying it all over to the GPU, so I look forward to trying it out, let's see how this all works, and lets see some actual code!
+
+![4000 cats at 60FPS](image-2.png)
+![1000 cats at 210FPS](image-3.png)
+![2500 cats at 90FPS](image-4.png)
