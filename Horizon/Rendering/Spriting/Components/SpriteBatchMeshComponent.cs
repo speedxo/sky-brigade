@@ -2,6 +2,7 @@
 using Horizon.Rendering.Spriting.Data;
 using Silk.NET.OpenGL;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Shader = Horizon.Content.Shader;
 
@@ -19,13 +20,11 @@ public class SpriteBatchMesh : Mesh2D
     }
 
     private readonly SpriteSheet sheet;
-
-    private BufferObject<SpriteData> storageBuffer { get; init; }
+    private BufferStorageObject<SpriteData> storageBuffer { get; init; }
+    private unsafe SpriteData* dataPtr;
 
     public uint ElementCount { get; private set; }
-    private uint bufferLength = 0;
-
-    private SpriteData[] data = new SpriteData[16];
+    private uint bufferLength = 16;
 
     public SpriteBatchMesh(SpriteSheet sheet, Shader shader)
         : base()
@@ -33,7 +32,20 @@ public class SpriteBatchMesh : Mesh2D
         this.sheet = sheet;
         this.Material = new CustomMaterial(this.sheet, in shader);
 
-        storageBuffer = new(BufferTargetARB.ShaderStorageBuffer);
+        storageBuffer = new(
+            BufferStorageTarget.ShaderStorageBuffer,
+            BufferTargetARB.ShaderStorageBuffer
+        );
+
+        unsafe
+        {
+            dataPtr = (SpriteData*)
+                storageBuffer.MapBufferRange(
+                    (nuint)(bufferLength * sizeof(SpriteData)),
+                    MapBufferAccessMask.WriteBit | MapBufferAccessMask.PersistentBit
+                );
+        }
+
         Material.Technique.Shader.GetResourceIndex(
             "SpriteUniforms",
             ProgramInterface.ShaderStorageBlock
@@ -45,7 +57,7 @@ public class SpriteBatchMesh : Mesh2D
         throw new Exception("Please only draw a SpriteBatchMesh through a SpriteBatch");
     }
 
-    public void Draw(
+    public unsafe void Draw(
         in SpriteSheet sheet,
         in Matrix4x4 modelMatrix,
         in ReadOnlySpan<Sprite> sprites,
@@ -61,46 +73,40 @@ public class SpriteBatchMesh : Mesh2D
         Material.Technique.SetUniform(UNIFORM_MODEL_MATRIX, modelMatrix);
         Material.Technique.SetUniform(UNIFORM_SINGLE_BUFFER_SIZE, sheet.SingleSpriteSize);
 
-        //storageBuffer.BufferData(new ReadOnlySpan<SpriteData>(AggregateSpriteData(sprites)));
-
         // I AM TESING STUFF!!!!
 
-        AggregateSpriteData(in sprites);
-        if (data.Length > bufferLength)
+        if (sprites.Length > bufferLength) // Check if array has been resized.
         {
-            storageBuffer.BufferData(new ReadOnlySpan<SpriteData>(data));
-            bufferLength = (uint)data.Length;
+            bufferLength = (uint)sprites.Length;
+
+            storageBuffer.UnmapBuffer();
+            Console.WriteLine("REMAP");
+            dataPtr = (SpriteData*)
+                storageBuffer.MapBufferRange(
+                    (nuint)(bufferLength * sizeof(SpriteData)),
+                    MapBufferAccessMask.WriteBit | MapBufferAccessMask.PersistentBit
+                );
         }
-        else
-            storageBuffer.BufferSubData(new ReadOnlySpan<SpriteData>(data));
+
+        AggregateSpriteData(in sprites);
 
         Material.Technique.Shader.BindBuffer("SpriteUniforms", storageBuffer);
         Buffer.VertexArray.Bind();
 
-        // Once again, I really don't want to make the whole method unsafe for one call.
-        unsafe
-        {
-            // Turn on wire-frame mode
-            if (options.IsWireframeEnabled)
-                GameEntity.Entity.Engine.GL.PolygonMode(
-                    TriangleFace.FrontAndBack,
-                    PolygonMode.Line
-                );
+        // Turn on wire-frame mode
+        if (options.IsWireframeEnabled)
+            GameEntity.Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
 
-            GameEntity.Entity.Engine.GL.DrawElements(
-                PrimitiveType.Triangles,
-                ElementCount,
-                DrawElementsType.UnsignedInt,
-                null
-            );
+        GameEntity.Entity.Engine.GL.DrawElements(
+            PrimitiveType.Triangles,
+            ElementCount,
+            DrawElementsType.UnsignedInt,
+            null
+        );
 
-            // Turn off wire-frame mode
-            if (options.IsWireframeEnabled)
-                GameEntity.Entity.Engine.GL.PolygonMode(
-                    TriangleFace.FrontAndBack,
-                    PolygonMode.Fill
-                );
-        }
+        // Turn off wire-frame mode
+        if (options.IsWireframeEnabled)
+            GameEntity.Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
 
         Buffer.VertexArray.Unbind();
 
@@ -119,15 +125,17 @@ public class SpriteBatchMesh : Mesh2D
         SetUniform(UNIFORM_SINGLE_BUFFER_SIZE, sheet.SingleSpriteSize);
     }
 
-    private void AggregateSpriteData(in ReadOnlySpan<Sprite> sprites)
+    private unsafe void AggregateSpriteData(in ReadOnlySpan<Sprite> sprites)
     {
-        if (sprites.Length > data.Length)
-            Array.Resize(ref data, sprites.Length);
-
         for (int i = 0; i < sprites.Length; i++)
         {
-            data[i].modelMatrix = sprites[i].Transform.ModelMatrix;
-            data[i].spriteOffset = sprites[i].GetFrameOffset();
+            dataPtr[i].modelMatrix = sprites[i].Transform.ModelMatrix;
+            dataPtr[i].spriteOffset = sprites[i].GetFrameOffset();
         }
+    }
+
+    ~SpriteBatchMesh()
+    {
+        storageBuffer.UnmapBuffer();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Horizon.GameEntity;
+﻿using HidSharp.Reports;
+using Horizon.GameEntity;
 using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL;
@@ -94,6 +95,96 @@ public class BufferObject<T> : IDisposable
     {
         // FIXME cross static ref to Entity.Engine
         Entity.Engine.GL.BindBuffer(Type, 0);
+    }
+
+    public unsafe void* MapBufferRange(nuint length, MapBufferAccessMask access)
+    {
+        Bind();
+        void* ptr = Entity.Engine.GL.MapBufferRange(Type, 0, length, access);
+        Unbind();
+        return ptr;
+    }
+
+    public void UnmapBuffer()
+    {
+        Bind();
+        Entity.Engine.GL.UnmapBuffer(Type);
+        Unbind();
+    }
+
+    public virtual void Dispose()
+    {
+        try
+        {
+            // FIXME cross static ref to Entity.Engine
+            Entity.Engine.GL.DeleteBuffer(Handle);
+        }
+        catch
+        {
+            /* i dont fucking care */
+        }
+        GC.SuppressFinalize(this);
+    }
+}
+
+public class BufferStorageObject<T> : IDisposable
+    where T : unmanaged
+{
+    /* These are private because they have no reason to be public
+     * Traditional OOP style principles break when you have to abstract
+     */
+    public uint Handle { get; init; }
+
+    public readonly BufferStorageTarget Target;
+    public readonly BufferTargetARB Type;
+
+    public unsafe BufferStorageObject(BufferStorageTarget bufferTarget, BufferTargetARB bufferType)
+    {
+        Target = bufferTarget;
+        Type = bufferType;
+
+        // FIXME cross static ref to Entity.Engine
+        Handle = Entity.Engine.GL.GenBuffer();
+        Bind();
+        unsafe
+        {
+            Entity.Engine.GL.BufferStorage(
+                Target,
+                (nuint)(16 * sizeof(T)),
+                0,
+                BufferStorageMask.MapWriteBit | BufferStorageMask.MapPersistentBit
+            );
+        }
+        Unbind();
+    }
+
+    public virtual void Bind()
+    {
+        /* Binding the buffer object, with the correct buffer type.
+         */
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(Type, Handle);
+    }
+
+    public virtual void Unbind()
+    {
+        // FIXME cross static ref to Entity.Engine
+        Entity.Engine.GL.BindBuffer(Type, 0);
+    }
+
+    public unsafe void* MapBufferRange(nuint length, MapBufferAccessMask access)
+    {
+        Bind();
+        void* ptr = Entity.Engine.GL.MapBufferRange(Type, 0, length, access);
+        Unbind();
+        return ptr;
+    }
+
+    public void UnmapBuffer()
+    {
+        Bind();
+        Entity.Engine.GL.UnmapBuffer(Type);
+        Unbind();
     }
 
     public virtual void Dispose()

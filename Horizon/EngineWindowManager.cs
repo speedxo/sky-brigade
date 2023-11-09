@@ -58,7 +58,7 @@ public class EngineWindowManager : Entity
         {
             API = new GraphicsAPI()
             {
-                Flags = ContextFlags.ForwardCompatible,
+                Flags = ContextFlags.Default,
                 API = ContextAPI.OpenGL,
                 Profile = ContextProfile.Core,
                 Version = new APIVersion(4, 6)
