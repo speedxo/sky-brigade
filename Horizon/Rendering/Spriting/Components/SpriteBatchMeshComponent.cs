@@ -12,7 +12,10 @@ public class SpriteBatchMesh : Mesh2D
 {
     private const string UNIFORM_SINGLE_BUFFER_SIZE = "uSingleFrameSize";
 
-    [StructLayout(LayoutKind.Sequential)]
+    // TODO: we'll get back to memory alignment later.
+    [StructLayout(
+        LayoutKind.Sequential /*, Pack = 16*/
+    )]
     private struct SpriteData
     {
         public Matrix4x4 modelMatrix;
@@ -57,21 +60,13 @@ public class SpriteBatchMesh : Mesh2D
         throw new Exception("Please only draw a SpriteBatchMesh through a SpriteBatch");
     }
 
-    public unsafe void Draw(
-        in SpriteSheet sheet,
-        in Matrix4x4 modelMatrix,
-        in ReadOnlySpan<Sprite> sprites,
-        ref RenderOptions options
-    )
+    public unsafe void Draw(in ReadOnlySpan<Sprite> sprites, ref RenderOptions options)
     {
         if (ElementCount < 1)
             return; // Don't render if there is nothing to render to improve performance.
 
         BindAndSetUniforms(in options);
-
         Material.Use(in options);
-        Material.Technique.SetUniform(UNIFORM_MODEL_MATRIX, modelMatrix);
-        Material.Technique.SetUniform(UNIFORM_SINGLE_BUFFER_SIZE, sheet.SingleSpriteSize);
 
         // I AM TESING STUFF!!!!
 

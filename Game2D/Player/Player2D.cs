@@ -46,7 +46,7 @@ public class Player2D : Sprite
         CreateStateController();
         AttachDebugWatches();
 
-        collidersIntervalRunner = AddEntity(new IntervalRunner(0.25f, GenerateTileColliders));
+        collidersIntervalRunner = AddEntity(new IntervalRunner(1.0f / 4.0f, GenerateTileColliders));
     }
 
     private void AttachDebugWatches()
@@ -144,6 +144,8 @@ public class Player2D : Sprite
 
     private void UpdateTileColliders(float dt)
     {
+        GenerateTileColliders();
+
         for (int i = 0; i < colliableTiles.Count; i++)
         {
             var tile = colliableTiles[i];

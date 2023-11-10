@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using Horizon.GameEntity;
+using System.Numerics;
+using TileBash.Player;
 
 namespace TileBash.Animals.Behaviors;
 
@@ -15,22 +17,24 @@ internal class GenericWanderState : AnimalState
 
     public override void Enter()
     {
+        // Set animation
+        Parent.SetAnimation("run");
+
         // Random wander time between 0 and 9.9 seconds
         _targetWanderTime = Random.NextSingle() * 10.0f;
         _wanderingTimer = 0;
 
         // Random direction
         float value = Random.NextSingle() * 2.0f * MathF.PI;
-        _targetDir = new Vector2(MathF.Cos(value), MathF.Sin(value) * 0.25f);
+        _targetDir =
+            new Vector2(MathF.Cos(value), MathF.Sin(value) * 0.25f) * 0.25f
+            + Entity.Engine.Input.GetVirtualController().MovementAxis * 0.75f;
     }
 
     public override void Exit() { }
 
     public override void Update(float dt)
     {
-        // Set animation
-        Parent.SetAnimation("run");
-
         Parent.Flipped = _targetDir.X < 0;
 
         _wanderingTimer += dt;

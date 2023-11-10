@@ -83,7 +83,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// <summary>
     /// The global transform for all sprite meshes.
     /// </summary>
-    public TransformComponent Transform { get; init; }
+    //public TransformComponent Transform { get; init; }
 
     /// <summary>
     /// Gets the shader.
@@ -111,7 +111,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
 
         this.SpritesheetSprites = new();
 
-        this.Transform = AddComponent<TransformComponent>();
+        // this.Transform = AddComponent<TransformComponent>();
         Engine.Debugger.GeneralDebugger.AddWatch("Sprite Maximum", "SpriteBatch", () => Count);
     }
 
@@ -179,10 +179,8 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
 
         base.Draw(dt, ref options);
 
-        foreach (var (spritesheet, renderData) in SpritesheetSprites)
-            renderData.Mesh.Draw(
-                spritesheet,
-                Transform.ModelMatrix,
+        foreach (var (_, renderData) in SpritesheetSprites)
+            renderData.Mesh.Draw( /*Transform.ModelMatrix, */
                 renderData.Sprites,
                 ref options
             );

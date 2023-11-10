@@ -13,6 +13,9 @@ internal class GenericIdleState : AnimalState
 
     public override void Enter()
     {
+        // Set animation
+        Parent.SetAnimation("idle");
+
         // Idle for a random amount
         _targetIdleTime = Random.NextSingle() * 60.0f;
         _idleTimer = 0.0f;
@@ -25,9 +28,6 @@ internal class GenericIdleState : AnimalState
 
     public override void Update(float dt)
     {
-        // Set animation
-        Parent.SetAnimation("idle");
-
         if (Vector2.DistanceSquared(Player2D.Current.Position, Parent.Transform.Position) < 25.0f)
             StateMachine.Transition(AnimalBehavior.Wander);
 
