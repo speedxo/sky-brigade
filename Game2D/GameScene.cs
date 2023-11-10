@@ -123,7 +123,10 @@ public class GameScene : Scene
 
         if (Engine.Input.KeyboardManager.IsKeyPressed(Key.G))
         {
-            for (int i = 0; i < 100; i++)
+            ushort len = 100;
+
+            Cat[] gattos = new Cat[len];
+            for (int i = 0; i < len; i++)
             {
                 var x = random.NextSingle() * Engine.Window.WindowSize.X;
                 var y = random.NextSingle() * Engine.Window.WindowSize.Y;
@@ -131,8 +134,9 @@ public class GameScene : Scene
                 var cat = new Cat();
                 cat.Transform.Position = cam.ScreenToWorld(new Vector2(x, y));
 
-                spriteBatch.Add(AddEntity(cat));
+                gattos[i] = AddEntity(cat);
             }
+            spriteBatch.AddRange(gattos);
         }
         //var mousePos = cam.ScreenToWorld(Engine.Input.MouseManager.GetData().Position);
         //for (int i = 0; i < tilemap.Depth; i++)

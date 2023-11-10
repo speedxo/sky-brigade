@@ -15,6 +15,72 @@ namespace Horizon.Rendering.Spriting;
 public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
 {
     /// <summary>
+    /// Helper struct to aggregate data related to rendering a series of sprites with a common sprite sheet.
+    /// </summary>
+    private struct SpriteSheetRenderObject
+    {
+        public SpriteBatchMesh Mesh;
+        public ushort Index;
+        public Sprite[] Sprites;
+
+        public SpriteSheetRenderObject(in SpriteBatchMesh mesh)
+        {
+            this.Mesh = mesh;
+            this.Index = 0;
+            this.Sprites = new Sprite[1];
+        }
+
+        /// <summary>
+        /// Adds the specified sprite, performing an additional check to ensure we don't already contain the specified sprite.
+        /// </summary>
+        /// <param name="sprite">The sprite.</param>
+        public void Add(in Sprite sprite)
+        {
+            // Ensure we don't already contain this sprite.
+            if (Sprites.Contains(sprite))
+                return;
+
+            // Make sure we conform our new array.
+            if (Index > Sprites.Length)
+                Array.Resize(ref Sprites, Sprites.Length + 1);
+
+            Sprites[Index++] = sprite;
+        }
+
+        public void AddRange(in Sprite[] sprites)
+        {
+            // Make sure we conform our new array.
+            if (Index + sprites.Length > Sprites.Length)
+                Array.Resize(ref Sprites, Sprites.Length + sprites.Length);
+
+            for (ushort i = 0; i < sprites.Length; i++)
+            {
+                if (Sprites.Contains(sprites[i]))
+                    continue;
+
+                Sprites[Index + i] = sprites[i];
+                Index++;
+            }
+        }
+
+        public void AddRange(in List<Sprite> sprites)
+        {
+            // Make sure we conform our new array.
+            if (Index + sprites.Count > Sprites.Length)
+                Array.Resize(ref Sprites, Sprites.Length + sprites.Count);
+
+            for (ushort i = 0; i < sprites.Count; i++)
+            {
+                if (Sprites.Contains(sprites[i]))
+                    continue;
+
+                Sprites[Index + i] = sprites[i];
+                Index++;
+            }
+        }
+    }
+
+    /// <summary>
     /// The global transform for all sprite meshes.
     /// </summary>
     public TransformComponent Transform { get; init; }
@@ -28,11 +94,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// TODO please remind me to make a custom datastruct for this shit
     /// </summary>
     /// <value>
-    public Dictionary<
-        SpriteSheet,
-        (List<Sprite> sprites, SpriteBatchMesh mesh)
-    > SpritesheetSprites { get; init; }
-
+    private Dictionary<SpriteSheet, SpriteSheetRenderObject> SpritesheetSprites { get; init; }
     private bool _requiresVboUpdate = false;
     public int Count { get; private set; }
 
@@ -59,17 +121,49 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// <param name="sprite"></param>
     public void Add(Sprite sprite)
     {
+        // Ensure this sprite's sprite sheet has a render object associated.
         if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet))
-            SpritesheetSprites.Add(sprite.Spritesheet, (new(), new(sprite.Spritesheet, Shader)));
+            SpritesheetSprites.Add(
+                sprite.Spritesheet,
+                new SpriteSheetRenderObject(new(sprite.Spritesheet, Shader))
+            );
 
-        //if (SpritesheetSprites[sprite.Spritesheet].sprites.Count + 1 >= SpriteBatchMesh.MAX_SPRITES)
-        //    Engine.Logger.Log(
-        //        Logging.LogLevel.Fatal,
-        //        $"You are attempting to add more than {SpriteBatchMesh.MAX_SPRITES} sprites, which is the limit. Please create another sprite batch."
-        //    );
-
+        // Add the sprite
+        SpritesheetSprites[sprite.Spritesheet].Add(sprite);
         Count++;
-        SpritesheetSprites[sprite.Spritesheet].sprites.Add(sprite);
+
+        // Flag the Vertex array to be rebuilt.
+        _requiresVboUpdate = true;
+    }
+
+    /// <summary>
+    /// Commits an object to be rendered.
+    /// </summary>
+    /// <param name="sprite"></param>
+    public void AddRange(Sprite[] sprites)
+    {
+        // Sort sprites into groups via their sprite sheet and setup the SpritesheetSprites key/value pair.
+        Dictionary<SpriteSheet, List<Sprite>> spriteSpriteSheetPairs = new();
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            spriteSpriteSheetPairs.TryAdd(sprites[i].Spritesheet, new());
+            spriteSpriteSheetPairs[sprites[i].Spritesheet].Add(sprites[i]);
+
+            if (!SpritesheetSprites.ContainsKey(sprites[i].Spritesheet))
+                SpritesheetSprites.Add(
+                    sprites[i].Spritesheet,
+                    new SpriteSheetRenderObject(new(sprites[i].Spritesheet, Shader))
+                );
+        }
+
+        // Ensure the spritebatch is configured to render all the sprite sheets.
+        foreach ((var sheet, var storedSprites) in spriteSpriteSheetPairs)
+        {
+            SpritesheetSprites[sheet].AddRange(storedSprites);
+            Count += storedSprites.Count;
+        }
+
+        // Flag the Vertex array to be rebuilt.
         _requiresVboUpdate = true;
     }
 
@@ -85,11 +179,11 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
 
         base.Draw(dt, ref options);
 
-        foreach (var (spritesheet, (sprites, mesh)) in SpritesheetSprites)
-            mesh.Draw(
+        foreach (var (spritesheet, renderData) in SpritesheetSprites)
+            renderData.Mesh.Draw(
                 spritesheet,
                 Transform.ModelMatrix,
-                CollectionsMarshal.AsSpan(sprites),
+                renderData.Sprites,
                 ref options
             );
     }
@@ -99,11 +193,9 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// </summary>
     public void UpdateVBO()
     {
-        Count = 0;
-        foreach (var (_, (sprites, mesh)) in SpritesheetSprites)
+        foreach (var (_, renderData) in SpritesheetSprites)
         {
-            mesh.Load(GenerateSpriteMeshData(CollectionsMarshal.AsSpan(sprites)));
-            Count += sprites.Count;
+            renderData.Mesh.Load(GenerateSpriteMeshData(renderData.Sprites));
         }
 
         _requiresVboUpdate = false;
@@ -129,6 +221,9 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         }
         for (int i = 0; i < sprites.Length; i++)
         {
+            if (sprites[i] is null)
+                continue;
+
             var spriteVertices = sprites[i].GetVertices();
             for (int j = 0; j < spriteVertices.Length; j++)
                 vertices[i + j] = spriteVertices[j];
