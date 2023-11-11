@@ -16,6 +16,15 @@
 # Mono auto generated files
 mono_crash.*
 
+# Rider
+.idea/
+
+# VSCode Counter
+.VSCodeCounter/
+
+# Config whatever
+.config/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
