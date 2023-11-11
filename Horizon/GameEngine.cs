@@ -407,20 +407,22 @@ public abstract class GameEngine : Entity, IDisposable
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         // Render all entities & components
-        for (int i = 0; i < Components.Count; i++)
-            DrawWithMetrics(Components.Values.ElementAt(i), dt, ref options);
+        //for (int i = 0; i < Components.Count; i++)
+        //    DrawWithMetrics(Components.Values.ElementAt(i), dt, ref options);
 
-        for (int i = 0; i < Entities.Count; i++)
-            DrawWithMetrics(Entities[i], dt, ref options);
+        //for (int i = 0; i < Entities.Count; i++)
+        //    DrawWithMetrics(Entities[i], dt, ref options);
+
+        base.Draw(dt, ref options);
 
         // Render ImGui UI on top of the game screen.
         _imGuiController.Render();
-        OnPostDraw?.Invoke(dt);
 
         // Collect Metrics
         var endTime = Stopwatch.GetTimestamp();
         var elapsedSeconds = (double)(endTime - startTime) / Stopwatch.Frequency;
         Debugger.PerformanceDebugger.GpuMetrics.AddCustom("Engine", "GPU", elapsedSeconds);
+        OnPostDraw?.Invoke(dt);
     }
 
     public void Dispose()

@@ -15,13 +15,8 @@ namespace TileBash.Animals
 
         public AnimalBehaviorStateMachineComponent StateMachine { get; init; }
 
-        public Animal(string spriteSheetPath, Vector2 spriteSize)
+        public Animal()
         {
-            ConfigureSpriteSheet(
-                new SpriteSheet(Engine.Content.LoadTexture(spriteSheetPath).Handle, spriteSize),
-                "idle"
-            );
-
             StateMachine = AddComponent<AnimalBehaviorStateMachineComponent>();
         }
     }

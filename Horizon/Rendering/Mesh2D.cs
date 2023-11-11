@@ -2,6 +2,7 @@
 using Horizon.OpenGL;
 using Horizon.Rendering.Spriting.Data;
 using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -34,28 +35,14 @@ public class Mesh2D : Mesh<Vertex2D>
         Buffer.VertexArray.Bind();
         Buffer.VertexBuffer.Bind();
 
-        Buffer.VertexAttributePointer(
-            0,
-            2,
-            VertexAttribPointerType.Float,
-            (uint)Vertex2D.SizeInBytes,
-            0
-        );
+        Buffer.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, Vertex2D.SizeInBytes, 0);
         Buffer.VertexAttributePointer(
             1,
             2,
             VertexAttribPointerType.Float,
-            (uint)Vertex2D.SizeInBytes,
+            Vertex2D.SizeInBytes,
             2 * sizeof(float)
         );
-        Buffer.VertexAttributePointer(
-            2,
-            1,
-            VertexAttribPointerType.Int,
-            (uint)Vertex2D.SizeInBytes,
-            4 * sizeof(float)
-        );
-
         Buffer.VertexBuffer.Unbind();
         Buffer.VertexArray.Unbind();
     }

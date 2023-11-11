@@ -270,7 +270,8 @@ public abstract partial class Tiling<TTextureID>
         }
 
         /// <summary>
-        /// Returns all the tiles within a half area by half area region around a specified point, within O(area) time complexity.
+        /// Returns all the tiles within a half area by half area region around a specified point, within O(area^2) time complexity.
+        /// TODO: use inverse projection to directly sample with normalized device coordinates, maybe faster?
         /// </summary>
         public IEnumerable<Tile> FindVisibleTiles(Vector2 position, float area = 10.0f)
         {
@@ -290,7 +291,7 @@ public abstract partial class Tiling<TTextureID>
                     for (int z = 0; z < Depth; z++)
                     {
                         Tile? tile = this[x, y, z];
-                        if (tile is null) // handle null value
+                        if (tile is null) // handle null case
                             continue;
 
                         yield return tile;

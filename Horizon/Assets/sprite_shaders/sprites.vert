@@ -1,7 +1,5 @@
 ﻿#version 460
 
-#define MAX_SPRITES 750
-
 layout(location = 0) in vec2 vPos;
 layout(location = 1) in vec2 vTexCoords;
 
@@ -12,32 +10,22 @@ uniform vec2 uSingleFrameSize;
 struct SpriteData {
   mat4 modelMatrix;
   vec2 spriteOffset;
+  uint frameIndex;
+  uint spacer;
+  //vec2 spacer0, spacer1, spacer2, spacer3, spacer4, spacer5;
 };
 
-layout(std430) buffer SpriteUniforms 
+layout(std430) buffer spriteData 
 {
-  SpriteData data[MAX_SPRITES];
-} spriteData;
+  SpriteData data[];
+};
 
 out vec2 texCoords;
 
 void main() {
-  int vertexId = gl_VertexID / 4;
-
-  // Retrieve the sprite's texture offset and flipping flag
-  vec2 spriteOffset = spriteData.data[vertexId].spriteOffset;
-  //bool isFlipped = spriteData.data[vId].isFlipped;
-
-  // Calculate the base texture coordinates
-  vec2 baseTexCoords = vTexCoords + spriteOffset * uSingleFrameSize;
-
-  // Apply horizontal flipping if necessary
-  //texCoords =
-  //    isFlipped ? vec2(1.0 - baseTexCoords.x, baseTexCoords.y) : baseTexCoords;
-  texCoords = baseTexCoords;
-  // Retrieve the model matrix and ID for the current sprite
-  mat4 modelMatrix = spriteData.data[vertexId].modelMatrix;
+  // calculate texture coords with animation data.
+  texCoords = data[gl_InstanceID].spriteOffset + vTexCoords * uSingleFrameSize + vec2(uSingleFrameSize.x * data[gl_InstanceID].frameIndex, 0);
 
   // Transform the vertex position
-  gl_Position = uProjection * uView * modelMatrix * vec4(vPos, 0.0, 1.0);
+  gl_Position = uProjection * uView * data[gl_InstanceID].modelMatrix * vec4(vPos, 0.0, 1.0);
 }

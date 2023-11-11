@@ -52,16 +52,20 @@ public abstract class Sprite : Entity
     public void AddAnimation(
         string name,
         Vector2 position,
-        int length,
+        uint length,
         float frameTime = 0.1f,
         Vector2? inSize = null
-    ) => AnimationManager.AddAnimation(name, position, length, frameTime, inSize);
+    )
+    {
+        AnimationManager ??= AddComponent(new SpriteSheetAnimationManager(inSize!.Value));
+        AnimationManager.AddAnimation(name, position, length, frameTime, inSize);
+    }
 
     /// <summary>
     /// Adds a range of animations.
     /// </summary>
     public void AddAnimationRange(
-        (string name, Vector2 position, int length, float frameTime, Vector2? inSize)[] animations
+        (string name, Vector2 position, uint length, float frameTime, Vector2? inSize)[] animations
     )
     {
         foreach (var (name, position, length, frameTime, inSize) in animations)
@@ -101,7 +105,7 @@ public abstract class Sprite : Entity
     public void ConfigureSpriteSheet(SpriteSheet spriteSheet, string name)
     {
         this.Spritesheet = (spriteSheet);
-        this.AnimationManager = AddComponent(new SpriteSheetAnimationManager(Spritesheet));
+        this.AnimationManager ??= AddComponent(new SpriteSheetAnimationManager(spriteSheet));
 
         this.FrameName = name;
         this.ID = _idCounter++;
@@ -115,32 +119,24 @@ public abstract class Sprite : Entity
         this.FrameName = name;
     }
 
-    public Vertex2D[] GetVertices()
-    {
-        if (!_hasBeenSetup)
-            Engine.Logger.Log(Logging.LogLevel.Error, "[Sprite] Setup() has not been called!");
-
-        Vector2[] uv = IsAnimated
-            ? GetAnimatedTextureCoordinates(FrameName)
-            : Spritesheet.GetTextureCoordinates(FrameName);
-
-        return new Vertex2D[]
-        {
-            new Vertex2D(-Size.X / 2.0f, Size.Y / 2.0f, uv[0].X, uv[0].Y),
-            new Vertex2D(Size.X / 2.0f, Size.Y / 2.0f, uv[1].X, uv[1].Y),
-            new Vertex2D(Size.X / 2.0f, -Size.Y / 2.0f, uv[2].X, uv[2].Y),
-            new Vertex2D(-Size.X / 2.0f, -Size.Y / 2.0f, uv[3].X, uv[3].Y),
-        };
-    }
-
     public Vector2 GetFrameOffset()
     {
         if (IsAnimated)
         {
-            var (definition, index) = AnimationManager[FrameName];
+            var (definition, _) = AnimationManager[FrameName];
 
-            return (definition.Position + new Vector2(index, 0));
+            return (definition.Position * Spritesheet.SingleSpriteSize);
         }
         return Vector2.Zero;
+    }
+
+    public uint GetFrameIndex()
+    {
+        if (IsAnimated)
+        {
+            var (_, index) = AnimationManager[FrameName];
+            return index;
+        }
+        return 0;
     }
 }

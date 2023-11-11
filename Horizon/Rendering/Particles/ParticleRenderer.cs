@@ -65,6 +65,18 @@ public class ParticleRenderer2D : Entity, IDisposable
         for (uint i = 0; i < count; i++)
             freeIndices.Enqueue(i);
 
+        quadVerts = new ParticleVertex[]
+        {
+            new ParticleVertex(new Vector2(-ParticleSize, -ParticleSize)),
+            new ParticleVertex(new Vector2(ParticleSize, -ParticleSize)),
+            new ParticleVertex(new Vector2(ParticleSize, ParticleSize)),
+            new ParticleVertex(new Vector2(-ParticleSize, ParticleSize))
+        };
+        indices = new uint[] { 0, 1, 2, 0, 2, 3 };
+    }
+
+    public override void Initialize()
+    {
         buffer = new();
 
         // Configure VAO layout
@@ -98,17 +110,10 @@ public class ParticleRenderer2D : Entity, IDisposable
         buffer.VertexAttributeDivisor(2, 1); // Each particle has its own offset.
         buffer.Unbind();
 
-        quadVerts = new ParticleVertex[]
-        {
-            new ParticleVertex(new Vector2(-ParticleSize, -ParticleSize)),
-            new ParticleVertex(new Vector2(ParticleSize, -ParticleSize)),
-            new ParticleVertex(new Vector2(ParticleSize, ParticleSize)),
-            new ParticleVertex(new Vector2(-ParticleSize, ParticleSize))
-        };
-        indices = new uint[] { 0, 1, 2, 0, 2, 3 };
-
         buffer.VertexBuffer.BufferData(quadVerts);
         buffer.ElementBuffer.BufferData(indices);
+
+        base.Initialize();
     }
 
     /// <summary>

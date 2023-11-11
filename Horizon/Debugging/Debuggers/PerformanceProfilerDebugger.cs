@@ -21,16 +21,18 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
     }
 
     private float _updateRate = 1.0f / 30.0f;
-    private float _updateTimer = 0.0f;
+    private float _updateTimer,
+        _renderTimer = 0.0f;
 
     private SkylineDebugger Debugger { get; set; }
 
     public readonly Metrika CpuMetrics = new();
     public readonly Metrika GpuMetrics = new();
 
-    private LinearBuffer<double> _updateFrameTimes;
-    private LinearBuffer<double> _renderFrameTimes;
-    private LinearBuffer<double> _renderDeltas;
+    private LinearBuffer<double> _updateFrameTimes,
+        _renderFrameTimes;
+    private LinearBuffer<double> _updateDeltas,
+        _renderDeltas;
 
     private long _prevTimestamp;
     private long _prevCpuTime;
@@ -44,6 +46,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 
         _updateFrameTimes = new(100);
         _renderFrameTimes = new(100);
+        _updateDeltas = new(100);
         _renderDeltas = new(100);
 
         // Initialize requried dictionaries by inference.
@@ -56,7 +59,9 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 
         Entity.Engine.OnPreDraw += ResetGpuMetrics;
         Entity.Engine.OnPreUpdate += ResetCpuMetrics;
-        Entity.Engine.OnPostUpdate += UpdateMetrics;
+
+        Entity.Engine.OnPostUpdate += UpdateUpdateMetrics;
+        Entity.Engine.OnPostDraw += UpdateRenderMetrics;
     }
 
     private void ResetGpuMetrics(float dt)
@@ -69,7 +74,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
         CpuMetrics.ResetMetrics();
     }
 
-    private void UpdateMetrics(float dt)
+    private void UpdateUpdateMetrics(float dt)
     {
         if (!Visible)
             return;
@@ -79,8 +84,22 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
         if (_updateTimer > _updateRate)
         {
             _updateTimer = 0.0f;
-            _renderDeltas.Append(dt);
+            _updateDeltas.Append(dt);
             _updateFrameTimes.Append(GetAverage(CpuMetrics["Engine"]["CPU"]) * 1000.0);
+        }
+    }
+
+    private void UpdateRenderMetrics(float dt)
+    {
+        if (!Visible)
+            return;
+
+        _renderTimer += dt;
+
+        if (_renderTimer > _updateRate)
+        {
+            _renderTimer = 0.0f;
+            _renderDeltas.Append(dt);
             _renderFrameTimes.Append(GetAverage(GpuMetrics["Engine"]["GPU"]) * 1000.0);
         }
     }
@@ -94,7 +113,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 
         if (ImGui.Begin(Name))
         {
-            ImGui.Text($"FPS: {1.0f / _renderDeltas.Buffer.Average():0.0}");
+            ImGui.Text($"FPS (Render): {1.0f / _renderDeltas.Buffer.Average():0.0}");
+            ImGui.Text($"FPS (Update): {1.0f / _updateDeltas.Buffer.Average():0.0}");
 
             if (ImGui.CollapsingHeader("Logic Profiler"))
                 DrawCpuProfiling();
@@ -228,7 +248,8 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
                 // We subscribed to engine events, so we need to make sure to clean 'em up.
                 Entity.Engine.OnPreDraw -= ResetGpuMetrics;
                 Entity.Engine.OnPreUpdate -= ResetCpuMetrics;
-                Entity.Engine.OnPostUpdate -= UpdateMetrics;
+                Entity.Engine.OnPostUpdate -= UpdateUpdateMetrics;
+                Entity.Engine.OnPostDraw -= UpdateRenderMetrics;
             }
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer

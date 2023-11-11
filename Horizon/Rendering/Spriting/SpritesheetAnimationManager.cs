@@ -14,22 +14,25 @@ public class SpriteSheetAnimationManager : IGameComponent
     public string Name { get; set; } = "SpriteSheet Animation Manager";
     public Entity Parent { get; set; }
 
-    public SpriteSheet Spritesheet { get; private set; }
     public Dictionary<string, SpriteAnimationDefinition> Animations { get; init; }
+    public Vector2 SpriteSize { get; init; }
 
-    public SpriteSheetAnimationManager(in SpriteSheet sheet)
+    public SpriteSheetAnimationManager(in Vector2 spriteSize)
     {
-        Spritesheet = sheet;
+        this.SpriteSize = spriteSize;
         this.Animations = new();
     }
 
-    public (SpriteDefinition definition, int index) this[string name]
+    public SpriteSheetAnimationManager(in SpriteSheet sheet)
+        : this(sheet.SpriteSize) { }
+
+    public (SpriteDefinition definition, uint index) this[string name]
     {
         get => GetFrame(name);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public (SpriteDefinition definition, int index) GetFrame(string name)
+    public (SpriteDefinition definition, uint index) GetFrame(string name)
     {
         if (!Animations.TryGetValue(name, out SpriteAnimationDefinition value))
         {
@@ -46,7 +49,7 @@ public class SpriteSheetAnimationManager : IGameComponent
     public void AddAnimation(
         string name,
         Vector2 position,
-        int length,
+        uint length,
         float frameTime = 0.1f,
         Vector2? inSize = null
     )
@@ -69,7 +72,7 @@ public class SpriteSheetAnimationManager : IGameComponent
                 FirstFrame = new SpriteDefinition
                 {
                     Position = position,
-                    Size = inSize ?? Spritesheet.SpriteSize
+                    Size = inSize ?? SpriteSize
                 },
                 FrameTime = frameTime,
             }

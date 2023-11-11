@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity.Components;
 using Horizon.Primitives;
 using Horizon.Rendering;
+using System.Collections.Concurrent;
 
 namespace Horizon.GameEntity
 {
@@ -19,6 +20,7 @@ namespace Horizon.GameEntity
         public static GameEngine Engine => _engine;
 
         internal static int _nextId = 0;
+        internal ConcurrentStack<Entity> _uninitializedEntities = new();
 
         /// <summary>
         /// List containing the nested entities within this entity.
@@ -129,7 +131,8 @@ namespace Horizon.GameEntity
 
             entity.ID = ++_nextId;
             entity.Name ??= entity.GetType().Name;
-            entity.Initialize();
+            entity.Enabled = false;
+            _uninitializedEntities.Push(entity);
 
             return entity;
         }
@@ -245,7 +248,18 @@ namespace Horizon.GameEntity
         public virtual void Draw(float dt, ref RenderOptions options)
         {
             if (!Enabled)
+            {
                 return;
+            }
+
+            while (_uninitializedEntities.Any())
+            {
+                if (_uninitializedEntities.TryPop(out var ent))
+                {
+                    ent.Initialize();
+                    ent.Enabled = true;
+                }
+            }
 
             for (int i = 0; i < Components.Count; i++)
                 Components.Values.ElementAt(i).Draw(dt, ref options);

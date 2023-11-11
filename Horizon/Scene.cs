@@ -111,11 +111,7 @@ public abstract class Scene : Entity, IDisposable
         //    Engine.GL.Viewport(0, 0, (uint)Engine.WindowSize.X, (uint)Engine.WindowSize.Y);
         //}
 
-        for (int i = 0; i < Components.Count; i++)
-            Components.Values.ElementAt(i).Draw(dt, ref options);
-
-        for (int i = 0; i < Entities.Count; i++)
-            Entities[i].Draw(dt, ref options);
+        base.Draw(dt, ref options);
 
         DrawOther(dt, ref options);
 

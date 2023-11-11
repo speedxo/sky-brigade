@@ -189,23 +189,6 @@ namespace Horizon.Content
             );
         }
 
-        public void BindBuffer<T>(in string name, in BufferStorageObject<T> bufferObject)
-            where T : unmanaged => BindBuffer(programResourceIndexes[name], bufferObject);
-
-        public void BindBuffer<T>(
-            in uint bufferBindingPoint,
-            in BufferStorageObject<T> bufferObject
-        )
-            where T : unmanaged
-        {
-            bufferObject.Bind();
-            Engine.GL.BindBufferBase(
-                BufferTargetARB.ShaderStorageBuffer,
-                bufferBindingPoint,
-                bufferObject.Handle
-            );
-        }
-
         public unsafe void ReadSSBO<T>(
             uint bufferBindingPoint,
             BufferObject<T> bufferObject,

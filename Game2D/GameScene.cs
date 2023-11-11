@@ -14,6 +14,7 @@ using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using System;
+using System.Drawing;
 using System.Numerics;
 using TileBash.Animals;
 using TileBash.Player;
@@ -23,14 +24,14 @@ namespace TileBash;
 public class GameScene : Scene
 {
     private readonly Random random;
-    private readonly Player2D player;
-    private readonly SpriteBatch spriteBatch;
+    private Player2D player;
+    private SpriteBatch spriteBatch;
     private readonly Camera cam;
     private readonly TileMap tilemap;
     private readonly World world;
     private readonly ParticleRenderer2D particles;
     private RenderOptions charOptions;
-
+    private int catCounter = 0;
     private readonly Box2DDebugDrawCallback debugDrawCallback;
 
     public GameScene()
@@ -63,11 +64,6 @@ public class GameScene : Scene
         else
             Entities.Add(tilemap);
 
-        AddEntity(player = new Player2D(world, tilemap));
-
-        spriteBatch = AddEntity(new SpriteBatch());
-        spriteBatch.Add(player);
-
         cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
@@ -90,6 +86,18 @@ public class GameScene : Scene
                 }
             )
         );
+    }
+
+    public override void Initialize()
+    {
+        AddEntity(player = new Player2D(world, tilemap));
+        //var cat = AddEntity<Cat>();
+
+        spriteBatch = AddEntity(new SpriteBatch());
+        spriteBatch.Add(player);
+        //spriteBatch.Add(cat);
+
+        base.Initialize();
     }
 
     protected override Effect[] GeneratePostProccessingEffects()
@@ -119,25 +127,13 @@ public class GameScene : Scene
 
         cam.Position = new Vector3(player.Position.X, player.Position.Y, cameraMovement);
 
-        cam.Update(dt);
-
         if (Engine.Input.KeyboardManager.IsKeyPressed(Key.G))
         {
-            ushort len = 100;
-
-            Cat[] gattos = new Cat[len];
-            for (int i = 0; i < len; i++)
-            {
-                var x = random.NextSingle() * Engine.Window.WindowSize.X;
-                var y = random.NextSingle() * Engine.Window.WindowSize.Y;
-
-                var cat = new Cat();
-                cat.Transform.Position = cam.ScreenToWorld(new Vector2(x, y));
-
-                gattos[i] = AddEntity(cat);
-            }
-            spriteBatch.AddRange(gattos);
+            catCounter += 512;
         }
+
+        cam.Update(dt);
+
         //var mousePos = cam.ScreenToWorld(Engine.Input.MouseManager.GetData().Position);
         //for (int i = 0; i < tilemap.Depth; i++)
         //{
@@ -155,6 +151,23 @@ public class GameScene : Scene
     {
         charOptions = options with { Camera = cam };
         world.DrawDebugData();
+
+        if (catCounter > 0)
+        {
+            Cat[] gattos = new Cat[catCounter];
+            for (int i = 0; i < catCounter; i++)
+            {
+                var x = random.NextSingle() * Engine.Window.WindowSize.X;
+                var y = random.NextSingle() * Engine.Window.WindowSize.Y;
+
+                var cat = new Cat();
+                cat.Transform.Position = cam.ScreenToWorld(new Vector2(x, y));
+
+                gattos[i] = AddEntity(cat);
+            }
+            spriteBatch.AddRange(gattos);
+            catCounter = 0;
+        }
 
         debugDrawCallback.Enabled = options.IsBox2DDebugDrawEnabled;
         base.Draw(dt, ref charOptions);

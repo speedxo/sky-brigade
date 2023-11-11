@@ -71,7 +71,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             // Once again, I really don't want to make the whole method unsafe for one call.
             unsafe
             {
-                Entity.Engine.GL.DrawElements(
+                Engine.GL.DrawElements(
                     primitive,
                     (uint)Indices.Count,
                     DrawElementsType.UnsignedInt,

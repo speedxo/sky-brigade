@@ -12,11 +12,15 @@ namespace TileBash.Animals
     {
         public override string Name { get; set; } = "Cat";
 
-        public Cat()
-            : base("content/cat.png", new Vector2(32))
+        public override void Initialize()
         {
+            ConfigureSpriteSheet(
+                Engine.Content.LoadSpriteSheet("content/cat.png", new Vector2(32)),
+                "idle"
+            );
+
             AddAnimationRange(
-                new (string name, Vector2 position, int length, float frameTime, Vector2? inSize)[]
+                new (string name, Vector2 position, uint length, float frameTime, Vector2? inSize)[]
                 {
                     ("idle", new Vector2(0, 0), 4, 0.25f, null),
                     ("run", new Vector2(0, 4), 8, 0.125f, null)
@@ -32,6 +36,8 @@ namespace TileBash.Animals
                 AnimalBehavior.Wander,
                 new GenericWanderState(this, StateMachine)
             );
+            Transform.Scale = Vector2.One * 2.0f;
+            base.Initialize();
         }
     }
 }

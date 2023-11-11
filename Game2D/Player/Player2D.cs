@@ -41,12 +41,17 @@ public class Player2D : Sprite
         this.world = world;
         this.map = map;
 
+        collidersIntervalRunner = AddEntity(new IntervalRunner(1.0f / 4.0f, GenerateTileColliders));
+    }
+
+    public override void Initialize()
+    {
         CreateSprite();
         CreatePhysics();
         CreateStateController();
         AttachDebugWatches();
 
-        collidersIntervalRunner = AddEntity(new IntervalRunner(1.0f / 4.0f, GenerateTileColliders));
+        base.Initialize();
     }
 
     private void AttachDebugWatches()
@@ -93,12 +98,13 @@ public class Player2D : Sprite
 
     private void CreateSprite()
     {
-        var sheet = (new SpriteSheet("content/spritesheet.png", new Vector2(16)));
-
-        ConfigureSpriteSheet(sheet, "idle");
+        ConfigureSpriteSheet(
+            Engine.Content.LoadSpriteSheet("content/spritesheet.png", new Vector2(16)),
+            "idle"
+        );
 
         AddAnimationRange(
-            new (string, Vector2, int, float, Vector2?)[]
+            new (string, Vector2, uint, float, Vector2?)[]
             {
                 ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
                 ("walk_down", new Vector2(0, 3), 4, 0.1f, null),

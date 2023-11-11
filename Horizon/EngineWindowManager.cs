@@ -10,7 +10,8 @@ namespace Horizon;
 
 public class EngineWindowManager : Entity
 {
-    private IWindow _window;
+    private IWindow _window,
+        _updateWindow;
     private IInputContext _input;
 
     public Action<double> UpdateFrame;
@@ -50,6 +51,7 @@ public class EngineWindowManager : Entity
     public IInputContext GetInput() => _input;
 
     private readonly WindowOptions _options;
+    private Task _updateTask;
 
     public EngineWindowManager(in Vector2 windowSize, in string title)
     {
@@ -58,7 +60,7 @@ public class EngineWindowManager : Entity
         {
             API = new GraphicsAPI()
             {
-                Flags = ContextFlags.Default,
+                Flags = ContextFlags.Debug,
                 API = ContextAPI.OpenGL,
                 Profile = ContextProfile.Core,
                 Version = new APIVersion(4, 6)
@@ -132,7 +134,36 @@ public class EngineWindowManager : Entity
             throw new Exception("Window is already running!");
 
         IsRunning = true;
-        _window.Run();
+
+        // Create the window.
+        _window.Initialize();
+
+        // Run the loop.
+        _window.Run(OnFrame);
+
+        // Dispose and unload
+        _window.DoEvents();
+        _window.Reset();
+    }
+
+    private void OnLogicFrame()
+    {
+        while (!_window.IsClosing)
+        {
+            if (_window.IsInitialized)
+                _window.DoUpdate();
+        }
+    }
+
+    private void OnFrame()
+    {
+        _window.DoEvents();
+
+        if (!_window.IsClosing)
+            _window.DoRender();
+
+        // Delegate a render thread.
+        _updateTask ??= Task.Run(OnLogicFrame);
     }
 
     public void Dispose()

@@ -17,7 +17,7 @@ namespace Horizon.Content
 
         public void AddShader(in string name, in Shader shader) => Shaders.AddNamed(name, shader);
 
-        public override void Initialize()
+        public ContentManager()
         {
             Shaders = AddEntity<ShaderContentManager>();
 
@@ -26,6 +26,8 @@ namespace Horizon.Content
             unmanagedTextures = new List<Texture>();
             unnamedSpritesheets = new();
         }
+
+        public override void Initialize() { }
 
         public int TotalTextures
         {
@@ -48,6 +50,10 @@ namespace Horizon.Content
             {
                 yield return texture;
             }
+            foreach (var sheet in unnamedSpritesheets.Values)
+            {
+                yield return sheet;
+            }
         }
 
         #region Textures
@@ -63,14 +69,13 @@ namespace Horizon.Content
                     LogLevel.Warning,
                     $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned."
                 );
-
             return unnamedTextures[internedPath];
         }
 
         public SpriteSheet LoadSpriteSheet(string path, Vector2 size)
         {
             if (!unnamedSpritesheets.ContainsKey(path))
-                unnamedSpritesheets.TryAdd(path, new SpriteSheet(LoadTexture(path).Handle, size));
+                unnamedSpritesheets.TryAdd(path, new SpriteSheet(path, size));
             else
                 Engine.Logger.Log(
                     LogLevel.Warning,
