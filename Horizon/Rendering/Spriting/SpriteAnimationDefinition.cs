@@ -8,5 +8,6 @@
         public uint Length { get; set; }
 
         public SpriteDefinition FirstFrame { get; set; }
+        public float Fuzz { get; set; }
     }
 }

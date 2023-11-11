@@ -77,6 +77,7 @@ public class SpriteSheetAnimationManager : IGameComponent
                     Size = inSize ?? SpriteSize
                 },
                 FrameTime = frameTime,
+                Fuzz = Random.Shared.NextSingle() * 0.2f + 0.8f
             }
         );
     }
@@ -97,7 +98,7 @@ public class SpriteSheetAnimationManager : IGameComponent
                 continue;
             }
 
-            frame.Timer += dt;
+            frame.Timer += dt * frame.Fuzz;
 
             if (frame.Timer >= frame.FrameTime)
             {
