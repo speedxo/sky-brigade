@@ -69,7 +69,7 @@ namespace Horizon.GameEntity
         /// </summary>
         public Entity? Parent { get; set; }
 
-        public Dictionary<Type, IGameComponent> Components { get; set; } = new();
+        public ConcurrentDictionary<Type, IGameComponent> Components { get; set; } = new();
 
         /// <summary>
         /// This method is called after the parent entity is set.
@@ -184,7 +184,7 @@ namespace Horizon.GameEntity
         public void RemoveComponent<T>()
             where T : IGameComponent
         {
-            if (!Components.Remove(typeof(T)))
+            if (!Components.TryRemove(typeof(T), out _))
             {
                 var msg = $"Component of the same type ({nameof(T)}) doesn't exist";
 

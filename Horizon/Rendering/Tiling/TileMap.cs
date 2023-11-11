@@ -35,7 +35,7 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// The lower layer slice in which <see cref="ParallaxEntity"/> will be rendered onto, followed by every layer above it ontop.
         /// </summary>
-        public int ParallaxIndex { get; set; } = 2;
+        public int ParallaxIndex { get; set; } = 3;
 
         /// <summary>
         /// Gets or sets the physics world associated with the tile map.

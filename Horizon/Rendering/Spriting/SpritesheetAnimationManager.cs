@@ -1,5 +1,6 @@
 ﻿using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
+using System.Collections.Concurrent;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -14,7 +15,7 @@ public class SpriteSheetAnimationManager : IGameComponent
     public string Name { get; set; } = "SpriteSheet Animation Manager";
     public Entity Parent { get; set; }
 
-    public Dictionary<string, SpriteAnimationDefinition> Animations { get; init; }
+    public ConcurrentDictionary<string, SpriteAnimationDefinition> Animations { get; init; }
     public Vector2 SpriteSize { get; init; }
 
     public SpriteSheetAnimationManager(in Vector2 spriteSize)
@@ -65,7 +66,7 @@ public class SpriteSheetAnimationManager : IGameComponent
             return;
         }
 
-        this.Animations.Add(
+        this.Animations.TryAdd(
             name,
             new SpriteAnimationDefinition()
             {

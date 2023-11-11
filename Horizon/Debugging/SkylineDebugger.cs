@@ -50,7 +50,7 @@ namespace Horizon.Debugging
         {
             foreach (var comp in _components)
             {
-                Components.Remove(comp.GetType());
+                Components.Remove(comp.GetType(), out _);
                 comp.Dispose();
             }
             _components.Clear();

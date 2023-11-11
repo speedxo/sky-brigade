@@ -141,7 +141,7 @@ public class GameScene : Scene
             Engine.Debugger.Enabled = !Engine.Debugger.Enabled;
 
         cameraMovement +=
-            15.0f
+            (15.0f + cameraMovement / 5.0f)
             * dt
             * (
                 Engine.Input.KeyboardManager.IsKeyDown(Key.E)

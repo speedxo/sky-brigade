@@ -24,6 +24,6 @@ void main() {
   {
     case 1: shouldDiscard = gl_Position.y < 0.00 ? 1.0 : 0.0; break;
     case 2: shouldDiscard = gl_Position.y > -0.075 ? 1.0 : 0.0; break;
-    default: shouldDiscard = 0; break;
+    case 0: default: shouldDiscard = 0; 
   }
 }

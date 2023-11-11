@@ -92,7 +92,7 @@ namespace Horizon.Debugging.Debuggers
                         {
                             if (ImGui.MenuItem("Delete"))
                             {
-                                entity.Components.Remove(component.GetType());
+                                entity.Components.TryRemove(component.GetType(), out _);
                                 // TODO: some king of disposing.tho
                                 ImGui.CloseCurrentPopup();
                             }

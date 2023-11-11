@@ -111,7 +111,7 @@ public abstract partial class Tiling<TTextureID>
         {
             if (_drawParallax)
             {
-                RenderAll(dt, ref options);
+                RenderLower(Map.ParallaxIndex + 2, dt, ref options);
                 Map.ParallaxEntity!.Render(dt, ref options);
 
                 RenderUpper(Map.ParallaxIndex, dt, ref options);

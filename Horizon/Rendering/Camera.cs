@@ -81,7 +81,7 @@ public class Camera : Entity
                 aspectRatio * Position.Z,
                 Position.Z,
                 1.0f,
-                1000.0f
+                250.0f
             );
 
             var h = Position.Z;
