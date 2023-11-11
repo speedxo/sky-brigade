@@ -100,6 +100,7 @@ public abstract class GameEngine : Entity, IDisposable
         Window.RenderFrame += WindowDraw;
         Window.UpdateStateFrame += (delta) =>
         {
+            UpdatePhysics((float)delta);
             UpdateState((float)delta);
         };
         Window.Closing += DisposeECS;

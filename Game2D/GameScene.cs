@@ -3,6 +3,7 @@ using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
 using Horizon;
 using Horizon.Extentions;
+using Horizon.GameEntity;
 using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Prefabs.Effects;
 using Horizon.Rendering;
@@ -27,7 +28,7 @@ public class GameScene : Scene
     private Player2D player;
     private SpriteBatch spriteBatch;
     private readonly Camera cam;
-    private readonly TileMap tilemap;
+    private  TileMap tilemap;
     private readonly World world;
     private ParticleRenderer2D particles;
     private RenderOptions charOptions;
@@ -50,9 +51,16 @@ public class GameScene : Scene
         debugDrawCallback.Enabled = true;
 
         world = AddComponent<Box2DWorldComponent>();
-
         world.SetDebugDraw(debugDrawCallback);
 
+      
+        cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
+
+        InitializeRenderingPipeline();
+    }
+
+    public override void Initialize()
+    {
         if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
         {
             Engine.Logger.Log(
@@ -62,18 +70,17 @@ public class GameScene : Scene
             Environment.Exit(1);
         }
         else
-            Entities.Add(tilemap);
-
-        cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
-
-        InitializeRenderingPipeline();
-    }
-
-    public override void Initialize()
-    {
+        {
+            AddEntity(tilemap);
+        }
         AddEntity(player = new Player2D(world, tilemap));
+        spriteBatch = new SpriteBatch();
+        spriteBatch.Parent = this;
 
-        spriteBatch = AddEntity(new SpriteBatch());
+        spriteBatch.Name ??= spriteBatch.GetType().Name;
+        spriteBatch.Enabled = false;
+
+        PushToInitializationQueue(spriteBatch);
         spriteBatch.Add(player);
 
         AddEntity(
@@ -82,6 +89,10 @@ public class GameScene : Scene
                 MaxAge = 3.0f
             }
         );
+        
+        // The tile map will now render this entity between the parallax layers, implicitly.
+        tilemap.SetParallaxEntity(spriteBatch);
+
         AddEntity(
             new IntervalRunner(
                 1 / 25.0f,
@@ -114,10 +125,16 @@ public class GameScene : Scene
     private float cameraMovement = 16;
     private Vector2 playerDir;
 
+    public override void UpdatePhysics(float dt)
+    {
+        base.UpdatePhysics(dt);
+        spriteBatch.UpdatePhysics(dt);
+    }
+
     public override void UpdateState(float dt)
     {
         base.UpdateState(dt);
-
+        spriteBatch.UpdateState(dt);
         playerDir = Engine.Input.GetVirtualController().MovementAxis;
 
         if (Engine.Input.KeyboardManager.IsKeyPressed(Key.F3))
@@ -171,6 +188,8 @@ public class GameScene : Scene
     public override void Render(float dt, ref RenderOptions options)
     {
         charOptions = options with { Camera = cam };
+        base.Render(dt, ref charOptions);
+
         world.DrawDebugData();
 
         if (catCounter > 0)
@@ -191,7 +210,7 @@ public class GameScene : Scene
         }
 
         debugDrawCallback.Enabled = options.IsBox2DDebugDrawEnabled;
-        base.Render(dt, ref charOptions);
+        spriteBatch.RenderImplicit = true;
     }
 
     public override void DrawOther(float dt, ref RenderOptions options)

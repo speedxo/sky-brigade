@@ -13,8 +13,9 @@ public partial class Tiling<TTextureID>
         {
             public readonly int ID { get; init; }
             public readonly TileSet Set { get; init; }
-            public readonly bool IsCollidable { get; init; }
+            public readonly bool IsCollectible { get; init; }
             public readonly bool IsVisible { get; init; }
+            public readonly bool AlwaysOnTop { get; init; }
         }
 
         public int ID { get; init; }
@@ -24,7 +25,7 @@ public partial class Tiling<TTextureID>
         {
             this.ID = config.ID;
             this.Set = config.Set;
-            this.PhysicsData.IsCollidable = config.IsCollidable;
+            this.PhysicsData.IsCollidable = config.IsCollectible;
             this.RenderingData.IsVisible = config.IsVisible;
         }
     }

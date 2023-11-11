@@ -19,6 +19,11 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         public Tile?[] Tiles { get; init; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this slice is rendered always on top regardless of parallaxing.
+        /// </summary>
+        public bool AlwaysOnTop { get; set; } = false;
+
         public TileMapChunkSlice(int width, int height)
         {
             this.Width = width;

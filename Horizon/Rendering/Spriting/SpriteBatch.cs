@@ -116,10 +116,10 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// TODO please remind me to make a custom datastruct for this shit
     /// </summary>
     /// <value>
-    private ConcurrentDictionary<uint, SpriteSheetRenderObject> SpritesheetSprites { get; init; }
+    private ConcurrentDictionary<uint, SpriteSheetRenderObject> SpritesheetSprites { get; } = new();
     public int Count { get; private set; }
 
-    private ConcurrentStack<Sprite> _queuedSprites;
+    private ConcurrentStack<Sprite> _queuedSprites = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpriteBatch"/> class.
@@ -132,9 +132,6 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
             ShaderFactory.CompileNamed("Assets/sprite_shaders/", "sprites")
         );
 
-        this.SpritesheetSprites = new();
-        this._queuedSprites = new();
-
         // this.Transform = AddComponent<TransformComponent>();
         Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
         Engine.Debugger.GeneralDebugger.AddWatch(
@@ -143,6 +140,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
             () => SpritesheetSprites.Count
         );
     }
+    public SpriteBatch() : this(null) { }
 
     /// <summary>
     /// Commits an object to be rendered.
@@ -163,6 +161,10 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// <param name="options">Render options (optional).</param>
     public override void Render(float dt, ref RenderOptions options)
     {
+        base.Render(dt, ref options);
+
+        if (!Enabled && !RenderImplicit) return;
+        
         if (_queuedSprites.Any())
         {
             int length = _queuedSprites.Count;
@@ -173,15 +175,23 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
                 Dictionary<uint, List<Sprite>> spriteSpriteSheetPairs = new();
                 for (int i = 0; i < sprites.Length; i++)
                 {
-                    spriteSpriteSheetPairs.TryAdd(sprites[i].Spritesheet.Handle, new());
-                    spriteSpriteSheetPairs[sprites[i].Spritesheet.Handle].Add(sprites[i]);
-
-                    if (!SpritesheetSprites.ContainsKey(sprites[i].Spritesheet.Handle))
+                    if (sprites[i].AnimationManager is null)
                     {
-                        SpritesheetSprites.TryAdd(
-                            sprites[i].Spritesheet.Handle,
-                            new SpriteSheetRenderObject(new(sprites[i].Spritesheet, Shader))
-                        );
+                        // Sprite not yet initialized
+                        _queuedSprites.Push(sprites[i]);
+                    }
+                    else
+                    {
+                        spriteSpriteSheetPairs.TryAdd(sprites[i].Spritesheet.Handle, new());
+                        spriteSpriteSheetPairs[sprites[i].Spritesheet.Handle].Add(sprites[i]);
+
+                        if (!SpritesheetSprites.ContainsKey(sprites[i].Spritesheet.Handle))
+                        {
+                            SpritesheetSprites.TryAdd(
+                                sprites[i].Spritesheet.Handle,
+                                new SpriteSheetRenderObject(new(sprites[i].Spritesheet, Shader))
+                            );
+                        }
                     }
                 }
 
@@ -193,9 +203,6 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
                 }
             }
         }
-
-        base.Render(dt, ref options);
-
         foreach (var (_, renderData) in SpritesheetSprites)
             renderData.Mesh.Draw( /*Transform.ModelMatrix, */
                 CollectionsMarshal.AsSpan(renderData.Sprites),

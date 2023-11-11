@@ -1,11 +1,19 @@
 ﻿using Box2D.NetStandard.Dynamics.Bodies;
 using Horizon.Primitives;
+using System.Drawing.Drawing2D;
 using System.Numerics;
 
 namespace Horizon.Rendering;
 
 public abstract partial class Tiling<TTextureID>
 {
+    public enum TileChunkCullMode
+    {
+        None = 0,
+        Top = 1,
+        Bottom = 2
+    }
+
     /// <summary>
     /// Represents a chunk of tiles in a tile map.
     /// </summary>
@@ -27,6 +35,7 @@ public abstract partial class Tiling<TTextureID>
         public const int HEIGHT = 32;
 
         public TileMapChunkSlice[] Slices { get; init; }
+        private List<int> alwaysOnTop = new();
 
         /// <summary>
         /// Gets the position of the chunk in the tile map.
@@ -144,6 +153,15 @@ public abstract partial class Tiling<TTextureID>
         {
             Renderer.Draw(dt, ref options);
         }
+        /// <summary>
+        /// Draws the specified chunk index.
+        /// </summary>
+        /// <param name="dt">The time elapsed since the last frame.</param>
+        /// <param name="options">Optional rendering options.</param>
+        public void RenderSlice(int index, float dt, ref RenderOptions options, in TileChunkCullMode cullMode)
+        {
+            Renderer.DrawSliceAtIndex(index, dt, ref options, cullMode);
+        }
 
         /// <summary>
         /// Updates the chunk.
@@ -171,9 +189,12 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         public void PostGenerate()
         {
+            alwaysOnTop.Clear();
+
             for (int s = 0; s < Slices.Length; s++)
             {
                 var slice = Slices[s];
+                if (slice.AlwaysOnTop) alwaysOnTop.Add(s);
                 for (int i = 0; i < slice.Tiles.Length; i++)
                 {
                     if (slice.Tiles[i] is null)
@@ -181,6 +202,15 @@ public abstract partial class Tiling<TTextureID>
 
                     slice.Tiles[i]!.PostGeneration();
                 }
+            }
+
+        }
+
+        internal void RenderAlwaysOnTop(float dt, ref RenderOptions options)
+        {
+            for (int i = 0; i < alwaysOnTop.Count; i++)
+            {
+                Renderer.DrawSliceAtIndex(alwaysOnTop[i], dt, ref options, TileChunkCullMode.None);
             }
         }
     }

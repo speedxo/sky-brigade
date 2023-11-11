@@ -1,6 +1,7 @@
 ﻿using Horizon.GameEntity.Components;
 using Horizon.Primitives;
 using Horizon.Rendering;
+using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 
 namespace Horizon.GameEntity
@@ -36,6 +37,11 @@ namespace Horizon.GameEntity
         /// Gets or sets this entities enable flag.
         /// </summary>
         public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this entity is being rendered by another system.
+        /// </summary>
+        public bool RenderImplicit { get; set; } = false;
 
         /// <summary>
         /// Human readable name for this entity.
@@ -136,7 +142,7 @@ namespace Horizon.GameEntity
 
             return entity;
         }
-
+        protected void PushToInitializationQueue(in Entity entity) => _uninitializedEntities.Push(entity);
         /// <summary>
         /// Adds an entity to the scene and returns the added entity.
         /// </summary>
@@ -247,25 +253,22 @@ namespace Horizon.GameEntity
         /// <param name="options">Render options (optional).</param>
         public virtual void Render(float dt, ref RenderOptions options)
         {
-            if (!Enabled)
-            {
-                return;
-            }
-
             while (_uninitializedEntities.Any())
             {
                 if (_uninitializedEntities.TryPop(out var ent))
                 {
+                    ent.Enabled = !ent.RenderImplicit;
                     ent.Initialize();
-                    ent.Enabled = true;
                 }
             }
 
-            for (int i = 0; i < Components.Count; i++)
-                Components.Values.ElementAt(i).Render(dt, ref options);
+            if (!Enabled && !RenderImplicit)
+                return;
 
             for (int i = 0; i < Entities.Count; i++)
                 Entities[i].Render(dt, ref options);
+            for (int i = 0; i < Components.Count; i++)
+                Components.Values.ElementAt(i).Render(dt, ref options);
         }
 
         /// <summary>

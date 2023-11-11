@@ -1,6 +1,9 @@
 ﻿using Box2D.NetStandard.Dynamics.World;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components.Physics2D;
+using Microsoft.Extensions.Options;
+using Silk.NET.OpenGL;
+using System.Drawing.Drawing2D;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using TiledSharp;
@@ -30,6 +33,11 @@ public abstract partial class Tiling<TTextureID>
         public int Height { get; init; }
 
         /// <summary>
+        /// The lower layer slice in which <see cref="ParallaxEntity"/> will be rendered onto, followed by every layer above it ontop.
+        /// </summary>
+        public int ParallaxIndex { get; set; } = 2;
+
+        /// <summary>
         /// Gets or sets the physics world associated with the tile map.
         /// </summary>
         public World? World { get; private set; }
@@ -40,11 +48,17 @@ public abstract partial class Tiling<TTextureID>
         public TileMapChunkManager ChunkManager { get; private set; }
 
         /// <summary>
+        /// An optional entity that will be rendered between the sets of layers specified by <see cref="ParallaxIndex"/>.
+        /// </summary>
+        public Entity? ParallaxEntity { get; private set; }
+
+        /// <summary>
         /// Gets the dictionary of tile sets used in the tile map.
         /// </summary>
         public Dictionary<string, TileSet> TileSets { get; init; }
 
         private int TileUpdateCount = 0;
+        private bool hasBeenInitialized = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TileMap"/> class.
@@ -123,11 +137,16 @@ public abstract partial class Tiling<TTextureID>
                 foreach (var layer in tiledMap.Layers)
                 {
                     var layerConfig = GenerateTiledTileConfigFromLayer(layer);
-
+                    
                     foreach (var tile in layer.Tiles)
                     {
                         if (tile.Gid == 0)
                             continue;
+
+                        for (int chunkIndex = 0; chunkIndex < map.Width * map.Height; chunkIndex++)
+                        {
+                            map.ChunkManager.Chunks[chunkIndex].Slices[layerIndex].AlwaysOnTop = layerConfig.AlwaysOnTop;
+                        }
 
                         // invert the tile Y coordinates because one again openGL is weird (read about coordinate system orientations)
                         int tileY = tiledMap.Height - tile.Y - 1;
@@ -176,16 +195,31 @@ public abstract partial class Tiling<TTextureID>
         /// <returns></returns>
         private static StaticTile.TiledTileConfig GenerateTiledTileConfigFromLayer(TmxLayer layer)
         {
-            layer.Properties.TryGetValue("IsCollidable", out var _stringIsCollidable);
+            layer.Properties.TryGetValue("IsCollectible", out var _stringIsCollidable);
+            layer.Properties.TryGetValue("IsAlwaysOnTop", out var _stringTop);
 
             bool isCollidable =
                 bool.TryParse(_stringIsCollidable, out isCollidable) && isCollidable;
+            bool isOnTop =
+                bool.TryParse(_stringTop, out isOnTop) && isOnTop;
 
             return new StaticTile.TiledTileConfig
             {
-                IsCollidable = isCollidable,
-                IsVisible = layer.Visible
+                IsCollectible = isCollidable,
+                IsVisible = layer.Visible,
+                AlwaysOnTop = isOnTop
             };
+        }
+
+        /// <summary>
+        /// Sets the parallax entity. Note: This will disable the entity and render it implicitly.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        public void SetParallaxEntity(in Entity entity)
+        {
+            this.ParallaxEntity = entity;
+            entity.RenderImplicit = true;
+            entity.Enabled = false;
         }
 
         /// <summary>
@@ -237,6 +271,10 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         public override void Initialize()
         {
+            // Safetly check because TileMpa can be initialized implicitly.
+            if (hasBeenInitialized) return;
+            hasBeenInitialized = true;
+
             if (Parent!.HasComponent<Box2DWorldComponent>())
                 World = Parent!.GetComponent<Box2DWorldComponent>();
             ChunkManager = AddComponent<TileMapChunkManager>();

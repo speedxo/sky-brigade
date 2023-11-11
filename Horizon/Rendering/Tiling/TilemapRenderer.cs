@@ -118,9 +118,32 @@ public abstract partial class Tiling<TTextureID>
                 }
             }
         }
+        public void DrawSliceAtIndex(int index, float dt, ref RenderOptions options, in TileChunkCullMode cullMode)
+        {
+            Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
+            if (!Chunk.IsVisibleByCamera)
+                return;
+
+            _dirtyChunkUpdateTimer += dt;
+            if (Chunk.IsDirty && _dirtyChunkUpdateTimer > 0.1f)
+            {
+                _dirtyChunkUpdateTimer = 0.0f;
+                Chunk.IsDirty = false;
+
+                GenerateMesh();
+            }
+            if (!TileMapChunkSliceTileMeshesKeyPairs.Any()) return;
+
+            foreach (var (_, mesh) in TileMapChunkSliceTileMeshesKeyPairs[Chunk.Slices[index]].TileMeshPairs)
+            {
+                mesh.CullMode = cullMode;
+                mesh.Render(dt, ref options);
+                mesh.CullMode = TileChunkCullMode.None;
+            }
+            
+        }
 
         private float _dirtyChunkUpdateTimer = 0.0f;
-
         public void Draw(float dt, ref RenderOptions options)
         {
             Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
@@ -136,7 +159,7 @@ public abstract partial class Tiling<TTextureID>
                 GenerateMesh();
             }
 
-            // TODO find a better way as to not have several n^2 accesses.
+            
             foreach (var (_, sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
             {
                 foreach (var (_, mesh) in sliceMeshes.TileMeshPairs)

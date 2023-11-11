@@ -112,7 +112,6 @@ public abstract class Scene : Entity, IDisposable
         //}
 
         base.Render(dt, ref options);
-
         DrawOther(dt, ref options);
 
         //if (options.IsPostProcessingEnabled)
