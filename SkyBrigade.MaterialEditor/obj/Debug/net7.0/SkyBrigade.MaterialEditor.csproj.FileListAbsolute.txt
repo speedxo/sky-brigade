@@ -1,5 +1,0 @@
-/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/Debug/net7.0/SkyBrigade.MaterialEditor.csproj.AssemblyReference.cache
-/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/Debug/net7.0/SkyBrigade.MaterialEditor.GeneratedMSBuildEditorConfig.editorconfig
-/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/Debug/net7.0/SkyBrigade.MaterialEditor.AssemblyInfoInputs.cache
-/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/Debug/net7.0/SkyBrigade.MaterialEditor.AssemblyInfo.cs
-/Users/bogz/Documents/sky-brigade/SkyBrigade.MaterialEditor/obj/Debug/net7.0/SkyBrigade.MaterialEditor.csproj.CoreCompileInputs.cache
