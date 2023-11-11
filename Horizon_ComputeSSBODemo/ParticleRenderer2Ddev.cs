@@ -157,7 +157,7 @@ public class ParticleRenderer2Ddev : Entity, IDisposable
         buffer.Unbind();
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         timer += dt;
         spawnParticles.Use();
@@ -190,10 +190,10 @@ public class ParticleRenderer2Ddev : Entity, IDisposable
 
         updateParticles.End();
 
-        base.Update(dt);
+        base.UpdateState(dt);
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         Material.Use(in options);
         Material.SetModel(Transform.ModelMatrix);

@@ -98,9 +98,9 @@ public abstract class GameEngine : Entity, IDisposable
     private void SubscribeWindowEvents()
     {
         Window.RenderFrame += WindowDraw;
-        Window.UpdateFrame += (delta) =>
+        Window.UpdateStateFrame += (delta) =>
         {
-            Update((float)delta);
+            UpdateState((float)delta);
         };
         Window.Closing += DisposeECS;
         Window.Load += Load;
@@ -322,7 +322,7 @@ public abstract class GameEngine : Entity, IDisposable
     public void Run() => Window.Run();
 
     // Variables and method used for non-essential updates that run once per second.
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         OnPreUpdate?.Invoke(dt);
 
@@ -345,7 +345,7 @@ public abstract class GameEngine : Entity, IDisposable
         Debugger.PerformanceDebugger.CpuMetrics.TimeAndTrackMethod(
             () =>
             {
-                base.Update(dt);
+                base.UpdateState(dt);
             },
             "Engine",
             "CPU"
@@ -354,18 +354,18 @@ public abstract class GameEngine : Entity, IDisposable
         OnPostUpdate?.Invoke(dt);
     }
 
-    //// Update method for non-essential tasks, such as measuring memory usage.
+    //// UpdateState method for non-essential tasks, such as measuring memory usage.
     //private void nonEssentialUpdate()
     //{
     //    MemoryUsage = GC.GetTotalMemory(false) / 1000000;
     //}
     private void WindowDraw(double dt) =>
-        Draw((float)dt, ref Debugger.RenderOptionsDebugger.RenderOptions);
+        Render((float)dt, ref Debugger.RenderOptionsDebugger.RenderOptions);
 
     public void DrawWithMetrics(in Entity entity, in float dt, ref RenderOptions options)
     {
         var startTime = Stopwatch.GetTimestamp();
-        entity.Draw(dt, ref options);
+        entity.Render(dt, ref options);
         var endTime = Stopwatch.GetTimestamp();
 
         var val = (double)(endTime - startTime) / Stopwatch.Frequency;
@@ -379,7 +379,7 @@ public abstract class GameEngine : Entity, IDisposable
     public void DrawWithMetrics(in IGameComponent component, in float dt, ref RenderOptions options)
     {
         var startTime = Stopwatch.GetTimestamp();
-        component.Draw(dt, ref options);
+        component.Render(dt, ref options);
         var endTime = Stopwatch.GetTimestamp();
         if (component.Name == "Scene Manager")
             return;
@@ -392,7 +392,7 @@ public abstract class GameEngine : Entity, IDisposable
         );
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (!Enabled)
             return;
@@ -413,7 +413,7 @@ public abstract class GameEngine : Entity, IDisposable
         //for (int i = 0; i < Entities.Count; i++)
         //    DrawWithMetrics(Entities[i], dt, ref options);
 
-        base.Draw(dt, ref options);
+        base.Render(dt, ref options);
 
         // Render ImGui UI on top of the game screen.
         _imGuiController.Render();

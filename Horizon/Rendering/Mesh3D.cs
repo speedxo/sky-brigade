@@ -54,7 +54,7 @@ public class Mesh3D : Mesh<Vertex>
         Buffer.VertexArray.Unbind();
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (ElementCount < 1)
             return; // SAVOUR THE FRAMES!!!

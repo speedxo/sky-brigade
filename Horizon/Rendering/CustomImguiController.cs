@@ -498,7 +498,7 @@ public class CustomImguiController : IDisposable
 
     /// <summary>
     /// Sets per-frame data based on the associated window.
-    /// This is called by Update(float).
+    /// This is called by UpdateState(float).
     /// </summary>
     private void SetPerFrameImGuiData(float deltaSeconds)
     {
@@ -784,7 +784,7 @@ public class CustomImguiController : IDisposable
                         );
                         //_gl.CheckGlError("Scissor");
 
-                        // Bind texture, Draw
+                        // Bind texture, Render
                         _gl.BindTexture(GLEnum.Texture2D, (uint)cmdPtr.TextureId);
                         //_gl.CheckGlError("Texture");
 
@@ -795,7 +795,7 @@ public class CustomImguiController : IDisposable
                             (void*)(cmdPtr.IdxOffset * sizeof(ushort)),
                             (int)cmdPtr.VtxOffset
                         );
-                        //_gl.CheckGlError("Draw");
+                        //_gl.CheckGlError("Render");
                     }
                 }
             }

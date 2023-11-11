@@ -56,7 +56,7 @@ namespace Horizon.Debugging
             _components.Clear();
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             RenderToConatiner = Enabled && GameContainerDebugger.Visible;
 
@@ -121,7 +121,7 @@ namespace Horizon.Debugging
                 ImGui.EndMainMenuBar();
             }
 
-            base.Draw(dt, ref options);
+            base.Render(dt, ref options);
         }
     }
 }

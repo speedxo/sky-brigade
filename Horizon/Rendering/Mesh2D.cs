@@ -54,7 +54,7 @@ public class Mesh2D : Mesh<Vertex2D>
     /// </summary>
     /// <param name="dt">The elapsed time since the last render call.</param>
     /// <param name="options">Optional render options. If not provided, default options will be used.</param>
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (ElementCount < 1)
             return; // SAVOUR THE FRAMES!!!

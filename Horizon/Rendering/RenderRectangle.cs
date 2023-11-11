@@ -39,7 +39,7 @@ public class RenderTarget : Entity
 
     public void RenderScene(float dt) { }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         Engine.GL.Viewport(
             0,
@@ -55,12 +55,12 @@ public class RenderTarget : Entity
         Technique.SetUniform("uView", Matrix4x4.Identity);
         Technique.SetUniform("uProjection", Matrix4x4.Identity);
 
-        Mesh.Draw(dt, ref options);
+        Mesh.Render(dt, ref options);
 
         Technique.End();
     }
 
-    public override void Update(float dt) { }
+    public override void UpdateState(float dt) { }
 }
 
 public class RenderRectangle : Entity
@@ -152,12 +152,12 @@ public class RenderRectangle : Entity
             Technique.SetUniform(UNIFORM_DEPTH, 1);
         }
 
-        Mesh.Draw(dt, ref options);
+        Mesh.Render(dt, ref options);
 
         Technique.End();
     }
 
-    public override void Draw(float dt, ref RenderOptions options) { }
+    public override void Render(float dt, ref RenderOptions options) { }
 
-    public override void Update(float dt) { }
+    public override void UpdateState(float dt) { }
 }

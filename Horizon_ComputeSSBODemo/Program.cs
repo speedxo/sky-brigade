@@ -48,7 +48,7 @@ namespace Horizon_ComputeSSBODemo
             base.Initialize();
         }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
             camera.Position += new Vector3(
                 Engine.Input.GetVirtualController().MovementAxis * dt * 5.0f,
@@ -56,13 +56,13 @@ namespace Horizon_ComputeSSBODemo
             );
             particles.SpawnPosition = new Vector2(camera.Position.X, camera.Position.Y);
 
-            base.Update(dt);
+            base.UpdateState(dt);
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             rendOptions = options with { Camera = camera };
-            base.Draw(dt, ref rendOptions);
+            base.Render(dt, ref rendOptions);
         }
 
         public override void DrawOther(float dt, ref RenderOptions options) { }

@@ -28,7 +28,6 @@ namespace TileBash.Animals
             );
 
             IsAnimated = true;
-            Size = new Vector2(2.0f);
             SetAnimation("idle");
 
             StateMachine.AddState(AnimalBehavior.Idle, new GenericIdleState(this, StateMachine));

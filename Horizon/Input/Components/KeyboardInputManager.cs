@@ -119,7 +119,7 @@ namespace Horizon.Input.Components
         }
 
         /// <summary>
-        /// Returns true if a key that was not pressed last frame is pressed.
+        /// Returns true if a key that was not pressed last frame is currently being pressed.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns></returns>
@@ -132,20 +132,35 @@ namespace Horizon.Input.Components
         }
 
         /// <summary>
+        /// Returns the state of a key as of the current frame.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        public bool IsKeyDown(Key key)
+        {
+            if (CurrentState is null)
+                return false;
+
+            return CurrentState.IsKeyPressed(key);
+        }
+
+        /// <summary>
         /// Updates the KeyboardManager, not used for keyboard input.
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             // Not used for keyboard input.
         }
+
+        public void UpdatePhysics(float dt) { }
 
         /// <summary>
         /// Draws the KeyboardManager, not used for keyboard input.
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used for keyboard input.
         }

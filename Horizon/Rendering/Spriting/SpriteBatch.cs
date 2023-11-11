@@ -136,11 +136,11 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
         this._queuedSprites = new();
 
         // this.Transform = AddComponent<TransformComponent>();
-        Engine.Debugger.GeneralDebugger.AddWatch("Sprite Maximum", "SpriteBatch", () => Count);
+        Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
         Engine.Debugger.GeneralDebugger.AddWatch(
-            "Meshes",
+            "Mesh Count",
             "SpriteBatch",
-            () => SpritesheetSprites.Values.Count
+            () => SpritesheetSprites.Count
         );
     }
 
@@ -161,7 +161,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
     /// </summary>
     /// <param name="dt">Delta time.</param>
     /// <param name="options">Render options (optional).</param>
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (_queuedSprites.Any())
         {
@@ -194,7 +194,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
             }
         }
 
-        base.Draw(dt, ref options);
+        base.Render(dt, ref options);
 
         foreach (var (_, renderData) in SpritesheetSprites)
             renderData.Mesh.Draw( /*Transform.ModelMatrix, */

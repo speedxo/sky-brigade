@@ -104,7 +104,7 @@ namespace Horizon.Input.Components
         /// Updates the JoystickInputManager, processing input from the connected joystick/gamepad.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             // Not used for joystick input.
         }
@@ -114,7 +114,7 @@ namespace Horizon.Input.Components
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used for joystick input.
         }
@@ -128,5 +128,7 @@ namespace Horizon.Input.Components
             Controller?.EndPolling();
             Controller?.Release();
         }
+
+        public void UpdatePhysics(float dt) { }
     }
 }

@@ -102,7 +102,7 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (!Visible)
                 return;
@@ -137,7 +137,7 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Dispose() { }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
             if (!Visible)
                 return;
@@ -153,6 +153,8 @@ namespace Horizon.Debugging.Debuggers
                 }
             }
         }
+
+        public override void UpdatePhysics(float dt) { }
 
         ~GeneralDebugger()
         {

@@ -22,6 +22,8 @@ namespace Horizon.GameEntity.Components
             SetUniform("uModel", Transform.ModelMatrix);
         }
 
-        public void Update(float dt) { }
+        public void UpdateState(float dt) { }
+
+        public void UpdatePhysics(float dt) { }
     }
 }

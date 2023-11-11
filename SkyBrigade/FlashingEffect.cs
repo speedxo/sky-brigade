@@ -18,7 +18,7 @@ internal class FlashingEffect : Effect
         : base(File.ReadAllText("Assets/DemoEffectStack/stage0.frag")) { }
 
     // Here we keep track of how much time has passed.
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         data.iTime += dt;
         RequiresUpdate = true;

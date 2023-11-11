@@ -23,12 +23,14 @@ namespace Horizon.GameEntity.Components.Physics2D
             transform = Parent.GetComponent<TransformComponent2D>()!;
         }
 
-        public void Draw(float dt, ref RenderOptions options) { }
+        public void Render(float dt, ref RenderOptions options) { }
 
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             transform.Position = Body.Position;
             transform.Rotation = MathHelper.RadiansToDegrees(Body.GetAngle());
         }
+
+        public void UpdatePhysics(float dt) { }
     }
 }

@@ -48,16 +48,18 @@ public abstract partial class Tiling<TTextureID>
                 Chunks[i] = new TileMapChunk(Map, new Vector2(i % Map.Width, i / Map.Width));
         }
 
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             for (int i = 0; i < Map.Width * Map.Height; i++)
-                Chunks[i].Update(dt);
+                Chunks[i].UpdateState(dt);
         }
 
-        public void Draw(float dt, ref RenderOptions options)
+        public void UpdatePhysics(float dt) { }
+
+        public void Render(float dt, ref RenderOptions options)
         {
             for (int i = 0; i < Map.Width * Map.Height; i++)
-                Chunks[i].Draw(dt, ref options);
+                Chunks[i].Render(dt, ref options);
         }
 
         public void GenerateMeshes()

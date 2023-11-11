@@ -24,7 +24,7 @@ in vec2 texCoords;
 
 uniform sampler2D uAlbedo;
 uniform sampler2D uDepth;
-
+ 
 ";
 
         [Pure]
@@ -118,9 +118,9 @@ void main()
             Technique.End();
         }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
-            base.Update(dt);
+            base.UpdateState(dt);
         }
 
         [Pure]
@@ -151,7 +151,7 @@ void main()
         {
             foreach (var effect in Effects)
             {
-                effect.Update(dt);
+                effect.UpdateState(dt);
 
                 if (effect.RequiresUpdate)
                 {

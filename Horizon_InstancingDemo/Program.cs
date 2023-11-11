@@ -118,12 +118,12 @@ internal class Program : Scene
         vbo.Unbind();
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         totalTime += dt;
         model = Matrix4x4.CreateRotationZ((MathF.PI / 180.0f) * totalTime * MathF.PI * 60);
 
-        base.Update(dt);
+        base.UpdateState(dt);
     }
 
     public override void DrawOther(float dt, ref RenderOptions options)

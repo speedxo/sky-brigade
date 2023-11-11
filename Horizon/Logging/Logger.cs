@@ -65,6 +65,8 @@ public class Logger : IGameComponent
             textWriter = new StreamWriter("log.txt", true);
     }
 
+    public void UpdatePhysics(float dt) { }
+
     /// <summary>
     /// Logs a message with the specified log level.
     /// </summary>
@@ -108,7 +110,7 @@ public class Logger : IGameComponent
 
     public void Initialize() { }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
         if (!logQueue.IsEmpty)
         {
@@ -133,7 +135,7 @@ public class Logger : IGameComponent
         }
     }
 
-    public void Draw(float dt, ref RenderOptions options) { }
+    public void Render(float dt, ref RenderOptions options) { }
 
     // Helper struct to store log entry information
     private readonly struct LogEntry

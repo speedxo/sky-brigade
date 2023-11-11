@@ -141,9 +141,9 @@ public class ParticleRenderer2D : Entity, IDisposable
     /// Updates the entity and its components.
     /// </summary>
     /// <param name="dt">Delta time.</param>
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
-        base.Update(dt);
+        base.UpdateState(dt);
 
         // TODO: completely ditch this or at very least reuse a thread pool
         Parallel.For(
@@ -176,7 +176,7 @@ public class ParticleRenderer2D : Entity, IDisposable
     /// </summary>
     /// <param name="dt">Delta time.</param>
     /// <param name="options">Render options (optional).</param>
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (Count < 1)
             return;

@@ -27,10 +27,12 @@ internal class AnimalBehaviorStateMachineComponent : IGameComponent
         CurrentState.Enter();
     }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
-        CurrentState?.Update(dt);
+        CurrentState?.UpdateState(dt);
     }
 
-    public void Draw(float dt, ref RenderOptions options) { }
+    public void Render(float dt, ref RenderOptions options) { }
+
+    public void UpdatePhysics(float dt) { }
 }

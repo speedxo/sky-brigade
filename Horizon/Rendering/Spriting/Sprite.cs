@@ -30,7 +30,6 @@ public abstract class Sprite : Entity
     }
     internal bool ShouldUpdateVbo { get; private set; }
 
-    public Vector2 Size { get; set; } = Vector2.One;
     public bool IsAnimated { get; set; }
     public string FrameName { get; private set; }
 

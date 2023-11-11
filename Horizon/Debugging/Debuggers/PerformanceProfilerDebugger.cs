@@ -44,10 +44,12 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 
         Debugger = (Parent as SkylineDebugger)!;
 
-        _updateFrameTimes = new(100);
-        _renderFrameTimes = new(100);
-        _updateDeltas = new(100);
-        _renderDeltas = new(100);
+        int collectionSize = 25;
+
+        _updateFrameTimes = new(collectionSize);
+        _renderFrameTimes = new(collectionSize);
+        _updateDeltas = new(collectionSize);
+        _renderDeltas = new(collectionSize);
 
         // Initialize requried dictionaries by inference.
         CpuMetrics.AddCustom("Engine", "CPU", 0.0);
@@ -106,7 +108,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 
     private double GetAverage(LinearBuffer<double> linearBuffer) => linearBuffer.Buffer.Average();
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (!Visible)
             return;
@@ -114,7 +116,7 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
         if (ImGui.Begin(Name))
         {
             ImGui.Text($"FPS (Render): {1.0f / _renderDeltas.Buffer.Average():0.0}");
-            ImGui.Text($"FPS (Update): {1.0f / _updateDeltas.Buffer.Average():0.0}");
+            ImGui.Text($"FPS (UpdateState): {1.0f / _updateDeltas.Buffer.Average():0.0}");
 
             if (ImGui.CollapsingHeader("Logic Profiler"))
                 DrawCpuProfiling();
@@ -237,7 +239,9 @@ public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
         return (float)(GC.GetTotalMemory(false) / (1024.0 * 1024.0)); // in MB
     }
 
-    public override void Update(float dt) { }
+    public override void UpdateState(float dt) { }
+
+    public override void UpdatePhysics(float dt) { }
 
     protected virtual void Dispose(bool disposing)
     {

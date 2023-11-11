@@ -30,8 +30,8 @@ public partial class CharacterController : Entity
         MovementController = AddComponent(new CharacterMovementController(config));
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
-        base.Update(dt);
+        base.UpdateState(dt);
     }
 }

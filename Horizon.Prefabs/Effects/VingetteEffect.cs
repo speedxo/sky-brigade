@@ -47,11 +47,13 @@ ShaderData ShaderStage(ShaderData data)
             RequiresUpdate = true;
         }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
             RequiresUpdate = true;
             //data.Intensity = dt * 100.0f;
         }
+
+        public override void UpdatePhysics(float dt) { }
 
         public override void UpdateBuffer(in UniformBufferObject bufferObject)
         {

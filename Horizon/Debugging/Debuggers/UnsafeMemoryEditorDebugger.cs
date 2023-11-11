@@ -147,7 +147,7 @@ namespace Horizon.Debugging.Debuggers
                 ImGui.Text(FixedHex(base_display_addr + addr, addr_digits_count) + ": ");
                 ImGui.SameLine();
 
-                // Draw Hexadecimal
+                // Render Hexadecimal
                 float line_start_x = ImGuiNative.igGetCursorPosX();
                 for (int n = 0; n < Rows && addr < mem_size; n++, addr++)
                 {
@@ -227,7 +227,7 @@ namespace Horizon.Debugging.Debuggers
                 ImGui.SameLine(line_start_x + cell_width * Rows + glyph_width * 2);
                 //separator line drawing replaced by printing a pipe char
 
-                // Draw ASCII values
+                // Render ASCII values
                 addr = line_i * Rows;
                 var asciiVal = new System.Text.StringBuilder(2 + Rows);
                 asciiVal.Append("| ");

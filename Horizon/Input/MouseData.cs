@@ -10,7 +10,7 @@ namespace Horizon.Input
         /// <summary>
         /// Gets the looking axis input as a Vector2.
         /// </summary>
-        public Vector2 LookingAxis { get; set; }
+        public Vector2 Direction { get; set; }
 
         /// <summary>
         /// Gets the absolute mouse coordinates as a Vector2.

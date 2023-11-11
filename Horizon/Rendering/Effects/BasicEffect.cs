@@ -7,7 +7,9 @@ namespace Horizon.Rendering.Effects
         public BasicEffect()
             : base(File.ReadAllText("Assets/effects/basicStage.frag")) { }
 
-        public override void Update(float dt) { }
+        public override void UpdateState(float dt) { }
+
+        public override void UpdatePhysics(float dt) { }
 
         public override void UpdateBuffer(in UniformBufferObject bufferObject) { }
     }

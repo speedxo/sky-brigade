@@ -28,7 +28,7 @@ public abstract class InstancedMesh<VertexType, InstancedDataType> : Mesh<Vertex
     /// </summary>
     protected abstract void SetVboLayout();
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (ElementCount < 1)
             return; // SAVOUR THE FRAMES!!!

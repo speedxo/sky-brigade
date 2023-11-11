@@ -46,6 +46,8 @@ public class SpriteSheetAnimationManager : IGameComponent
         return (value.FirstFrame, value.Index);
     }
 
+    public void UpdatePhysics(float dt) { }
+
     public void AddAnimation(
         string name,
         Vector2 position,
@@ -79,11 +81,11 @@ public class SpriteSheetAnimationManager : IGameComponent
         );
     }
 
-    public void Draw(float dt, ref RenderOptions options) { }
+    public void Render(float dt, ref RenderOptions options) { }
 
     public void Initialize() { }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
         foreach (var name in Animations.Keys)
         {

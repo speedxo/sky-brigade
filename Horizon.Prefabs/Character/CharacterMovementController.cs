@@ -50,10 +50,12 @@ public partial class CharacterController
             Transform.Position = new Vector3(0, 0, 0);
         }
 
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             DoLocomotion(dt);
         }
+
+        public void UpdatePhysics(float dt) { }
 
         private void DoLocomotion(float dt)
         {
@@ -73,6 +75,6 @@ public partial class CharacterController
                 Position = new Vector3(0, 0, 0);
         }
 
-        public void Draw(float dt, ref RenderOptions options) { }
+        public void Render(float dt, ref RenderOptions options) { }
     }
 }

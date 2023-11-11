@@ -20,7 +20,8 @@ internal abstract class AnimalState : IUpdateable
         this.StateMachine = stateMachine;
     }
 
-    public abstract void Update(float dt);
+    public abstract void UpdatePhysics(float dt);
+    public abstract void UpdateState(float dt);
     public abstract void Enter();
     public abstract void Exit();
 }

@@ -21,12 +21,12 @@ internal class GenericIdleState : AnimalState
         _idleTimer = 0.0f;
 
         // Incase player suddenly approaches
-        Update(0.0f);
+        UpdateState(0.0f);
     }
 
     public override void Exit() { }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         if (Vector2.DistanceSquared(Player2D.Current.Position, Parent.Transform.Position) < 25.0f)
             StateMachine.Transition(AnimalBehavior.Wander);
@@ -35,4 +35,6 @@ internal class GenericIdleState : AnimalState
         if (_idleTimer > _targetIdleTime)
             StateMachine.Transition(AnimalBehavior.Wander);
     }
+
+    public override void UpdatePhysics(float dt) { }
 }

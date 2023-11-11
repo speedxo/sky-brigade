@@ -113,7 +113,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public Box2DDebugDrawCallback()
     {
-        Name = "Box2D Debug Draw Callback";
+        Name = "Box2D Debug Render Callback";
 
         segmentMesh = new(PrimitiveType.LineStrip);
         circleMesh = new(PrimitiveType.TriangleFan);
@@ -123,9 +123,9 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void Initialize() { }
 
-    public void Update(float dt) { }
+    public void UpdateState(float dt) { }
 
-    public void Draw(float dt, ref RenderOptions options)
+    public void Render(float dt, ref RenderOptions options)
     {
         if (!Enabled)
         {
@@ -329,4 +329,6 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         polygonMesh.Dispose();
         segmentMesh.Dispose();
     }
+
+    public void UpdatePhysics(float dt) { }
 }

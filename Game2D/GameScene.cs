@@ -29,7 +29,7 @@ public class GameScene : Scene
     private readonly Camera cam;
     private readonly TileMap tilemap;
     private readonly World world;
-    private readonly ParticleRenderer2D particles;
+    private ParticleRenderer2D particles;
     private RenderOptions charOptions;
     private int catCounter = 0;
     private readonly Box2DDebugDrawCallback debugDrawCallback;
@@ -67,6 +67,14 @@ public class GameScene : Scene
         cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
+    }
+
+    public override void Initialize()
+    {
+        AddEntity(player = new Player2D(world, tilemap));
+
+        spriteBatch = AddEntity(new SpriteBatch());
+        spriteBatch.Add(player);
 
         AddEntity(
             particles = new ParticleRenderer2D(100_000, new BasicParticle2DMaterial())
@@ -82,20 +90,10 @@ public class GameScene : Scene
                     var x = random.NextSingle() * Engine.Window.WindowSize.X;
                     var y = random.NextSingle() * Engine.Window.WindowSize.Y;
 
-                    SpawnParticle(cam.ScreenToWorld(new Vector2(x, y)));
+                    SpawnParticle(cam.ScreenToWorld(new Vector2(x, y)), playerDir);
                 }
             )
         );
-    }
-
-    public override void Initialize()
-    {
-        AddEntity(player = new Player2D(world, tilemap));
-        //var cat = AddEntity<Cat>();
-
-        spriteBatch = AddEntity(new SpriteBatch());
-        spriteBatch.Add(player);
-        //spriteBatch.Add(cat);
 
         base.Initialize();
     }
@@ -113,17 +111,28 @@ public class GameScene : Scene
         Engine.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private readonly float cameraMovement = 16;
+    private float cameraMovement = 16;
     private Vector2 playerDir;
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
-        base.Update(dt);
+        base.UpdateState(dt);
 
         playerDir = Engine.Input.GetVirtualController().MovementAxis;
 
         if (Engine.Input.KeyboardManager.IsKeyPressed(Key.F3))
             Engine.Debugger.Enabled = !Engine.Debugger.Enabled;
+
+        cameraMovement +=
+            15.0f
+            * dt
+            * (
+                Engine.Input.KeyboardManager.IsKeyDown(Key.E)
+                    ? -1
+                    : Engine.Input.KeyboardManager.IsKeyDown(Key.Q)
+                        ? 1
+                        : 0
+            );
 
         cam.Position = new Vector3(player.Position.X, player.Position.Y, cameraMovement);
 
@@ -131,8 +140,20 @@ public class GameScene : Scene
         {
             catCounter += 512;
         }
+        if (
+            Engine.Input.MouseManager
+                .GetData()
+                .Actions.HasFlag(Horizon.Input.VirtualAction.PrimaryAction)
+        )
+        {
+            var mouseData = Engine.Input.MouseManager.GetData();
+            SpawnParticle(
+                cam.ScreenToWorld(mouseData.Position),
+                new Vector2(1.0f - mouseData.Direction.X, mouseData.Direction.Y)
+            );
+        }
 
-        cam.Update(dt);
+        cam.UpdateState(dt);
 
         //var mousePos = cam.ScreenToWorld(Engine.Input.MouseManager.GetData().Position);
         //for (int i = 0; i < tilemap.Depth; i++)
@@ -147,7 +168,7 @@ public class GameScene : Scene
         //}
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         charOptions = options with { Camera = cam };
         world.DrawDebugData();
@@ -170,12 +191,12 @@ public class GameScene : Scene
         }
 
         debugDrawCallback.Enabled = options.IsBox2DDebugDrawEnabled;
-        base.Draw(dt, ref charOptions);
+        base.Render(dt, ref charOptions);
     }
 
     public override void DrawOther(float dt, ref RenderOptions options)
     {
-        debugDrawCallback.Draw(dt, ref options);
+        debugDrawCallback.Render(dt, ref options);
     }
 
     public override void Dispose()
@@ -183,30 +204,17 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    private void SpawnParticle(Vector2 pos)
+    private void SpawnParticle(Vector2 pos, Vector2 dir)
     {
-        float val = (random.NextSingle() * 2.0f) * MathF.PI;
+        float val = ((random.NextSingle() * 2.0f) - MathF.PI);
 
         particles.Add(
-            new Particle2D(new Vector2(MathF.Sin(val), MathF.Cos(val)) + playerDir, pos, val)
+            new Particle2D(
+                new Vector2(MathF.Sin(val), MathF.Cos(val)) * 0.5f + dir * 0.5f,
+                pos,
+                val
+            )
         );
-    }
-
-    private void SpawnLine(int width = 250)
-    {
-        for (int i = 0; i < width; i += 2)
-        {
-            particles.Add(
-                new Particle2D(
-                    new Vector2(
-                        0.2f + random.NextSingle() / 10.0f,
-                        -1.0f + random.NextSingle() / 10.0f
-                    ),
-                    player.Position + new Vector2(i * particles.ParticleSize * 2.0f - 13.0f, 7.0f),
-                    5.0f + random.NextSingle()
-                )
-            );
-        }
     }
 
     private void SpawnCircle(int count = 250)
@@ -232,9 +240,6 @@ public class GameScene : Scene
         {
             ImGui.Text($"Particles Max: {particles.Count}");
             ImGui.Text($"Cats: {spriteBatch.Count - 1}");
-
-            if (ImGui.Button("Spawn 100"))
-                SpawnLine();
 
             if (ImGui.Button("Spawn 100000"))
                 SpawnCircle(100000);

@@ -116,25 +116,25 @@ public class Player2D : Sprite
         IsAnimated = true;
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         UpdateTileColliders(dt);
 
-        base.Update(dt);
+        base.UpdateState(dt);
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         foreach (var tile in visibleTiles)
-            tile.Draw(dt, ref options);
+            tile.Render(dt, ref options);
 
-        base.Draw(dt, ref options);
+        base.Render(dt, ref options);
     }
 
     private void GenerateTileColliders()
     {
         // Enumerate the enumerable so its only iterated _once_.
-        visibleTiles = map.FindVisibleTiles(Position - Size / 2.0f, 8.0f)
+        visibleTiles = map.FindVisibleTiles(Position - Transform.Scale / 2.0f, 8.0f)
             .Where(e => e.PhysicsData.IsCollidable)
             .ToArray();
 
@@ -155,7 +155,7 @@ public class Player2D : Sprite
         for (int i = 0; i < colliableTiles.Count; i++)
         {
             var tile = colliableTiles[i];
-            tile.Update(dt);
+            tile.UpdateState(dt);
 
             tile.PhysicsData.Distance = Vector2.DistanceSquared(tile.GlobalPosition, Position);
             if (tile.PhysicsData.Distance > 25.0f)

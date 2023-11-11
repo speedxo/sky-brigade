@@ -104,13 +104,15 @@ namespace Horizon.GameEntity.Components
         /// Updates the transform component based on the elapsed time (dt).
         /// </summary>
         /// <param name="dt">The elapsed time since the last update call.</param>
-        public void Update(float dt) { }
+        public void UpdateState(float dt) { }
+
+        public void UpdatePhysics(float dt) { }
 
         /// <summary>
         /// Draws the game entity with the current transformation.
         /// </summary>
         /// <param name="dt">The elapsed time since the last draw call.</param>
         /// <param name="options">Optional render options.</param>
-        public void Draw(float dt, ref RenderOptions options) { }
+        public void Render(float dt, ref RenderOptions options) { }
     }
 }

@@ -19,7 +19,7 @@ namespace Horizon.Debugging.Debuggers
             Name = "Content Manager";
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (!Visible)
                 return;
@@ -102,6 +102,8 @@ namespace Horizon.Debugging.Debuggers
         //    }
         //}
 
-        public override void Update(float dt) { }
+        public override void UpdatePhysics(float dt) { }
+
+        public override void UpdateState(float dt) { }
     }
 }

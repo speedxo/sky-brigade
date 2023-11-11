@@ -61,12 +61,14 @@ namespace Horizon.Rendering
         //    }
         //}
 
-        public void Update(float dt)
+        public void UpdatePhysics(float dt) { }
+
+        public void UpdateState(float dt)
         {
-            // Update logic here if needed
+            // UpdateState logic here if needed
         }
 
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Drawing logic here if needed
         }

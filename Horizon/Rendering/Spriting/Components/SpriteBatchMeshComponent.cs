@@ -20,11 +20,13 @@ public class SpriteBatchMesh : Mesh2D
         public Matrix4x4 modelMatrix;
         public Vector2 spriteOffset;
         public uint frameIndex;
-        private uint spacer6;
+        private uint mermoryalignmentblahblah;
     }
 
     private readonly SpriteSheet sheet;
     private BufferObject<SpriteData> storageBuffer { get; init; }
+
+    // eish
     private unsafe SpriteData* dataPtr;
 
     public uint ElementCount { get; private set; }
@@ -83,7 +85,7 @@ public class SpriteBatchMesh : Mesh2D
         Buffer.ElementBuffer.BufferData(elements);
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         throw new Exception("Please only draw a SpriteBatchMesh through a SpriteBatch");
     }

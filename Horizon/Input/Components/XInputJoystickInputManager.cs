@@ -77,7 +77,7 @@ namespace Horizon.Input.Components
         /// Updates the JoystickInputManager, processing input from the connected joystick/gamepad.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             actions = VirtualAction.None;
 
@@ -101,12 +101,14 @@ namespace Horizon.Input.Components
             triggers = new Vector2(Joystick.Axes[4].Position, Joystick.Axes[5].Position);
         }
 
+        public void UpdatePhysics(float dt) { }
+
         /// <summary>
         /// Draws the JoystickInputManager, not used for joystick input.
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used for joystick input.
         }

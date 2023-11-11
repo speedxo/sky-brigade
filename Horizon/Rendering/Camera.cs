@@ -107,7 +107,7 @@ public class Camera : Entity
         viewProj = View * Projection;
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         CalculateMatricesAndUpdateBounds(Engine.Window.AspectRatio);
     }

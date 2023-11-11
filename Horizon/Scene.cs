@@ -74,7 +74,7 @@ public abstract class Scene : Entity, IDisposable
         return true;
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (!Enabled)
             return;
@@ -111,7 +111,7 @@ public abstract class Scene : Entity, IDisposable
         //    Engine.GL.Viewport(0, 0, (uint)Engine.WindowSize.X, (uint)Engine.WindowSize.Y);
         //}
 
-        base.Draw(dt, ref options);
+        base.Render(dt, ref options);
 
         DrawOther(dt, ref options);
 
@@ -137,7 +137,7 @@ public abstract class Scene : Entity, IDisposable
         if (options.IsPostProcessingEnabled)
             SceneRect.RenderScene(dt, ref options);
         else
-            defaultSceneRect!.RenderScene(dt, ref options); // we do a test on hasRenderPipelineBeenInitialized in Draw
+            defaultSceneRect!.RenderScene(dt, ref options); // we do a test on hasRenderPipelineBeenInitialized in Render
 
         if (Engine.Debugger.GameContainerDebugger.Visible)
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Unbind();

@@ -7,6 +7,7 @@ uniform mat4 uView;
 uniform mat4 uProjection;
 uniform vec2 uSingleFrameSize;
 
+
 struct SpriteData {
   mat4 modelMatrix;
   vec2 spriteOffset;

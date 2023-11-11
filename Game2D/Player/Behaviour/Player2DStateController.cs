@@ -40,10 +40,12 @@ public class Player2DStateController : IGameComponent
         Player = (Player2D)Parent;
     }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
         CurrentState = StateBehaviours[CurrentState].Update(dt);
     }
 
-    public void Draw(float dt, ref RenderOptions options) { }
+    public void UpdatePhysics(float dt) { }
+
+    public void Render(float dt, ref RenderOptions options) { }
 }

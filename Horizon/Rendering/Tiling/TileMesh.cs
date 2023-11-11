@@ -182,7 +182,7 @@ public abstract partial class Tiling<TTextureID>
             );
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (_uploadData)
             {

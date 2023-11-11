@@ -38,7 +38,7 @@ namespace Horizon.Debugging.Debuggers
 
         public RenderOptions RenderOptions;
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (!Visible)
                 return;
@@ -62,7 +62,7 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Dispose() { }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
             RenderOptions = RenderOptions.Default with
             {
@@ -77,5 +77,7 @@ namespace Horizon.Debugging.Debuggers
                 IsBox2DDebugDrawEnabled = isBox2DDebugDrawEnabled
             };
         }
+
+        public override void UpdatePhysics(float dt) { }
     }
 }

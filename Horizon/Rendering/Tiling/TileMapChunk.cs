@@ -140,7 +140,7 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
         /// <param name="options">Optional rendering options.</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             Renderer.Draw(dt, ref options);
         }
@@ -149,11 +149,13 @@ public abstract partial class Tiling<TTextureID>
         /// Updates the chunk.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             if (!IsVisibleByCamera)
                 return;
         }
+
+        public void UpdatePhysics(float dt) { }
 
         /// <summary>
         /// Populates the chunk with tiles using a custom action.

@@ -147,7 +147,7 @@ public partial class Tiling<TTextureID>
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
         /// <param name="options">Optional rendering options.</param>
-        public virtual void Draw(float dt, ref RenderOptions options)
+        public virtual void Render(float dt, ref RenderOptions options)
         {
             // Implement drawing logic here.
         }
@@ -156,10 +156,12 @@ public partial class Tiling<TTextureID>
         /// Updates the tile.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public virtual void Update(float dt)
+        public virtual void UpdateState(float dt)
         {
             // Implement update logic here.
         }
+
+        public void UpdatePhysics(float dt) { }
 
         /// <summary>
         /// Performs post-generation actions for the tile.

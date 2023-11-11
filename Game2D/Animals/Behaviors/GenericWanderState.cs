@@ -33,7 +33,7 @@ internal class GenericWanderState : AnimalState
 
     public override void Exit() { }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         Parent.Flipped = _targetDir.X < 0;
 
@@ -43,4 +43,6 @@ internal class GenericWanderState : AnimalState
         if (_wanderingTimer > _targetWanderTime)
             StateMachine.Transition(AnimalBehavior.Idle);
     }
+
+    public override void UpdatePhysics(float dt) { }
 }

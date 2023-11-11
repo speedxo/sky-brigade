@@ -55,7 +55,7 @@ namespace Horizon.Input.Components
             return new MouseData
             {
                 Actions = actions,
-                LookingAxis = direction,
+                Direction = direction,
                 Position = position
             };
         }
@@ -64,7 +64,7 @@ namespace Horizon.Input.Components
         /// Updates the MouseInputManager, processing input from the connected mouse.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             actions = VirtualAction.None;
 
@@ -84,7 +84,7 @@ namespace Horizon.Input.Components
             }
 
             position = Mouse.Position;
-            direction = position - previousPosition;
+            direction = previousPosition - position;
             previousPosition = position;
         }
 
@@ -93,9 +93,11 @@ namespace Horizon.Input.Components
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used for mouse input.
         }
+
+        public void UpdatePhysics(float dt) { }
     }
 }

@@ -225,19 +225,19 @@ namespace Horizon.GameEntity
         }
 
         /// <summary>
-        /// Updates the entity and its components.
+        /// Updates the state logic of the entity, its sub-entities and its components.
         /// </summary>
         /// <param name="dt">Delta time.</param>
-        public virtual void Update(float dt)
+        public virtual void UpdateState(float dt)
         {
             if (!Enabled)
                 return;
 
             foreach (var item in Components.Values)
-                item.Update(dt);
+                item.UpdateState(dt);
 
             for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Update(dt);
+                Entities[i].UpdateState(dt);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <param name="dt">Delta time.</param>
         /// <param name="options">Render options (optional).</param>
-        public virtual void Draw(float dt, ref RenderOptions options)
+        public virtual void Render(float dt, ref RenderOptions options)
         {
             if (!Enabled)
             {
@@ -262,10 +262,26 @@ namespace Horizon.GameEntity
             }
 
             for (int i = 0; i < Components.Count; i++)
-                Components.Values.ElementAt(i).Draw(dt, ref options);
+                Components.Values.ElementAt(i).Render(dt, ref options);
 
             for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Draw(dt, ref options);
+                Entities[i].Render(dt, ref options);
+        }
+
+        /// <summary>
+        /// Updates the physics logic of the entity, its sub-entities and its components.
+        /// </summary>
+        /// <param name="dt">Delta time.</param>
+        public virtual void UpdatePhysics(float dt)
+        {
+            if (!Enabled)
+                return;
+
+            foreach (var item in Components.Values)
+                item.UpdatePhysics(dt);
+
+            for (int i = 0; i < Entities.Count; i++)
+                Entities[i].UpdatePhysics(dt);
         }
     }
 }

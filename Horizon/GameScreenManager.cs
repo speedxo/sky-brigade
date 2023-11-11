@@ -31,10 +31,12 @@ public class GameScreenManagerComponent : InstanceManager<Scene>, IGameComponent
     /// </summary>
     /// <param name="dt">Delta time</param>
     /// <param name="options">Render Options</param>
-    public void Draw(float dt, ref RenderOptions options)
+    public void Render(float dt, ref RenderOptions options)
     {
-        GetCurrentInstance().Draw(dt, ref options);
+        GetCurrentInstance().Render(dt, ref options);
     }
+
+    public void UpdatePhysics(float dt) { }
 
     public override void AddInstance<T>(Scene instance)
     {
@@ -47,8 +49,8 @@ public class GameScreenManagerComponent : InstanceManager<Scene>, IGameComponent
     public void RemoveComponent<T>()
         where T : IGameComponent { }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
-        GetCurrentInstance().Update(dt);
+        GetCurrentInstance().UpdateState(dt);
     }
 }

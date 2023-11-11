@@ -3,6 +3,7 @@ using Horizon.OpenGL;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+using System.Diagnostics;
 using System.Numerics;
 
 // Namespace declaration for the GameManager class
@@ -14,8 +15,10 @@ public class EngineWindowManager : Entity
         _updateWindow;
     private IInputContext _input;
 
-    public Action<double> UpdateFrame;
+    public Action<double> UpdateStateFrame;
+    public Action<double> UpdatePhysicsFrame;
     public Action<double> RenderFrame;
+
     public Action Closing;
     public Action Load;
 
@@ -51,7 +54,8 @@ public class EngineWindowManager : Entity
     public IInputContext GetInput() => _input;
 
     private readonly WindowOptions _options;
-    private Task _updateTask;
+    private Task _updateTask,
+        _physicsTask;
 
     public EngineWindowManager(in Vector2 windowSize, in string title)
     {
@@ -86,7 +90,7 @@ public class EngineWindowManager : Entity
         };
         this._window.Update += (dt) =>
         {
-            UpdateFrame?.Invoke(dt);
+            UpdateStateFrame?.Invoke(dt);
         };
         this._window.Resize += WindowResize;
 
@@ -155,6 +159,23 @@ public class EngineWindowManager : Entity
         }
     }
 
+    private void OnPhysicsFrame()
+    {
+        long previousTicks = 0,
+            ticks;
+        double elapsedTime;
+        while (!_window.IsClosing)
+        {
+            ticks = Environment.TickCount64;
+            elapsedTime = ((previousTicks - ticks) / (double)Stopwatch.Frequency);
+
+            if (_window.IsInitialized)
+                UpdatePhysicsFrame?.Invoke(elapsedTime);
+
+            previousTicks = ticks;
+        }
+    }
+
     private void OnFrame()
     {
         _window.DoEvents();
@@ -162,8 +183,9 @@ public class EngineWindowManager : Entity
         if (!_window.IsClosing)
             _window.DoRender();
 
-        // Delegate a render thread.
+        // Dispatch threads.
         _updateTask ??= Task.Run(OnLogicFrame);
+        _physicsTask ??= Task.Run(OnPhysicsFrame);
     }
 
     public void Dispose()
@@ -330,11 +352,11 @@ public class EngineWindowManager : Entity
 //         // Register event handlers for the window.
 //         Window.Render += (delta) =>
 //         {
-//             Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with { GL = Gl });
+//             Render((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with { GL = Gl });
 //         };
-//         Window.Update += (delta) =>
+//         Window.UpdateState += (delta) =>
 //         {
-//             Update((float)delta);
+//             UpdateState((float)delta);
 //         };
 //         Window.Load += onLoad;
 //         Window.Closing += Window_Closing;
@@ -524,7 +546,7 @@ public class EngineWindowManager : Entity
 //     }
 
 //     // Variables and method used for non-essential updates that run once per second.
-//     public override void Update(float dt)
+//     public override void UpdateState(float dt)
 //     {
 //         Debugger.PerformanceDebugger.UpdateStart(dt);
 
@@ -546,28 +568,28 @@ public class EngineWindowManager : Entity
 
 //         UpdateViewport();
 
-//         base.Update(dt);
+//         base.UpdateState(dt);
 //         Debugger.PerformanceDebugger.UpdateEnd();
 //     }
 
-//     // Update method for non-essential tasks, such as measuring memory usage.
+//     // UpdateState method for non-essential tasks, such as measuring memory usage.
 //     private void nonEssentialUpdate()
 //     {
 //         MemoryUsage = GC.GetTotalMemory(false) / 1000000;
 //     }
 
-//     public override void Draw(float dt, ref RenderOptions options)
+//     public override void Render(float dt, ref RenderOptions options)
 //     {
 //         Debugger.PerformanceDebugger.RenderStart(dt);
 
 //         // Make sure ImGui is up-to-date before rendering.
-//         imguiController.Update(dt);
+//         imguiController.UpdateState(dt);
 
 //         // Clear the screen buffer before rendering the game screen.
 //         Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 //         // Render all entities
-//         base.Draw(dt, options);
+//         base.Render(dt, options);
 
 //         // Render ImGui UI on top of the game screen.
 //         imguiController.Render();

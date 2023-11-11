@@ -18,9 +18,11 @@ namespace Horizon.Debugging.Debuggers
             Name = "Game Container";
         }
 
-        public override void Update(float dt) { }
+        public override void UpdateState(float dt) { }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void UpdatePhysics(float dt) { }
+
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (Visible && ImGui.Begin("Game Container"))
             {
