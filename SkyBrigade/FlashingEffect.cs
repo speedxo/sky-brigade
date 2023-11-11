@@ -29,4 +29,6 @@ internal class FlashingEffect : Effect
     {
         bufferObject.BufferSingleData(data);
     }
+
+    public override void UpdatePhysics(float dt) { }
 }
