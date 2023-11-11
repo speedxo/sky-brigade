@@ -4,8 +4,8 @@
     {
         public float FrameTime { get; set; }
         public float Timer { get; set; }
-        public int Index { get; set; }
-        public int Length { get; set; }
+        public uint Index { get; set; }
+        public uint Length { get; set; }
 
         public SpriteDefinition FirstFrame { get; set; }
     }

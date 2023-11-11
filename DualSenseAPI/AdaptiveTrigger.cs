@@ -18,16 +18,21 @@
     public class TriggerEffect
     {
         internal TriggerEffectType InternalEffect { get; private set; } = TriggerEffectType.Default;
+
         // Used for all trigger effects that apply resistance
         internal float InternalStartPosition { get; private set; } = 0;
+
         // Used for section resistance
         internal float InternalEndPosition { get; private set; } = 0;
+
         // Below properties are for EffectEx only
         internal float InternalStartForce { get; private set; } = 0;
+
         internal float InternalMiddleForce { get; private set; } = 0;
         internal float InternalEndForce { get; private set; } = 0;
         internal bool InternalKeepEffect { get; private set; } = false;
         internal byte InternalVibrationFrequency { get; private set; } = 0;
+
         private TriggerEffect() { }
 
         /// <summary>
@@ -38,7 +43,9 @@
         /// <summary>
         /// Calibration sequence.
         /// </summary>
-        public static readonly TriggerEffect Calibrate = new SimpleEffect(TriggerEffectType.Calibrate);
+        public static readonly TriggerEffect Calibrate = new SimpleEffect(
+            TriggerEffectType.Calibrate
+        );
 
         /// <summary>
         /// Simple trigger effect that only sets the mode byte.
@@ -131,7 +138,10 @@
             /// The start of the trigger press is roughly when the trigger value is between 0 and 0.5.
             /// However, the user-perceived end position may not be exactly 0.5 as the trigger will be vibrating.
             /// </remarks>
-            public float StartForce { get { return InternalStartForce; } }
+            public float StartForce
+            {
+                get { return InternalStartForce; }
+            }
 
             /// <summary>
             /// The force at the middle of the press, as a percentage (from 0 to 1).
@@ -140,7 +150,10 @@
             /// The start of the trigger press is roughly when the trigger value is between 0.5 and 1.
             /// However, the user-perceived start position may not be exactly 0.5 as the trigger will be vibrating.
             /// </remarks>
-            public float MiddleForce { get { return InternalMiddleForce; } }
+            public float MiddleForce
+            {
+                get { return InternalMiddleForce; }
+            }
 
             /// <summary>
             /// The force at the end of the press, as a percentage (from 0 to 1). Requires <see cref="KeepEffect"/> to be set.
@@ -149,17 +162,26 @@
             /// There is a slight gap between when the trigger value hits 1 and when this force starts. This can lead to a small
             /// region where there is no effect playing; be mindful of this when creating your effects.
             /// </remarks>
-            public float EndForce { get { return InternalEndForce; } }
+            public float EndForce
+            {
+                get { return InternalEndForce; }
+            }
 
             /// <summary>
             /// Whether to enable to effect after the trigger is fully pressed.
             /// </summary>
-            public bool KeepEffect { get { return InternalKeepEffect; } }
+            public bool KeepEffect
+            {
+                get { return InternalKeepEffect; }
+            }
 
             /// <summary>
             /// The vibration frequency in hertz.
             /// </summary>
-            public byte VibrationFrequency { get { return InternalVibrationFrequency; } }
+            public byte VibrationFrequency
+            {
+                get { return InternalVibrationFrequency; }
+            }
 
             /// <summary>
             /// Creates a vibration trigger effect.
@@ -167,10 +189,16 @@
             /// <param name="vibrationFreqHz">The vibration frequency in hertz.</param>
             /// <param name="startForce">The force at the start of the press, as a percentage (from 0 to 1).</param>
             /// <param name="middleForce">The force at the middle of the press, as a percentage (from 0 to 1).</param>
-            /// <param name="endForce">The force at the end of the press, as a percentage (from 0 to 1). 
+            /// <param name="endForce">The force at the end of the press, as a percentage (from 0 to 1).
             /// Requires <paramref name="keepEffect"/> to be set.</param>
             /// <param name="keepEffect">Whether to enable the effect after the trigger is fully pressed.</param>
-            public Vibrate(byte vibrationFreqHz, float startForce, float middleForce, float endForce, bool keepEffect = true)
+            public Vibrate(
+                byte vibrationFreqHz,
+                float startForce,
+                float middleForce,
+                float endForce,
+                bool keepEffect = true
+            )
             {
                 InternalEffect = TriggerEffectType.Vibrate;
                 InternalStartForce = startForce;

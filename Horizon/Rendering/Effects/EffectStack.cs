@@ -24,7 +24,7 @@ in vec2 texCoords;
 
 uniform sampler2D uAlbedo;
 uniform sampler2D uDepth;
-
+ 
 ";
 
         [Pure]
@@ -34,10 +34,7 @@ uniform sampler2D uDepth;
 
             if (finalIndex < 0)
             {
-                Engine.Logger.Log(
-                    Logging.LogLevel.Warning,
-                    "An empty EffectStack was created!"
-                );
+                Engine.Logger.Log(Logging.LogLevel.Warning, "An empty EffectStack was created!");
                 return $@"
 out vec4 FinalFragColor;
 
@@ -82,14 +79,20 @@ void main()
                 : File.ReadAllText(vertexPath);
 
             Technique = AddEntity(
-                new Technique(Engine.Content.Shaders.AddFromDefinitions(new ShaderDefinition {
-                    Type = Silk.NET.OpenGL.ShaderType.FragmentShader,
-                    Source = fragmentSource
-                }, new ShaderDefinition
-                {
-                    Type = Silk.NET.OpenGL.ShaderType.VertexShader,
-                    Source = vertexSource
-                }))
+                new Technique(
+                    Engine.Content.Shaders.AddFromDefinitions(
+                        new ShaderDefinition
+                        {
+                            Type = Silk.NET.OpenGL.ShaderType.FragmentShader,
+                            Source = fragmentSource
+                        },
+                        new ShaderDefinition
+                        {
+                            Type = Silk.NET.OpenGL.ShaderType.VertexShader,
+                            Source = vertexSource
+                        }
+                    )
+                )
             );
 
             SetBindingPoints();
@@ -115,9 +118,9 @@ void main()
             Technique.End();
         }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
-            base.Update(dt);
+            base.UpdateState(dt);
         }
 
         [Pure]
@@ -148,7 +151,7 @@ void main()
         {
             foreach (var effect in Effects)
             {
-                effect.Update(dt);
+                effect.UpdateState(dt);
 
                 if (effect.RequiresUpdate)
                 {

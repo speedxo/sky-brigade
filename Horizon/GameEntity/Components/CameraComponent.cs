@@ -26,7 +26,7 @@ namespace Horizon.GameEntity.Components
         /// </summary>
         public TransformComponent Transform { get; private set; }
 
-        private float CameraYaw = -90f;
+        private float CameraYaw = 0f;
         private float CameraPitch = 0f;
 
 #pragma warning disable CS8601 // ooo woo im Roslyn sheesh fancy c# lexer
@@ -69,7 +69,7 @@ namespace Horizon.GameEntity.Components
             Front = Vector3.Normalize(Transform.Rotation);
         }
 
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used.
         }
@@ -78,7 +78,7 @@ namespace Horizon.GameEntity.Components
         /// Updates the camera.
         /// </summary>
         /// <param name="dt">Delta time.</param>
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
             // FIXME somehow figure out a better way to pass around the Engine.
 
@@ -97,7 +97,7 @@ namespace Horizon.GameEntity.Components
                 (float)Entity.Engine.Window.ViewportSize.X
                     / (float)Entity.Engine.Window.ViewportSize.Y,
                 0.1f,
-                100.0f
+                100000.0f
             );
         }
     }

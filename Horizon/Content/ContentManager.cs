@@ -1,7 +1,8 @@
-﻿using System.IO;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Logging;
 using Horizon.OpenGL;
+using Horizon.Rendering.Spriting;
+using System.Numerics;
 
 namespace Horizon.Content
 {
@@ -9,21 +10,24 @@ namespace Horizon.Content
     {
         private Dictionary<string, Texture> namedTextures;
         private Dictionary<string, Texture> unnamedTextures;
+        private Dictionary<string, SpriteSheet> unnamedSpritesheets;
         private List<Texture> unmanagedTextures;
 
         public ShaderContentManager Shaders { get; private set; }
 
-        public void AddShader(in string name, in Shader shader)
-            => Shaders.AddNamed(name, shader);
+        public void AddShader(in string name, in Shader shader) => Shaders.AddNamed(name, shader);
 
-        public override void Initialize()
+        public ContentManager()
         {
             Shaders = AddEntity<ShaderContentManager>();
 
             namedTextures = new Dictionary<string, Texture>();
             unnamedTextures = new Dictionary<string, Texture>();
             unmanagedTextures = new List<Texture>();
+            unnamedSpritesheets = new();
         }
+
+        public override void Initialize() { }
 
         public int TotalTextures
         {
@@ -46,9 +50,12 @@ namespace Horizon.Content
             {
                 yield return texture;
             }
+            foreach (var sheet in unnamedSpritesheets.Values)
+            {
+                yield return sheet;
+            }
         }
 
-     
         #region Textures
 
         public Texture LoadTexture(string path)
@@ -62,8 +69,20 @@ namespace Horizon.Content
                     LogLevel.Warning,
                     $"An attempt to load Texture({path}) was made even though an instance of Texture({path}) already exists, a reference to the already loaded texture will be returned."
                 );
-
             return unnamedTextures[internedPath];
+        }
+
+        public SpriteSheet LoadSpriteSheet(string path, Vector2 size)
+        {
+            if (!unnamedSpritesheets.ContainsKey(path))
+                unnamedSpritesheets.TryAdd(path, new SpriteSheet(path, size));
+            else
+                Engine.Logger.Log(
+                    LogLevel.Warning,
+                    $"An attempt to load SpriteSheet({path}) was made even though an instance of SpriteSheet({path}) already exists, a reference to the already loaded sheet will be returned."
+                );
+
+            return unnamedSpritesheets[path];
         }
 
         public Texture GenerateNamedTexture(string name, Texture texture)
@@ -102,7 +121,6 @@ namespace Horizon.Content
         }
 
         #endregion Textures
-
 
         // Implement IDisposable pattern
         private bool disposed = false;
@@ -147,10 +165,7 @@ namespace Horizon.Content
         public void DeleteTexture(string name)
         {
             if (!namedTextures.Remove(name, out var texture))
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Attempt to delete nonexistent Texture({name})"
-                );
+                Engine.Logger.Log(LogLevel.Error, $"Attempt to delete nonexistent Texture({name})");
             else
                 texture?.Dispose();
         }
@@ -166,6 +181,12 @@ namespace Horizon.Content
         {
             unnamedTextures.TryAdd(texture.Handle.ToString(), texture);
             return unnamedTextures[texture.Handle.ToString()];
+        }
+
+        public SpriteSheet AddTexture(SpriteSheet texture)
+        {
+            unnamedTextures.TryAdd(texture.Handle.ToString(), texture);
+            return texture;
         }
     }
 }

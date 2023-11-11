@@ -1,22 +1,17 @@
 ﻿using ImGuiNET;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Horizon.Debugging.Debuggers
 {
     public class MemoryEditor
     {
-        bool AllowEdits;
-        int Rows;
-        int DataEditingAddr;
-        bool DataEditingTakeFocus;
-        byte[] DataInput = new byte[32];
-        byte[] AddrInput = new byte[32];
+        private bool AllowEdits;
+        private int Rows;
+        private int DataEditingAddr;
+        private bool DataEditingTakeFocus;
+        private byte[] DataInput = new byte[32];
+        private byte[] AddrInput = new byte[32];
 
         public MemoryEditor()
         {
@@ -34,7 +29,12 @@ namespace Horizon.Debugging.Debuggers
         private static bool TryHexParse(byte[] bytes, out int result)
         {
             string input = System.Text.Encoding.UTF8.GetString(bytes).ToString();
-            return int.TryParse(input, NumberStyles.AllowHexSpecifier, CultureInfo.CurrentCulture, out result);
+            return int.TryParse(
+                input,
+                NumberStyles.AllowHexSpecifier,
+                CultureInfo.CurrentCulture,
+                out result
+            );
         }
 
         private static void ReplaceChars(byte[] bytes, string input)
@@ -46,7 +46,12 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public unsafe void Draw(string title, byte[] mem_data, int mem_size, int base_display_addr = 0)
+        public unsafe void Draw(
+            string title,
+            byte[] mem_data,
+            int mem_size,
+            int base_display_addr = 0
+        )
         {
             ImGui.SetNextWindowSize(new Vector2(500, 350), ImGuiCond.FirstUseEver);
             if (!ImGui.Begin(title))
@@ -58,8 +63,15 @@ namespace Horizon.Debugging.Debuggers
             float line_height = ImGuiNative.igGetTextLineHeight();
             int line_total_count = (mem_size + Rows - 1) / Rows;
 
-            ImGuiNative.igSetNextWindowContentSize(new Vector2(0.0f, line_total_count * line_height));
-            ImGui.BeginChild("##scrolling", new Vector2(0, -ImGuiNative.igGetFrameHeightWithSpacing()), false, 0);
+            ImGuiNative.igSetNextWindowContentSize(
+                new Vector2(0.0f, line_total_count * line_height)
+            );
+            ImGui.BeginChild(
+                "##scrolling",
+                new Vector2(0, -ImGuiNative.igGetFrameHeightWithSpacing()),
+                false,
+                0
+            );
 
             ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0, 0));
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0));
@@ -84,16 +96,47 @@ namespace Horizon.Debugging.Debuggers
 
             if (DataEditingAddr != -1)
             {
-                if (ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.UpArrow)) && DataEditingAddr >= Rows) { DataEditingAddr -= Rows; DataEditingTakeFocus = true; }
-                else if (ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.DownArrow)) && DataEditingAddr < mem_size - Rows) { DataEditingAddr += Rows; DataEditingTakeFocus = true; }
-                else if (ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.LeftArrow)) && DataEditingAddr > 0) { DataEditingAddr -= 1; DataEditingTakeFocus = true; }
-                else if (ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.RightArrow)) && DataEditingAddr < mem_size - 1) { DataEditingAddr += 1; DataEditingTakeFocus = true; }
+                if (
+                    ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.UpArrow))
+                    && DataEditingAddr >= Rows
+                )
+                {
+                    DataEditingAddr -= Rows;
+                    DataEditingTakeFocus = true;
+                }
+                else if (
+                    ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.DownArrow))
+                    && DataEditingAddr < mem_size - Rows
+                )
+                {
+                    DataEditingAddr += Rows;
+                    DataEditingTakeFocus = true;
+                }
+                else if (
+                    ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.LeftArrow))
+                    && DataEditingAddr > 0
+                )
+                {
+                    DataEditingAddr -= 1;
+                    DataEditingTakeFocus = true;
+                }
+                else if (
+                    ImGui.IsKeyPressed((ImGuiKey)ImGui.GetKeyIndex(ImGuiKey.RightArrow))
+                    && DataEditingAddr < mem_size - 1
+                )
+                {
+                    DataEditingAddr += 1;
+                    DataEditingTakeFocus = true;
+                }
             }
             if ((DataEditingAddr / Rows) != (data_editing_addr_backup / Rows))
             {
                 // Track cursor movements
-                float scroll_offset = ((DataEditingAddr / Rows) - (data_editing_addr_backup / Rows)) * line_height;
-                bool scroll_desired = (scroll_offset < 0.0f && DataEditingAddr < visible_start_addr + Rows * 2) || (scroll_offset > 0.0f && DataEditingAddr > visible_end_addr - Rows * 2);
+                float scroll_offset =
+                    ((DataEditingAddr / Rows) - (data_editing_addr_backup / Rows)) * line_height;
+                bool scroll_desired =
+                    (scroll_offset < 0.0f && DataEditingAddr < visible_start_addr + Rows * 2)
+                    || (scroll_offset > 0.0f && DataEditingAddr > visible_end_addr - Rows * 2);
                 if (scroll_desired)
                     ImGuiNative.igSetScrollY_Float(ImGuiNative.igGetScrollY() + scroll_offset);
             }
@@ -104,7 +147,7 @@ namespace Horizon.Debugging.Debuggers
                 ImGui.Text(FixedHex(base_display_addr + addr, addr_digits_count) + ": ");
                 ImGui.SameLine();
 
-                // Draw Hexadecimal
+                // Render Hexadecimal
                 float line_start_x = ImGuiNative.igGetCursorPosX();
                 for (int n = 0; n < Rows && addr < mem_size; n++, addr++)
                 {
@@ -130,13 +173,30 @@ namespace Horizon.Debugging.Debuggers
                         {
                             ImGui.SetKeyboardFocusHere();
                             ReplaceChars(DataInput, FixedHex(mem_data[addr], 2));
-                            ReplaceChars(AddrInput, FixedHex(base_display_addr + addr, addr_digits_count));
+                            ReplaceChars(
+                                AddrInput,
+                                FixedHex(base_display_addr + addr, addr_digits_count)
+                            );
                         }
                         ImGui.PushItemWidth(ImGui.CalcTextSize("FF").X);
 
-                        var flags = ImGuiInputTextFlags.CharsHexadecimal | ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.NoHorizontalScroll | ImGuiInputTextFlags.CallbackAlways;
+                        var flags =
+                            ImGuiInputTextFlags.CharsHexadecimal
+                            | ImGuiInputTextFlags.EnterReturnsTrue
+                            | ImGuiInputTextFlags.AutoSelectAll
+                            | ImGuiInputTextFlags.NoHorizontalScroll
+                            | ImGuiInputTextFlags.CallbackAlways;
 
-                        if (ImGui.InputText("##data", DataInput, 32, flags, callback, (IntPtr)(&cursor_pos)))
+                        if (
+                            ImGui.InputText(
+                                "##data",
+                                DataInput,
+                                32,
+                                flags,
+                                callback,
+                                (IntPtr)(&cursor_pos)
+                            )
+                        )
                             data_write = data_next = true;
                         else if (!DataEditingTakeFocus && !ImGui.IsItemActive())
                             DataEditingAddr = -1;
@@ -167,7 +227,7 @@ namespace Horizon.Debugging.Debuggers
                 ImGui.SameLine(line_start_x + cell_width * Rows + glyph_width * 2);
                 //separator line drawing replaced by printing a pipe char
 
-                // Draw ASCII values
+                // Render ASCII values
                 addr = line_i * Rows;
                 var asciiVal = new System.Text.StringBuilder(2 + Rows);
                 asciiVal.Append("| ");
@@ -176,7 +236,7 @@ namespace Horizon.Debugging.Debuggers
                     int c = mem_data[addr];
                     asciiVal.Append((c >= 32 && c < 128) ? Convert.ToChar(c) : '.');
                 }
-                ImGui.TextUnformatted(asciiVal.ToString());  //use unformatted, so string can contain the '%' character
+                ImGui.TextUnformatted(asciiVal.ToString()); //use unformatted, so string can contain the '%' character
             }
             //clipper.End();  //not implemented
             ImGui.PopStyleVar(2);
@@ -197,7 +257,8 @@ namespace Horizon.Debugging.Debuggers
             int rows_backup = Rows;
             if (ImGui.DragInt("##rows", ref Rows, 0.2f, 4, 32, "%.0f rows"))
             {
-                if (Rows <= 0) Rows = 4;
+                if (Rows <= 0)
+                    Rows = 4;
                 Vector2 new_window_size = ImGui.GetWindowSize();
                 new_window_size.X += (Rows - rows_backup) * (cell_width + glyph_width);
                 ImGui.SetWindowSize(new_window_size);
@@ -205,11 +266,24 @@ namespace Horizon.Debugging.Debuggers
             //ImGui.PopAllowKeyboardFocus();
             ImGui.PopItemWidth();
             ImGui.SameLine();
-            ImGui.Text(string.Format(" Range {0}..{1} ", FixedHex(base_display_addr, addr_digits_count),
-                FixedHex(base_display_addr + mem_size - 1, addr_digits_count)));
+            ImGui.Text(
+                string.Format(
+                    " Range {0}..{1} ",
+                    FixedHex(base_display_addr, addr_digits_count),
+                    FixedHex(base_display_addr + mem_size - 1, addr_digits_count)
+                )
+            );
             ImGui.SameLine();
             ImGui.PushItemWidth(70);
-            if (ImGui.InputText("##addr", AddrInput, 32, ImGuiInputTextFlags.CharsHexadecimal | ImGuiInputTextFlags.EnterReturnsTrue, null))
+            if (
+                ImGui.InputText(
+                    "##addr",
+                    AddrInput,
+                    32,
+                    ImGuiInputTextFlags.CharsHexadecimal | ImGuiInputTextFlags.EnterReturnsTrue,
+                    null
+                )
+            )
             {
                 int goto_addr;
                 if (TryHexParse(AddrInput, out goto_addr))
@@ -218,7 +292,10 @@ namespace Horizon.Debugging.Debuggers
                     if (goto_addr >= 0 && goto_addr < mem_size)
                     {
                         ImGui.BeginChild("##scrolling");
-                        ImGui.SetScrollFromPosY(ImGui.GetCursorStartPos().Y + (goto_addr / Rows) * ImGuiNative.igGetTextLineHeight());
+                        ImGui.SetScrollFromPosY(
+                            ImGui.GetCursorStartPos().Y
+                                + (goto_addr / Rows) * ImGuiNative.igGetTextLineHeight()
+                        );
                         ImGui.EndChild();
                         DataEditingAddr = goto_addr;
                         DataEditingTakeFocus = true;
@@ -238,7 +315,10 @@ namespace Horizon.Debugging.Debuggers
     {
         public float StartPosY;
         public float ItemsHeight;
-        public int ItemsCount, StepNo, DisplayStart, DisplayEnd;
+        public int ItemsCount,
+            StepNo,
+            DisplayStart,
+            DisplayEnd;
 
         public ImGuiListClipper2(int items_count = -1, float items_height = -1.0f)
         {
@@ -254,7 +334,8 @@ namespace Horizon.Debugging.Debuggers
             DisplayEnd = DisplayStart = -1;
             if (ItemsHeight > 0.0f)
             {
-                int dispStart, dispEnd;
+                int dispStart,
+                    dispEnd;
                 //ImGuiNative.igCalcListClipping(ItemsCount, ItemsHeight, &dispStart, &dispEnd);
                 //DisplayStart = dispStart;
                 //DisplayEnd = dispEnd;

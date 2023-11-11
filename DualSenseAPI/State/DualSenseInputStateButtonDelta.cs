@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace DualSenseAPI.State
@@ -118,10 +118,13 @@ namespace DualSenseAPI.State
 
             // since reflection can be a bit heavy, we'll incur this burden only once at startup so we can get the necessary property info for comparison
 
-            PropertyInfo[] deltaProperties = typeof(DualSenseInputStateButtonDelta).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+            PropertyInfo[] deltaProperties = typeof(DualSenseInputStateButtonDelta).GetProperties(
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly
+            );
             propertyPairData = deltaProperties
                 .Where(x => x.PropertyType == typeof(ButtonDeltaState))
-                .Select(x => (x, typeof(DualSenseInputState).GetProperty(x.Name)!)).ToList();
+                .Select(x => (x, typeof(DualSenseInputState).GetProperty(x.Name)!))
+                .ToList();
         }
 
         /// <summary>
@@ -129,16 +132,25 @@ namespace DualSenseAPI.State
         /// </summary>
         /// <param name="prevState">The previous/old input state.</param>
         /// <param name="nextState">The next/new input state.</param>
-        internal DualSenseInputStateButtonDelta(DualSenseInputState prevState, DualSenseInputState nextState)
+        internal DualSenseInputStateButtonDelta(
+            DualSenseInputState prevState,
+            DualSenseInputState nextState
+        )
         {
             foreach (var (delta, state) in propertyPairData)
             {
-                if (state.GetValue(prevState) is bool oldVal && state.GetValue(nextState) is bool newVal)
+                if (
+                    state.GetValue(prevState) is bool oldVal
+                    && state.GetValue(nextState) is bool newVal
+                )
                 {
                     // otherwise leave at default NoChange
                     if (oldVal != newVal)
                     {
-                        delta.SetValue(this, newVal ? ButtonDeltaState.Pressed : ButtonDeltaState.Released);
+                        delta.SetValue(
+                            this,
+                            newVal ? ButtonDeltaState.Pressed : ButtonDeltaState.Released
+                        );
                         HasChanges = true;
                     }
                 }

@@ -1,5 +1,7 @@
-﻿using System.Numerics;
-using Horizon.Logging;
+﻿using Horizon.Logging;
+using Horizon.OpenGL;
+using Silk.NET.OpenGL;
+using System.Numerics;
 
 namespace Horizon.Content
 {
@@ -14,8 +16,11 @@ namespace Horizon.Content
         /// </summary>
         public uint Handle { get; init; }
 
+        public override string Name => $"Shader({Handle})";
+
         private readonly Dictionary<string, int> uniformIndexes;
         private readonly Dictionary<string, uint> uniformBlockIndexes;
+        private readonly Dictionary<string, uint> programResourceIndexes;
 
         /// <summary>
         /// Please initialize using GLShaderFactory.
@@ -26,6 +31,36 @@ namespace Horizon.Content
             Handle = handle;
             uniformIndexes = new();
             uniformBlockIndexes = new();
+            programResourceIndexes = new();
+        }
+
+        /// <summary>
+        /// Gets and caches the index of a program resource.
+        /// TODO: rewrite!
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="interface">The interface.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException">
+        /// Shader program is not created.
+        /// or
+        /// Shader resource '{name}' not found!
+        /// </exception>
+        public uint GetResourceIndex(string name, ProgramInterface @interface)
+        {
+            if (Handle == 0)
+                throw new InvalidOperationException("Shader program is not created.");
+
+            if (programResourceIndexes.TryGetValue(name, out uint ind))
+                return ind;
+
+            uint index = Engine.GL.GetProgramResourceIndex(Handle, @interface, name);
+
+            if (index < 0)
+                throw new InvalidOperationException($"Shader resource '{name}' not found!");
+
+            programResourceIndexes.TryAdd(name, index);
+            return index;
         }
 
         /// <summary>
@@ -48,6 +83,20 @@ namespace Horizon.Content
             return uniformBlockIndexes[blockName];
         }
 
+        public void SetUniform(in string name, in Matrix4x4 value)
+        {
+            int location = GetUniformLocation(name);
+            if (location == -1) // If GetUniformLocation returns -1, the uniform is not found.
+            {
+                //Engine.Logger.Log(
+                //    LogLevel.Error,
+                //    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
+                //);
+                return;
+            }
+            Engine.GL.UniformMatrix4(location, 1, false, value.M11);
+        }
+
         /// <summary>
         /// Sets the specified uniform to a specified value. This is a high performance method and the uniform index is guaranteed to be cached.
         /// </summary>
@@ -56,7 +105,10 @@ namespace Horizon.Content
             int location = GetUniformLocation(name);
             if (location == -1 || value is null) // If GetUniformLocation returns -1, the uniform is not found.
             {
-                Engine.Logger.Log(LogLevel.Error, $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!");
+                //Engine.Logger.Log(
+                //    LogLevel.Error,
+                //    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
+                //);
                 return;
             }
 
@@ -79,12 +131,7 @@ namespace Horizon.Content
                     break;
 
                 case Vector3 vector3Value:
-                    Engine.GL.Uniform3(
-                        location,
-                        vector3Value.X,
-                        vector3Value.Y,
-                        vector3Value.Z
-                    );
+                    Engine.GL.Uniform3(location, vector3Value.X, vector3Value.Y, vector3Value.Z);
                     break;
 
                 case Vector4 vector4Value:
@@ -98,7 +145,7 @@ namespace Horizon.Content
                     break;
 
                 case Matrix4x4 matrixValue:
-                    unsafe // Dont wanna make the whole method unsafe for a single call.
+                    unsafe // Don't wanna make the whole method unsafe for a single call.
                     {
                         Engine.GL.UniformMatrix4(location, 1, false, (float*)&matrixValue);
                     }
@@ -128,7 +175,57 @@ namespace Horizon.Content
             return uniformIndexes[name];
         }
 
+        public void BindBuffer<T>(in string name, in BufferObject<T> bufferObject)
+            where T : unmanaged => BindBuffer(programResourceIndexes[name], bufferObject);
+
+        public void BindBuffer<T>(in uint bufferBindingPoint, in BufferObject<T> bufferObject)
+            where T : unmanaged
+        {
+            bufferObject.Bind();
+            Engine.GL.BindBufferBase(
+                BufferTargetARB.ShaderStorageBuffer,
+                bufferBindingPoint,
+                bufferObject.Handle
+            );
+        }
+
+        public unsafe void ReadSSBO<T>(
+            uint bufferBindingPoint,
+            BufferObject<T> bufferObject,
+            ref T[] data,
+            int length = 1,
+            int offset = 0
+        )
+            where T : unmanaged
+        {
+            Engine.GL.UseProgram(Handle);
+            Engine.GL.BindBufferBase(BufferTargetARB.ShaderStorageBuffer, bufferBindingPoint, 0);
+            bufferObject.Bind();
+
+            //int bufferSize;
+            //Engine.GL.GetNamedBufferParameter(
+            //    bufferObject.Handle,
+            //    BufferPNameARB.Size,
+            //    &bufferSize
+            //);
+
+            unsafe
+            {
+                fixed (T* dataPtr = data)
+                {
+                    Engine.GL.GetNamedBufferSubData(
+                        bufferObject.Handle,
+                        sizeof(T) * offset,
+                        (nuint)(sizeof(T) * length),
+                        dataPtr
+                    );
+                }
+            }
+            Engine.GL.UseProgram(0);
+        }
+
         public virtual void Use() => Engine.GL.UseProgram(Handle);
+
         public virtual void End() => Engine.GL.UseProgram(0);
 
         public override void Dispose()

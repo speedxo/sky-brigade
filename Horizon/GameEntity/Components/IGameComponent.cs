@@ -1,11 +1,12 @@
-﻿using Horizon.Rendering;
+﻿using Horizon.Primitives;
+using Horizon.Rendering;
 
 namespace Horizon.GameEntity.Components
 {
     /// <summary>
     /// IGameComponent interface represents a game component.
     /// </summary>
-    public interface IGameComponent
+    public interface IGameComponent : IDrawable, IUpdateable
     {
         /// <summary>
         /// Gets or sets the human readable name for this component.
@@ -21,18 +22,5 @@ namespace Horizon.GameEntity.Components
         /// Initializes the game component.
         /// </summary>
         void Initialize();
-
-        /// <summary>
-        /// Updates the game component.
-        /// </summary>
-        /// <param name="dt">Delta time.</param>
-        void Update(float dt);
-
-        /// <summary>
-        /// Draws the game component.
-        /// </summary>
-        /// <param name="dt">Delta time.</param>
-        /// <param name="options">Render options (optional).</param>
-        void Draw(float dt, ref RenderOptions options);
     }
 }

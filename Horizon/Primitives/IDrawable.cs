@@ -9,5 +9,5 @@ public interface IDrawable
     /// </summary>
     /// <param name="dt">The elapsed time since the last render call.</param>
     /// <param name="options">Optional render options. If not provided, default options will be used.</param>
-    public void Draw(float dt, ref RenderOptions options);
+    public void Render(float dt, ref RenderOptions options);
 }

@@ -1,7 +1,7 @@
 ﻿using Horizon.GameEntity.Components;
 using Horizon.Primitives;
 using Horizon.Rendering;
-using Silk.NET.OpenAL;
+using System.Collections.Concurrent;
 
 namespace Horizon.GameEntity
 {
@@ -11,13 +11,16 @@ namespace Horizon.GameEntity
     public abstract class Entity : IDrawable, IUpdateable
     {
         private static GameEngine _engine;
-        public static void SetGameEngine(in GameEngine engine) 
-            => _engine = engine;
+
+        public static void SetGameEngine(in GameEngine engine) => _engine = engine;
+
         /// <summary>
         /// Static instance of the parent game engine.
         /// </summary>
         public static GameEngine Engine => _engine;
+
         internal static int _nextId = 0;
+        internal ConcurrentStack<Entity> _uninitializedEntities = new();
 
         /// <summary>
         /// List containing the nested entities within this entity.
@@ -128,7 +131,8 @@ namespace Horizon.GameEntity
 
             entity.ID = ++_nextId;
             entity.Name ??= entity.GetType().Name;
-            entity.Initialize();
+            entity.Enabled = false;
+            _uninitializedEntities.Push(entity);
 
             return entity;
         }
@@ -221,19 +225,19 @@ namespace Horizon.GameEntity
         }
 
         /// <summary>
-        /// Updates the entity and its components.
+        /// Updates the state logic of the entity, its sub-entities and its components.
         /// </summary>
         /// <param name="dt">Delta time.</param>
-        public virtual void Update(float dt)
+        public virtual void UpdateState(float dt)
         {
             if (!Enabled)
                 return;
 
             foreach (var item in Components.Values)
-                item.Update(dt);
+                item.UpdateState(dt);
 
             for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Update(dt);
+                Entities[i].UpdateState(dt);
         }
 
         /// <summary>
@@ -241,16 +245,43 @@ namespace Horizon.GameEntity
         /// </summary>
         /// <param name="dt">Delta time.</param>
         /// <param name="options">Render options (optional).</param>
-        public virtual void Draw(float dt, ref RenderOptions options)
+        public virtual void Render(float dt, ref RenderOptions options)
+        {
+            if (!Enabled)
+            {
+                return;
+            }
+
+            while (_uninitializedEntities.Any())
+            {
+                if (_uninitializedEntities.TryPop(out var ent))
+                {
+                    ent.Initialize();
+                    ent.Enabled = true;
+                }
+            }
+
+            for (int i = 0; i < Components.Count; i++)
+                Components.Values.ElementAt(i).Render(dt, ref options);
+
+            for (int i = 0; i < Entities.Count; i++)
+                Entities[i].Render(dt, ref options);
+        }
+
+        /// <summary>
+        /// Updates the physics logic of the entity, its sub-entities and its components.
+        /// </summary>
+        /// <param name="dt">Delta time.</param>
+        public virtual void UpdatePhysics(float dt)
         {
             if (!Enabled)
                 return;
 
-            for (int i = 0; i < Components.Count; i++)
-                Components.Values.ElementAt(i).Draw(dt, ref options);
+            foreach (var item in Components.Values)
+                item.UpdatePhysics(dt);
 
             for (int i = 0; i < Entities.Count; i++)
-                Entities[i].Draw(dt, ref options);
+                Entities[i].UpdatePhysics(dt);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Horizon.GameEntity.Components;
+﻿using Horizon.Data;
+using Horizon.GameEntity.Components;
 using Horizon.Rendering;
 using System.Numerics;
 
@@ -58,7 +59,7 @@ public class GameObject : Entity
     /// <summary>
     /// Creates a new instance of the GameObject class.
     /// </summary>
-    public GameObject(Material? material = null, MeshData? meshData = null)
+    public GameObject(Material? material = null, IMeshData<Vertex>? meshData = null)
     {
         // Add a transform component to the game object.
         Transform = AddComponent<TransformComponent>();
@@ -66,8 +67,8 @@ public class GameObject : Entity
         // Add a mesh renderer component to the game object.
         MeshRenderer = AddComponent<MeshRendererComponent>();
 
-        if (meshData.HasValue)
-            MeshRenderer.Load(meshData.Value, material);
+        if (meshData is not null)
+            MeshRenderer.Load(meshData, material);
         else if (material != null)
             Material = material;
     }

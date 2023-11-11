@@ -12,7 +12,7 @@ namespace Horizon
             new GameInstanceParameters
             {
                 WindowTitle = "Horizon Game",
-                InitialWindowSize = new Vector2(1280, 720)
+                InitialWindowSize = new Vector2(1600, 900)
             };
     }
 }

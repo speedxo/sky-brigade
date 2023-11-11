@@ -1,19 +1,13 @@
 ﻿using Horizon.Collections;
 using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Horizon.Data;
 
 /// <summary>
 /// A convience class to very quickly capture basic realtime metrics, integrating the ECS.
 /// </summary>
-public class Metrika : Entity, IDisposable
+public class Metrika : Entity
 {
     private const int AVG_LEN = 50;
 
@@ -64,7 +58,7 @@ public class Metrika : Entity, IDisposable
 
         Categories.TryAdd(category, new Dictionary<string, LinearBuffer<double>>());
         Categories[category].TryAdd(name, new LinearBuffer<double>(AVG_LEN));
-            Categories[category][name].Append(time);
+        Categories[category][name].Append(time);
     }
 
     public void ResetMetrics()
@@ -77,6 +71,4 @@ public class Metrika : Entity, IDisposable
             }
         }
     }
-
-    public void Dispose() { }
 }

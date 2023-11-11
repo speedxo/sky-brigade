@@ -8,12 +8,17 @@ namespace Horizon.Input
     public struct MouseData
     {
         /// <summary>
-        /// Gets or sets the looking axis input as a Vector2.
+        /// Gets the looking axis input as a Vector2.
         /// </summary>
-        public Vector2 LookingAxis { get; set; }
+        public Vector2 Direction { get; set; }
 
         /// <summary>
-        /// Gets or sets the VirtualAction representing various actions triggered by mouse input.
+        /// Gets the absolute mouse coordinates as a Vector2.
+        /// </summary>
+        public Vector2 Position { get; set; }
+
+        /// <summary>
+        /// Gets the VirtualAction representing various actions triggered by mouse input.
         /// </summary>
         public VirtualAction Actions { get; set; }
     }

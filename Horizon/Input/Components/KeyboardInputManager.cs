@@ -22,13 +22,13 @@ namespace Horizon.Input.Components
         /// <summary>
         /// Represents the current most up to date state of the keyboard.
         /// </summary>
-        public KeyboardState? CurrentState { get; private set; }  
-        
+        public KeyboardState? CurrentState { get; private set; }
+
         /// <summary>
         /// A snapshot of the state of the keyboard one frame ago.
         /// </summary>
         public KeyboardState? PreviousState { get; private set; }
-        
+
         /// <summary>
         /// The parent input manager
         /// </summary>
@@ -58,7 +58,7 @@ namespace Horizon.Input.Components
             Bindings = KeyboardBindings.Default;
             Manager = (InputManager)Parent;
 
-            // Delegate updating of the previous keyboard state to after the main update callback. 
+            // Delegate updating of the previous keyboard state to after the main update callback.
             Entity.Engine.OnPostUpdate += (dt) =>
             {
                 PreviousState = CurrentState;
@@ -72,7 +72,7 @@ namespace Horizon.Input.Components
         /// </summary>
         /// <returns>The KeyboardData containing the keyboard input.</returns>
         public KeyboardData Data { get; private set; } = default;
-        
+
         /// <summary>
         /// Updates the KeyboardManager, processing input from the connected keyboard.
         /// </summary>
@@ -85,7 +85,7 @@ namespace Horizon.Input.Components
             {
                 direction = default;
                 actions = default;
-                
+
                 return;
             }
 
@@ -119,31 +119,48 @@ namespace Horizon.Input.Components
         }
 
         /// <summary>
-        /// Returns true if a key that was not pressed last frame is pressed.
+        /// Returns true if a key that was not pressed last frame is currently being pressed.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns></returns>
         public bool IsKeyPressed(Key key)
         {
-            if (CurrentState is null || PreviousState is null) 
+            if (CurrentState is null || PreviousState is null)
                 return false;
-            
+
             return !PreviousState.IsKeyPressed(key) && CurrentState.IsKeyPressed(key);
-        }            
+        }
+
+        /// <summary>
+        /// Returns the state of a key as of the current frame.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        public bool IsKeyDown(Key key)
+        {
+            if (CurrentState is null)
+                return false;
+
+            return CurrentState.IsKeyPressed(key);
+        }
+
         /// <summary>
         /// Updates the KeyboardManager, not used for keyboard input.
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             // Not used for keyboard input.
         }
+
+        public void UpdatePhysics(float dt) { }
+
         /// <summary>
         /// Draws the KeyboardManager, not used for keyboard input.
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used for keyboard input.
         }

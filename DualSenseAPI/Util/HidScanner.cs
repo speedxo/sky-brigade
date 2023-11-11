@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using HidSharp;
+using System.Collections.Generic;
 
-using Device.Net;
-using HidSharp;
 //using Hid.Net.Windows;
 
 namespace DualSenseAPI.Util
@@ -13,6 +11,7 @@ namespace DualSenseAPI.Util
     internal class HidScanner
     {
         private static HidScanner? _instance = null;
+
         /// <summary>
         /// Singleton HidScanner instance.
         /// </summary>
@@ -27,13 +26,14 @@ namespace DualSenseAPI.Util
                 return _instance;
             }
         }
+
         /// <summary>
         /// Lists connected devices.
         /// </summary>
         /// <returns>An enumerable of connected devices.</returns>
         public static IEnumerable<HidDevice> ListDevices()
-        { 
+        {
             return DeviceList.Local.GetHidDevices(1356, 3302);
-        }   
+        }
     }
 }

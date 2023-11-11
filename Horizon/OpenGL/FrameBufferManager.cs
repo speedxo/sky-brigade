@@ -15,6 +15,8 @@ public static class FrameBufferManager
     {
         foreach (var item in frameBuffers)
         {
+            if (item.IsFixed)
+                continue;
             item.Resize(width, height);
         }
     }

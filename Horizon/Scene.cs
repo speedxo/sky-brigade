@@ -74,16 +74,18 @@ public abstract class Scene : Entity, IDisposable
         return true;
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (!Enabled)
             return;
 
         if (!hasRenderPipelineBeenInitialized)
+        {
             Engine.Logger.Log(
                 Logging.LogLevel.Fatal,
                 "The scenes render pipeline has not been initialized!"
             );
+        }
 
         RenderScene(dt, ref options);
         PostEffects.PreDraw(dt);
@@ -98,9 +100,7 @@ public abstract class Scene : Entity, IDisposable
         //{
         FrameBuffer.Bind();
 
-        Engine.GL.Clear(
-            ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit
-        );
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         Engine.GL.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
         //}
         //else
@@ -111,11 +111,7 @@ public abstract class Scene : Entity, IDisposable
         //    Engine.GL.Viewport(0, 0, (uint)Engine.WindowSize.X, (uint)Engine.WindowSize.Y);
         //}
 
-        for (int i = 0; i < Components.Count; i++)
-            Components.Values.ElementAt(i).Draw(dt, ref options);
-
-        for (int i = 0; i < Entities.Count; i++)
-            Entities[i].Draw(dt, ref options);
+        base.Render(dt, ref options);
 
         DrawOther(dt, ref options);
 
@@ -130,9 +126,7 @@ public abstract class Scene : Entity, IDisposable
         if (Engine.Debugger.GameContainerDebugger.Visible)
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Bind();
 
-        Engine.GL.Clear(
-            ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit
-        );
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         Engine.GL.Viewport(
             0,
             0,
@@ -140,11 +134,10 @@ public abstract class Scene : Entity, IDisposable
             (uint)Engine.Window.ViewportSize.Y
         );
 
-        
         if (options.IsPostProcessingEnabled)
             SceneRect.RenderScene(dt, ref options);
         else
-            defaultSceneRect!.RenderScene(dt, ref options); // we do a test on hasRenderPipelineBeenInitialized in Draw
+            defaultSceneRect!.RenderScene(dt, ref options); // we do a test on hasRenderPipelineBeenInitialized in Render
 
         if (Engine.Debugger.GameContainerDebugger.Visible)
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Unbind();

@@ -15,46 +15,51 @@ public partial class CharacterController
         public Entity Parent { get; set; }
         public CharacterController Controller { get; private set; }
         public TransformComponent Transform { get; private set; }
-        public CharacterMovementControllerConfig Config { get; private set; }
+        public CharacterMovementControllerConfig Config { get; init; }
+
+        public float MovementSpeedMultiplier { get; set; } = 1.0f;
 
         public Vector3 Position
         {
             get => Transform.Position;
             set => Transform.Position = value;
         }
+
         public Vector3 Rotation
         {
             get => Transform.Rotation;
             set => Transform.Rotation = value;
         }
+
         public Vector3 Front
         {
             get => Transform.Front;
         }
 
-        public CharacterMovementController()
+        public CharacterMovementController(CharacterMovementControllerConfig config)
         {
             Name = "Character Movement controller";
+            Config = config;
         }
 
         public void Initialize()
         {
-            Config = CharacterMovementControllerConfig.Default;
-
             Controller = (CharacterController)Parent;
 
             Transform = Parent.GetComponent<TransformComponent>()!;
-            Transform.Position = new Vector3(0, 5, -2);
+            Transform.Position = new Vector3(0, 0, 0);
         }
 
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             DoLocomotion(dt);
         }
 
+        public void UpdatePhysics(float dt) { }
+
         private void DoLocomotion(float dt)
         {
-            var moveSpeed = Config.BaseMovementSpeed * dt;
+            var moveSpeed = (Config.BaseMovementSpeed * MovementSpeedMultiplier) * dt;
 
             var virtualController = Engine.Input.GetVirtualController();
 
@@ -67,9 +72,9 @@ public partial class CharacterController
             // there apears to be some funky wunky happenings with the underlying
             // glfw window wrapper silk.net is using sooooooooooooo
             if (float.IsNaN(Position.X) || float.IsNaN(Position.Y) || float.IsNaN(Position.Z))
-                Position = new Vector3(0, 5, -2);
+                Position = new Vector3(0, 0, 0);
         }
 
-        public void Draw(float dt, ref RenderOptions options) { }
+        public void Render(float dt, ref RenderOptions options) { }
     }
 }

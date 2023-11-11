@@ -6,6 +6,10 @@ namespace Horizon.Rendering
 {
     public class EmptyMaterial : Material
     {
+        private const string UNIFORM_COLOR = "uColor";
+        private const string UNIFORM_TEXTURE = "uTexture";
+        private const string UNIFORM_USE_TEXTURE = "useTexture";
+
         // forward some properties
         public override Vector4 Color { get; set; }
 
@@ -17,21 +21,19 @@ namespace Horizon.Rendering
             Color = Vector4.One;
         }
 
-        public override void Use(ref RenderOptions options)
+        public override void Use(in RenderOptions options)
         {
-            
-
             Technique.Use();
-            Technique.SetUniform("uColor", Color * options.Color);
+            Technique.SetUniform(UNIFORM_COLOR, Color * options.Color);
 
             if (Texture == null)
-                Technique.SetUniform("useTexture", 0);
+                Technique.SetUniform(UNIFORM_USE_TEXTURE, 0);
             else
             {
                 Engine.GL.ActiveTexture(TextureUnit.Texture0);
                 Engine.GL.BindTexture(TextureTarget.Texture2D, Texture.Handle);
-                Technique.SetUniform("uTexture", 0);
-                Technique.SetUniform("useTexture", 1);
+                Technique.SetUniform(UNIFORM_TEXTURE, 0);
+                Technique.SetUniform(UNIFORM_USE_TEXTURE, 1);
             }
         }
     }

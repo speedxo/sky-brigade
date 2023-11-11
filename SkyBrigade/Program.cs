@@ -6,14 +6,13 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        _ = GameManager.Instance.Initialize(
+        using var engine = new BasicEngine(
             GameInstanceParameters.Default with
             {
-                InitialGameScreen = typeof(DemoGameScreen),
-                WindowTitle = "vrek",
-                InitialWindowSize = new System.Numerics.Vector2(1280, 720)
+                InitialGameScreen = typeof(DemoGameScreen)
             }
         );
-        GameManager.Instance.Run();
+
+        engine.Run();
     }
 }

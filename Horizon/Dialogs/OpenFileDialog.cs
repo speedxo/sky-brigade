@@ -1,5 +1,4 @@
 using Horizon.GameEntity;
-using Horizon.GameEntity.Components;
 using Horizon.Rendering;
 using ImGuiNET;
 
@@ -29,8 +28,10 @@ namespace Horizon.Dialogs
         private DirectoryInfo? currentDirectory;
         private string[] fileNames = Array.Empty<string>();
         private string[] selectedFileNames = Array.Empty<string>();
+
         private int index = 0,
             selectedFileIndex = 0;
+
         private List<FileItem> selectedFiles = new();
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace Horizon.Dialogs
         /// </summary>
         /// <param name="dt">Time elapsed since the last update.</param>
         /// <param name="options">Optional render options (unused in this implementation).</param>
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             // Show the open file dialog on the screen.
             ShowDialog();

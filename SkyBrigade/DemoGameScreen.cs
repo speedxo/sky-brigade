@@ -21,13 +21,15 @@ internal class DemoGameScreen : Scene
         InitializeRenderingPipeline();
 
         /* need to consoldiate OpenGL calls into profiles, perhaps a call to
-         * GameManager.Instance.InitializeGL(GLProfile); maybe predefined calls
+         * Engine.InitializeGL(GLProfile); maybe predefined calls
          * ie. GLProfile.Realtime3D can setup depth testing and GLProfile.Flat
          * can be 2D orientated?                                              */
-        GameManager.Instance.Gl.ClearColor(System.Drawing.Color.CornflowerBlue);
-        GameManager.Instance.Gl.Enable(EnableCap.DepthTest);
+        Engine.GL.ClearColor(System.Drawing.Color.CornflowerBlue);
+        Engine.GL.Enable(EnableCap.DepthTest);
 
-        character = new CharacterController();
+        character = new CharacterController(
+            CharacterController.CharacterMovementControllerConfig.Default
+        );
         AddEntity(character);
 
         /* We cannot use property initialisation here due to the fact that each
@@ -37,16 +39,11 @@ internal class DemoGameScreen : Scene
         plane = new Plane(new BasicMaterial());
         plane.Transform.Scale = new System.Numerics.Vector3(10);
         plane.Transform.Rotation = new System.Numerics.Vector3(90, 0, 0);
-        plane.Material.Texture = GameManager.Instance.ContentManager.GetTexture("debug");
+        plane.Material.Texture = Engine.Content.GetTexture("white");
+
         AddEntity(plane);
 
-        // yea this single boolean enables or disables the debugging interface
-        GameManager.Instance.Debugger.Enabled = true;
-
-        GameManager.Instance.Debugger.GeneralDebugger.AddWatch(
-            "player pos",
-            () => character.Position
-        );
+        Engine.Debugger.GeneralDebugger.AddWatch("player pos", () => character.Position);
     }
 
     /* The reason i opted to have an overidable method is for safety, while its
@@ -57,11 +54,11 @@ internal class DemoGameScreen : Scene
         return new Effect[] { vingette = new VingetteEffect() };
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
-        var options = (options ?? RenderOptions.Default) with { Camera = character.Camera };
+        var opts = options with { Camera = character.Camera };
 
-        base.Draw(dt, options);
+        base.Render(dt, ref opts);
     }
 
     public override void DrawGui(float dt)
@@ -72,24 +69,24 @@ internal class DemoGameScreen : Scene
             ImGui.Text($"Rotation: {character.Rotation}");
             ImGui.End();
         }
-        if (ImGui.Begin("Effects"))
+
+        var mat = (BasicMaterial)plane.Material;
+
+        if (ImGui.Begin("Material"))
         {
-            foreach (var effect in PostEffects.Effects)
-            {
-                SceneEntityDebugger.DrawProperties(vingette);
-                ImGui.Text($"{effect.BindingPoint}");
-            }
+            ImGui.DragFloat("AO", ref mat.MaterialDescription.AmbientOcclusion);
+            ImGui.ColorEdit4("Color", ref mat.MaterialDescription.Color);
 
             ImGui.End();
         }
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
-        base.Update(dt);
+        base.UpdateState(dt);
 
-        if (GameManager.Instance.InputManager.WasPressed(Horizon.Input.VirtualAction.Interact))
-            GameManager.Instance.Debugger.Enabled = !GameManager.Instance.Debugger.Enabled;
+        //if (Engine.Input.WasPressed(Horizon.Input.VirtualAction.Interact))
+        //    Engine.Debugger.Enabled = !Engine.Debugger.Enabled;
     }
 
     public override void Dispose() { }

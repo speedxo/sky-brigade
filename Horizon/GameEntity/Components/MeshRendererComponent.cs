@@ -3,7 +3,7 @@
 namespace Horizon.GameEntity.Components
 {
     [RequiresComponent(typeof(TransformComponent))]
-    public class MeshRendererComponent : Mesh, IGameComponent
+    public class MeshRendererComponent : Mesh3D, IGameComponent
     {
         public string Name { get; set; }
 
@@ -16,12 +16,14 @@ namespace Horizon.GameEntity.Components
             // ! We attached a [RequiresComponent(typeof(TransformComponent))]
         }
 
-        public override void Use(ref RenderOptions options)
+        protected override void BindAndSetUniforms(in RenderOptions options)
         {
-            base.Use(ref options);
+            base.BindAndSetUniforms(in options);
             SetUniform("uModel", Transform.ModelMatrix);
         }
 
-        public void Update(float dt) { }
+        public void UpdateState(float dt) { }
+
+        public void UpdatePhysics(float dt) { }
     }
 }

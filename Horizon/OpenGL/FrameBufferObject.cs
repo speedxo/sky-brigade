@@ -13,6 +13,7 @@ public class FrameBufferObject : Entity, IDisposable
 
     public int Width { get; protected set; }
     public int Height { get; protected set; }
+    public bool IsFixed { get; set; } = false;
 
     private bool _requiresResize = false;
     private Vector2 _newSize;
@@ -58,7 +59,7 @@ public class FrameBufferObject : Entity, IDisposable
         this.Height = height;
 
         // Create a framebuffer object
-        Handle = Engine.GL.GenFramebuffer();
+        Handle = Engine.GL.CreateFramebuffer();
 
         Attachments = new Dictionary<FramebufferAttachment, uint>();
     }
@@ -71,14 +72,7 @@ public class FrameBufferObject : Entity, IDisposable
 
         foreach (var (attachment, texture) in Attachments)
         {
-            Engine.GL.FramebufferTexture2D(
-                FramebufferTarget.Framebuffer,
-                attachment,
-                TextureTarget.Texture2D,
-                texture,
-                0
-            );
-            Engine.GL.DrawBuffer((DrawBufferMode)attachment);
+            Engine.GL.NamedFramebufferTexture(Handle, attachment, texture, 0);
         }
         // Check if the framebuffer is complete
         if (
@@ -158,6 +152,7 @@ public class FrameBufferObject : Entity, IDisposable
             foreach (var (type, texture) in Attachments)
             {
                 Engine.GL.DeleteTexture(texture);
+
                 attachmentTypes.Add(type);
             }
             Engine.GL.DeleteFramebuffer(Handle);
@@ -167,7 +162,7 @@ public class FrameBufferObject : Entity, IDisposable
 
             Attachments.Clear();
             // Create a framebuffer object
-            Handle = Engine.GL.GenFramebuffer();
+            Handle = Engine.GL.CreateFramebuffer();
 
             foreach (var attachment in attachmentTypes)
             {
@@ -199,5 +194,6 @@ public class FrameBufferObject : Entity, IDisposable
         {
             Engine.GL.DeleteTexture(texture);
         }
+        Engine.GL.DeleteFramebuffer(Handle);
     }
 }

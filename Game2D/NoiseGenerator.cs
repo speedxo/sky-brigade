@@ -1,10 +1,5 @@
-﻿using Horizon;
-using Horizon.GameEntity;
-using Horizon.Rendering;
-using Silk.NET.OpenGL;
-using System.Numerics;
+﻿namespace TileBash;
 
-namespace TileBash;
 
 //public class NoiseGenerator
 //{

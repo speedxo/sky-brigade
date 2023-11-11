@@ -19,7 +19,7 @@ public class IntervalRunner : Entity
         _action = action;
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         if (!Enabled)
         {

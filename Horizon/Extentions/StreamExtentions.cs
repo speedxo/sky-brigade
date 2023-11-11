@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Horizon.Extentions
+﻿namespace Horizon.Extentions
 {
     public static class StreamExtensions
     {

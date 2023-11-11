@@ -1,22 +1,18 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Numerics;
+using Horizon.Extentions;
 using ImGuiNET;
+using ImPlotNET;
 using Silk.NET.Input;
 using Silk.NET.Input.Extensions;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
-using Point = System.Drawing.Point;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
-using Horizon.Extentions;
-using System.Xml.Serialization;
-using ImPlotNET;
+using Point = System.Drawing.Point;
 
 namespace Horizon.Rendering;
 
@@ -24,9 +20,14 @@ public class CustomImguiController : IDisposable
 {
     public readonly struct ImGuiFontConfig
     {
-        public ImGuiFontConfig(string fontPath, int fontSize, Func<ImGuiIOPtr, IntPtr> getGlyphRange = null)
+        public ImGuiFontConfig(
+            string fontPath,
+            int fontSize,
+            Func<ImGuiIOPtr, IntPtr> getGlyphRange = null
+        )
         {
-            if (fontSize <= 0) throw new ArgumentOutOfRangeException(nameof(fontSize));
+            if (fontSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(fontSize));
             FontPath = fontPath ?? throw new ArgumentNullException(nameof(fontPath));
             FontSize = fontSize;
             GetGlyphRange = getGlyphRange;
@@ -36,6 +37,7 @@ public class CustomImguiController : IDisposable
         public int FontSize { get; }
         public Func<ImGuiIOPtr, IntPtr> GetGlyphRange { get; }
     }
+
     public enum TextureCoordinate
     {
         S = TextureParameterName.TextureWrapS,
@@ -43,7 +45,7 @@ public class CustomImguiController : IDisposable
         R = TextureParameterName.TextureWrapR
     }
 
-    class Texture : IDisposable
+    private class Texture : IDisposable
     {
         public const SizedInternalFormat Srgb8Alpha8 = (SizedInternalFormat)GLEnum.Srgb8Alpha8;
         public const SizedInternalFormat Rgb32F = (SizedInternalFormat)GLEnum.Rgb32f;
@@ -54,18 +56,28 @@ public class CustomImguiController : IDisposable
         private readonly GL _gl;
         public readonly string Name;
         public readonly uint GlTexture;
-        public readonly uint Width, Height;
+        public readonly uint Width,
+            Height;
         public readonly uint MipmapLevels;
         public readonly SizedInternalFormat InternalFormat;
 
-        public unsafe Texture(GL gl, int width, int height, IntPtr data, bool generateMipmaps = false, bool srgb = false)
+        public unsafe Texture(
+            GL gl,
+            int width,
+            int height,
+            IntPtr data,
+            bool generateMipmaps = false,
+            bool srgb = false
+        )
         {
             _gl = gl;
             MaxAniso ??= gl.GetFloat(MaxTextureMaxAnisotropy);
             Width = (uint)width;
             Height = (uint)height;
             InternalFormat = srgb ? Srgb8Alpha8 : SizedInternalFormat.Rgba8;
-            MipmapLevels = (uint)(generateMipmaps == false ? 1 : (int)Math.Floor(Math.Log(Math.Max(Width, Height), 2)));
+            MipmapLevels = (uint)(
+                generateMipmaps == false ? 1 : (int)Math.Floor(Math.Log(Math.Max(Width, Height), 2))
+            );
 
             GlTexture = _gl.GenTexture();
             Bind();
@@ -73,14 +85,28 @@ public class CustomImguiController : IDisposable
             PixelFormat pxFormat = PixelFormat.Bgra;
 
             _gl.TexStorage2D(GLEnum.Texture2D, MipmapLevels, InternalFormat, Width, Height);
-            _gl.TexSubImage2D(GLEnum.Texture2D, 0, 0, 0, Width, Height, pxFormat, PixelType.UnsignedByte, (void*)data);
+            _gl.TexSubImage2D(
+                GLEnum.Texture2D,
+                0,
+                0,
+                0,
+                Width,
+                Height,
+                pxFormat,
+                PixelType.UnsignedByte,
+                (void*)data
+            );
 
             if (generateMipmaps)
                 _gl.GenerateTextureMipmap(GlTexture);
             SetWrap(TextureCoordinate.S, TextureWrapMode.Repeat);
             SetWrap(TextureCoordinate.T, TextureWrapMode.Repeat);
 
-            _gl.TexParameterI(GLEnum.Texture2D, TextureParameterName.TextureMaxLevel, MipmapLevels - 1);
+            _gl.TexParameterI(
+                GLEnum.Texture2D,
+                TextureParameterName.TextureMaxLevel,
+                MipmapLevels - 1
+            );
         }
 
         public void Bind()
@@ -101,7 +127,11 @@ public class CustomImguiController : IDisposable
         public void SetAnisotropy(float level)
         {
             const TextureParameterName textureMaxAnisotropy = (TextureParameterName)0x84FE;
-            _gl.TexParameter(GLEnum.Texture2D, (GLEnum)textureMaxAnisotropy, Horizon.Extentions.Util.Clamp(level, 1, MaxAniso.GetValueOrDefault()));
+            _gl.TexParameter(
+                GLEnum.Texture2D,
+                (GLEnum)textureMaxAnisotropy,
+                Horizon.Extentions.Util.Clamp(level, 1, MaxAniso.GetValueOrDefault())
+            );
         }
 
         public void SetLod(int @base, int min, int max)
@@ -122,7 +152,7 @@ public class CustomImguiController : IDisposable
         }
     }
 
-    struct UniformFieldInfo
+    private struct UniformFieldInfo
     {
         public int Location;
         public string Name;
@@ -130,7 +160,7 @@ public class CustomImguiController : IDisposable
         public UniformType Type;
     }
 
-    class Shader
+    private class Shader
     {
         public uint Program { get; private set; }
         private readonly Dictionary<string, int> _uniformToLocation = new Dictionary<string, int>();
@@ -142,12 +172,14 @@ public class CustomImguiController : IDisposable
         public Shader(GL gl, string vertexShader, string fragmentShader)
         {
             _gl = gl;
-            _files = new[]{
+            _files = new[]
+            {
                 (ShaderType.VertexShader, vertexShader),
                 (ShaderType.FragmentShader, fragmentShader),
             };
             Program = CreateProgram(_files);
         }
+
         public void UseShader()
         {
             _gl.UseProgram(Program);
@@ -170,7 +202,12 @@ public class CustomImguiController : IDisposable
 
             for (int i = 0; i < uniformCount; i++)
             {
-                string name = _gl.GetActiveUniform(Program, (uint)i, out int size, out UniformType type);
+                string name = _gl.GetActiveUniform(
+                    Program,
+                    (uint)i,
+                    out int size,
+                    out UniformType type
+                );
 
                 UniformFieldInfo fieldInfo;
                 fieldInfo.Location = GetUniformLocation(name);
@@ -296,38 +333,51 @@ public class CustomImguiController : IDisposable
     /// <summary>
     /// Constructs a new CustomImguiController.
     /// </summary>
-    public CustomImguiController(GL gl, IView view, IInputContext input) : this(gl, view, input, null, null)
-    {
-    }
+    public CustomImguiController(GL gl, IView view, IInputContext input)
+        : this(gl, view, input, null, null) { }
 
     /// <summary>
     /// Constructs a new CustomImguiController with font configuration.
     /// </summary>
-    public CustomImguiController(GL gl, IView view, IInputContext input, ImGuiFontConfig imGuiFontConfig) : this(gl, view, input, imGuiFontConfig, null)
-    {
-    }
+    public CustomImguiController(
+        GL gl,
+        IView view,
+        IInputContext input,
+        ImGuiFontConfig imGuiFontConfig
+    )
+        : this(gl, view, input, imGuiFontConfig, null) { }
 
     /// <summary>
     /// Constructs a new CustomImguiController with an onConfigureIO Action.
     /// </summary>
-    public CustomImguiController(GL gl, IView view, IInputContext input, Action onConfigureIO) : this(gl, view, input, null, onConfigureIO)
-    {
-    }
+    public CustomImguiController(GL gl, IView view, IInputContext input, Action onConfigureIO)
+        : this(gl, view, input, null, onConfigureIO) { }
 
     /// <summary>
     /// Constructs a new CustomImguiController with font configuration and onConfigure Action.
     /// </summary>
-    public CustomImguiController(GL gl, IView view, IInputContext input, ImGuiFontConfig? imGuiFontConfig = null, Action onConfigureIO = null)
+    public CustomImguiController(
+        GL gl,
+        IView view,
+        IInputContext input,
+        ImGuiFontConfig? imGuiFontConfig = null,
+        Action onConfigureIO = null
+    )
     {
         Init(gl, view, input);
 
         var io = ImGuiNET.ImGui.GetIO();
-        
+
         if (imGuiFontConfig is not null)
         {
             var glyphRange = imGuiFontConfig.Value.GetGlyphRange?.Invoke(io) ?? default(IntPtr);
 
-            io.Fonts.AddFontFromFileTTF(imGuiFontConfig.Value.FontPath, imGuiFontConfig.Value.FontSize, null, glyphRange);
+            io.Fonts.AddFontFromFileTTF(
+                imGuiFontConfig.Value.FontPath,
+                imGuiFontConfig.Value.FontSize,
+                null,
+                glyphRange
+            );
         }
 
         onConfigureIO?.Invoke();
@@ -370,7 +420,7 @@ public class CustomImguiController : IDisposable
     private void BeginFrame()
     {
         ImGuiNET.ImGui.NewFrame();
-        
+
         _frameBegun = true;
         _keyboard = _input.Keyboards[0];
         _view.Resize += WindowResized;
@@ -407,7 +457,7 @@ public class CustomImguiController : IDisposable
 
             _frameBegun = false;
             ImGuiNET.ImGui.Render();
-            
+
             RenderImDrawData(ImGuiNET.ImGui.GetDrawData());
 
             if (oldCtx != ImGuiContext)
@@ -448,7 +498,7 @@ public class CustomImguiController : IDisposable
 
     /// <summary>
     /// Sets per-frame data based on the associated window.
-    /// This is called by Update(float).
+    /// This is called by UpdateState(float).
     /// </summary>
     private void SetPerFrameImGuiData(float deltaSeconds)
     {
@@ -457,14 +507,17 @@ public class CustomImguiController : IDisposable
 
         if (_windowWidth > 0 && _windowHeight > 0)
         {
-            io.DisplayFramebufferScale = new Vector2(_view.FramebufferSize.X / _windowWidth,
-                _view.FramebufferSize.Y / _windowHeight);
+            io.DisplayFramebufferScale = new Vector2(
+                _view.FramebufferSize.X / _windowWidth,
+                _view.FramebufferSize.Y / _windowHeight
+            );
         }
 
         io.DeltaTime = deltaSeconds; // DeltaTime is in seconds.
     }
 
     private static Key[] keyEnumArr = (Key[])Enum.GetValues(typeof(Key));
+
     private void UpdateImGuiInput()
     {
         var io = ImGuiNET.ImGui.GetIO();
@@ -499,10 +552,15 @@ public class CustomImguiController : IDisposable
 
         _pressedChars.Clear();
 
-        io.KeyCtrl = keyboardState.IsKeyPressed(Key.ControlLeft) || keyboardState.IsKeyPressed(Key.ControlRight);
-        io.KeyAlt = keyboardState.IsKeyPressed(Key.AltLeft) || keyboardState.IsKeyPressed(Key.AltRight);
-        io.KeyShift = keyboardState.IsKeyPressed(Key.ShiftLeft) || keyboardState.IsKeyPressed(Key.ShiftRight);
-        io.KeySuper = keyboardState.IsKeyPressed(Key.SuperLeft) || keyboardState.IsKeyPressed(Key.SuperRight);
+        io.KeyCtrl =
+            keyboardState.IsKeyPressed(Key.ControlLeft)
+            || keyboardState.IsKeyPressed(Key.ControlRight);
+        io.KeyAlt =
+            keyboardState.IsKeyPressed(Key.AltLeft) || keyboardState.IsKeyPressed(Key.AltRight);
+        io.KeyShift =
+            keyboardState.IsKeyPressed(Key.ShiftLeft) || keyboardState.IsKeyPressed(Key.ShiftRight);
+        io.KeySuper =
+            keyboardState.IsKeyPressed(Key.SuperLeft) || keyboardState.IsKeyPressed(Key.SuperRight);
     }
 
     internal void PressChar(char keyChar)
@@ -534,49 +592,54 @@ public class CustomImguiController : IDisposable
         io.KeyMap[(int)ImGuiKey.Z] = (int)Key.Z;
     }
 
-    private unsafe void SetupRenderState(ImDrawDataPtr drawDataPtr, int framebufferWidth, int framebufferHeight)
+    private unsafe void SetupRenderState(
+        ImDrawDataPtr drawDataPtr,
+        int framebufferWidth,
+        int framebufferHeight
+    )
     {
         // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
         _gl.Enable(GLEnum.Blend);
         _gl.BlendEquation(GLEnum.FuncAdd);
-        _gl.BlendFuncSeparate(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha, GLEnum.One, GLEnum.OneMinusSrcAlpha);
+        _gl.BlendFuncSeparate(
+            GLEnum.SrcAlpha,
+            GLEnum.OneMinusSrcAlpha,
+            GLEnum.One,
+            GLEnum.OneMinusSrcAlpha
+        );
         _gl.Disable(GLEnum.CullFace);
         _gl.Disable(GLEnum.DepthTest);
         _gl.Disable(GLEnum.StencilTest);
         _gl.Enable(GLEnum.ScissorTest);
-#if !GLES && !LEGACY
-        _gl.Disable(GLEnum.PrimitiveRestart);
-        _gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
-#endif
 
         float L = drawDataPtr.DisplayPos.X;
         float R = drawDataPtr.DisplayPos.X + drawDataPtr.DisplaySize.X;
         float T = drawDataPtr.DisplayPos.Y;
         float B = drawDataPtr.DisplayPos.Y + drawDataPtr.DisplaySize.Y;
 
-        Span<float> orthoProjection = stackalloc float[] {
-            2.0f / (R - L),
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            2.0f / (T - B),
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            -1.0f,
-            0.0f,
-            (R + L) / (L - R),
-            (T + B) / (B - T),
-            0.0f,
-            1.0f,
-        };
+        Span<float> orthoProjection =
+            stackalloc float[] {
+                2.0f / (R - L),
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                2.0f / (T - B),
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                -1.0f,
+                0.0f,
+                (R + L) / (L - R),
+                (T + B) / (B - T),
+                0.0f,
+                1.0f,
+            };
 
         _shader.UseShader();
         _gl.Uniform1(_attribLocationTex, 0);
         _gl.UniformMatrix4(_attribLocationProjMtx, 1, false, orthoProjection);
-        _gl.CheckGlError("Projection");
 
         _gl.BindSampler(0, 0);
 
@@ -585,7 +648,6 @@ public class CustomImguiController : IDisposable
         // The renderer would actually work without any VAO bound, but then our VertexAttrib calls would overwrite the default one currently bound.
         _vertexArrayObject = _gl.GenVertexArray();
         _gl.BindVertexArray(_vertexArrayObject);
-        _gl.CheckGlError("VAO");
 
         // Bind vertex/index buffers and setup attributes for ImDrawVert
         _gl.BindBuffer(GLEnum.ArrayBuffer, _vboHandle);
@@ -593,9 +655,30 @@ public class CustomImguiController : IDisposable
         _gl.EnableVertexAttribArray((uint)_attribLocationVtxPos);
         _gl.EnableVertexAttribArray((uint)_attribLocationVtxUV);
         _gl.EnableVertexAttribArray((uint)_attribLocationVtxColor);
-        _gl.VertexAttribPointer((uint)_attribLocationVtxPos, 2, GLEnum.Float, false, (uint)sizeof(ImDrawVert), (void*)0);
-        _gl.VertexAttribPointer((uint)_attribLocationVtxUV, 2, GLEnum.Float, false, (uint)sizeof(ImDrawVert), (void*)8);
-        _gl.VertexAttribPointer((uint)_attribLocationVtxColor, 4, GLEnum.UnsignedByte, true, (uint)sizeof(ImDrawVert), (void*)16);
+        _gl.VertexAttribPointer(
+            (uint)_attribLocationVtxPos,
+            2,
+            GLEnum.Float,
+            false,
+            (uint)sizeof(ImDrawVert),
+            (void*)0
+        );
+        _gl.VertexAttribPointer(
+            (uint)_attribLocationVtxUV,
+            2,
+            GLEnum.Float,
+            false,
+            (uint)sizeof(ImDrawVert),
+            (void*)8
+        );
+        _gl.VertexAttribPointer(
+            (uint)_attribLocationVtxColor,
+            4,
+            GLEnum.UnsignedByte,
+            true,
+            (uint)sizeof(ImDrawVert),
+            (void*)16
+        );
     }
 
     private unsafe void RenderImDrawData(ImDrawDataPtr drawDataPtr)
@@ -647,7 +730,7 @@ public class CustomImguiController : IDisposable
         SetupRenderState(drawDataPtr, framebufferWidth, framebufferHeight);
 
         // Will project scissor/clipping rectangles into framebuffer space
-        Vector2 clipOff = drawDataPtr.DisplayPos;         // (0,0) unless using multi-viewports
+        Vector2 clipOff = drawDataPtr.DisplayPos; // (0,0) unless using multi-viewports
         Vector2 clipScale = drawDataPtr.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
         // Render command lists
@@ -657,11 +740,18 @@ public class CustomImguiController : IDisposable
 
             // Upload vertex/index buffers
 
-            _gl.BufferData(GLEnum.ArrayBuffer, (nuint)(cmdListPtr.VtxBuffer.Size * sizeof(ImDrawVert)), (void*)cmdListPtr.VtxBuffer.Data, GLEnum.StreamDraw);
-            _gl.CheckGlError($"Data Vert {n}");
-            _gl.BufferData(GLEnum.ElementArrayBuffer, (nuint)(cmdListPtr.IdxBuffer.Size * sizeof(ushort)), (void*)cmdListPtr.IdxBuffer.Data, GLEnum.StreamDraw);
-            _gl.CheckGlError($"Data Idx {n}");
-
+            _gl.BufferData(
+                BufferTargetARB.ArrayBuffer,
+                (nuint)(cmdListPtr.VtxBuffer.Size * sizeof(ImDrawVert)),
+                (void*)cmdListPtr.VtxBuffer.Data,
+                BufferUsageARB.StaticRead
+            );
+            _gl.BufferData(
+                BufferTargetARB.ElementArrayBuffer,
+                (nuint)(cmdListPtr.IdxBuffer.Size * sizeof(ushort)),
+                (void*)cmdListPtr.IdxBuffer.Data,
+                BufferUsageARB.StaticRead
+            );
             for (int cmd_i = 0; cmd_i < cmdListPtr.CmdBuffer.Size; cmd_i++)
             {
                 ImDrawCmdPtr cmdPtr = cmdListPtr.CmdBuffer[cmd_i];
@@ -678,18 +768,34 @@ public class CustomImguiController : IDisposable
                     clipRect.Z = (cmdPtr.ClipRect.Z - clipOff.X) * clipScale.X;
                     clipRect.W = (cmdPtr.ClipRect.W - clipOff.Y) * clipScale.Y;
 
-                    if (clipRect.X < framebufferWidth && clipRect.Y < framebufferHeight && clipRect.Z >= 0.0f && clipRect.W >= 0.0f)
+                    if (
+                        clipRect.X < framebufferWidth
+                        && clipRect.Y < framebufferHeight
+                        && clipRect.Z >= 0.0f
+                        && clipRect.W >= 0.0f
+                    )
                     {
                         // Apply scissor/clipping rectangle
-                        _gl.Scissor((int)clipRect.X, (int)(framebufferHeight - clipRect.W), (uint)(clipRect.Z - clipRect.X), (uint)(clipRect.W - clipRect.Y));
+                        _gl.Scissor(
+                            (int)clipRect.X,
+                            (int)(framebufferHeight - clipRect.W),
+                            (uint)(clipRect.Z - clipRect.X),
+                            (uint)(clipRect.W - clipRect.Y)
+                        );
                         //_gl.CheckGlError("Scissor");
 
-                        // Bind texture, Draw
+                        // Bind texture, Render
                         _gl.BindTexture(GLEnum.Texture2D, (uint)cmdPtr.TextureId);
                         //_gl.CheckGlError("Texture");
 
-                        _gl.DrawElementsBaseVertex(GLEnum.Triangles, cmdPtr.ElemCount, GLEnum.UnsignedShort, (void*)(cmdPtr.IdxOffset * sizeof(ushort)), (int)cmdPtr.VtxOffset);
-                        //_gl.CheckGlError("Draw");
+                        _gl.DrawElementsBaseVertex(
+                            GLEnum.Triangles,
+                            cmdPtr.ElemCount,
+                            GLEnum.UnsignedShort,
+                            (void*)(cmdPtr.IdxOffset * sizeof(ushort)),
+                            (int)cmdPtr.VtxOffset
+                        );
+                        //_gl.CheckGlError("Render");
                     }
                 }
             }
@@ -711,7 +817,12 @@ public class CustomImguiController : IDisposable
 
         _gl.BindBuffer(GLEnum.ArrayBuffer, (uint)lastArrayBuffer);
         _gl.BlendEquationSeparate((GLEnum)lastBlendEquationRgb, (GLEnum)lastBlendEquationAlpha);
-        _gl.BlendFuncSeparate((GLEnum)lastBlendSrcRgb, (GLEnum)lastBlendDstRgb, (GLEnum)lastBlendSrcAlpha, (GLEnum)lastBlendDstAlpha);
+        _gl.BlendFuncSeparate(
+            (GLEnum)lastBlendSrcRgb,
+            (GLEnum)lastBlendDstRgb,
+            (GLEnum)lastBlendSrcAlpha,
+            (GLEnum)lastBlendDstAlpha
+        );
 
         if (lastEnableBlend)
         {
@@ -770,7 +881,12 @@ public class CustomImguiController : IDisposable
         _gl.PolygonMode(GLEnum.FrontAndBack, (GLEnum)lastPolygonMode[0]);
 #endif
 
-        _gl.Scissor(lastScissorBox[0], lastScissorBox[1], (uint)lastScissorBox[2], (uint)lastScissorBox[3]);
+        _gl.Scissor(
+            lastScissorBox[0],
+            lastScissorBox[1],
+            (uint)lastScissorBox[2],
+            (uint)lastScissorBox[3]
+        );
     }
 
     private void CreateDeviceResources()
@@ -782,7 +898,7 @@ public class CustomImguiController : IDisposable
         _gl.GetInteger(GLEnum.VertexArrayBinding, out int lastVertexArray);
 
         string vertexSource =
-                @"#version 330
+            @"#version 330
         layout (location = 0) in vec2 Position;
         layout (location = 1) in vec2 UV;
         layout (location = 2) in vec4 Color;
@@ -796,7 +912,7 @@ public class CustomImguiController : IDisposable
             gl_Position = ProjMtx * vec4(Position.xy,0,1);
         }";
         string fragmentSource =
-                @"#version 330
+            @"#version 330
         in vec2 Frag_UV;
         in vec4 Frag_Color;
         uniform sampler2D Texture;
@@ -835,7 +951,12 @@ public class CustomImguiController : IDisposable
     {
         // Build texture atlas
         var io = ImGuiNET.ImGui.GetIO();
-        io.Fonts.GetTexDataAsRGBA32(out IntPtr pixels, out int width, out int height, out int bytesPerPixel);   // Load as RGBA 32-bit (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
+        io.Fonts.GetTexDataAsRGBA32(
+            out IntPtr pixels,
+            out int width,
+            out int height,
+            out int bytesPerPixel
+        ); // Load as RGBA 32-bit (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
 
         // Upload texture to graphics system
         _gl.GetInteger(GLEnum.TextureBinding2D, out int lastTexture);

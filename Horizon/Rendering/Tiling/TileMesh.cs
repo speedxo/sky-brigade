@@ -1,5 +1,4 @@
-﻿using Horizon.Content;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -11,38 +10,57 @@ namespace Horizon.Rendering;
 
 public abstract partial class Tiling<TTextureID>
 {
-    public class TileMesh : Entity
+    public readonly record struct TileRenderData(
+        float X,
+        float Y,
+        float UvX,
+        float UvY,
+        Vector3 Color
+    )
     {
-        public struct TileVertex
-        {
-            public Vector2 Position { get; set; }
-            public Vector2 TexCoords { get; set; }
-            public Vector3 Color { get; set; }
+        public static readonly uint SizeInBytes = sizeof(float) * 7;
+    }
 
-            public TileVertex(float x, float y, float uvX, float uvY, Vector3 color)
-            {
-                Color = new Vector3(color.X, color.Y, color.Z);
-                TexCoords = new Vector2(uvX, uvY);
-                Position = new Vector2(x, y);
-            }
-
-            public static readonly int SizeInBytes = sizeof(float) * 7;
-        }
-
-        public uint ElementCount { get; private set; }
+    public class TileMesh : Mesh<TileRenderData>
+    {
+        protected const string UNIFORM_TEXTURE = "uTexture";
+        public uint TileCount { get; private set; }
 
         public Shader Shader { get; init; }
         public TileMap Map { get; init; }
-        public VertexBufferObject<TileVertex> Vbo { get; private set; }
+        private InstancedVertexBufferObject<BasicVertex, TileRenderData> Vbo { get; set; }
         public TileSet Set { get; init; }
 
-        private readonly List<TileVertex> _vertices;
-        private readonly List<uint> _indices;
-        private uint _vertexCounter;
+        private readonly List<TileRenderData> _tileRenderData;
+
         private bool _uploadData,
             _isUpdatingMesh;
 
-        public TileMesh(Shader shader, TileSet set, TileMap map)
+        private readonly struct BasicVertex
+        {
+            public readonly Vector2 Position { get; init; }
+            public readonly Vector2 TexCoords { get; init; }
+
+            public static readonly uint SizeInBytes = sizeof(float) * 4;
+
+            public BasicVertex(Vector2 position, Vector2 texCoords)
+            {
+                Position = position;
+                TexCoords = texCoords;
+            }
+
+            public BasicVertex(float x, float y, float uvX, float uvY)
+            {
+                Position = new Vector2(x, y);
+                TexCoords = new Vector2(uvX, uvY);
+            }
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="TileMesh" /> class.</summary>
+        /// <param name="shader">The shader.</param>
+        /// <param name="set">The set.</param>
+        /// <param name="map">The map.</param>
+        public TileMesh(in Shader shader, in TileSet set, in TileMap map)
         {
             Set = set;
             Shader = shader;
@@ -50,175 +68,177 @@ public abstract partial class Tiling<TTextureID>
 
             Vbo = new();
 
+            Vector2 tileTextureSize = set.TileSize / set.Texture.Size;
+
+            BasicVertex[] vertices = new BasicVertex[]
+            {
+                new BasicVertex(-0.5f, -0.5f, 0, tileTextureSize.Y),
+                new BasicVertex(0.5f, -0.5f, tileTextureSize.X, tileTextureSize.Y),
+                new BasicVertex(0.5f, 0.5f, tileTextureSize.X, 0),
+                new BasicVertex(-0.5f, 0.5f, 0, 0)
+            };
+            Vbo.VertexBuffer.BufferData(vertices);
+            uint[] indices = new uint[] { 0, 1, 2, 0, 2, 3 };
+            Vbo.ElementBuffer.BufferData(indices);
+
+            Vbo.VertexArray.Bind();
+            Vbo.VertexBuffer.Bind();
+
             Vbo.VertexAttributePointer(
                 0,
                 2,
                 VertexAttribPointerType.Float,
-                (uint)TileVertex.SizeInBytes,
+                BasicVertex.SizeInBytes,
                 0
             );
             Vbo.VertexAttributePointer(
                 1,
                 2,
                 VertexAttribPointerType.Float,
-                (uint)TileVertex.SizeInBytes,
+                BasicVertex.SizeInBytes,
+                2 * sizeof(float)
+            );
+            Vbo.InstanceBuffer.Bind();
+
+            Vbo.VertexAttributePointer(
+                2,
+                2,
+                VertexAttribPointerType.Float,
+                TileRenderData.SizeInBytes,
+                0
+            );
+            Vbo.VertexAttributePointer(
+                3,
+                2,
+                VertexAttribPointerType.Float,
+                TileRenderData.SizeInBytes,
                 2 * sizeof(float)
             );
             Vbo.VertexAttributePointer(
-                2,
+                4,
                 3,
                 VertexAttribPointerType.Float,
-                (uint)TileVertex.SizeInBytes,
+                TileRenderData.SizeInBytes,
                 4 * sizeof(float)
             );
+            Vbo.VertexAttributeDivisor(2, 1);
+            Vbo.VertexAttributeDivisor(3, 1);
+            Vbo.VertexAttributeDivisor(4, 1);
 
-            _indices = new();
-            _vertices = new();
-        }
+            Vbo.VertexArray.Unbind();
+            Vbo.VertexBuffer.Unbind();
 
-        protected void Upload(ReadOnlySpan<TileVertex> vertices, ReadOnlySpan<uint> elements)
-        {
-            Vbo.VertexBuffer.BufferData(vertices);
-            Vbo.ElementBuffer.BufferData(elements);
-
-            ElementCount = (uint)elements.Length;
+            _tileRenderData = new();
         }
 
         /// <summary>
         /// Constructs a mesh from a Span<Tile>. No null checking is performed.
         /// </summary>
         /// <param name="tiles">a span of tiles to generate the mesh from.</param>
-        public void GenerateMeshFromTiles(ReadOnlySpan<Tile> tiles)
+        public void GenerateMeshFromTiles(in ReadOnlySpan<Tile> tiles)
         {
             if (_isUpdatingMesh)
                 return;
 
             _isUpdatingMesh = true;
 
+            int tileCount = 0;
+            for (int i = 0; i < tiles.Length; i++)
+                if (tiles[i].RenderingData.IsVisible)
+                    tileCount++;
+
+            _tileRenderData.Capacity = tileCount;
+
             for (int i = 0; i < tiles.Length; i++)
             {
                 if (!tiles[i].RenderingData.IsVisible)
                     continue;
 
-                AddTile(tiles[i]);
+                _tileRenderData.Add(GenerateRenderData(in tiles[i]));
             }
 
+            TileCount = (uint)tileCount;
             _uploadData = true;
         }
 
         [MethodImpl(
             MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization
         )]
-        private void AddTile(in Tile tile)
+        private static Tiling<TTextureID>.TileRenderData GenerateRenderData(in Tile tile)
         {
-            static uint[] getElements(uint _offset) =>
-                new uint[] { _offset, _offset + 1, _offset + 2, _offset, _offset + 2, _offset + 3 };
-
-            _vertices.AddRange(GetVertices(tile));
-            _indices.AddRange(getElements(_vertexCounter));
-            _vertexCounter += 4;
-        }
-
-        [MethodImpl(
-            MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization
-        )]
-        private static TileVertex[] GetVertices(in Tile tile)
-        {
-            Vector2[] uv;
-
-            if (tile is StaticTile sTile)
-                uv = sTile.Set.GetTextureCoordinatesFromTiledMapId(sTile.ID);
-            else
-                uv = tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID);
-
-            return new[]
+            Vector2 uv = tile switch
             {
-                new TileVertex(
-                    -Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
-                    Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
-                    uv[0].X,
-                    uv[0].Y,
-                    tile.RenderingData.Color
-                ),
-                new TileVertex(
-                    Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
-                    Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
-                    uv[1].X,
-                    uv[1].Y,
-                    tile.RenderingData.Color
-                ),
-                new TileVertex(
-                    Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
-                    -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
-                    uv[2].X,
-                    uv[2].Y,
-                    tile.RenderingData.Color
-                ),
-                new TileVertex(
-                    -Tile.TILE_WIDTH / 2.0f + tile.GlobalPosition.X * Tile.TILE_WIDTH,
-                    -Tile.TILE_HEIGHT / 2.0f - tile.GlobalPosition.Y * -Tile.TILE_HEIGHT,
-                    uv[3].X,
-                    uv[3].Y,
-                    tile.RenderingData.Color
-                )
+                StaticTile sTile
+                    => sTile.Set.GetNormalizedTextureCoordinatesFromTiledMapId(sTile.ID),
+                _ => tile.Set.GetTextureCoordinates(tile.RenderingData.TextureID)[0]
             };
+
+            return new TileRenderData(
+                tile.GlobalPosition.X,
+                tile.GlobalPosition.Y,
+                uv.X,
+                uv.Y,
+                tile.RenderingData.Color
+            );
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (_uploadData)
             {
                 _uploadData = false;
                 _isUpdatingMesh = false;
 
-                Upload(CollectionsMarshal.AsSpan(_vertices), CollectionsMarshal.AsSpan(_indices));
+                Vbo.InstanceBuffer.BufferData(CollectionsMarshal.AsSpan(_tileRenderData));
 
-                _indices.Clear();
-                _vertices.Clear();
-                _vertexCounter = 0;
+                _tileRenderData.Clear();
             }
 
-            if (ElementCount < 1)
-            {
+            if (TileCount < 1)
                 return;
-            }
-
-            
 
             Shader.Use();
 
-            Engine.GL.ActiveTexture(TextureUnit.Texture0);
-            Engine.GL.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
-            Shader.SetUniform("uTexture", 0);
+            Entity.Engine.GL.ActiveTexture(TextureUnit.Texture0);
+            Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
+            Shader.SetUniform(UNIFORM_TEXTURE, 0);
 
-            Shader.SetUniform("uView", options.Camera.View);
-            Shader.SetUniform("uProjection", options.Camera.Projection);
-            Shader.SetUniform("uWireframeEnabled", options.IsWireframeEnabled ? 1 : 0);
+            Shader.SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+            Shader.SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+            Shader.SetUniform(UNIFORM_USE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
 
-            Vbo.Bind();
+            Vbo.VertexArray.Bind();
 
             if (options.IsWireframeEnabled)
             {
-                Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+                Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
             }
 
-            unsafe // i dont wanna make the whole methud unsafe just for this
+            unsafe // i don't wanna make the whole method unsafe just for this
             {
-                Engine.GL.DrawElements(
+                Entity.Engine.GL.DrawElementsInstanced(
                     PrimitiveType.Triangles,
-                    ElementCount,
+                    6,
                     DrawElementsType.UnsignedInt,
-                    null
+                    null,
+                    TileCount
                 );
             }
 
             if (options.IsWireframeEnabled)
             {
-                Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                Entity.Engine.GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
             }
 
-            Vbo.Unbind();
+            Vbo.VertexArray.Unbind();
             Shader.End();
         }
+
+        public override void Load(in IMeshData<TileRenderData> data, in Material? mat = null)
+        {
+            Vbo.InstanceBuffer.BufferData(data.Vertices.Span);
+        }
+
+        public override void Dispose() { }
     }
 }

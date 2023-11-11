@@ -14,14 +14,17 @@ namespace Horizon.Debugging.Debuggers
 
         public abstract void Initialize();
 
-        public abstract void Update(float dt);
+        public abstract void UpdateState(float dt);
 
-        public abstract void Draw(float dt, ref RenderOptions options);
+        public abstract void Render(float dt, ref RenderOptions options);
 
         protected void Log(LogLevel level, string msg)
         {
             Entity.Engine.Logger.Log(level, $"({Name}) {msg}");
         }
+
+        public abstract void UpdatePhysics(float dt);
+
         public abstract void Dispose();
     }
 }

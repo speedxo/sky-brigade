@@ -3,7 +3,6 @@ using Horizon.Data;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
-using Horizon.Primitives;
 using Horizon.Rendering;
 using Silk.NET.OpenGL;
 using System.Numerics;
@@ -72,7 +71,7 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             // Once again, I really don't want to make the whole method unsafe for one call.
             unsafe
             {
-                Entity.Engine.GL.DrawElements(
+                Engine.GL.DrawElements(
                     primitive,
                     (uint)Indices.Count,
                     DrawElementsType.UnsignedInt,
@@ -107,9 +106,14 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     private uint polygonMeshIndexCount = 0;
 
+    private const string UNIFORM_VIEW_MATRIX = "uView";
+    private const string UNIFORM_MODEL_MATRIX = "uModel";
+    private const string UNIFORM_PROJECTION_MATRIX = "uProjection";
+    private const string UNIFORM_USE_NORMAL_AS_COLORS = "useNormalAsColor";
+
     public Box2DDebugDrawCallback()
     {
-        Name = "Box2D Debug Draw Callback";
+        Name = "Box2D Debug Render Callback";
 
         segmentMesh = new(PrimitiveType.LineStrip);
         circleMesh = new(PrimitiveType.TriangleFan);
@@ -119,9 +123,9 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
 
     public void Initialize() { }
 
-    public void Update(float dt) { }
+    public void UpdateState(float dt) { }
 
-    public void Draw(float dt, ref RenderOptions options)
+    public void Render(float dt, ref RenderOptions options)
     {
         if (!Enabled)
         {
@@ -131,14 +135,12 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
             return;
         }
 
-        
-
         Technique.Use();
 
-        Technique.SetUniform("uProjection", options.Camera.Projection);
-        Technique.SetUniform("uView", options.Camera.View);
-        Technique.SetUniform("uModel", Matrix4x4.Identity);
-        Technique.SetUniform("useNormalAsColor", true);
+        Technique.SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
+        Technique.SetUniform(UNIFORM_VIEW_MATRIX, options.Camera.View);
+        Technique.SetUniform(UNIFORM_MODEL_MATRIX, Matrix4x4.Identity);
+        Technique.SetUniform(UNIFORM_USE_NORMAL_AS_COLORS, true);
 
         polygonMesh.Draw(dt, ref options);
         circleMesh.Draw(dt, ref options);
@@ -327,4 +329,6 @@ public class Box2DDebugDrawCallback : DebugDraw, IGameComponent, IDisposable
         polygonMesh.Dispose();
         segmentMesh.Dispose();
     }
+
+    public void UpdatePhysics(float dt) { }
 }

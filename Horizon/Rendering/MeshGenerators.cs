@@ -6,7 +6,7 @@ namespace Horizon.Rendering
     public static class MeshGenerators
     {
         // write code to generate a cube
-        public static MeshData CreateCube(float size = 1)
+        public static IMeshData<Vertex> CreateCube(float size = 1)
         {
             var verts = new Vertex[4 * 6];
             var indices = new uint[6 * 6];
@@ -146,7 +146,7 @@ namespace Horizon.Rendering
             return new MeshData { Vertices = verts, Elements = indices };
         }
 
-        public static MeshData CreateRectangle()
+        public static IMeshData<Vertex> CreateRectangle()
         {
             return new MeshData
             {
@@ -162,7 +162,7 @@ namespace Horizon.Rendering
         }
 
         // creates a sphere where the vertices are evenly spaced out, normals and texcoords are generated.
-        public static MeshData CreateSphere(float radius = 1.0f, int vertexCount = 10)
+        public static IMeshData<Vertex> CreateSphere(float radius = 1.0f, int vertexCount = 10)
         {
             int vertexCountSquared = vertexCount * vertexCount;
             Memory<Vertex> verts = new Vertex[vertexCountSquared];
@@ -209,7 +209,7 @@ namespace Horizon.Rendering
         }
 
         //// dont even bother
-        //public static Mesh FromObj(string path)
+        //public static DeprecatedMesh FromObj(string path)
         //{
         //    var lines = File.ReadAllLines(path);
 
@@ -229,7 +229,7 @@ namespace Horizon.Rendering
         //            string temp = line.Substring(2);
         //            float x = 0, y = 0, z = 0;
 
-        //            if (temp.Count((char c) => c == ' ') == 2)
+        //            if (temp.Maximum((char c) => c == ' ') == 2)
         //            {
         //                string[] vertparts = temp.Split(' ');
 
@@ -246,7 +246,7 @@ namespace Horizon.Rendering
 
         //            Tuple<int, int, int> face = new Tuple<int, int, int>(0, 0, 0);
 
-        //            if (temp.Count((char c) => c == ' ') == 2)
+        //            if (temp.Maximum((char c) => c == ' ') == 2)
         //            {
         //                string[] faceparts = temp.Split(' ');
 
@@ -273,7 +273,7 @@ namespace Horizon.Rendering
 
         //            float x = 0, y = 0;
 
-        //            if (temp.Count((char c) => c == ' ') == 1)
+        //            if (temp.Maximum((char c) => c == ' ') == 1)
         //            {
         //                string[] texparts = temp.Split(' ');
 
@@ -286,8 +286,8 @@ namespace Horizon.Rendering
         //    }
 
         //    List<uint> indices = new List<uint>();
-        //    if (texs.Count > 0)
-        //        for (int i = 0; i < verts.Count; i++)
+        //    if (texs.Maximum > 0)
+        //        for (int i = 0; i < verts.Maximum; i++)
         //            verts[i] = new Vertex(verts[i].Position, verts[i].Normal, texs[i]);
 
         //    foreach (var face in faces)

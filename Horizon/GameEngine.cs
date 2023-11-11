@@ -6,9 +6,6 @@ using Horizon.Input;
 using Horizon.Logging;
 using Horizon.Rendering;
 using ImGuiNET;
-using ImPlotNET;
-using Microsoft.Extensions.Options;
-using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using System.Diagnostics;
@@ -17,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace Horizon;
 
-public abstract class GameEngine : Entity
+public abstract class GameEngine : Entity, IDisposable
 {
     #region Components
 
@@ -27,10 +24,15 @@ public abstract class GameEngine : Entity
     public InputManager Input { get; private set; }
     public EngineWindowManager Window { get; private set; }
     public Logger Logger { get; private set; }
-    public GL GL { get => Window.GL; }
+    public GL GL
+    {
+        get => Window.GL;
+    }
 
-    #endregion
+    #endregion Components
+
     #region Properties
+
     /// <summary>
     /// The current operating system information.
     /// </summary>
@@ -49,27 +51,37 @@ public abstract class GameEngine : Entity
 
         public static bool IsLinux { get; }
     }
-    #endregion
+
+    #endregion Properties
+
     #region Fields & Members
+
     private readonly GameInstanceParameters instanceParameters;
     private CustomImguiController _imGuiController;
     private RenderOptions _options;
-    #endregion
+
+    #endregion Fields & Members
+
     #region Event Delegates
 
     public delegate void PreUpdate(float dt);
+
     public delegate void PreDraw(float dt);
+
     public delegate void PostUpdate(float dt);
+
     public delegate void PostDraw(float dt);
 
-    public event PreDraw? OnPreDraw;    
-    public event PreUpdate? OnPreUpdate;    
+    public event PreDraw? OnPreDraw;
+
+    public event PreUpdate? OnPreUpdate;
+
     public event PostDraw? OnPostDraw;
+
     public event PostUpdate? OnPostUpdate;
 
+    #endregion Event Delegates
 
-    #endregion
-        
     public GameEngine(GameInstanceParameters parameters)
     {
         this.instanceParameters = parameters;
@@ -86,9 +98,9 @@ public abstract class GameEngine : Entity
     private void SubscribeWindowEvents()
     {
         Window.RenderFrame += WindowDraw;
-        Window.UpdateFrame += (delta) =>
+        Window.UpdateStateFrame += (delta) =>
         {
-            Update((float)delta);
+            UpdateState((float)delta);
         };
         Window.Closing += DisposeECS;
         Window.Load += Load;
@@ -98,20 +110,42 @@ public abstract class GameEngine : Entity
     {
         LoadEssentialEngineComponents();
 
-        _options = Debugger.RenderOptionsDebugger.RenderOptions with
+        _options = Debugger.RenderOptionsDebugger.RenderOptions with { GL = Window.GL };
+        unsafe
         {
-            GL = Window.GL
-        };
-
-
+            GL.Enable(EnableCap.DebugOutput);
+            GL.DebugMessageCallback(debugCallback, null);
+        }
         if (Debugger.Enabled)
         {
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            var buildDate = (new DateTime(2000, 1, 1)
-                                    .AddDays(version.Build).AddSeconds(version.Revision * 2)).ToString("dd/MM/yyyy");
+            var buildDate = (
+                new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2)
+            ).ToString("dd/MM/yyyy");
 
-            Window.UpdateTitle($"{instanceParameters.WindowTitle} - Horizon ({version}) {buildDate}");
+            Window.UpdateTitle(
+                $"{instanceParameters.WindowTitle} - Horizon ({version}) {buildDate}"
+            );
         }
+    }
+
+    private void debugCallback(
+        GLEnum source,
+        GLEnum type,
+        int id,
+        GLEnum severity,
+        int length,
+        nint message,
+        nint userParam
+    )
+    {
+        if (id == 131185 || id == 1280)
+            return;
+
+        Logger.Log(
+            LogLevel.Debug,
+            $"[{source}] [{severity}] [{type}] [{id}] {Marshal.PtrToStringAnsi(message)}"
+        );
     }
 
     /// <summary>
@@ -139,7 +173,7 @@ public abstract class GameEngine : Entity
     {
         // Non ECS
         AssetFactory.SetGameEngine(this);
-        Logger = new Logger(LogOutput.Console);
+        Logger = AddComponent(new Logger(LogOutput.Console));
         InitializeImGui();
 
         // Parameterless Entities
@@ -149,14 +183,14 @@ public abstract class GameEngine : Entity
         Debugger = AddEntity<SkylineDebugger>();
 
         /// Injected Entities
-        Input = AddEntity(new InputManager(Window) {
-            CaptureInput = true
-        });
+        Input = AddEntity(new InputManager(Window) { CaptureInput = true });
 
         // Components
         GameScreen = AddComponent<GameScreenManagerComponent>();
         // ! We ensure that intialGameScreen has to be of type Scene in ctor
-        GameScreen.AddInstance<Scene>((Scene)Activator.CreateInstance(instanceParameters.InitialGameScreen)!);
+        GameScreen.AddInstance<Scene>(
+            (Scene)Activator.CreateInstance(instanceParameters.InitialGameScreen)!
+        );
     }
 
     private void InitializeImGui()
@@ -168,10 +202,11 @@ public abstract class GameEngine : Entity
 
         //LoadImGuiStyle();
     }
+
     private static void LoadImGuiStyle()
     {
         ImGuiStylePtr style = ImGui.GetStyle();
-        
+
         style.AntiAliasedLines = true;
         style.AntiAliasedFill = true;
         style.AntiAliasedLinesUseTex = true;
@@ -222,9 +257,11 @@ public abstract class GameEngine : Entity
         Content.Shaders.AddNamed(
             "default",
             ShaderFactory.CompileFromDefinitions(
-               new ShaderDefinition {
-                   Type = ShaderType.VertexShader,
-                   Source = @"#version 410 core
+                new ShaderDefinition
+                {
+                    Type = ShaderType.VertexShader,
+                    Source =
+                        @"#version 410 core
 
      layout (location = 0) in vec3 vPos;
      layout (location = 1) in vec3 vNorm;
@@ -243,9 +280,12 @@ public abstract class GameEngine : Entity
          // Trying to understand the universe through vertex manipulation!
          gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
      }"
-               }, new ShaderDefinition {
-                   Type = ShaderType.FragmentShader,
-                   Source = @"#version 410 core
+                },
+                new ShaderDefinition
+                {
+                    Type = ShaderType.FragmentShader,
+                    Source =
+                        @"#version 410 core
      out vec4 FinalFragColor;
 
      in vec2 texCoords;
@@ -257,27 +297,38 @@ public abstract class GameEngine : Entity
          FinalFragColor = texture(uAlbedo, texCoords);
      }}
      "
-               }
+                }
             )
         );
 
-        Content.Shaders.AddNamed("basic", ShaderFactory.CompileNamed("Assets/basic_shader/", "basic"));
-        Content.Shaders.AddNamed("material_basic", ShaderFactory.CompileNamed("Assets/material_shader/", "basic"));
-        Content.Shaders.AddNamed("material_advanced", ShaderFactory.CompileNamed("Assets/material_shader/", "advanced"));
+        Content.Shaders.AddNamed(
+            "basic",
+            ShaderFactory.CompileNamed("Assets/basic_shader/", "basic")
+        );
+        Content.Shaders.AddNamed(
+            "material_basic",
+            ShaderFactory.CompileNamed("Assets/material_shader/", "basic")
+        );
+        Content.Shaders.AddNamed(
+            "material_advanced",
+            ShaderFactory.CompileNamed("Assets/material_shader/", "advanced")
+        );
 
         Content.GenerateNamedTexture("debug", "Assets/among.png");
         Content.GenerateNamedTexture("gray", "Assets/gray.png");
         Content.GenerateNamedTexture("white", "Assets/white.png");
     }
+
     public void Run() => Window.Run();
 
     // Variables and method used for non-essential updates that run once per second.
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         OnPreUpdate?.Invoke(dt);
 
-        if (Input.WasPressed(VirtualAction.Pause))
+        if (Input.KeyboardManager.IsKeyPressed(Key.Escape))
         {
+            Input.CaptureInput = !Input.CaptureInput;
             for (int i = 0; i < Input.NativeInputContext.Mice.Count; i++)
                 Input.NativeInputContext.Mice[i].Cursor.CursorMode = Input.CaptureInput
                     ? CursorMode.Raw
@@ -291,42 +342,57 @@ public abstract class GameEngine : Entity
         //    nonEssentialUpdate();
         //}
 
-        Debugger.PerformanceDebugger.CpuMetrics.TimeAndTrackMethod(() => {
-            base.Update(dt);
-        }, "Engine", "CPU");
+        Debugger.PerformanceDebugger.CpuMetrics.TimeAndTrackMethod(
+            () =>
+            {
+                base.UpdateState(dt);
+            },
+            "Engine",
+            "CPU"
+        );
 
         OnPostUpdate?.Invoke(dt);
     }
 
-    //// Update method for non-essential tasks, such as measuring memory usage.
+    //// UpdateState method for non-essential tasks, such as measuring memory usage.
     //private void nonEssentialUpdate()
     //{
     //    MemoryUsage = GC.GetTotalMemory(false) / 1000000;
     //}
-    private void WindowDraw(double dt) => Draw((float)dt, ref _options);
+    private void WindowDraw(double dt) =>
+        Render((float)dt, ref Debugger.RenderOptionsDebugger.RenderOptions);
 
     public void DrawWithMetrics(in Entity entity, in float dt, ref RenderOptions options)
     {
         var startTime = Stopwatch.GetTimestamp();
-        entity.Draw(dt, ref options);
+        entity.Render(dt, ref options);
         var endTime = Stopwatch.GetTimestamp();
-        
+
         var val = (double)(endTime - startTime) / Stopwatch.Frequency;
-        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", entity.Name, val);
+        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate(
+            "EngineComponents",
+            entity.Name,
+            val
+        );
     }
-    
+
     public void DrawWithMetrics(in IGameComponent component, in float dt, ref RenderOptions options)
     {
         var startTime = Stopwatch.GetTimestamp();
-        component.Draw(dt, ref options);
+        component.Render(dt, ref options);
         var endTime = Stopwatch.GetTimestamp();
-        if (component.Name == "Scene Manager") return;
+        if (component.Name == "Scene Manager")
+            return;
 
         var val = (double)(endTime - startTime) / Stopwatch.Frequency;
-        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate("EngineComponents", component.Name, val);
+        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate(
+            "EngineComponents",
+            component.Name,
+            val
+        );
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (!Enabled)
             return;
@@ -341,19 +407,28 @@ public abstract class GameEngine : Entity
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         // Render all entities & components
-        for (int i = 0; i < Components.Count; i++)
-            DrawWithMetrics(Components.Values.ElementAt(i), dt, ref options);
+        //for (int i = 0; i < Components.Count; i++)
+        //    DrawWithMetrics(Components.Values.ElementAt(i), dt, ref options);
 
-        for (int i = 0; i < Entities.Count; i++)
-            DrawWithMetrics(Entities[i], dt, ref options);
+        //for (int i = 0; i < Entities.Count; i++)
+        //    DrawWithMetrics(Entities[i], dt, ref options);
+
+        base.Render(dt, ref options);
 
         // Render ImGui UI on top of the game screen.
         _imGuiController.Render();
-        OnPostDraw?.Invoke(dt);
 
         // Collect Metrics
         var endTime = Stopwatch.GetTimestamp();
         var elapsedSeconds = (double)(endTime - startTime) / Stopwatch.Frequency;
         Debugger.PerformanceDebugger.GpuMetrics.AddCustom("Engine", "GPU", elapsedSeconds);
+        OnPostDraw?.Invoke(dt);
+    }
+
+    public void Dispose()
+    {
+        Window.Dispose();
+        Content.Dispose();
+        GameScreen.Dispose();
     }
 }

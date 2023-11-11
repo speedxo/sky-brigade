@@ -10,16 +10,19 @@ namespace Horizon.Debugging.Debuggers
 
         public override void Initialize()
         {
-            FrameBuffer = new FrameBufferObject(800, 600);
+            FrameBuffer = FrameBufferManager.CreateFrameBuffer(800, 600);
+            FrameBuffer.IsFixed = true;
             FrameBuffer.AddAttachment(Silk.NET.OpenGL.FramebufferAttachment.ColorAttachment0);
             FrameBuffer.ContructFrameBuffer();
 
             Name = "Game Container";
         }
 
-        public override void Update(float dt) { }
+        public override void UpdateState(float dt) { }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void UpdatePhysics(float dt) { }
+
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (Visible && ImGui.Begin("Game Container"))
             {
@@ -37,9 +40,6 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Dispose()
-        {
-            
-        }
+        public override void Dispose() { }
     }
 }

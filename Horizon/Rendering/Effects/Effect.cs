@@ -36,9 +36,11 @@ namespace Horizon.Rendering.Effects
         public abstract void UpdateBuffer(in UniformBufferObject bufferObject);
 
         /// <summary>
-        /// Update is called every frame
+        /// UpdateState is called every frame
         /// </summary>
         /// <param name="dt">deltatime between the last two frames</param>
-        public abstract void Update(float dt);
+        public abstract void UpdateState(float dt);
+
+        public abstract void UpdatePhysics(float dt);
     }
 }

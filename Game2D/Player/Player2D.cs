@@ -1,13 +1,10 @@
 ﻿using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.World;
-using Horizon;
 using Horizon.Extentions;
 using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
-using ImGuiNET;
-using System.Collections;
 using System.Numerics;
 using TileBash.Player.Behaviour;
 
@@ -15,6 +12,8 @@ namespace TileBash.Player;
 
 public class Player2D : Sprite
 {
+    public static Player2D Current { get; private set; }
+
     public Body PhysicsBody
     {
         get => box2DBodyComponent.Body;
@@ -28,6 +27,7 @@ public class Player2D : Sprite
     {
         get => stateController.CurrentState;
     }
+
     public override string Name { get; set; } = "Player2D";
     private readonly World world;
     private readonly TileMap map;
@@ -37,15 +37,21 @@ public class Player2D : Sprite
 
     public Player2D(World world, TileMap map)
     {
+        Current = this;
         this.world = world;
         this.map = map;
 
+        collidersIntervalRunner = AddEntity(new IntervalRunner(1.0f / 4.0f, GenerateTileColliders));
+    }
+
+    public override void Initialize()
+    {
         CreateSprite();
         CreatePhysics();
         CreateStateController();
         AttachDebugWatches();
 
-        collidersIntervalRunner = AddEntity(new IntervalRunner(0.25f, GenerateTileColliders));
+        base.Initialize();
     }
 
     private void AttachDebugWatches()
@@ -92,47 +98,43 @@ public class Player2D : Sprite
 
     private void CreateSprite()
     {
-        var sheet = (
-            new Spritesheet(
-                Engine.Content.LoadTexture("content/spritesheet.png"),
-                new Vector2(16)
-            )
+        ConfigureSpriteSheet(
+            Engine.Content.LoadSpriteSheet("content/spritesheet.png", new Vector2(16)),
+            "idle"
         );
 
-        sheet.AddAnimationRange(new (string, Vector2, int, float, Vector2?)[] {
-            ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
-            ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
-            ("walk_down", new Vector2(4, 0), 4, 0.1f, null),
-            ("walk_left", new Vector2(0, 1), 4, 0.1f, null),
-            ("walk_right", new Vector2(4, 1), 4, 0.1f, null),
-            ("idle", new Vector2(4, 0), 1, 0.1f, null)
-        });
-
-        ConfigureSpritesheetAndDefaultAnimation(sheet, "idle");
+        AddAnimationRange(
+            new (string, Vector2, uint, float, Vector2?)[]
+            {
+                ("walk_up", new Vector2(0, 0), 4, 0.1f, null),
+                ("walk_down", new Vector2(0, 3), 4, 0.1f, null),
+                ("walk_side", new Vector2(0, 1), 4, 0.1f, null),
+                ("idle", new Vector2(0, 3), 0, 0.1f, null)
+            }
+        );
 
         IsAnimated = true;
-        Size = new Vector2(1.0f);
     }
 
-    public override void Update(float dt)
+    public override void UpdateState(float dt)
     {
         UpdateTileColliders(dt);
 
-        base.Update(dt);
+        base.UpdateState(dt);
     }
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         foreach (var tile in visibleTiles)
-            tile.Draw(dt, ref options);
+            tile.Render(dt, ref options);
 
-        base.Draw(dt, ref options);
+        base.Render(dt, ref options);
     }
 
     private void GenerateTileColliders()
     {
-        // Enumerate the enumerable so its only itterated once.
-        visibleTiles = map.FindVisibleTiles(Position - Size / 2.0f, 8.0f)
+        // Enumerate the enumerable so its only iterated _once_.
+        visibleTiles = map.FindVisibleTiles(Position - Transform.Scale / 2.0f, 8.0f)
             .Where(e => e.PhysicsData.IsCollidable)
             .ToArray();
 
@@ -148,10 +150,12 @@ public class Player2D : Sprite
 
     private void UpdateTileColliders(float dt)
     {
+        GenerateTileColliders();
+
         for (int i = 0; i < colliableTiles.Count; i++)
         {
             var tile = colliableTiles[i];
-            tile.Update(dt);
+            tile.UpdateState(dt);
 
             tile.PhysicsData.Distance = Vector2.DistanceSquared(tile.GlobalPosition, Position);
             if (tile.PhysicsData.Distance > 25.0f)

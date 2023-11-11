@@ -1,6 +1,4 @@
-﻿using DualSenseAPI;
-using DualSenseAPI.State;
-using Horizon.GameEntity;
+﻿using Horizon.GameEntity;
 using Horizon.Input.Components;
 using Silk.NET.Input;
 using System.Numerics;
@@ -37,7 +35,7 @@ namespace Horizon.Input
         /// Gets the XInputJoystickManager responsible for handling joystick input.
         /// </summary>
         public XInputJoystickInputManager XInputJoystickManager { get; init; }
-        
+
         /// <summary>
         /// Gets the DualSenseInputManager responsible for handling joystick input.
         /// </summary>
@@ -56,7 +54,7 @@ namespace Horizon.Input
             KeyboardManager = AddComponent<KeyboardManager>();
             MouseManager = AddComponent<MouseInputManager>();
             XInputJoystickManager = AddComponent<XInputJoystickInputManager>();
-            DualSenseInputManager = AddComponent<DualSenseInputManager>();
+            //DualSenseInputManager = AddComponent<DualSenseInputManager>();
 
             CaptureInput = false;
         }
@@ -65,9 +63,9 @@ namespace Horizon.Input
         /// Updates the InputManager, aggregating input data from various sources into the VirtualController.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
-            base.Update(dt);
+            base.UpdateState(dt);
 
             var keyboardData = KeyboardManager.Data;
 
@@ -75,22 +73,29 @@ namespace Horizon.Input
             var joystickData = XInputJoystickManager.IsConnected
                 ? XInputJoystickManager.GetData()
                 : JoystickData.Default;
-            var dualsenseData = DualSenseInputManager.GetData();
+            // var dualsenseData = DualSenseInputManager.GetData();
 
             PreviousVirtualController = VirtualController;
 
             VirtualController.Actions =
-                keyboardData.Actions | mouseData.Actions | joystickData.Actions | dualsenseData.Actions;
+                keyboardData.Actions | mouseData.Actions | joystickData.Actions;
+            //| dualsenseData.Actions;
 
             VirtualController.MovementAxis =
                 keyboardData.MovementDirection
-                + (XInputJoystickManager.IsConnected ? joystickData.PrimaryAxis : Vector2.Zero)
-                + (DualSenseInputManager.HasController ? dualsenseData.PrimaryAxis : Vector2.Zero);
+                + (XInputJoystickManager.IsConnected ? joystickData.PrimaryAxis : Vector2.Zero);
+            //+ (DualSenseInputManager.HasController ? dualsenseData.PrimaryAxis : Vector2.Zero);
+            if (VirtualController.MovementAxis.LengthSquared() > 1.0f)
+                VirtualController.MovementAxis = Vector2.Normalize(VirtualController.MovementAxis);
 
             VirtualController.LookingAxis =
-                mouseData.LookingAxis
-                + (XInputJoystickManager.IsConnected ? joystickData.SecondaryAxis : Vector2.Zero)
-                + (DualSenseInputManager.HasController ? dualsenseData.SecondaryAxis : Vector2.Zero);
+                mouseData.Direction
+                + (
+                    XInputJoystickManager.IsConnected ? joystickData.SecondaryAxis : Vector2.Zero
+                )
+            /*+ (
+                DualSenseInputManager.HasController ? dualsenseData.SecondaryAxis : Vector2.Zero
+            )*/;
         }
 
         /// <summary>
@@ -118,7 +123,7 @@ namespace Horizon.Input
         /// </summary>
         public void Dispose()
         {
-            DualSenseInputManager.Dispose();
+            DualSenseInputManager?.Dispose();
         }
     }
 }

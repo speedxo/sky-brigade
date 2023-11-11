@@ -12,10 +12,12 @@ public class Box2DWorldComponent : Box2D.NetStandard.Dynamics.World.World, IGame
 
     public void Initialize() { }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
         Step(dt, 8, 3);
     }
 
-    public void Draw(float dt, ref RenderOptions options) { }
+    public void Render(float dt, ref RenderOptions options) { }
+
+    public void UpdatePhysics(float dt) { }
 }

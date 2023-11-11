@@ -9,14 +9,18 @@ namespace Horizon.Debugging.Debuggers
 
         private float gamma,
             ambientStrength;
+
         private string[] renderModes;
         private int renderModeIndex;
+
         private bool isPostProcessingEnabled,
             isWireframeEnabled,
             isBox2DDebugDrawEnabled;
 
         public override void Initialize()
         {
+            RenderOptions = RenderOptions.Default;
+
             // Initialize the properties
             gamma = RenderOptions.Default.Gamma;
             ambientStrength = RenderOptions.Default.AmbientLightingStrength;
@@ -32,9 +36,9 @@ namespace Horizon.Debugging.Debuggers
             Name = "Render Options";
         }
 
-        public RenderOptions RenderOptions { get; private set; }
+        public RenderOptions RenderOptions;
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             if (!Visible)
                 return;
@@ -56,12 +60,9 @@ namespace Horizon.Debugging.Debuggers
             }
         }
 
-        public override void Dispose()
-        {
-            
-        }
+        public override void Dispose() { }
 
-        public override void Update(float dt)
+        public override void UpdateState(float dt)
         {
             RenderOptions = RenderOptions.Default with
             {
@@ -76,5 +77,7 @@ namespace Horizon.Debugging.Debuggers
                 IsBox2DDebugDrawEnabled = isBox2DDebugDrawEnabled
             };
         }
+
+        public override void UpdatePhysics(float dt) { }
     }
 }

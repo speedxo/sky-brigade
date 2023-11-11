@@ -1,5 +1,4 @@
 ﻿using Horizon.Content;
-using Horizon.GameEntity;
 
 namespace Horizon.Rendering;
 
@@ -13,6 +12,7 @@ public abstract partial class Tiling<TTextureID>
             public Dictionary<TileSet, TileMesh> TileMeshPairs { get; init; }
 
             public TileMapChunkSlice Slice { get; init; }
+
             public TileMapChunkSliceTileMeshes(in TileMapChunkSlice slice)
             {
                 this.Slice = slice;
@@ -68,10 +68,13 @@ public abstract partial class Tiling<TTextureID>
         }
 
         private static Shader _shader;
-        
+
         public TileMapChunk Chunk { get; init; }
-        
-        private Dictionary<TileMapChunkSlice, TileMapChunkSliceTileMeshes> TileMapChunkSliceTileMeshesKeyPairs { get; init; }
+
+        private Dictionary<
+            TileMapChunkSlice,
+            TileMapChunkSliceTileMeshes
+        > TileMapChunkSliceTileMeshesKeyPairs { get; init; }
 
         public TilemapRenderer(in TileMapChunk chunk)
         {
@@ -81,16 +84,15 @@ public abstract partial class Tiling<TTextureID>
             this.TileMapChunkSliceTileMeshesKeyPairs = new();
         }
 
-        
         /// <summary>d
         /// Generates the mesh for the chunk.
         /// </summary>
         /// <remarks>
-        /// The method first updates all tileset pairs for each slice of each chunk, then uses the tileset/tile associations to generate a mesh for each tileset so that multiple tilesets can exist within the same slice/chunk/map. 
-        /// </remarks> 
+        /// The method first updates all tileset pairs for each slice of each chunk, then uses the tileset/tile associations to generate a mesh for each tileset so that multiple tilesets can exist within the same slice/chunk/map.
+        /// </remarks>
         public void GenerateMesh()
         {
-            // Update the tileset/tile associations.
+            // UpdateState tileset/tile associations.
             foreach (var slice in Chunk.Slices)
             {
                 if (!TileMapChunkSliceTileMeshesKeyPairs.ContainsKey(slice))
@@ -105,33 +107,41 @@ public abstract partial class Tiling<TTextureID>
                 foreach (var tileset in sliceMesh.TileSetPairs.Keys)
                 {
                     if (!sliceMesh.TileMeshPairs.ContainsKey(tileset))
-                        sliceMesh.TileMeshPairs.Add(tileset, new TileMesh(_shader, tileset, Chunk.Map));
+                        sliceMesh.TileMeshPairs.Add(
+                            tileset,
+                            new TileMesh(_shader, tileset, Chunk.Map)
+                        );
 
-                    sliceMesh.TileMeshPairs[tileset].GenerateMeshFromTiles(sliceMesh.TileSetPairs[tileset]);
+                    sliceMesh.TileMeshPairs[tileset].GenerateMeshFromTiles(
+                        sliceMesh.TileSetPairs[tileset]
+                    );
                 }
             }
         }
-        float _dirtyChunkUpdateTimer = 0.0f;
+
+        private float _dirtyChunkUpdateTimer = 0.0f;
+
         public void Draw(float dt, ref RenderOptions options)
         {
             Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
-            if (!Chunk.IsVisibleByCamera) return;
+            if (!Chunk.IsVisibleByCamera)
+                return;
 
             _dirtyChunkUpdateTimer += dt;
             if (Chunk.IsDirty && _dirtyChunkUpdateTimer > 0.1f)
             {
                 _dirtyChunkUpdateTimer = 0.0f;
                 Chunk.IsDirty = false;
-    
+
                 GenerateMesh();
             }
-            
+
             // TODO find a better way as to not have several n^2 accesses.
             foreach (var (_, sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
             {
                 foreach (var (_, mesh) in sliceMeshes.TileMeshPairs)
                 {
-                    mesh.Draw(dt, ref options);
+                    mesh.Render(dt, ref options);
                 }
             }
         }

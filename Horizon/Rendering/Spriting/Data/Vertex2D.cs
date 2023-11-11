@@ -14,8 +14,6 @@ namespace Horizon.Rendering.Spriting.Data
         /// </summary>
         public Vector2 TexCoords { get; set; }
 
-        public int Id { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the Vertex struct.
         /// </summary>
@@ -35,16 +33,15 @@ namespace Horizon.Rendering.Spriting.Data
         /// <param name="y">The y-coordinate of the vertex position.</param>
         /// <param name="uvX">The x-coordinate of the texture coordinates (UV).</param>
         /// <param name="uvY">The y-coordinate of the texture coordinates (UV).</param>
-        public Vertex2D(float x, float y, float uvX, float uvY, int id)
+        public Vertex2D(float x, float y, float uvX, float uvY)
         {
             this.TexCoords = new Vector2(uvX, uvY);
             this.Position = new Vector2(x, y);
-            this.Id = id;
         }
 
         /// <summary>
         /// The size of the vertex in bytes, used for defining the vertex array object's memory layout for use in shaders.
         /// </summary>
-        public static readonly unsafe int SizeInBytes = (sizeof(Vector2) * 2 + sizeof(int));
+        public static uint SizeInBytes { get; } = (sizeof(float) * 4);
     }
 }

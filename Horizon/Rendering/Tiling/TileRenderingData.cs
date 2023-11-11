@@ -5,6 +5,9 @@ namespace Horizon.Rendering;
 public abstract partial class Tiling<TTextureID>
     where TTextureID : Enum
 {
+    /// <summary>
+    /// A data structure to store useful visual debugging properties.
+    /// </summary>
     public struct TileRenderingData
     {
         public TTextureID TextureID;

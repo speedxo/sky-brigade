@@ -1,21 +1,15 @@
 ﻿using Horizon.Collections;
+using Horizon.Data;
+using Horizon.GameEntity;
 using Horizon.Rendering;
 using ImGuiNET;
-using System.Diagnostics;
+using ImPlotNET;
 using System.Diagnostics.Contracts;
 using System.Numerics;
-using System.Security.Cryptography;
-using Horizon.GameEntity;
-using Monitor = System.Threading.Monitor;
-using Horizon.Data;
-using System.Diagnostics.CodeAnalysis;
-using ImPlotNET;
-using System.Xml.Serialization;
-using System.Reflection.Emit;
 
 namespace Horizon.Debugging.Debuggers;
 
-public class PerformanceProfilerDebugger : DebuggerComponent
+public class PerformanceProfilerDebugger : DebuggerComponent, IDisposable
 {
     /// <summary>
     /// How many times/s metrics are collected.
@@ -26,19 +20,23 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         set => _updateRate = 1.0f / value;
     }
 
-    private float _updateRate = 1.0f / 10.0f;
-    private float _updateTimer = 0.0f;
+    private float _updateRate = 1.0f / 30.0f;
+    private float _updateTimer,
+        _renderTimer = 0.0f;
 
     private SkylineDebugger Debugger { get; set; }
 
     public readonly Metrika CpuMetrics = new();
     public readonly Metrika GpuMetrics = new();
 
-    private LinearBuffer<double> _updateFrameTimes;
-    private LinearBuffer<double> _renderFrameTimes;
+    private LinearBuffer<double> _updateFrameTimes,
+        _renderFrameTimes;
+    private LinearBuffer<double> _updateDeltas,
+        _renderDeltas;
 
     private long _prevTimestamp;
     private long _prevCpuTime;
+    private bool disposedValue;
 
     public override void Initialize()
     {
@@ -46,8 +44,12 @@ public class PerformanceProfilerDebugger : DebuggerComponent
 
         Debugger = (Parent as SkylineDebugger)!;
 
-        _updateFrameTimes = new(100);
-        _renderFrameTimes = new(100);
+        int collectionSize = 25;
+
+        _updateFrameTimes = new(collectionSize);
+        _renderFrameTimes = new(collectionSize);
+        _updateDeltas = new(collectionSize);
+        _renderDeltas = new(collectionSize);
 
         // Initialize requried dictionaries by inference.
         CpuMetrics.AddCustom("Engine", "CPU", 0.0);
@@ -57,19 +59,24 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         CpuMetrics.CreateCategory("EngineComponents");
         GpuMetrics.CreateCategory("EngineComponents");
 
-        Entity.Engine.OnPreDraw += (_) =>
-        {
-            GpuMetrics.ResetMetrics();
-        };
-        Entity.Engine.OnPreUpdate += (_) =>
-        {
-            CpuMetrics.ResetMetrics();
-        };
+        Entity.Engine.OnPreDraw += ResetGpuMetrics;
+        Entity.Engine.OnPreUpdate += ResetCpuMetrics;
 
-        Entity.Engine.OnPostUpdate += UpdateMetrics;
+        Entity.Engine.OnPostUpdate += UpdateUpdateMetrics;
+        Entity.Engine.OnPostDraw += UpdateRenderMetrics;
     }
 
-    private void UpdateMetrics(float dt)
+    private void ResetGpuMetrics(float dt)
+    {
+        GpuMetrics.ResetMetrics();
+    }
+
+    private void ResetCpuMetrics(float dt)
+    {
+        CpuMetrics.ResetMetrics();
+    }
+
+    private void UpdateUpdateMetrics(float dt)
     {
         if (!Visible)
             return;
@@ -79,22 +86,38 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         if (_updateTimer > _updateRate)
         {
             _updateTimer = 0.0f;
+            _updateDeltas.Append(dt);
             _updateFrameTimes.Append(GetAverage(CpuMetrics["Engine"]["CPU"]) * 1000.0);
+        }
+    }
+
+    private void UpdateRenderMetrics(float dt)
+    {
+        if (!Visible)
+            return;
+
+        _renderTimer += dt;
+
+        if (_renderTimer > _updateRate)
+        {
+            _renderTimer = 0.0f;
+            _renderDeltas.Append(dt);
             _renderFrameTimes.Append(GetAverage(GpuMetrics["Engine"]["GPU"]) * 1000.0);
         }
     }
 
-    private double GetAverage(LinearBuffer<double> linearBuffer)
-        => linearBuffer.Buffer.Average();
-    
+    private double GetAverage(LinearBuffer<double> linearBuffer) => linearBuffer.Buffer.Average();
 
-    public override void Draw(float dt, ref RenderOptions options)
+    public override void Render(float dt, ref RenderOptions options)
     {
         if (!Visible)
             return;
 
         if (ImGui.Begin(Name))
         {
+            ImGui.Text($"FPS (Render): {1.0f / _renderDeltas.Buffer.Average():0.0}");
+            ImGui.Text($"FPS (UpdateState): {1.0f / _updateDeltas.Buffer.Average():0.0}");
+
             if (ImGui.CollapsingHeader("Logic Profiler"))
                 DrawCpuProfiling();
             if (ImGui.CollapsingHeader("Render Profiler"))
@@ -210,18 +233,46 @@ public class PerformanceProfilerDebugger : DebuggerComponent
         }
     }
 
-    public override void Dispose()
-    {
-        // Metrika subscribes to engine events, so we need to make sure to clean 'em up.
-        CpuMetrics.Dispose();
-        GpuMetrics.Dispose();
-    }
-
     [Pure]
     private static float GetMemoryUsage()
     {
         return (float)(GC.GetTotalMemory(false) / (1024.0 * 1024.0)); // in MB
     }
 
-    public override void Update(float dt) { }
+    public override void UpdateState(float dt) { }
+
+    public override void UpdatePhysics(float dt) { }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                // We subscribed to engine events, so we need to make sure to clean 'em up.
+                Entity.Engine.OnPreDraw -= ResetGpuMetrics;
+                Entity.Engine.OnPreUpdate -= ResetCpuMetrics;
+                Entity.Engine.OnPostUpdate -= UpdateUpdateMetrics;
+                Entity.Engine.OnPostDraw -= UpdateRenderMetrics;
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            disposedValue = true;
+        }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~PerformanceProfilerDebugger()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public override void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 }

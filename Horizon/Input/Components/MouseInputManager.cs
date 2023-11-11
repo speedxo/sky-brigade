@@ -23,7 +23,9 @@ namespace Horizon.Input.Components
         /// Gets the first connected mouse, or null if none is connected.
         /// </summary>
         public static IMouse? Mouse =>
-            Entity.Engine.Input.NativeInputContext.Mice.Count > 0 ? Entity.Engine.Input.NativeInputContext.Mice[0] : null;
+            Entity.Engine.Input.NativeInputContext.Mice.Count > 0
+                ? Entity.Engine.Input.NativeInputContext.Mice[0]
+                : null;
 
         /// <summary>
         /// Gets the MouseBindings representing the button-to-action mappings for the mouse.
@@ -31,8 +33,10 @@ namespace Horizon.Input.Components
         public MouseBindings Bindings { get; private set; }
 
         private VirtualAction actions;
+
         private Vector2 direction,
-            previousPosition;
+            previousPosition,
+            position;
 
         /// <summary>
         /// Initializes the MouseInputManager by setting the default MouseBindings.
@@ -48,14 +52,19 @@ namespace Horizon.Input.Components
         /// <returns>The MouseData containing the mouse input.</returns>
         public MouseData GetData()
         {
-            return new MouseData { Actions = actions, LookingAxis = direction };
+            return new MouseData
+            {
+                Actions = actions,
+                Direction = direction,
+                Position = position
+            };
         }
 
         /// <summary>
         /// Updates the MouseInputManager, processing input from the connected mouse.
         /// </summary>
         /// <param name="dt">The time elapsed since the last update.</param>
-        public void Update(float dt)
+        public void UpdateState(float dt)
         {
             actions = VirtualAction.None;
 
@@ -74,10 +83,8 @@ namespace Horizon.Input.Components
                 }
             }
 
-            var position = Mouse.Position;
-
-            direction = position - previousPosition;
-
+            position = Mouse.Position;
+            direction = previousPosition - position;
             previousPosition = position;
         }
 
@@ -86,9 +93,11 @@ namespace Horizon.Input.Components
         /// </summary>
         /// <param name="dt">The time elapsed since the last draw.</param>
         /// <param name="options">Optional rendering options (not used).</param>
-        public void Draw(float dt, ref RenderOptions options)
+        public void Render(float dt, ref RenderOptions options)
         {
             // Not used for mouse input.
         }
+
+        public void UpdatePhysics(float dt) { }
     }
 }

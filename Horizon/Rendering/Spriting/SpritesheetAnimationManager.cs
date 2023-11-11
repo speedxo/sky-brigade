@@ -5,27 +5,34 @@ using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering.Spriting;
 
-public class SpritesheetAnimationManager : IGameComponent
+/// <summary>
+/// An internal component used to keep track of animated regions of a spritesheet.
+/// </summary>
+/// <seealso cref="Horizon.GameEntity.Components.IGameComponent" />
+public class SpriteSheetAnimationManager : IGameComponent
 {
-    public string Name { get; set; } = "Spritesheet Animation Manager";
+    public string Name { get; set; } = "SpriteSheet Animation Manager";
     public Entity Parent { get; set; }
 
-    public Spritesheet Spritesheet { get; private set; }
-
     public Dictionary<string, SpriteAnimationDefinition> Animations { get; init; }
+    public Vector2 SpriteSize { get; init; }
 
-    public SpritesheetAnimationManager()
+    public SpriteSheetAnimationManager(in Vector2 spriteSize)
     {
+        this.SpriteSize = spriteSize;
         this.Animations = new();
     }
 
-    public (SpriteDefinition definition, int index) this[string name]
+    public SpriteSheetAnimationManager(in SpriteSheet sheet)
+        : this(sheet.SpriteSize) { }
+
+    public (SpriteDefinition definition, uint index) this[string name]
     {
         get => GetFrame(name);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public (SpriteDefinition definition, int index) GetFrame(string name)
+    public (SpriteDefinition definition, uint index) GetFrame(string name)
     {
         if (!Animations.TryGetValue(name, out SpriteAnimationDefinition value))
         {
@@ -39,10 +46,12 @@ public class SpritesheetAnimationManager : IGameComponent
         return (value.FirstFrame, value.Index);
     }
 
+    public void UpdatePhysics(float dt) { }
+
     public void AddAnimation(
         string name,
         Vector2 position,
-        int length,
+        uint length,
         float frameTime = 0.1f,
         Vector2? inSize = null
     )
@@ -65,25 +74,28 @@ public class SpritesheetAnimationManager : IGameComponent
                 FirstFrame = new SpriteDefinition
                 {
                     Position = position,
-                    Size = inSize ?? Spritesheet.SpriteSize
+                    Size = inSize ?? SpriteSize
                 },
                 FrameTime = frameTime,
             }
         );
     }
 
-    public void Draw(float dt, ref RenderOptions options) { }
+    public void Render(float dt, ref RenderOptions options) { }
 
-    public void Initialize()
-    {
-        Spritesheet = (Spritesheet)Parent;
-    }
+    public void Initialize() { }
 
-    public void Update(float dt)
+    public void UpdateState(float dt)
     {
         foreach (var name in Animations.Keys)
         {
             var frame = Animations[name];
+
+            if (frame.Length < 1)
+            {
+                frame.Index = 0;
+                continue;
+            }
 
             frame.Timer += dt;
 

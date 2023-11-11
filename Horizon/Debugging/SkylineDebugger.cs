@@ -30,18 +30,20 @@ namespace Horizon.Debugging
         {
             CreateDebugComponents();
         }
-        
+
         private void CreateDebugComponents()
         {
-            _components.AddRange(new DebuggerComponent[]
-            {
-                (RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>()),
-                (SceneEntityDebugger = AddComponent<SceneEntityDebugger>()), 
-                (LoadedContentDebugger = AddComponent<LoadedContentDebugger>()),
-                (GameContainerDebugger = AddComponent<DockedGameContainerDebugger>()),
-                (PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>()),
-                (GeneralDebugger = AddComponent<GeneralDebugger>())
-            });
+            _components.AddRange(
+                new DebuggerComponent[]
+                {
+                    (RenderOptionsDebugger = AddComponent<RenderOptionsDebugger>()),
+                    (SceneEntityDebugger = AddComponent<SceneEntityDebugger>()),
+                    (LoadedContentDebugger = AddComponent<LoadedContentDebugger>()),
+                    (GameContainerDebugger = AddComponent<DockedGameContainerDebugger>()),
+                    (PerformanceDebugger = AddComponent<PerformanceProfilerDebugger>()),
+                    (GeneralDebugger = AddComponent<GeneralDebugger>())
+                }
+            );
         }
 
         private void DestroyDebugComponents()
@@ -54,16 +56,18 @@ namespace Horizon.Debugging
             _components.Clear();
         }
 
-        public override void Draw(float dt, ref RenderOptions options)
+        public override void Render(float dt, ref RenderOptions options)
         {
             RenderToConatiner = Enabled && GameContainerDebugger.Visible;
 
             if (!Enabled)
             {
-                if (_components.Any()) DestroyDebugComponents();
+                if (_components.Any())
+                    DestroyDebugComponents();
                 return;
             }
-            if (!_components.Any()) CreateDebugComponents();
+            if (!_components.Any())
+                CreateDebugComponents();
 
             if (ImGui.BeginMainMenuBar())
             {
@@ -117,7 +121,7 @@ namespace Horizon.Debugging
                 ImGui.EndMainMenuBar();
             }
 
-            base.Draw(dt, ref options);
+            base.Render(dt, ref options);
         }
     }
 }

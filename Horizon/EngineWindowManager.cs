@@ -3,6 +3,7 @@ using Horizon.OpenGL;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+using System.Diagnostics;
 using System.Numerics;
 
 // Namespace declaration for the GameManager class
@@ -10,13 +11,16 @@ namespace Horizon;
 
 public class EngineWindowManager : Entity
 {
-    private IWindow _window;
+    private IWindow _window,
+        _updateWindow;
     private IInputContext _input;
 
-    public Action<double>? UpdateFrame;
-    public Action<double>? RenderFrame;
-    public Action? Closing;
-    public Action? Load;
+    public Action<double> UpdateStateFrame;
+    public Action<double> UpdatePhysicsFrame;
+    public Action<double> RenderFrame;
+
+    public Action Closing;
+    public Action Load;
 
     public bool IsRunning { get; private set; }
 
@@ -24,6 +28,7 @@ public class EngineWindowManager : Entity
     /// The screen aspect ratio (w/h)
     /// </summary>
     public float AspectRatio { get; private set; }
+
     /// <summary>
     /// The viewport size.
     /// </summary>
@@ -35,11 +40,13 @@ public class EngineWindowManager : Entity
     public Vector2 WindowSize { get; private set; }
 
     public GL GL { get; private set; }
+
     /// <summary>
     /// Gets the underlying native window.
     /// </summary>
     /// <returns>The GLFW IWindow.</returns>
     public IWindow GetWindow() => _window;
+
     /// <summary>
     /// Gets the windows native input context.
     /// </summary>
@@ -47,6 +54,8 @@ public class EngineWindowManager : Entity
     public IInputContext GetInput() => _input;
 
     private readonly WindowOptions _options;
+    private Task _updateTask,
+        _physicsTask;
 
     public EngineWindowManager(in Vector2 windowSize, in string title)
     {
@@ -55,10 +64,10 @@ public class EngineWindowManager : Entity
         {
             API = new GraphicsAPI()
             {
-                Flags = ContextFlags.ForwardCompatible,
+                Flags = ContextFlags.Debug,
                 API = ContextAPI.OpenGL,
                 Profile = ContextProfile.Core,
-                Version = new APIVersion(4, 1) // MacOS compatibility (fuck you apple)
+                Version = new APIVersion(4, 6)
             },
             Title = title,
             Size = new Silk.NET.Maths.Vector2D<int>((int)windowSize.X, (int)windowSize.Y),
@@ -75,13 +84,13 @@ public class EngineWindowManager : Entity
 
     private void SubscribeWindowEvents()
     {
-        this._window.Render += (dt) => {
+        this._window.Render += (dt) =>
+        {
             RenderFrame?.Invoke(dt);
         };
         this._window.Update += (dt) =>
         {
-            UpdateViewport();
-            UpdateFrame?.Invoke(dt);
+            UpdateStateFrame?.Invoke(dt);
         };
         this._window.Resize += WindowResize;
 
@@ -111,7 +120,8 @@ public class EngineWindowManager : Entity
 
     private void WindowResize(Silk.NET.Maths.Vector2D<int> size)
     {
-        FrameBufferManager.ResizeAll((int)ViewportSize.X, (int)ViewportSize.Y);
+        FrameBufferManager.ResizeAll(size.X, size.Y);
+        UpdateViewport();
     }
 
     public void Close()
@@ -128,11 +138,58 @@ public class EngineWindowManager : Entity
             throw new Exception("Window is already running!");
 
         IsRunning = true;
-        _window.Run();
+
+        // Create the window.
+        _window.Initialize();
+
+        // Run the loop.
+        _window.Run(OnFrame);
+
+        // Dispose and unload
+        _window.DoEvents();
+        _window.Reset();
+    }
+
+    private void OnLogicFrame()
+    {
+        while (!_window.IsClosing)
+        {
+            if (_window.IsInitialized)
+                _window.DoUpdate();
+        }
+    }
+
+    private void OnPhysicsFrame()
+    {
+        long previousTicks = 0,
+            ticks;
+        double elapsedTime;
+        while (!_window.IsClosing)
+        {
+            ticks = Environment.TickCount64;
+            elapsedTime = ((previousTicks - ticks) / (double)Stopwatch.Frequency);
+
+            if (_window.IsInitialized)
+                UpdatePhysicsFrame?.Invoke(elapsedTime);
+
+            previousTicks = ticks;
+        }
+    }
+
+    private void OnFrame()
+    {
+        _window.DoEvents();
+
+        if (!_window.IsClosing)
+            _window.DoRender();
+
+        // Dispatch threads.
+        _updateTask ??= Task.Run(OnLogicFrame);
+        _physicsTask ??= Task.Run(OnPhysicsFrame);
     }
 
     public void Dispose()
-    {   
+    {
         GC.SuppressFinalize(this);
         _window.Dispose();
     }
@@ -146,8 +203,6 @@ public class EngineWindowManager : Entity
         _window.Title = title;
     }
 }
-
-
 
 /// <summary>
 /// The GameManager class manages the main game loop and essential components for a game.
@@ -297,11 +352,11 @@ public class EngineWindowManager : Entity
 //         // Register event handlers for the window.
 //         Window.Render += (delta) =>
 //         {
-//             Draw((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with { GL = Gl });
+//             Render((float)delta, Debugger.RenderOptionsDebugger.RenderOptions with { GL = Gl });
 //         };
-//         Window.Update += (delta) =>
+//         Window.UpdateState += (delta) =>
 //         {
-//             Update((float)delta);
+//             UpdateState((float)delta);
 //         };
 //         Window.Load += onLoad;
 //         Window.Closing += Window_Closing;
@@ -347,7 +402,7 @@ public class EngineWindowManager : Entity
 //         Logger = new Logger(LogOutput.Console);
 
 //         // Check if at least one keyboard is available for input.
-//         if (Input.Keyboards.Count < 1)
+//         if (Input.Keyboards.Maximum < 1)
 //             throw new Exception(
 //                 "Cannot play without a keyboard. A keyboard is required for this game to function."
 //             );
@@ -370,7 +425,7 @@ public class EngineWindowManager : Entity
 //         GameScreenManager.AddInstance<Scene>((Scene)Activator.CreateInstance(initialGameScreen)!);
 
 //         Gl.Enable(EnableCap.VertexArray);
-//         for (int i = 0; i < Input.Mice.Count; i++)
+//         for (int i = 0; i < Input.Mice.Maximum; i++)
 //             Input.Mice[i].Cursor.CursorMode = IsInputCaptured ? CursorMode.Raw : CursorMode.Normal;
 //     }
 
@@ -491,14 +546,14 @@ public class EngineWindowManager : Entity
 //     }
 
 //     // Variables and method used for non-essential updates that run once per second.
-//     public override void Update(float dt)
+//     public override void UpdateState(float dt)
 //     {
 //         Debugger.PerformanceDebugger.UpdateStart(dt);
 
 //         if (InputManager.WasPressed(VirtualAction.Pause))
 //         {
 //             IsInputCaptured = !IsInputCaptured;
-//             for (int i = 0; i < Input.Mice.Count; i++)
+//             for (int i = 0; i < Input.Mice.Maximum; i++)
 //                 Input.Mice[i].Cursor.CursorMode = IsInputCaptured
 //                     ? CursorMode.Raw
 //                     : CursorMode.Normal;
@@ -513,28 +568,28 @@ public class EngineWindowManager : Entity
 
 //         UpdateViewport();
 
-//         base.Update(dt);
+//         base.UpdateState(dt);
 //         Debugger.PerformanceDebugger.UpdateEnd();
 //     }
 
-//     // Update method for non-essential tasks, such as measuring memory usage.
+//     // UpdateState method for non-essential tasks, such as measuring memory usage.
 //     private void nonEssentialUpdate()
 //     {
 //         MemoryUsage = GC.GetTotalMemory(false) / 1000000;
 //     }
 
-//     public override void Draw(float dt, ref RenderOptions options)
+//     public override void Render(float dt, ref RenderOptions options)
 //     {
 //         Debugger.PerformanceDebugger.RenderStart(dt);
 
 //         // Make sure ImGui is up-to-date before rendering.
-//         imguiController.Update(dt);
+//         imguiController.UpdateState(dt);
 
 //         // Clear the screen buffer before rendering the game screen.
 //         Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 //         // Render all entities
-//         base.Draw(dt, options);
+//         base.Render(dt, options);
 
 //         // Render ImGui UI on top of the game screen.
 //         imguiController.Render();
