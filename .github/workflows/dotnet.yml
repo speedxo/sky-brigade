@@ -38,36 +38,3 @@ jobs:
         with:
           name: build-artifacts-windows
           path: ./ # Modify the path as per your project's artifacts on Windows
-
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-dotnet-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-dotnet-
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build for macOS
-        run: dotnet build --no-restore
-
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
-
-      - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-artifacts-macos
-          path: ./ # Modify the path as per your project's artifacts on macOS
