@@ -139,6 +139,7 @@ public class SpriteBatch : Entity, I2DBatchedRenderer<Sprite>
             "SpriteBatch",
             () => SpritesheetSprites.Count
         );
+
     }
     public SpriteBatch() : this(null) { }
 

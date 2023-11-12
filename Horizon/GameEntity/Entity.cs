@@ -142,6 +142,9 @@ namespace Horizon.GameEntity
 
             return entity;
         }
+        /// <summary>
+        /// Pushes an entity to the initialization queue, which will call initialize on the next render pass.
+        /// </summary>
         protected void PushToInitializationQueue(in Entity entity) => _uninitializedEntities.Push(entity);
         /// <summary>
         /// Adds an entity to the scene and returns the added entity.

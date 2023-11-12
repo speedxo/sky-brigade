@@ -28,9 +28,9 @@ public class GameScene : Scene
     private Player2D player;
     private SpriteBatch spriteBatch;
     private readonly Camera cam;
-    private  TileMap tilemap;
+    private TileMap tilemap;
     private readonly World world;
-    private ParticleRenderer2D particles;
+    private ParticleRenderer2D rainParticleSystem;
     private RenderOptions charOptions;
     private int catCounter = 0;
     private readonly Box2DDebugDrawCallback debugDrawCallback;
@@ -53,7 +53,7 @@ public class GameScene : Scene
         world = AddComponent<Box2DWorldComponent>();
         world.SetDebugDraw(debugDrawCallback);
 
-      
+
         cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
@@ -83,13 +83,16 @@ public class GameScene : Scene
         PushToInitializationQueue(spriteBatch);
         spriteBatch.Add(player);
 
-        AddEntity(
-            particles = new ParticleRenderer2D(100_000, new BasicParticle2DMaterial())
+
+        AddEntity(rainParticleSystem = new ParticleRenderer2D(
+            100_000, new BasicParticle2DMaterial())
             {
-                MaxAge = 3.0f
+                MaxAge = 2.5f,
+                StartColor = new Vector3(4, 0, 255) / new Vector3(255),
+                EndColor = new Vector3(66, 135, 245) / new Vector3(255),
             }
         );
-        
+
         // The tile map will now render this entity between the parallax layers, implicitly.
         tilemap.SetParallaxEntity(spriteBatch);
 
@@ -98,10 +101,13 @@ public class GameScene : Scene
                 1 / 25.0f,
                 () =>
                 {
-                    var x = random.NextSingle() * Engine.Window.WindowSize.X;
-                    var y = random.NextSingle() * Engine.Window.WindowSize.Y;
+                    (float, float) roll(int diag) => (random.NextSingle() * Engine.Window.WindowSize.X + diag / 2.0f, random.NextSingle() * Engine.Window.WindowSize.X + diag / 2.0f);
 
-                    SpawnParticle(cam.ScreenToWorld(new Vector2(x, y)), playerDir);
+                    for (int diagonal = 0; diagonal < 4; diagonal++)
+                    {
+                        (var x, var y) = roll(diagonal);            // slight bias
+                        SpawnParticle(cam.ScreenToWorld(new Vector2(x + 250, y - 250)), Vector2.One, 1.0f);
+                    }
                 }
             )
         );
@@ -155,7 +161,7 @@ public class GameScene : Scene
 
         if (Engine.Input.KeyboardManager.IsKeyPressed(Key.G))
         {
-            catCounter += 512;
+            catCounter += 128;
         }
         if (
             Engine.Input.MouseManager
@@ -223,13 +229,13 @@ public class GameScene : Scene
         debugDrawCallback.Dispose();
     }
 
-    private void SpawnParticle(Vector2 pos, Vector2 dir)
+    private void SpawnParticle(Vector2 pos, Vector2 dir, float blend = 0.5f)
     {
         float val = ((random.NextSingle() * 2.0f) - MathF.PI);
 
-        particles.Add(
+        rainParticleSystem.Add(
             new Particle2D(
-                new Vector2(MathF.Sin(val), MathF.Cos(val)) * 0.5f + dir * 0.5f,
+                new Vector2(MathF.Sin(val), MathF.Cos(val)) * (1.0f - blend) + dir * blend,
                 pos,
                 val
             )
@@ -243,7 +249,7 @@ public class GameScene : Scene
         {
             val = random.NextSingle() * MathF.PI * 2.0f;
 
-            particles.Add(
+            rainParticleSystem.Add(
                 new Particle2D(
                     new Vector2(MathF.Cos(val), MathF.Sin(val)),
                     player.Position,
@@ -257,7 +263,7 @@ public class GameScene : Scene
     {
         if (ImGui.Begin("Particles (& cats)"))
         {
-            ImGui.Text($"Particles Max: {particles.Count}");
+            ImGui.Text($"Particles: {rainParticleSystem.Count}");
             ImGui.Text($"Cats: {spriteBatch.Count - 1}");
 
             if (ImGui.Button("Spawn 100000"))
