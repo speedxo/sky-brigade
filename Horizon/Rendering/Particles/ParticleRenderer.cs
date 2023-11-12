@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
 using Horizon.OpenGL;
@@ -14,11 +15,12 @@ namespace Horizon.Rendering.Particles;
 /// <seealso cref="System.IDisposable" />
 public class ParticleRenderer2D : Entity, IDisposable
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 16)]
     private struct ParticleRenderData
     {
         public Vector2 offset;
         public float alive;
-        public float age;
+        public float _spacer;
 
         public static uint SizeInBytes { get; } = sizeof(float) * 4;
     }
@@ -149,7 +151,7 @@ public class ParticleRenderer2D : Entity, IDisposable
         if (!freeIndices.TryDequeue(out var index))
             return;
 
-        input.Random = Random.Shared.NextSingle() / 5.0f + 0.5f;
+        input.Random = Random.Shared.NextSingle() / 2.0f + 0.5f;
         Particles[index] = input;
         Particles[index].Age = 0.0f;
 
