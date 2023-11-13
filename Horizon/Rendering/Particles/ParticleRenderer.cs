@@ -148,6 +148,8 @@ public class ParticleRenderer2D : Entity, IDisposable
     /// <param name="input"></param>
     public void Add(Particle2D input)
     {
+        if (!Enabled)
+            return;
         if (!freeIndices.TryDequeue(out var index))
             return;
 
@@ -168,31 +170,30 @@ public class ParticleRenderer2D : Entity, IDisposable
     public override void UpdateState(float dt)
     {
         base.UpdateState(dt);
+        if (!Enabled)
+            return;
 
         Parallel.For(
             0,
             Maximum,
             i =>
             {
-                ref var renderData = ref RenderData[i];
-                ref var particle = ref Particles[i];
-
-                if (renderData.alive >= 0f)
+                if (RenderData[i].alive >= 0f)
                 {
-                    particle.Age += dt * particle.Random;
-                    renderData.alive = 1.0f - particle.Age / MaxAge;
+                    Particles[i].Age += dt * Particles[i].Random;
+                    RenderData[i].alive = 1.0f - Particles[i].Age / MaxAge;
 
-                    if (particle.Age > MaxAge)
-                        renderData.alive = -5;
+                    if (Particles[i].Age > MaxAge)
+                        RenderData[i].alive = -5;
                     else
-                        renderData.offset +=
-                            particle.Direction * particle.Random * particle.Speed * dt;
+                        RenderData[i].offset +=
+                            Particles[i].Direction * Particles[i].Random * Particles[i].Speed * dt;
                 }
                 else
                 {
-                    if (renderData.alive < -2) // floats are scary
+                    if (RenderData[i].alive < -2) // floats are scary
                     {
-                        renderData.alive = -1;
+                        RenderData[i].alive = -1;
                         freeIndices.Enqueue((uint)i);
                         Count--;
                     }
@@ -209,6 +210,8 @@ public class ParticleRenderer2D : Entity, IDisposable
     public override void Render(float dt, ref RenderOptions options)
     {
         base.Render(dt, ref options);
+        if (!Enabled)
+            return;
 
         if (Count < 1)
             return;

@@ -1,4 +1,7 @@
-﻿using Horizon.Content;
+﻿using System.Diagnostics;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using Horizon.Content;
 using Horizon.Debugging;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
@@ -8,9 +11,6 @@ using Horizon.Rendering;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using System.Diagnostics;
-using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace Horizon;
 
@@ -104,11 +104,12 @@ public abstract class GameEngine : Entity, IDisposable
             UpdateState((float)delta);
         };
         Window.Closing += DisposeECS;
-        Window.Load += Load;
+        Window.Load += Initialize;
     }
 
-    protected virtual void Load()
+    public override void Initialize()
     {
+        base.Initialize();
         LoadEssentialEngineComponents();
 
         _options = Debugger.RenderOptionsDebugger.RenderOptions with { GL = Window.GL };
@@ -255,14 +256,16 @@ public abstract class GameEngine : Entity, IDisposable
     // Method to load essential assets required for the game.
     private void LoadEssentialAssets()
     {
-        Content.Shaders.AddNamed(
-            "default",
-            ShaderFactory.CompileFromDefinitions(
-                new ShaderDefinition
-                {
-                    Type = ShaderType.VertexShader,
-                    Source =
-                        @"#version 410 core
+        Content
+            .Shaders
+            .AddNamed(
+                "default",
+                ShaderFactory.CompileFromDefinitions(
+                    new ShaderDefinition
+                    {
+                        Type = ShaderType.VertexShader,
+                        Source =
+                            @"#version 410 core
 
      layout (location = 0) in vec3 vPos;
      layout (location = 1) in vec3 vNorm;
@@ -281,12 +284,12 @@ public abstract class GameEngine : Entity, IDisposable
          // Trying to understand the universe through vertex manipulation!
          gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
      }"
-                },
-                new ShaderDefinition
-                {
-                    Type = ShaderType.FragmentShader,
-                    Source =
-                        @"#version 410 core
+                    },
+                    new ShaderDefinition
+                    {
+                        Type = ShaderType.FragmentShader,
+                        Source =
+                            @"#version 410 core
      out vec4 FinalFragColor;
 
      in vec2 texCoords;
@@ -298,22 +301,25 @@ public abstract class GameEngine : Entity, IDisposable
          FinalFragColor = texture(uAlbedo, texCoords);
      }}
      "
-                }
-            )
-        );
+                    }
+                )
+            );
 
-        Content.Shaders.AddNamed(
-            "basic",
-            ShaderFactory.CompileNamed("Assets/basic_shader/", "basic")
-        );
-        Content.Shaders.AddNamed(
-            "material_basic",
-            ShaderFactory.CompileNamed("Assets/material_shader/", "basic")
-        );
-        Content.Shaders.AddNamed(
-            "material_advanced",
-            ShaderFactory.CompileNamed("Assets/material_shader/", "advanced")
-        );
+        Content
+            .Shaders
+            .AddNamed("basic", ShaderFactory.CompileNamed("Assets/basic_shader/", "basic"));
+        Content
+            .Shaders
+            .AddNamed(
+                "material_basic",
+                ShaderFactory.CompileNamed("Assets/material_shader/", "basic")
+            );
+        Content
+            .Shaders
+            .AddNamed(
+                "material_advanced",
+                ShaderFactory.CompileNamed("Assets/material_shader/", "advanced")
+            );
 
         Content.GenerateNamedTexture("debug", "Assets/among.png");
         Content.GenerateNamedTexture("gray", "Assets/gray.png");
@@ -343,14 +349,17 @@ public abstract class GameEngine : Entity, IDisposable
         //    nonEssentialUpdate();
         //}
 
-        Debugger.PerformanceDebugger.CpuMetrics.TimeAndTrackMethod(
-            () =>
-            {
-                base.UpdateState(dt);
-            },
-            "Engine",
-            "CPU"
-        );
+        Debugger
+            .PerformanceDebugger
+            .CpuMetrics
+            .TimeAndTrackMethod(
+                () =>
+                {
+                    base.UpdateState(dt);
+                },
+                "Engine",
+                "CPU"
+            );
 
         OnPostUpdate?.Invoke(dt);
     }
@@ -370,11 +379,11 @@ public abstract class GameEngine : Entity, IDisposable
         var endTime = Stopwatch.GetTimestamp();
 
         var val = (double)(endTime - startTime) / Stopwatch.Frequency;
-        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate(
-            "EngineComponents",
-            entity.Name,
-            val
-        );
+        Engine
+            .Debugger
+            .PerformanceDebugger
+            .GpuMetrics
+            .Aggregate("EngineComponents", entity.Name, val);
     }
 
     public void DrawWithMetrics(in IGameComponent component, in float dt, ref RenderOptions options)
@@ -386,11 +395,11 @@ public abstract class GameEngine : Entity, IDisposable
             return;
 
         var val = (double)(endTime - startTime) / Stopwatch.Frequency;
-        Engine.Debugger.PerformanceDebugger.GpuMetrics.Aggregate(
-            "EngineComponents",
-            component.Name,
-            val
-        );
+        Engine
+            .Debugger
+            .PerformanceDebugger
+            .GpuMetrics
+            .Aggregate("EngineComponents", component.Name, val);
     }
 
     public override void Render(float dt, ref RenderOptions options)

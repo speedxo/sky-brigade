@@ -1,11 +1,11 @@
-﻿using Box2D.NetStandard.Dynamics.World;
+﻿using System.Drawing.Drawing2D;
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using Box2D.NetStandard.Dynamics.World;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components.Physics2D;
 using Microsoft.Extensions.Options;
 using Silk.NET.OpenGL;
-using System.Drawing.Drawing2D;
-using System.Numerics;
-using System.Runtime.CompilerServices;
 using TiledSharp;
 
 namespace Horizon.Rendering;
@@ -35,7 +35,7 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// The lower layer slice in which <see cref="ParallaxEntity"/> will be rendered onto, followed by every layer above it ontop.
         /// </summary>
-        public int ParallaxIndex { get; set; } = 3;
+        public int ParallaxIndex { get; set; }
 
         /// <summary>
         /// Gets or sets the physics world associated with the tile map.
@@ -61,6 +61,11 @@ public abstract partial class Tiling<TTextureID>
         private bool hasBeenInitialized = false;
 
         /// <summary>
+        /// The offset applied when calculating tilemap clipping.
+        /// </summary>
+        public float ClippingOffset = 0.0f;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TileMap"/> class.
         /// </summary>
         /// <param name="width">The width of the tilemap in chunks (32)</param>
@@ -72,6 +77,7 @@ public abstract partial class Tiling<TTextureID>
             this.Depth = depth;
             this.Width = width;
             this.Height = height;
+            this.ParallaxIndex = depth / 2;
 
             TileSets = new Dictionary<string, TileSet>();
         }
@@ -137,7 +143,7 @@ public abstract partial class Tiling<TTextureID>
                 foreach (var layer in tiledMap.Layers)
                 {
                     var layerConfig = GenerateTiledTileConfigFromLayer(layer);
-                    
+
                     foreach (var tile in layer.Tiles)
                     {
                         if (tile.Gid == 0)
@@ -145,7 +151,8 @@ public abstract partial class Tiling<TTextureID>
 
                         for (int chunkIndex = 0; chunkIndex < map.Width * map.Height; chunkIndex++)
                         {
-                            map.ChunkManager.Chunks[chunkIndex].Slices[layerIndex].AlwaysOnTop = layerConfig.AlwaysOnTop;
+                            map.ChunkManager.Chunks[chunkIndex].Slices[layerIndex].AlwaysOnTop =
+                                layerConfig.AlwaysOnTop;
                         }
 
                         // invert the tile Y coordinates because one again openGL is weird (read about coordinate system orientations)
@@ -180,10 +187,9 @@ public abstract partial class Tiling<TTextureID>
             }
             catch (Exception ex)
             {
-                Engine.Logger.Log(
-                    Logging.LogLevel.Error,
-                    $"Error loading Tiled map: + {ex.Message}"
-                );
+                Engine
+                    .Logger
+                    .Log(Logging.LogLevel.Error, $"Error loading Tiled map: + {ex.Message}");
                 return null;
             }
         }
@@ -200,8 +206,7 @@ public abstract partial class Tiling<TTextureID>
 
             bool isCollidable =
                 bool.TryParse(_stringIsCollidable, out isCollidable) && isCollidable;
-            bool isOnTop =
-                bool.TryParse(_stringTop, out isOnTop) && isOnTop;
+            bool isOnTop = bool.TryParse(_stringTop, out isOnTop) && isOnTop;
 
             return new StaticTile.TiledTileConfig
             {
@@ -271,29 +276,29 @@ public abstract partial class Tiling<TTextureID>
         /// </summary>
         public override void Initialize()
         {
+            base.Initialize();
+
             // Safetly check because TileMpa can be initialized implicitly.
-            if (hasBeenInitialized) return;
+            if (hasBeenInitialized)
+                return;
             hasBeenInitialized = true;
 
             if (Parent!.HasComponent<Box2DWorldComponent>())
                 World = Parent!.GetComponent<Box2DWorldComponent>();
             ChunkManager = AddComponent<TileMapChunkManager>();
 
-            Engine.Debugger.GeneralDebugger.AddWatch(
-                "Size",
-                "Tilemap",
-                () => $"{Width}, {Height}, {Depth}"
-            );
-            Engine.Debugger.GeneralDebugger.AddWatch(
-                "Chunk Maximum",
-                "Tilemap",
-                () => $"{ChunkManager.Chunks.GetLength(0)}"
-            );
-            Engine.Debugger.GeneralDebugger.AddWatch(
-                "Total Tiles",
-                "Tilemap",
-                () => TileUpdateCount
-            );
+            Engine
+                .Debugger
+                .GeneralDebugger
+                .AddWatch("Size", "Tilemap", () => $"{Width}, {Height}, {Depth}");
+            Engine
+                .Debugger
+                .GeneralDebugger
+                .AddWatch("Chunk Maximum", "Tilemap", () => $"{ChunkManager.Chunks.GetLength(0)}");
+            Engine
+                .Debugger
+                .GeneralDebugger
+                .AddWatch("Total Tiles", "Tilemap", () => TileUpdateCount);
         }
 
         /// <summary>
@@ -328,7 +333,7 @@ public abstract partial class Tiling<TTextureID>
                 {
                     for (int z = 0; z < Depth; z++)
                     {
-                        Tile? tile = this[x, y, z];
+                        Tile? tile = this[(int)(x), (int)(y), z];
                         if (tile is null) // handle null case
                             continue;
 

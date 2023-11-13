@@ -1,6 +1,6 @@
-﻿using Box2D.NetStandard.Collision.Shapes;
+﻿using System.Numerics;
+using Box2D.NetStandard.Collision.Shapes;
 using Horizon.Primitives;
-using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -20,12 +20,12 @@ public partial class Tiling<TTextureID>
         /// <summary>
         /// The width of the tile.
         /// </summary>
-        public const float TILE_WIDTH = 1.0f;
+        public const float TILE_WIDTH = 2.0f;
 
         /// <summary>
         /// The height of the tile.
         /// </summary>
-        public const float TILE_HEIGHT = 1.0f;
+        public const float TILE_HEIGHT = 2.0f;
 
         /// <summary>
         /// Gets the local position of the tile within its chunk.
@@ -84,7 +84,12 @@ public partial class Tiling<TTextureID>
         /// <returns>The global coordinates.</returns>
         public static Vector2 GetTileGlobalCoordinates(Vector2 local, TileMapChunk chunk)
         {
-            return local + chunk.Position * new Vector2(TileMapChunk.WIDTH, TileMapChunk.HEIGHT);
+            return local * new Vector2(TILE_WIDTH, TILE_HEIGHT)
+                + chunk.Position
+                    * new Vector2(
+                        TileMapChunk.WIDTH * TILE_WIDTH,
+                        TileMapChunk.HEIGHT * TILE_HEIGHT
+                    );
         }
 
         /// <summary>

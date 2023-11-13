@@ -107,18 +107,23 @@ public abstract partial class Tiling<TTextureID>
                 foreach (var tileset in sliceMesh.TileSetPairs.Keys)
                 {
                     if (!sliceMesh.TileMeshPairs.ContainsKey(tileset))
-                        sliceMesh.TileMeshPairs.Add(
-                            tileset,
-                            new TileMesh(_shader, tileset, Chunk.Map)
-                        );
+                        sliceMesh
+                            .TileMeshPairs
+                            .Add(tileset, new TileMesh(_shader, tileset, Chunk.Map));
 
-                    sliceMesh.TileMeshPairs[tileset].GenerateMeshFromTiles(
-                        sliceMesh.TileSetPairs[tileset]
-                    );
+                    sliceMesh
+                        .TileMeshPairs[tileset]
+                        .GenerateMeshFromTiles(sliceMesh.TileSetPairs[tileset]);
                 }
             }
         }
-        public void DrawSliceAtIndex(int index, float dt, ref RenderOptions options, in TileChunkCullMode cullMode)
+
+        public void DrawSliceAtIndex(
+            int index,
+            float dt,
+            ref RenderOptions options,
+            in TileChunkCullMode cullMode
+        )
         {
             Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
             if (!Chunk.IsVisibleByCamera)
@@ -132,18 +137,23 @@ public abstract partial class Tiling<TTextureID>
 
                 GenerateMesh();
             }
-            if (!TileMapChunkSliceTileMeshesKeyPairs.Any()) return;
+            if (!TileMapChunkSliceTileMeshesKeyPairs.Any())
+                return;
 
-            foreach (var (_, mesh) in TileMapChunkSliceTileMeshesKeyPairs[Chunk.Slices[index]].TileMeshPairs)
+            foreach (
+                var (_, mesh) in TileMapChunkSliceTileMeshesKeyPairs[
+                    Chunk.Slices[index]
+                ].TileMeshPairs
+            )
             {
                 mesh.CullMode = cullMode;
                 mesh.Render(dt, ref options);
                 mesh.CullMode = TileChunkCullMode.None;
             }
-            
         }
 
         private float _dirtyChunkUpdateTimer = 0.0f;
+
         public void Draw(float dt, ref RenderOptions options)
         {
             Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
@@ -159,7 +169,6 @@ public abstract partial class Tiling<TTextureID>
                 GenerateMesh();
             }
 
-            
             foreach (var (_, sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
             {
                 foreach (var (_, mesh) in sliceMeshes.TileMeshPairs)

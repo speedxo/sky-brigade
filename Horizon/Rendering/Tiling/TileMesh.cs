@@ -1,9 +1,9 @@
-﻿using Horizon.GameEntity;
-using Horizon.OpenGL;
-using Silk.NET.OpenGL;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Horizon.GameEntity;
+using Horizon.OpenGL;
+using Silk.NET.OpenGL;
 using Shader = Horizon.Content.Shader;
 
 namespace Horizon.Rendering;
@@ -30,7 +30,6 @@ public abstract partial class Tiling<TTextureID>
         /// If set to TileChunkCullMode.Top, all tiles above the screen midpoint are culled, and vice versa.
         /// </summary>
         public TileChunkCullMode CullMode { get; set; } = TileChunkCullMode.None;
-
 
         public Shader Shader { get; init; }
         public TileMap Map { get; init; }
@@ -78,10 +77,15 @@ public abstract partial class Tiling<TTextureID>
 
             BasicVertex[] vertices = new BasicVertex[]
             {
-                new BasicVertex(-0.5f, -0.5f, 0, tileTextureSize.Y),
-                new BasicVertex(0.5f, -0.5f, tileTextureSize.X, tileTextureSize.Y),
-                new BasicVertex(0.5f, 0.5f, tileTextureSize.X, 0),
-                new BasicVertex(-0.5f, 0.5f, 0, 0)
+                new BasicVertex(-Tile.TILE_WIDTH / 2, -Tile.TILE_HEIGHT / 2, 0, tileTextureSize.Y),
+                new BasicVertex(
+                    Tile.TILE_WIDTH / 2,
+                    -Tile.TILE_HEIGHT / 2,
+                    tileTextureSize.X,
+                    tileTextureSize.Y
+                ),
+                new BasicVertex(Tile.TILE_WIDTH / 2, Tile.TILE_HEIGHT / 2, tileTextureSize.X, 0),
+                new BasicVertex(-Tile.TILE_WIDTH / 2, Tile.TILE_HEIGHT / 2, 0, 0)
             };
             Vbo.VertexBuffer.BufferData(vertices);
             uint[] indices = new uint[] { 0, 1, 2, 0, 2, 3 };
@@ -213,6 +217,7 @@ public abstract partial class Tiling<TTextureID>
             Shader.SetUniform(UNIFORM_PROJECTION_MATRIX, options.Camera.Projection);
             Shader.SetUniform(UNIFORM_USE_WIREFRAME, options.IsWireframeEnabled ? 1 : 0);
             Shader.SetUniform("uDiscard", (int)CullMode);
+            Shader.SetUniform("uClipOffset", Map.ClippingOffset);
 
             Vbo.VertexArray.Bind();
 
@@ -223,13 +228,16 @@ public abstract partial class Tiling<TTextureID>
 
             unsafe // i don't wanna make the whole method unsafe just for this
             {
-                Entity.Engine.GL.DrawElementsInstanced(
-                    PrimitiveType.Triangles,
-                    6,
-                    DrawElementsType.UnsignedInt,
-                    null,
-                    TileCount
-                );
+                Entity
+                    .Engine
+                    .GL
+                    .DrawElementsInstanced(
+                        PrimitiveType.Triangles,
+                        6,
+                        DrawElementsType.UnsignedInt,
+                        null,
+                        TileCount
+                    );
             }
 
             if (options.IsWireframeEnabled)

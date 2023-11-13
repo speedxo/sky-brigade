@@ -1,11 +1,11 @@
-﻿using Box2D.NetStandard.Collision.Shapes;
+﻿using System.Numerics;
+using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.World;
 using Horizon.Extentions;
 using Horizon.GameEntity.Components.Physics2D;
 using Horizon.Rendering;
 using Horizon.Rendering.Spriting;
-using System.Numerics;
 using TileBash.Player.Behaviour;
 
 namespace TileBash.Player;
@@ -89,8 +89,8 @@ public class Player2D : Sprite
         PhysicsBody.SetLinearDampling(7.5f);
         PhysicsBody.SetTransform(
             new Vector2(
-                map.Width / 2.0f * TileMapChunk.WIDTH,
-                map.Height / 2.0f * TileMapChunk.HEIGHT
+                map.Width / 2.0f * TileMapChunk.WIDTH * Tile.TILE_WIDTH,
+                map.Height / 2.0f * TileMapChunk.HEIGHT * Tile.TILE_HEIGHT
             ),
             0.0f
         );

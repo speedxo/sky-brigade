@@ -25,10 +25,12 @@ public abstract class Scene : Entity, IDisposable
     {
         if (hasRenderPipelineBeenInitialized)
         {
-            Engine.Logger.Log(
-                Logging.LogLevel.Fatal,
-                "The scenes render pipeline has already been initialized!"
-            );
+            Engine
+                .Logger
+                .Log(
+                    Logging.LogLevel.Fatal,
+                    "The scenes render pipeline has already been initialized!"
+                );
             throw new Exception("The scenes render pipeline has already been initialized!");
         }
 
@@ -81,10 +83,12 @@ public abstract class Scene : Entity, IDisposable
 
         if (!hasRenderPipelineBeenInitialized)
         {
-            Engine.Logger.Log(
-                Logging.LogLevel.Fatal,
-                "The scenes render pipeline has not been initialized!"
-            );
+            Engine
+                .Logger
+                .Log(
+                    Logging.LogLevel.Fatal,
+                    "The scenes render pipeline has not been initialized!"
+                );
         }
 
         RenderScene(dt, ref options);
@@ -126,12 +130,14 @@ public abstract class Scene : Entity, IDisposable
             Engine.Debugger.GameContainerDebugger.FrameBuffer.Bind();
 
         Engine.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        Engine.GL.Viewport(
-            0,
-            0,
-            (uint)(Engine.Window.ViewportSize.X),
-            (uint)Engine.Window.ViewportSize.Y
-        );
+        Engine
+            .GL
+            .Viewport(
+                0,
+                0,
+                (uint)(Engine.Window.ViewportSize.X),
+                (uint)Engine.Window.ViewportSize.Y
+            );
 
         if (options.IsPostProcessingEnabled)
             SceneRect.RenderScene(dt, ref options);

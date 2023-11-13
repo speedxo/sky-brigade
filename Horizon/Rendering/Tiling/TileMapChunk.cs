@@ -1,7 +1,7 @@
-﻿using Box2D.NetStandard.Dynamics.Bodies;
-using Horizon.Primitives;
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 using System.Numerics;
+using Box2D.NetStandard.Dynamics.Bodies;
+using Horizon.Primitives;
 
 namespace Horizon.Rendering;
 
@@ -87,9 +87,9 @@ public abstract partial class Tiling<TTextureID>
             Renderer = new TilemapRenderer(this);
 
             Bounds = new RectangleF(
-                pos * new Vector2(WIDTH, HEIGHT)
+                pos * new Vector2(WIDTH * Tile.TILE_WIDTH, HEIGHT * Tile.TILE_HEIGHT)
                     - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
-                new(WIDTH, HEIGHT)
+                new(WIDTH * Tile.TILE_WIDTH, HEIGHT * Tile.TILE_HEIGHT)
             );
 
             IsDirty = true;
@@ -153,12 +153,18 @@ public abstract partial class Tiling<TTextureID>
         {
             Renderer.Draw(dt, ref options);
         }
+
         /// <summary>
         /// Draws the specified chunk index.
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
         /// <param name="options">Optional rendering options.</param>
-        public void RenderSlice(int index, float dt, ref RenderOptions options, in TileChunkCullMode cullMode)
+        public void RenderSlice(
+            int index,
+            float dt,
+            ref RenderOptions options,
+            in TileChunkCullMode cullMode
+        )
         {
             Renderer.DrawSliceAtIndex(index, dt, ref options, cullMode);
         }
@@ -194,7 +200,8 @@ public abstract partial class Tiling<TTextureID>
             for (int s = 0; s < Slices.Length; s++)
             {
                 var slice = Slices[s];
-                if (slice.AlwaysOnTop) alwaysOnTop.Add(s);
+                if (slice.AlwaysOnTop)
+                    alwaysOnTop.Add(s);
                 for (int i = 0; i < slice.Tiles.Length; i++)
                 {
                     if (slice.Tiles[i] is null)
@@ -203,7 +210,6 @@ public abstract partial class Tiling<TTextureID>
                     slice.Tiles[i]!.PostGeneration();
                 }
             }
-
         }
 
         internal void RenderAlwaysOnTop(float dt, ref RenderOptions options)

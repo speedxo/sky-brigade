@@ -1,8 +1,8 @@
-﻿using Horizon.GameEntity.Components;
+﻿using System.Collections.Concurrent;
+using Horizon.GameEntity.Components;
 using Horizon.Primitives;
 using Horizon.Rendering;
 using Microsoft.Extensions.Options;
-using System.Collections.Concurrent;
 
 namespace Horizon.GameEntity
 {
@@ -37,6 +37,7 @@ namespace Horizon.GameEntity
         /// Gets or sets this entities enable flag.
         /// </summary>
         public bool Enabled { get; set; } = true;
+        internal bool _initialized = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether this entity is being rendered by another system.
@@ -74,7 +75,10 @@ namespace Horizon.GameEntity
         /// <summary>
         /// This method is called after the parent entity is set.
         /// </summary>
-        public virtual void Initialize() { }
+        public virtual void Initialize()
+        {
+            _initialized = true;
+        }
 
         /// <summary>
         /// Adds a component of type T to the entity.
@@ -107,10 +111,12 @@ namespace Horizon.GameEntity
                     // Check if the entity has the required component
                     if (!HasComponent(requiredComponentType))
                     {
-                        Engine.Logger.Log(
-                            Logging.LogLevel.Fatal,
-                            $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'."
-                        );
+                        Engine
+                            .Logger
+                            .Log(
+                                Logging.LogLevel.Fatal,
+                                $"Entity must have component of type '{requiredComponentType.Name}' to add '{componentType.Name}'."
+                            );
                         throw new Exception();
                     }
                 }
@@ -137,15 +143,17 @@ namespace Horizon.GameEntity
 
             entity.ID = ++_nextId;
             entity.Name ??= entity.GetType().Name;
-            entity.Enabled = false;
             _uninitializedEntities.Push(entity);
 
             return entity;
         }
+
         /// <summary>
         /// Pushes an entity to the initialization queue, which will call initialize on the next render pass.
         /// </summary>
-        protected void PushToInitializationQueue(in Entity entity) => _uninitializedEntities.Push(entity);
+        protected void PushToInitializationQueue(in Entity entity) =>
+            _uninitializedEntities.Push(entity);
+
         /// <summary>
         /// Adds an entity to the scene and returns the added entity.
         /// </summary>
@@ -239,7 +247,7 @@ namespace Horizon.GameEntity
         /// <param name="dt">Delta time.</param>
         public virtual void UpdateState(float dt)
         {
-            if (!Enabled)
+            if (!Enabled || !_initialized)
                 return;
 
             foreach (var item in Components.Values)
@@ -265,7 +273,7 @@ namespace Horizon.GameEntity
                 }
             }
 
-            if (!Enabled && !RenderImplicit)
+            if ((!Enabled && !RenderImplicit) || !_initialized)
                 return;
 
             for (int i = 0; i < Entities.Count; i++)
@@ -280,7 +288,7 @@ namespace Horizon.GameEntity
         /// <param name="dt">Delta time.</param>
         public virtual void UpdatePhysics(float dt)
         {
-            if (!Enabled)
+            if (!Enabled || !_initialized)
                 return;
 
             foreach (var item in Components.Values)

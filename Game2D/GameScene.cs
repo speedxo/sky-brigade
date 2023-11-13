@@ -1,4 +1,7 @@
 ﻿global using static Horizon.Rendering.Tiling<TileBash.TileTextureID>;
+using System;
+using System.Drawing;
+using System.Numerics;
 using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
 using Horizon;
@@ -14,9 +17,6 @@ using Horizon.Rendering.Spriting;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using System;
-using System.Drawing;
-using System.Numerics;
 using TileBash.Animals;
 using TileBash.Player;
 
@@ -53,7 +53,6 @@ public class GameScene : Scene
         world = AddComponent<Box2DWorldComponent>();
         world.SetDebugDraw(debugDrawCallback);
 
-
         cam = new Camera(true) { Position = new Vector3(0, 0, 100) };
 
         InitializeRenderingPipeline();
@@ -61,16 +60,18 @@ public class GameScene : Scene
 
     public override void Initialize()
     {
+        base.Initialize();
+
         if ((tilemap = TileMap.FromTiledMap(this, "content/maps/main.tmx")!) == null)
         {
-            Engine.Logger.Log(
-                Horizon.Logging.LogLevel.Fatal,
-                "Failed to load tilemap, aborting..."
-            );
+            Engine
+                .Logger
+                .Log(Horizon.Logging.LogLevel.Fatal, "Failed to load tilemap, aborting...");
             Environment.Exit(1);
         }
         else
         {
+            tilemap.ParallaxIndex = 2;
             AddEntity(tilemap);
         }
         AddEntity(player = new Player2D(world, tilemap));
@@ -83,13 +84,13 @@ public class GameScene : Scene
         PushToInitializationQueue(spriteBatch);
         spriteBatch.Add(player);
 
-
-        AddEntity(rainParticleSystem = new ParticleRenderer2D(
-            100_000, new BasicParticle2DMaterial())
+        AddEntity(
+            rainParticleSystem = new ParticleRenderer2D(100_000, new BasicParticle2DMaterial())
             {
                 MaxAge = 2.5f,
                 StartColor = new Vector3(4, 0, 255) / new Vector3(255),
                 EndColor = new Vector3(66, 135, 245) / new Vector3(255),
+                Enabled = true
             }
         );
 
@@ -101,12 +102,20 @@ public class GameScene : Scene
                 1 / 25.0f,
                 () =>
                 {
-                    (float, float) roll(int diag) => (random.NextSingle() * Engine.Window.WindowSize.X + diag / 2.0f, random.NextSingle() * Engine.Window.WindowSize.X + diag / 2.0f);
+                    (float, float) roll(int diag) =>
+                        (
+                            random.NextSingle() * Engine.Window.WindowSize.X + diag / 2.0f,
+                            random.NextSingle() * Engine.Window.WindowSize.X + diag / 2.0f
+                        );
 
                     for (int diagonal = 0; diagonal < 4; diagonal++)
                     {
-                        (var x, var y) = roll(diagonal);            // slight bias
-                        SpawnParticle(cam.ScreenToWorld(new Vector2(x + 250, y - 250)), Vector2.One, 1.0f);
+                        (var x, var y) = roll(diagonal); // slight bias
+                        SpawnParticle(
+                            cam.ScreenToWorld(new Vector2(x + 250, y - 250)),
+                            Vector2.One,
+                            1.0f
+                        );
                     }
                 }
             )
@@ -164,9 +173,12 @@ public class GameScene : Scene
             catCounter += 128;
         }
         if (
-            Engine.Input.MouseManager
+            Engine
+                .Input
+                .MouseManager
                 .GetData()
-                .Actions.HasFlag(Horizon.Input.VirtualAction.PrimaryAction)
+                .Actions
+                .HasFlag(Horizon.Input.VirtualAction.PrimaryAction)
         )
         {
             var mouseData = Engine.Input.MouseManager.GetData();
@@ -263,6 +275,8 @@ public class GameScene : Scene
     {
         if (ImGui.Begin("Particles (& cats)"))
         {
+            ImGui.DragFloat("Clipping Offset", ref tilemap.ClippingOffset, 0.01f, -1, 1);
+
             ImGui.Text($"Particles: {rainParticleSystem.Count}");
             ImGui.Text($"Cats: {spriteBatch.Count - 1}");
 

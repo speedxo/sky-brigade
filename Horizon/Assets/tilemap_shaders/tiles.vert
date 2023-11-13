@@ -10,6 +10,7 @@ layout(location = 4) in vec3 iColor;
 uniform mat4 uView;
 uniform mat4 uProjection;
 uniform int uDiscard;
+uniform float uClipOffset;
 
 out vec2 texCoords;
 out vec3 color;
@@ -22,8 +23,8 @@ void main() {
   
   switch (uDiscard)
   {
-    case 1: shouldDiscard = gl_Position.y < 0.00 ? 1.0 : 0.0; break;
-    case 2: shouldDiscard = gl_Position.y > -0.075 ? 1.0 : 0.0; break;
+    case 1: shouldDiscard = gl_Position.y < 0.0 + uClipOffset ? 1.0 : 0.0; break;
+    case 2: shouldDiscard = gl_Position.y > 0.0 - uClipOffset ? 1.0 : 0.0; break;
     case 0: default: shouldDiscard = 0; 
   }
 }
