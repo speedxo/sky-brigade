@@ -8,10 +8,17 @@ using Horizon.Core.Primitives;
 
 namespace Horizon.Content.Assets
 {
-    public class Texture : IGameAsset
+    public readonly struct Texture : IGameAsset
     {
-        public uint Handle { get; init; }
+        public readonly uint Width { get; init; }
+        public readonly uint Height { get; init; }
 
-        public void Dispose() { }
+        public readonly uint Handle { get; init; }
+
+        public static Texture Empty { get; } = new Texture { 
+            Handle = 0,
+            Width = 0,
+            Height = 0
+        };
     }
 }

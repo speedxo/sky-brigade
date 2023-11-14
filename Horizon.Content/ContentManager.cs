@@ -3,12 +3,12 @@ using Horizon.Core.Primitives;
 
 namespace Horizon.Content
 {
-    public class ContentManager : IContentManager
+    public class ContentManager
     {
         private bool disposedValue;
 
-        public IAssetManager<IGameAsset> Textures { get; init; }
-        public IAssetManager<IGameAsset> Shaders { get; init; }
+        public IAssetManager<IGameAsset, IGameAssetDisposer> Textures { get; init; }
+        public IAssetManager<IGameAsset, IGameAssetDisposer> Shaders { get; init; }
 
         public string Name { get; set; }
         public Entity Parent { get; set; }

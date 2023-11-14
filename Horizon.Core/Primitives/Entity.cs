@@ -1,19 +1,25 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Horizon.Core.Components;
-using Horizon.Core.Primitives;
 
-namespace Horizon.Engine;
+namespace Horizon.Core.Primitives;
 
 public abstract class Entity
 {
+    public static GameEngine Engine { get; internal set; }
+
     public Entity Parent { get; init; }
     public List<Entity> Children { get; init; }
     public Dictionary<Type, IGameComponent> Components { get; init; }
     public bool Enabled { get; set; } = true;
+
+    private ConcurrentStack<Entity> _uninitializedEntities = new();
+    private ConcurrentStack<IGameComponent> _uninitializedComponents = new();
 
     public Entity()
     {
@@ -23,7 +29,33 @@ public abstract class Entity
 
     public void Initialize() { }
 
-    public virtual void Render(float dt) { }
+    public virtual void Render(float dt)
+    {
+        while (!_uninitializedComponents.IsEmpty)
+        {
+            if (_uninitializedComponents.TryPop(out IGameComponent? result))
+            {
+                if (result is null) continue;
+                
+                result.Initialize();
+                result.Enabled = true;
+                
+                Components.Add(result.GetType(), result);
+            }
+        }
+        while (!_uninitializedEntities.IsEmpty)
+        {
+            if (_uninitializedEntities.TryPop(out Entity? result))
+            {
+                if (result is null) continue;
+                
+                result.Initialize();
+                result.Enabled = true;
+
+                Children.Add(result);
+            }
+        }
+    }
 
     public virtual void UpdatePhysics(float dt) { }
 
@@ -53,8 +85,8 @@ public abstract class Entity
     /// <returns>A reference to the component.</returns>
     public IGameComponent AddComponent(IGameComponent component)
     {
-        if (!Components.ContainsKey(component.GetType()))
-            Components.TryAdd(component.GetType(), component);
+        if (!Components.ContainsKey(component.GetType()) && !_uninitializedComponents.Contains(component))
+            _uninitializedComponents.Push(component);
 
         return Components[component.GetType()];
     }
@@ -81,8 +113,8 @@ public abstract class Entity
     /// <returns>A reference to the child entity.</returns>
     public Entity AddEntity(Entity entity)
     {
-        if (!Children.Contains(entity))
-            Children.Add(entity);
+        if (!Children.Contains(entity) && !_uninitializedEntities.Contains(entity))
+            _uninitializedEntities.Push(entity);
         else
         {
             // entity already exists, dupe.

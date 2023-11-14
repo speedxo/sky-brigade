@@ -6,17 +6,11 @@ namespace Horizon.Core.Primitives
     {
         private bool disposedValue;
 
-        /// <summary>
-        /// The current IGameEngine instance.
-        /// </summary>
-        public static GameEngine Current { get; protected set; }
-
         public GameEngine()
         {
             Enabled = true;
             Parent = null!; // base node.
 
-            Current = this;
             Engine = this;
 
             Children = new();
@@ -24,6 +18,7 @@ namespace Horizon.Core.Primitives
         }
 
         public IContentManager Content { get; init; }
+        public Silk.NET.OpenGL.GL GL { get; protected set; }
 
         /// <summary>
         /// Disposes of engine components.
