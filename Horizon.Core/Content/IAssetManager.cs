@@ -3,7 +3,7 @@
 namespace Horizon.Core.Content;
 
 /// <summary>
-/// A class build around creating, managing and disposing of game assets in a reliable threadsafe manner.
+/// A class build around creating, managing and disposing of game assets in a reliable thread-safe manner.
 /// </summary>
 /// <typeparam name="AssetType"></typeparam>
 /// <typeparam name="AssetFactoryType"></typeparam>

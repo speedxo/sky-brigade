@@ -31,16 +31,15 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
     {
         var texture = new Texture
         {
-            Handle = Entity.Engine.GL.GenTexture(),
+            Handle = GameEngine.GL.GenTexture(),
             Width = (uint)width,
             Height = (uint)height
         };
 
-        Entity.Engine.GL.ActiveTexture(TextureUnit.Texture0);
-        Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        GameEngine.GL.ActiveTexture(TextureUnit.Texture0);
+        GameEngine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
 
-        Entity
-            .Engine
+        GameEngine
             .GL
             .TexImage2D(
                 TextureTarget.Texture2D,
@@ -54,7 +53,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 null
             );
         SetParameters();
-        Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, 0);
+        GameEngine.GL.BindTexture(TextureTarget.Texture2D, 0);
         return texture;
     }
 
@@ -64,17 +63,16 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
 
         var texture = new Texture
         {
-            Handle = Entity.Engine.GL.GenTexture(),
+            Handle = GameEngine.GL.GenTexture(),
             Width = (uint)img.Width,
             Height = (uint)img.Height
         };
 
-        Entity.Engine.GL.ActiveTexture(TextureUnit.Texture0);
-        Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        GameEngine.GL.ActiveTexture(TextureUnit.Texture0);
+        GameEngine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
 
         //Reserve enough memory from the gpu for the whole image
-        Entity
-            .Engine
+        GameEngine
             .GL
             .TexImage2D(
                 TextureTarget.Texture2D,
@@ -97,9 +95,8 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 fixed (void* data = accessor.GetRowSpan(y))
                 {
                     //Loading the actual image.
-                    Entity
-                        .Engine
-                        .GL
+                    GameEngine
+                    .GL
                         .TexSubImage2D(
                             TextureTarget.Texture2D,
                             0,
@@ -121,41 +118,37 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
     private static void SetParameters()
     {
         // Setting some texture parameters so the texture behaves as expected.
-        Entity
-            .Engine
+        GameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapS,
                 (int)GLEnum.Repeat
             );
-        Entity
-            .Engine
+        GameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapT,
                 (int)GLEnum.Repeat
             );
-        Entity
-            .Engine
+        GameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMinFilter,
                 (int)GLEnum.NearestMipmapNearest
             );
-        Entity
-            .Engine
+        GameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter,
                 (int)GLEnum.Nearest
             );
-        //Entity.Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        //Entity.Engine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
+        //GameEngine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        //GameEngine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
         ////Generating mipmaps.
-        //Entity.Engine.GL.GenerateMipmap(TextureTarget.Texture2D);
+        //GameEngine.GL.GenerateMipmap(TextureTarget.Texture2D);
     }
 }

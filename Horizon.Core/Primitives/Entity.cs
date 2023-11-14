@@ -11,8 +11,6 @@ namespace Horizon.Core.Primitives;
 
 public abstract class Entity
 {
-    public static GameEngine Engine { get; internal set; }
-
     public Entity Parent { get; init; }
     public List<Entity> Children { get; init; }
     public Dictionary<Type, IGameComponent> Components { get; init; }
@@ -45,7 +43,7 @@ public abstract class Entity
         }
         while (!_uninitializedEntities.IsEmpty)
         {
-            if (_uninitializedEntities.TryPop(out Entity? result))
+            if (_uninitializedEntities.TryPop(out var result))
             {
                 if (result is null) continue;
                 
@@ -55,6 +53,11 @@ public abstract class Entity
                 Children.Add(result);
             }
         }
+
+        foreach (var (_, comp) in Components)
+            comp.Render(dt);
+        for (int i = 0; i < Children.Count; i++)
+            Children[i].Render(dt);
     }
 
     public virtual void UpdatePhysics(float dt) { }
@@ -64,8 +67,8 @@ public abstract class Entity
     /// <summary>
     /// Attempts to return a reference to a specified type of Component.
     /// </summary>
-    public IGameComponent GetComponent<T>()
-        where T : IGameComponent => Components[typeof(T)];
+    public T GetComponent<T>()
+        where T : IGameComponent => (T)Components[typeof(T)];
 
     /// <summary>
     /// Attempts to find all reference to a specified type of Entity.
@@ -76,26 +79,26 @@ public abstract class Entity
     /// <summary>
     /// Attempts to return a reference to a specified type of Entity. (if multiple are found, the first one is selected.)
     /// </summary>
-    public Entity? GetEntity<T>()
-        where T : Entity => Children.FindAll(e => e.GetType() == typeof(T)).FirstOrDefault();
+    public T? GetEntity<T>()
+        where T : Entity => (T)Children.FindAll(e => e.GetType() == typeof(T)).FirstOrDefault();
 
     /// <summary>
     /// Attempts to attach a component to this Entity.
     /// </summary>
     /// <returns>A reference to the component.</returns>
-    public IGameComponent AddComponent(IGameComponent component)
+    public T AddComponent<T>(T component) where T: IGameComponent
     {
         if (!Components.ContainsKey(component.GetType()) && !_uninitializedComponents.Contains(component))
             _uninitializedComponents.Push(component);
 
-        return Components[component.GetType()];
+        return (T)Components[component.GetType()];
     }
 
     /// <summary>
     /// Attempts to attach a component to this Entity.
     /// </summary>
     /// <returns>A reference to the component.</returns>
-    public IGameComponent AddComponent<T>()
+    public T AddComponent<T>()
         where T : IGameComponent
     {
         var component = Activator.CreateInstance(typeof(T));
@@ -111,7 +114,7 @@ public abstract class Entity
     /// Attempts to attach a child entity to this Entity.
     /// </summary>
     /// <returns>A reference to the child entity.</returns>
-    public Entity AddEntity(Entity entity)
+    public T AddEntity<T>(T entity) where T: Entity
     {
         if (!Children.Contains(entity) && !_uninitializedEntities.Contains(entity))
             _uninitializedEntities.Push(entity);
@@ -127,7 +130,7 @@ public abstract class Entity
     /// Attempts to attach a child entity  to this Entity.
     /// </summary>
     /// <returns>A reference to the child entity.</returns>
-    public Entity AddEntity<T>()
+    public T AddEntity<T>()
         where T : Entity
     {
         var entity = Activator.CreateInstance(typeof(T));
