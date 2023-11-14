@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "TileBash": {
-      "commandName": "Project",
-      "nativeDebugging": false
-    }
-  }
-}

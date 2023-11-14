@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "Horizon": {
-      "commandName": "Project",
-      "nativeDebugging": false,
-      "hotReloadEnabled": true
-    }
-  }
-}
