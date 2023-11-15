@@ -9,7 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horizon.Content", "Horizon.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horizon.Engine", "Horizon.Engine\Horizon.Engine.csproj", "{3049741B-5310-4071-935F-60198291C467}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Test", "Horizon.Test\Horizon.Test.csproj", "{67081606-C88A-4AF7-8A95-5049D64D8EFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horizon.Test", "Horizon.Test\Horizon.Test.csproj", "{67081606-C88A-4AF7-8A95-5049D64D8EFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Input", "Horizon.Input\Horizon.Input.csproj", "{495F28B3-9167-424A-B8C6-B4846AFB347C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.OpenGL", "Horizon.OpenGL\Horizon.OpenGL.csproj", "{35FA3275-4954-44C8-97C0-912EE06BCEB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horizon.Rendering", "Horizon.Rendering\Horizon.Rendering.csproj", "{894B46B7-78AF-4C96-B34A-1867CC774FA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +39,18 @@ Global
 		{67081606-C88A-4AF7-8A95-5049D64D8EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67081606-C88A-4AF7-8A95-5049D64D8EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67081606-C88A-4AF7-8A95-5049D64D8EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{495F28B3-9167-424A-B8C6-B4846AFB347C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{495F28B3-9167-424A-B8C6-B4846AFB347C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{495F28B3-9167-424A-B8C6-B4846AFB347C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{495F28B3-9167-424A-B8C6-B4846AFB347C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35FA3275-4954-44C8-97C0-912EE06BCEB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35FA3275-4954-44C8-97C0-912EE06BCEB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35FA3275-4954-44C8-97C0-912EE06BCEB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35FA3275-4954-44C8-97C0-912EE06BCEB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894B46B7-78AF-4C96-B34A-1867CC774FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894B46B7-78AF-4C96-B34A-1867CC774FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894B46B7-78AF-4C96-B34A-1867CC774FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894B46B7-78AF-4C96-B34A-1867CC774FA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

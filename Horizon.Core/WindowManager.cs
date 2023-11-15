@@ -7,23 +7,17 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Horizon.Core.Components;
 
 namespace Horizon.Core;
 
-
-public class WindowManager : Entity
+/// <summary>
+/// BaseGameEngine component to manage a window and its associated threads.
+/// </summary>
+public class WindowManager : IGameComponent
 {
-    private IWindow _window,
-        _updateWindow;
+    private readonly IWindow _window;
     private IInputContext _input;
-    private Task _updateTask, _physicsTask;
-
-    public Action<double> UpdateStateFrame;
-    public Action<double> UpdatePhysicsFrame;
-    public Action<double> RenderFrame;
-
-    public Action Closing;
-    public Action Load;
 
     public bool IsRunning { get; private set; }
 
@@ -43,27 +37,32 @@ public class WindowManager : Entity
     public Vector2 WindowSize { get; private set; }
 
     /// <summary>
-    /// 
+    /// The GL context associated with the windows main render thread.
     /// </summary>
     public GL GL { get; private set; }
+
+    public bool Enabled { get; set; }
+    public string Name { get; set; }
+    public Entity Parent { get; set; }
+
+    private BaseGameEngine _engine;
 
     /// <summary>
     /// Gets the underlying native window.
     /// </summary>
     /// <returns>The GLFW IWindow.</returns>
-    public IWindow GetWindow() => _window;
+    public IWindow Window { get => _window; }
 
     /// <summary>
     /// Gets the windows native input context.
     /// </summary>
     /// <returns>Native IInputContext</returns>
-    public IInputContext GetInput() => _input;
-
+    public IInputContext Input { get => _input; }
 
     // copy of initial WindowOptions instance.
     private readonly WindowOptions _options;
 
-    public WindowManager(in Vector2 windowSize, in string title)
+    public WindowManager(in WindowManagerConfiguration config)
     {
         // Create a window with the specified options.
         _options = WindowOptions.Default with
@@ -75,40 +74,26 @@ public class WindowManager : Entity
                 Profile = ContextProfile.Core,
                 Version = new APIVersion(4, 6)
             },
-            Title = title,
-            Size = new Silk.NET.Maths.Vector2D<int>((int)windowSize.X, (int)windowSize.Y),
+            Title = config.WindowTitle,
+            Size = new Silk.NET.Maths.Vector2D<int>((int)config.WindowSize.X, (int)config.WindowSize.Y),
             FramesPerSecond = 0,
             VSync = false
         };
 
-        ViewportSize = WindowSize = windowSize;
+        ViewportSize = WindowSize = config.WindowSize;
 
         // Create the window.
-        this._window = Window.Create(_options);
+        this._window = Silk.NET.Windowing.Window.Create(_options);
         SubscribeWindowEvents();
     }
 
     private void SubscribeWindowEvents()
     {
-        this._window.Render += (dt) =>
-        {
-            RenderFrame?.Invoke(dt);
-        };
-        this._window.Update += (dt) =>
-        {
-            UpdateStateFrame?.Invoke(dt);
-        };
+        this._window.Render += (dt) => _engine.Render((float)dt);
+        this._window.Update += (dt) => _engine.UpdateState((float)dt);
         this._window.Resize += WindowResize;
-
-        this._window.Load += () =>
-        {
-            GL = _window.CreateOpenGL();
-            _input = _window.CreateInput();
-
-            Load?.Invoke();
-            UpdateViewport();
-        };
-        this._window.Closing += () => Closing?.Invoke();
+        
+        this._window.Load += Initialize;
     }
 
     private void UpdateViewport()
@@ -124,12 +109,30 @@ public class WindowManager : Entity
         UpdateViewport();
     }
 
-    public void Close()
+    public void Initialize()
     {
-        if (IsRunning)
-            _window.Close();
-        else
-            throw new Exception("Cannot stop a window that never ran in the first palce!");
+        GL = _window.CreateOpenGL();
+        _input = _window.CreateInput();
+        _engine = (BaseGameEngine)Parent;
+
+
+        UpdateViewport();
+        _engine.Initialize();
+    }
+
+    public void Render(float dt)
+    {
+
+    }
+
+    public void UpdateState(float dt)
+    {
+
+    }
+
+    public void UpdatePhysics(float dt)
+    {
+
     }
 
     public void Run()
@@ -170,7 +173,7 @@ public class WindowManager : Entity
             elapsedTime = ((previousTicks - ticks) / (double)Stopwatch.Frequency);
 
             if (_window.IsInitialized)
-                UpdatePhysicsFrame?.Invoke(elapsedTime);
+                UpdatePhysics((float)elapsedTime);
 
             previousTicks = ticks;
         }
@@ -183,9 +186,12 @@ public class WindowManager : Entity
         if (!_window.IsClosing)
             _window.DoRender();
 
+        /* it is important to ensure that atleast one Render pass has happened, before
+         * we dispatch all the threads, as lazy initialisation is done in the render thread. */
+
         // Dispatch threads.
-        _updateTask ??= Task.Run(OnLogicFrame);
-        _physicsTask ??= Task.Run(OnPhysicsFrame);
+        Task.Run(OnLogicFrame);
+        Task.Run(OnPhysicsFrame);
     }
 
     public void Dispose()

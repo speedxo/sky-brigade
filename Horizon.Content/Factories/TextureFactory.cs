@@ -1,6 +1,7 @@
-﻿using Horizon.Content.Assets;
+﻿using Horizon.Core.Assets;
 using Horizon.Core.Content;
 using Horizon.Core.Primitives;
+using Horizon.OpenGL.Buffers;
 using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,40 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using Texture = Horizon.Content.Assets.Texture;
+
+using Texture = Horizon.Core.Assets.Texture;
 
 namespace Horizon.Content.Factories;
 
+public readonly struct BufferDescription : IAssetDescription
+{
+    public readonly BufferTargetARB Type { get; init; }
+    public readonly bool IsStorageBuffer { get; init; }
+    public readonly uint Size { get; init; }
+    public readonly BufferStorageMask StorageMasks { get; init; }
+
+    public static BufferDescription ArrayBuffer { get; } = new BufferDescription { 
+        Type = BufferTargetARB.ArrayBuffer,
+        IsStorageBuffer = false,
+        Size = 0
+    };
+}
+
+public class BufferFactory : IAssetFactory<BufferObject, BufferDescription>
+{
+    public static unsafe BufferObject Create(in BufferDescription description)
+    {
+        var buffer = new BufferObject { Handle = BaseGameEngine.GL.CreateBuffer(), Type = description.Type };
+
+        if (description.IsStorageBuffer)
+            BaseGameEngine.GL.NamedBufferStorage(buffer.Handle, description.Size, null, description.StorageMasks);
+
+        return buffer;
+    }
+}
+
 /// <summary>
-/// Asset factory for creating textures.
+/// Asset factory for creating instances of <see cref="Texture"/>.
 /// </summary>
 public class TextureFactory : IAssetFactory<Texture, TextureDescription>
 {
@@ -24,22 +53,22 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
         if (description.Width + description.Height > 2)
             return CreateFromDimensions(in description.Width, in description.Height, in description.Definition);
 
-        return Texture.Empty;
+        return Texture.Invalid;
     }
 
     private static unsafe Texture CreateFromDimensions(in int width, in int height, in TextureDefinition definition)
     {
         var texture = new Texture
         {
-            Handle = GameEngine.GL.GenTexture(),
+            Handle = BaseGameEngine.GL.GenTexture(),
             Width = (uint)width,
             Height = (uint)height
         };
 
-        GameEngine.GL.ActiveTexture(TextureUnit.Texture0);
-        GameEngine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        BaseGameEngine.GL.ActiveTexture(TextureUnit.Texture0);
+        BaseGameEngine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
 
-        GameEngine
+        BaseGameEngine
             .GL
             .TexImage2D(
                 TextureTarget.Texture2D,
@@ -53,7 +82,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 null
             );
         SetParameters();
-        GameEngine.GL.BindTexture(TextureTarget.Texture2D, 0);
+        BaseGameEngine.GL.BindTexture(TextureTarget.Texture2D, 0);
         return texture;
     }
 
@@ -63,16 +92,16 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
 
         var texture = new Texture
         {
-            Handle = GameEngine.GL.GenTexture(),
+            Handle = BaseGameEngine.GL.GenTexture(),
             Width = (uint)img.Width,
             Height = (uint)img.Height
         };
 
-        GameEngine.GL.ActiveTexture(TextureUnit.Texture0);
-        GameEngine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        BaseGameEngine.GL.ActiveTexture(TextureUnit.Texture0);
+        BaseGameEngine.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
 
         //Reserve enough memory from the gpu for the whole image
-        GameEngine
+        BaseGameEngine
             .GL
             .TexImage2D(
                 TextureTarget.Texture2D,
@@ -95,7 +124,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 fixed (void* data = accessor.GetRowSpan(y))
                 {
                     //Loading the actual image.
-                    GameEngine
+                    BaseGameEngine
                     .GL
                         .TexSubImage2D(
                             TextureTarget.Texture2D,
@@ -118,37 +147,37 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
     private static void SetParameters()
     {
         // Setting some texture parameters so the texture behaves as expected.
-        GameEngine
+        BaseGameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapS,
                 (int)GLEnum.Repeat
             );
-        GameEngine
+        BaseGameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapT,
                 (int)GLEnum.Repeat
             );
-        GameEngine
+        BaseGameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMinFilter,
                 (int)GLEnum.NearestMipmapNearest
             );
-        GameEngine
+        BaseGameEngine
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter,
                 (int)GLEnum.Nearest
             );
-        //GameEngine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        //GameEngine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
+        //BaseGameEngine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        //BaseGameEngine.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
         ////Generating mipmaps.
-        //GameEngine.GL.GenerateMipmap(TextureTarget.Texture2D);
+        //BaseGameEngine.GL.GenerateMipmap(TextureTarget.Texture2D);
     }
 }

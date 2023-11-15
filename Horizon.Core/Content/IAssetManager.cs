@@ -1,19 +1,16 @@
-﻿using System.Collections.Concurrent;
+﻿using Horizon.Core.Primitives;
+using System.Collections.Concurrent;
 
 namespace Horizon.Core.Content;
 
 /// <summary>
 /// A class build around creating, managing and disposing of game assets in a reliable thread-safe manner.
 /// </summary>
-/// <typeparam name="AssetType"></typeparam>
-/// <typeparam name="AssetFactoryType"></typeparam>
-/// <typeparam name="AssetDescriptionType"></typeparam>
-/// <typeparam name="AssetDisposerType"></typeparam>
-public abstract class AssetManager<AssetType, AssetFactoryType, AssetDescriptionType, AssetDisposerType> : IDisposable
-    where AssetType : IGameAsset
+public class AssetManager<AssetType, AssetFactoryType, AssetDescriptionType, AssetDisposerType> : IDisposable
+    where AssetType : IGLObject
     where AssetDescriptionType : IAssetDescription
     where AssetFactoryType : IAssetFactory<AssetType, AssetDescriptionType>
-    where AssetDisposerType: IGameAssetDisposer<AssetType>
+    where AssetDisposerType : IGameAssetDisposer<AssetType>
 {
     /// <summary>
     /// All keyed assets.
@@ -23,7 +20,7 @@ public abstract class AssetManager<AssetType, AssetFactoryType, AssetDescription
     /// <summary>
     /// All unnamed but managed assets.
     /// </summary>
-    public ConcurrentBag<AssetType> UnnamedAssets { get; init; }
+    public List<AssetType> UnnamedAssets { get; init; }
 
     public AssetManager()
     {
@@ -44,7 +41,7 @@ public abstract class AssetManager<AssetType, AssetFactoryType, AssetDescription
         }
         return asset;
     }
-    
+
     /// <summary>
     /// Creates a new unnamed managed instance of an asset from a description.
     /// </summary>
@@ -60,6 +57,28 @@ public abstract class AssetManager<AssetType, AssetFactoryType, AssetDescription
     /// Decorator method for managing an instance of an asset manually.
     /// </summary>
     public AssetType Add(in AssetType asset) { UnnamedAssets.Add(asset); return asset; }
+
+    /// <summary>
+    /// Removes an unnamed object.
+    /// </summary>
+    public bool Remove(in AssetType asset)
+    {
+        AssetDisposerType.Dispose(asset);
+        return UnnamedAssets.Remove(asset);
+    }
+
+    /// <summary>
+    /// Removes a named object from management.
+    /// </summary>
+    public bool Remove(in string name)
+    {
+        if (NamedAssets.TryRemove(name, out var asset))
+        {
+            AssetDisposerType.Dispose(asset);
+            return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// Disposes all managed assets.

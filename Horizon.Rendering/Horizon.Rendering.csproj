@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.19.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Horizon.Content\Horizon.Content.csproj" />
     <ProjectReference Include="..\Horizon.Core\Horizon.Core.csproj" />
-    <ProjectReference Include="..\Horizon.Input\Horizon.Input.csproj" />
+    <ProjectReference Include="..\Horizon.OpenGL\Horizon.OpenGL.csproj" />
   </ItemGroup>
 
 </Project>

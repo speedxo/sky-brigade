@@ -1,58 +1,40 @@
-﻿using Horizon.Content.Assets;
-using Horizon.Content.Disposers;
+﻿using Horizon.Content.Disposers;
 using Horizon.Content.Factories;
+using Horizon.Core.Assets;
 using Horizon.Core.Components;
 using Horizon.Core.Content;
 using Horizon.Core.Primitives;
 
-namespace Horizon.Content;
+namespace Horizon.Content.Managers;
 
 public class ContentManager : IGameComponent
 {
-    private bool disposedValue;
-
     public AssetManager<Texture, TextureFactory, TextureDescription, TextureDisposer> Textures { get; init; }
+    public AssetManager<Shader, ShaderFactory, ShaderDescription, ShaderDisposer> Shaders { get; init; }
 
     public string Name { get; set; }
     public Entity Parent { get; set; }
     public bool Enabled { get; set; }
 
-    public ContentManager(Entity parent)
+    public ContentManager()
     {
         Name = "Content Manager";
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                // managed
-            }
-
-            Textures.Dispose();
-            //Shaders.Dispose();
-            disposedValue = true;
-        }
-    }
-
-    ~ContentManager()
-    {
-        Dispose(disposing: false);
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        Textures = new();
+        Shaders = new();
     }
 
     public void Initialize()
     {
-        
+
     }
 
+
+    public void Dispose()
+    {
+        Textures.Dispose();
+        Shaders.Dispose();
+        GC.SuppressFinalize(this);
+    }
     public void Render(float dt)
     {
 

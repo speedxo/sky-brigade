@@ -3,9 +3,8 @@
 public interface IDrawable
 {
     /// <summary>
-    /// Draws the current object using the provided render options.
+    /// Draws the current object in its exact state.
     /// </summary>
     /// <param name="dt">The elapsed time since the last render call.</param>
-    /// <param name="options">Optional render options. If not provided, default options will be used.</param>
     public void Render(float dt);
 }

@@ -8,7 +8,8 @@ namespace Horizon.Content.Factories;
 public readonly struct TextureDescription : IAssetDescription
 {
     public readonly string Path;
-    public readonly int Width, Height;
+    public readonly int Width;
+    public readonly int Height;
     public readonly TextureDefinition Definition;
 
     public TextureDescription()

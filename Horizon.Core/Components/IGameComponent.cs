@@ -5,7 +5,7 @@ namespace Horizon.Core.Components;
 /// <summary>
 /// IGameComponent interface represents a game component.
 /// </summary>
-public interface IGameComponent : IDrawable, IUpdateable
+public interface IGameComponent : IDrawable, IUpdateable, IInstantiable
 {
     /// <summary>
     /// Gets or sets the enable flag for this component.
@@ -21,9 +21,4 @@ public interface IGameComponent : IDrawable, IUpdateable
     /// Gets or sets the parent entity of the game component.
     /// </summary>
     public Entity Parent { get; set; }
-
-    /// <summary>
-    /// Initializes the game component.
-    /// </summary>
-    void Initialize();
 }

@@ -6,15 +6,18 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Horizon.Core.Components;
+using Silk.NET.Core.Native;
 
 namespace Horizon.Core.Primitives;
 
-public abstract class Entity
+public abstract class Entity : IDrawable, IUpdateable
 {
-    public Entity Parent { get; init; }
-    public List<Entity> Children { get; init; }
-    public Dictionary<Type, IGameComponent> Components { get; init; }
     public bool Enabled { get; set; } = true;
+
+    public Entity Parent { get; private set; }
+
+    public Dictionary<Type, IGameComponent> Components { get; init; }
+    public List<Entity> Children { get; init; }
 
     private ConcurrentStack<Entity> _uninitializedEntities = new();
     private ConcurrentStack<IGameComponent> _uninitializedComponents = new();
@@ -25,7 +28,10 @@ public abstract class Entity
         Components = new();
     }
 
-    public void Initialize() { }
+    /// <summary>
+    /// Called after the constructor, guaranteeing that there will be a valid GL context.
+    /// </summary>
+    public virtual void Initialize() { }
 
     public virtual void Render(float dt)
     {
@@ -34,11 +40,9 @@ public abstract class Entity
             if (_uninitializedComponents.TryPop(out IGameComponent? result))
             {
                 if (result is null) continue;
-                
+
                 result.Initialize();
                 result.Enabled = true;
-                
-                Components.Add(result.GetType(), result);
             }
         }
         while (!_uninitializedEntities.IsEmpty)
@@ -46,11 +50,9 @@ public abstract class Entity
             if (_uninitializedEntities.TryPop(out var result))
             {
                 if (result is null) continue;
-                
+
                 result.Initialize();
                 result.Enabled = true;
-
-                Children.Add(result);
             }
         }
 
@@ -60,9 +62,21 @@ public abstract class Entity
             Children[i].Render(dt);
     }
 
-    public virtual void UpdatePhysics(float dt) { }
+    public virtual void UpdatePhysics(float dt)
+    {
+        foreach (var (_, comp) in Components)
+            comp.UpdatePhysics(dt);
+        for (int i = 0; i < Children.Count; i++)
+            Children[i].UpdatePhysics(dt);
+    }
 
-    public virtual void UpdateState(float dt) { }
+    public virtual void UpdateState(float dt)
+    {
+        foreach (var (_, comp) in Components)
+            comp.UpdateState(dt);
+        for (int i = 0; i < Children.Count; i++)
+            Children[i].UpdateState(dt);
+    }
 
     /// <summary>
     /// Attempts to return a reference to a specified type of Component.
@@ -86,12 +100,15 @@ public abstract class Entity
     /// Attempts to attach a component to this Entity.
     /// </summary>
     /// <returns>A reference to the component.</returns>
-    public T AddComponent<T>(T component) where T: IGameComponent
+    public T AddComponent<T>(T component) where T : IGameComponent
     {
         if (!Components.ContainsKey(component.GetType()) && !_uninitializedComponents.Contains(component))
             _uninitializedComponents.Push(component);
 
-        return (T)Components[component.GetType()];
+        component.Parent = this;
+        component.Enabled = false;
+        Components.Add(component.GetType(), component);
+        return component;
     }
 
     /// <summary>
@@ -114,7 +131,7 @@ public abstract class Entity
     /// Attempts to attach a child entity to this Entity.
     /// </summary>
     /// <returns>A reference to the child entity.</returns>
-    public T AddEntity<T>(T entity) where T: Entity
+    public T AddEntity<T>(T entity) where T : Entity
     {
         if (!Children.Contains(entity) && !_uninitializedEntities.Contains(entity))
             _uninitializedEntities.Push(entity);
@@ -122,6 +139,10 @@ public abstract class Entity
         {
             // entity already exists, dupe.
         }
+
+        entity.Parent = this;
+        entity.Enabled = false;
+        Children.Add(entity);
 
         return entity;
     }

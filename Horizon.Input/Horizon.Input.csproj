@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Horizon.Content\Horizon.Content.csproj" />
+    <PackageReference Include="Silk.NET.Input" Version="2.19.0" />
+    <PackageReference Include="Silk.NET.Input.Extensions" Version="2.19.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Horizon.Core\Horizon.Core.csproj" />
-    <ProjectReference Include="..\Horizon.Input\Horizon.Input.csproj" />
   </ItemGroup>
 
 </Project>
