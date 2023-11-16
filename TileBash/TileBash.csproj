@@ -1,0 +1,152 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <Deterministic>False</Deterministic>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <Deterministic>False</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <Deterministic>False</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <Deterministic>False</Deterministic>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="content\" />
+    <None Remove="content\sprites.vert" />
+    <None Remove="content\sprites.frag" />
+    <None Remove="content\tileset.png" />
+    <None Remove="content\noise\" />
+    <None Remove="content\noise\sprites.frag" />
+    <None Remove="content\noise\sprites.vert" />
+    <None Remove="content\spritesheet.png" />
+    <None Remove="content\maps\main.tmx" />
+    <None Remove="content\maps\tilesheets\Settlement.png" />
+    <None Remove="content\maps\tilesheets\Forest Cliff.png" />
+    <None Remove="content\maps\tilesheets\Forest Props.png" />
+    <None Remove="content\maps\tilesheets\strctures.tsx" />
+    <None Remove="content\maps\tilesheets\water.tsx" />
+    <None Remove="content\maps\tilesheets\Forest Tilesett.png" />
+    <None Remove="content\maps\tilesheets\Sample.png" />
+    <None Remove="content\maps\tilesheets\props.tsx" />
+    <None Remove="content\maps\tilesheets\Trees.png" />
+    <None Remove="content\maps\tilesheets\Water Tileset.png" />
+    <None Remove="content\maps\tilesheets\cliff.tsx" />
+    <None Remove="content\maps\tilesheets\Forest Structures.png" />
+    <None Remove="content\maps\tilesheets\tileset.tsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="content\" />
+    <Folder Include="content\noise\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="content\sprites.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\sprites.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\noise\noise.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\noise\noise.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\spritesheet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\maps\main.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\maps\tilesheets\tileset.tsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Horizon.Content\Horizon.Content.csproj" />
+    <ProjectReference Include="..\Horizon.Core\Horizon.Core.csproj" />
+    <ProjectReference Include="..\Horizon.Engine\Horizon.Engine.csproj" />
+    <ProjectReference Include="..\Horizon.Input\Horizon.Input.csproj" />
+    <ProjectReference Include="..\Horizon.OpenGL\Horizon.OpenGL.csproj" />
+    <ProjectReference Include="..\Horizon.Rendering\Horizon.Rendering.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="content\.DS_Store">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\cat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\tilemap.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\sprites.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\sprites.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\main.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Settlement.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Forest Cliff.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Forest Props.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\strctures.tsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\water.tsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Forest Tilesett.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Sample.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\props.tsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Trees.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Water Tileset.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\cliff.tsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\Forest Structures.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\tileset.tsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

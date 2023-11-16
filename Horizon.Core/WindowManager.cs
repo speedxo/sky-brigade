@@ -1,23 +1,26 @@
-﻿using Horizon.Core.Primitives;
-using Silk.NET.OpenGL;
-using Silk.NET.Windowing;
-using Silk.NET.Input;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Horizon.Core;
 using Horizon.Core.Components;
+using Horizon.Core.Primitives;
+using Silk.NET.Input;
+using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
 
 namespace Horizon.Core;
 
 /// <summary>
-/// BaseGameEngine component to manage a window and its associated threads.
+/// Engine component that manages all associated window activities and threads.
 /// </summary>
 public class WindowManager : IGameComponent
 {
     private readonly IWindow _window;
     private IInputContext _input;
+    private Task logicTask,
+        physicsTask;
 
     public bool IsRunning { get; private set; }
 
@@ -45,19 +48,23 @@ public class WindowManager : IGameComponent
     public string Name { get; set; }
     public Entity Parent { get; set; }
 
-    private BaseGameEngine _engine;
-
     /// <summary>
     /// Gets the underlying native window.
     /// </summary>
     /// <returns>The GLFW IWindow.</returns>
-    public IWindow Window { get => _window; }
+    public IWindow Window
+    {
+        get => _window;
+    }
 
     /// <summary>
     /// Gets the windows native input context.
     /// </summary>
     /// <returns>Native IInputContext</returns>
-    public IInputContext Input { get => _input; }
+    public IInputContext Input
+    {
+        get => _input;
+    }
 
     // copy of initial WindowOptions instance.
     private readonly WindowOptions _options;
@@ -75,7 +82,10 @@ public class WindowManager : IGameComponent
                 Version = new APIVersion(4, 6)
             },
             Title = config.WindowTitle,
-            Size = new Silk.NET.Maths.Vector2D<int>((int)config.WindowSize.X, (int)config.WindowSize.Y),
+            Size = new Silk.NET.Maths.Vector2D<int>(
+                (int)config.WindowSize.X,
+                (int)config.WindowSize.Y
+            ),
             FramesPerSecond = 0,
             VSync = false
         };
@@ -89,11 +99,20 @@ public class WindowManager : IGameComponent
 
     private void SubscribeWindowEvents()
     {
-        this._window.Render += (dt) => _engine.Render((float)dt);
-        this._window.Update += (dt) => _engine.UpdateState((float)dt);
+        this._window.Render += (dt) => Parent.Render((float)dt);
+        this._window.Update += (dt) => Parent.UpdateState((float)dt);
         this._window.Resize += WindowResize;
-        
-        this._window.Load += Initialize;
+
+        this._window.Load += () =>
+        {
+            GL = _window.CreateOpenGL();
+            GLObject.SetGL(GL);
+
+            _input = _window.CreateInput();
+
+            UpdateViewport();
+            Parent.Initialize();
+        };
     }
 
     private void UpdateViewport()
@@ -111,29 +130,14 @@ public class WindowManager : IGameComponent
 
     public void Initialize()
     {
-        GL = _window.CreateOpenGL();
-        _input = _window.CreateInput();
-        _engine = (BaseGameEngine)Parent;
-
-
-        UpdateViewport();
-        _engine.Initialize();
+        //Parent.Logger.Log(Bogz.Logging.LogLevel.Info, $"[{Name}] Created window({_options.Size})!");
     }
 
-    public void Render(float dt)
-    {
+    public void Render(float dt) { }
 
-    }
+    public void UpdateState(float dt) { }
 
-    public void UpdateState(float dt)
-    {
-
-    }
-
-    public void UpdatePhysics(float dt)
-    {
-
-    }
+    public void UpdatePhysics(float dt) { }
 
     public void Run()
     {
@@ -150,6 +154,7 @@ public class WindowManager : IGameComponent
 
         // Dispose and unload
         _window.DoEvents();
+        Dispose();
         _window.Reset();
     }
 
@@ -173,7 +178,7 @@ public class WindowManager : IGameComponent
             elapsedTime = ((previousTicks - ticks) / (double)Stopwatch.Frequency);
 
             if (_window.IsInitialized)
-                UpdatePhysics((float)elapsedTime);
+                Parent.UpdatePhysics((float)elapsedTime);
 
             previousTicks = ticks;
         }
@@ -187,17 +192,24 @@ public class WindowManager : IGameComponent
             _window.DoRender();
 
         /* it is important to ensure that atleast one Render pass has happened, before
-         * we dispatch all the threads, as lazy initialisation is done in the render thread. */
+         * we dispatch all the threads, as lazy initialization of unmanaged object is done in the render thread. */
 
         // Dispatch threads.
-        Task.Run(OnLogicFrame);
-        Task.Run(OnPhysicsFrame);
+        logicTask ??= Task.Run(OnLogicFrame);
+        physicsTask ??= Task.Run(OnPhysicsFrame);
     }
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
+        // this freezes the app if any threads get stuck so lets not do this
+        physicsTask.Wait();
+        logicTask.Wait();
+        Parent.Dispose();
+
         _window.Dispose();
+        //Parent.Logger.Log(Bogz.Logging.LogLevel.Info, $"[{Name}] Disposed!");
+
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
-﻿using Horizon.Core.Components;
+﻿using System.Numerics;
+using Horizon.Core.Components;
 using Horizon.Core.Primitives;
 using Silk.NET.Input;
-using System.Numerics;
 
 namespace Horizon.Input.Components
 {

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Horizon.Core\Horizon.Core.csproj" />
+    <ProjectReference Include="..\Horizon.OpenGL\Horizon.OpenGL.csproj" />
   </ItemGroup>
 
 </Project>

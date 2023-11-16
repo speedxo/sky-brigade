@@ -4,16 +4,39 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Box2D.NetStandard" Version="2.4.7-alpha" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.19.0" />
+    <PackageReference Include="TiledSharp" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Horizon.Content\Horizon.Content.csproj" />
     <ProjectReference Include="..\Horizon.Core\Horizon.Core.csproj" />
+    <ProjectReference Include="..\Horizon.Engine\Horizon.Engine.csproj" />
     <ProjectReference Include="..\Horizon.OpenGL\Horizon.OpenGL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tiling\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="shaders\spritebatch\sprites.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\spritebatch\sprites.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\tilemap\tilemap.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\tilemap\tilemap.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

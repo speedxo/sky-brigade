@@ -6,6 +6,4 @@ using System.Threading.Tasks;
 
 namespace Horizon.Engine;
 
-public class Scene
-{
-}
+public class Scene : GameObject { }

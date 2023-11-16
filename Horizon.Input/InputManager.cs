@@ -1,8 +1,9 @@
-﻿using Horizon.Core.Components;
+﻿using System.Numerics;
+using Horizon.Core;
+using Horizon.Core.Components;
 using Horizon.Core.Primitives;
 using Horizon.Input.Components;
 using Silk.NET.Input;
-using System.Numerics;
 
 namespace Horizon.Input
 {
@@ -15,7 +16,7 @@ namespace Horizon.Input
         /// <summary>
         /// The window's native input context.
         /// </summary>
-        public IInputContext NativeInputContext { get => _engine.WindowManager.Input; }
+        public IInputContext NativeInputContext { get; private set; }
 
         /// <summary>
         /// All attached PeripheralInputManagers.
@@ -45,9 +46,10 @@ namespace Horizon.Input
         public string Name { get; set; }
         public Entity Parent { get; set; }
 
-        private BaseGameEngine _engine;
         private VirtualController VirtualController = default;
         private VirtualController PreviousVirtualController = default;
+
+        private EngineEventHandler eventHandler;
 
         /// <summary>
         /// Initializes a new instance of the InputManager class with default values.
@@ -58,7 +60,8 @@ namespace Horizon.Input
             PeripheralInputManager.SetManager(this);
 
             // Attach all peripheral managers.
-            Peripherals = new PeripheralInputManager[] {
+            Peripherals = new PeripheralInputManager[]
+            {
                 XInputJoystickManager = new XInputJoystickInputManager(),
                 KeyboardManager = new KeyboardInputManager(),
                 MouseManager = new MouseInputManager()
@@ -68,18 +71,20 @@ namespace Horizon.Input
         ~InputManager()
         {
             // detach events
-            _engine.Events.PreState -= AggregateInputs;
-            _engine.Events.PostState -= SwapBuffers;
+            eventHandler.PreState -= AggregateInputs;
+            eventHandler.PostState -= SwapBuffers;
         }
 
         public void Initialize()
         {
             // TODO: fix assumptions
-            _engine = (BaseGameEngine)Parent;
+            eventHandler = Parent.GetComponent<EngineEventHandler>();
+
+            NativeInputContext = Parent.GetComponent<WindowManager>().Input;
 
             // attach events
-            _engine.Events.PreState += AggregateInputs;
-            _engine.Events.PostState += SwapBuffers;
+            eventHandler.PreState += AggregateInputs;
+            eventHandler.PostState += SwapBuffers;
 
             // Initialize peripheral managers
             for (int i = 0; i < Peripherals.Length; i++)
@@ -87,6 +92,7 @@ namespace Horizon.Input
         }
 
         public void Render(float dt) { }
+
         public void UpdatePhysics(float dt) { }
 
         /// <summary>
@@ -133,17 +139,14 @@ namespace Horizon.Input
 
             VirtualController.LookingAxis =
                 mouseData.Direction
-                + (
-                    XInputJoystickManager.IsConnected ? joystickData.SecondaryAxis : Vector2.Zero
-                );
+                + (XInputJoystickManager.IsConnected ? joystickData.SecondaryAxis : Vector2.Zero);
         }
 
         /// <summary>
         /// Gets the VirtualController providing unified input data from various sources.
         /// </summary>
         /// <returns>The VirtualController instance.</returns>
-        public VirtualController GetVirtualController() =>
-            Enabled ? VirtualController : default;
+        public VirtualController GetVirtualController() => Enabled ? VirtualController : default;
 
         /// <summary>
         /// Gets the last frames VirtualController providing unified input data from various sources.

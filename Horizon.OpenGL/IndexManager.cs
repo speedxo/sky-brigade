@@ -7,7 +7,7 @@ namespace Horizon.OpenGL;
 /// </summary>
 internal abstract class IndexManager
 {
-    protected readonly Dictionary<string, int> namedIndices;
+    protected readonly Dictionary<string, uint> namedIndices;
     protected readonly IGLObject glObject;
 
     public IndexManager(in IGLObject obj)
@@ -16,7 +16,7 @@ internal abstract class IndexManager
         namedIndices = new();
     }
 
-    public int GetLocation(in string name)
+    public uint GetLocation(in string name)
     {
         if (!namedIndices.ContainsKey(name))
             namedIndices.Add(name, GetIndex(name));
@@ -24,5 +24,5 @@ internal abstract class IndexManager
         return namedIndices[name];
     }
 
-    protected abstract int GetIndex(in string name);
+    protected abstract uint GetIndex(in string name);
 }
