@@ -3,9 +3,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Core.Primitives;
+
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -76,7 +78,7 @@ public class WindowManager : IGameComponent
         {
             API = new GraphicsAPI()
             {
-                Flags = ContextFlags.Debug,
+                Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
                 Profile = ContextProfile.Core,
                 Version = new APIVersion(4, 6)

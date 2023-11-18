@@ -16,7 +16,8 @@ namespace Horizon.Rendering.Spriting.Components;
 public class SpriteBatchMesh : GameObject
 {
     private const string UNIFORM_SINGLE_BUFFER_SIZE = "uSingleFrameSize";
-    private const string UNIFORM_CAMERA_MATRIX = "uMvp";
+    private const string UNIFORM_CAMERA_PROJ_MATRIX = "uCameraProjection";
+    private const string UNIFORM_CAMERA_VIEW_MATRIX = "uCameraView";
 
     // TODO: we'll get back to memory alignment later.
     [StructLayout(LayoutKind.Sequential)]
@@ -168,7 +169,9 @@ public class SpriteBatchMesh : GameObject
     protected void BindAndSetUniforms()
     {
         Shader.Bind();
-        Shader.SetUniform(UNIFORM_CAMERA_MATRIX, GameEngine.Instance.ActiveCamera.ProjView);
+
+        Shader.SetUniform(UNIFORM_CAMERA_PROJ_MATRIX, Engine.ActiveCamera.Projection);
+        Shader.SetUniform(UNIFORM_CAMERA_VIEW_MATRIX, Engine.ActiveCamera.View);
         Shader.SetUniform(UNIFORM_SINGLE_BUFFER_SIZE, sheet.SingleSpriteSize);
 
         Engine.GL.BindTextureUnit(0, sheet.Handle);

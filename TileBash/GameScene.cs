@@ -33,7 +33,7 @@ public class GameScene : Scene
     private TileMap tilemap;
     private World world;
     private ParticleRenderer2D rainParticleSystem;
-    private Renderer2D deferredRenderer;
+    private DeferredRenderer2D deferredRenderer;
 
     //private RenderOptions charOptions;
     private int catCounter = 0;
@@ -71,7 +71,7 @@ public class GameScene : Scene
         //world.SetDebugDraw(debugDrawCallback);
 
         AddEntity(player = new Player2D(world, tilemap));
-        deferredRenderer = AddEntity<Renderer2D>(
+        deferredRenderer = AddEntity<DeferredRenderer2D>(
             new((uint)Engine.WindowManager.WindowSize.X, (uint)Engine.WindowManager.WindowSize.Y)
         );
         cam = AddEntity<Camera2D>(new(deferredRenderer.ViewportSize / 4.0f));
@@ -83,7 +83,7 @@ public class GameScene : Scene
 
         deferredRenderer.AddEntity(
             rainParticleSystem = new ParticleRenderer2D(100_000)
-            {
+            {   
                 MaxAge = 2.5f,
                 StartColor = new Vector3(4, 0, 255) / new Vector3(255),
                 EndColor = new Vector3(66, 135, 245) / new Vector3(255),
@@ -102,16 +102,16 @@ public class GameScene : Scene
                     (float, float) roll(int diag) =>
                         (
                             random.NextSingle() * Engine.WindowManager.WindowSize.X + diag / 2.0f,
-                            random.NextSingle() * Engine.WindowManager.WindowSize.X + diag / 2.0f
+                            random.NextSingle() * Engine.WindowManager.WindowSize.Y + diag / 2.0f
                         );
 
                     for (int diagonal = 0; diagonal < 4; diagonal++)
                     {
                         (var x, var y) = roll(diagonal); // slight bias
                         SpawnParticle(
-                            cam.ScreenToWorld(new Vector2(x + 250, y - 250)),
-                            Vector2.One,
-                            1.0f
+                            cam.ScreenToWorld(new Vector2(x, y)),
+                            -Vector2.One,
+                            0.2f
                         );
                     }
                 }
@@ -134,7 +134,7 @@ public class GameScene : Scene
         Engine.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private float cameraMovement = 12f;
+    private float cameraMovement = 1f;
 
     public override void UpdateState(float dt)
     {
@@ -151,6 +151,7 @@ public class GameScene : Scene
                         ? 1
                         : 0
             );
+        cam.Zoom = cameraMovement;
 
         if (Engine.InputManager.KeyboardManager.IsKeyPressed(Key.G))
         {

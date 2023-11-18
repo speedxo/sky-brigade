@@ -9,8 +9,7 @@ namespace Horizon.Rendering;
 
 public class DeferredRenderer2DTechnique : Renderer2DTechnique
 {
-    protected virtual string UNIFORM_NORMAL { get; } = "uTexNormal";
-    protected virtual string UNIFORM_FRAGPOS { get; } = "uTexFragPos";
+    protected virtual string UNIFORM_NORMALFRAGPOS { get; } = "uTexNormalFragPos";
     protected override string ShaderFileName => "deferred";
 
     public DeferredRenderer2DTechnique(FrameBufferObject frameBuffer)
@@ -21,23 +20,38 @@ public class DeferredRenderer2DTechnique : Renderer2DTechnique
         frameBuffer.BindAttachment(FramebufferAttachment.ColorAttachment0, 0);
         SetUniform(UNIFORM_ALBEDO, 0);
         frameBuffer.BindAttachment(FramebufferAttachment.ColorAttachment1, 1);
-        SetUniform(UNIFORM_NORMAL, 1);
-        frameBuffer.BindAttachment(FramebufferAttachment.ColorAttachment2, 2);
-        SetUniform(UNIFORM_FRAGPOS, 2);
+        SetUniform(UNIFORM_NORMALFRAGPOS, 1);
 
-        //LightingStuff();
+        LightingStuff();
     }
+
+    Vector2 lightPos;
+    Vector3 color = Vector3.One;
+    int indexer = 0, max = 32;
 
     private void LightingStuff()
     {
-        var mouseData = GameEngine.Instance.InputManager.MouseManager.GetData();
-        Vector2 normalizedScreenPosition = new Vector2(
-            (mouseData.Position.X / GameEngine.Instance.WindowManager.WindowSize.X),
-            1.0f - (mouseData.Position.Y / GameEngine.Instance.WindowManager.WindowSize.Y)
-        );
-        SetUniform("lights[0].Position", new Vector2(128));
-        SetUniform("lights[0].Radius", 500.0f);
-        SetUniform("lights[0].Color", new Vector3(1.0f, 1.0f, 1.0f));
+        var data = GameEngine.Instance.InputManager.MouseManager.GetData();
+        lightPos = GameEngine.Instance.ActiveCamera.ScreenToWorld(data.Position);
+
+        SetUniform($"uTime", GameEngine.Instance.TotalTime);
+        SetUniform($"uAspectRatio", GameEngine.Instance.WindowManager.AspectRatio);
+        SetUniform($"lights[{indexer}].Position", (lightPos));
+        SetUniform($"lights[{indexer}].Radius", 200.0f);
+        SetUniform($"lights[{indexer}].Color", color);
+
+
+        if (GameEngine.Instance.InputManager.GetPreviousVirtualController().IsPressed(Input.VirtualAction.SecondaryAction))
+        {
+            if (!GameEngine.Instance.InputManager.IsPressed(Input.VirtualAction.SecondaryAction))
+            {
+                indexer = ++indexer % max;
+                color = new Vector3(Random.Shared.NextSingle(), Random.Shared.NextSingle(), Random.Shared.NextSingle());
+            }
+        }
+
+
+
         SetUniform(
             "viewPos",
             new Vector2(

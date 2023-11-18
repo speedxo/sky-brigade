@@ -22,9 +22,10 @@ public class FrameBufferObject : IGLObject
     public void Bind()
     {
         ContentManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
-        ContentManager
-            .GL
-            .NamedFramebufferDrawBuffers(Handle, (uint)DrawBuffers.Length, (GLEnum)DrawBuffers[0]);
+        ContentManager.GL.DrawBuffers((uint)DrawBuffers.Length, in DrawBuffers[0]);
+        //ContentManager
+        //    .GL
+        //    .NamedFramebufferDrawBuffers(Handle, (uint)DrawBuffers.Length, (GLEnum)DrawBuffers[0]);
     }
 
     /// <summary>

@@ -155,7 +155,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMinFilter,
-                (int)GLEnum.Nearest
+                (int)GLEnum.NearestMipmapLinear
             );
         ContentManager
             .GL
@@ -164,9 +164,9 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 TextureParameterName.TextureMagFilter,
                 (int)GLEnum.Nearest
             );
-        //ContentManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        //ContentManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 8);
-        ////Generating mipmaps.
-        //ContentManager.GL.GenerateMipmap(TextureTarget.Texture2D);
+        ContentManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        ContentManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 4);
+        //Generating mipmaps.
+        ContentManager.GL.GenerateMipmap(TextureTarget.Texture2D);
     }
 }

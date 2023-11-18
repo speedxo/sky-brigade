@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,53 +10,62 @@ using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Buffers;
 using Horizon.OpenGL.Descriptions;
+
 using Silk.NET.OpenGL;
 
 namespace Horizon.Rendering;
 
 public class RenderTarget : GameObject
 {
-    public FrameBufferObject FrameBuffer { get; init; }
+    public FrameBufferObject FrameBuffer { get; protected set; }
+    public Vector2 ViewportSize { get; }
 
-    public RenderTarget(in FrameBufferObjectDescription desc)
+    protected virtual FrameBufferObject CreateFrameBuffer(in uint width, in uint height) => GameEngine
+            .Instance
+            .ContentManager
+            .FrameBuffers
+            .Create(
+                new FrameBufferObjectDescription
+                {
+                    Width = width,
+                    Height = height,
+                    Attachments = new[]
+                    {
+                        FramebufferAttachment.ColorAttachment0 // Albedo
+                    }
+                }
+            )
+            .Asset;
+
+    public RenderTarget(in uint width, in uint height)
     {
-        FrameBuffer = GameEngine.Instance.ContentManager.FrameBuffers.Create(desc).Asset;
+        ViewportSize = new Vector2(width, height);
     }
 
-    /// <summary>
-    /// Binds textures in the order they are in the dictionary.
-    /// </summary>
-    public void BindTextureSamplers()
+    public override void Initialize()
     {
-        uint counter = 0;
-        foreach (var (_, texture) in FrameBuffer.Attachments)
-        {
-            GameEngine.Instance.GL.BindTextureUnit(counter++, texture.Handle);
-        }
+        FrameBuffer = CreateFrameBuffer((uint)ViewportSize.X, (uint)ViewportSize.Y);
+        base.Initialize();
     }
 
     public override void Render(float dt, object? obj = null)
     {
-        GameEngine.Instance
-            .GL
-            .BindFramebuffer(Silk.NET.OpenGL.FramebufferTarget.Framebuffer, FrameBuffer.Handle);
+        // Bind the framebuffer and its attachments
+        FrameBuffer.Bind();
+        Engine.GL.Disable(EnableCap.Blend);
 
-        GameEngine.Instance.GL.DrawBuffers((uint)FrameBuffer.DrawBuffers.Length, FrameBuffer.DrawBuffers);
+        // set the viewport & clear screen
+        FrameBuffer.Viewport();
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
 
-        GameEngine.Instance.GL.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
-        GameEngine.Instance.GL.ClearColor(System.Drawing.Color.Red);
-        GameEngine.Instance.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit);
-
+        // draw all children
         base.Render(dt);
 
-        GameEngine.Instance.GL.BindFramebuffer(Silk.NET.OpenGL.FramebufferTarget.Framebuffer, 0);
-        GameEngine.Instance
-            .GL
-            .Viewport(
-                0,
-                0,
-                (uint)GameEngine.Instance.WindowManager.ViewportSize.X,
-                (uint)GameEngine.Instance.WindowManager.ViewportSize.Y
-            );
+        Engine.GL.Enable(EnableCap.Blend);
+        // set to window frame buffer
+        FrameBufferObject.Unbind();
+
+        // restore window viewport
+        Engine.GL.Viewport(0, 0, (uint)GameEngine.Instance.WindowManager.WindowSize.X, (uint)GameEngine.Instance.WindowManager.WindowSize.Y);
     }
 }

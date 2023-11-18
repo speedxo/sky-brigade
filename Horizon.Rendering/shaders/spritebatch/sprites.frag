@@ -1,11 +1,16 @@
 ﻿#version 410 core
 
-out vec4 FragColor;
+layout(location = 0) out vec4 AlbedoColor;
+layout(location = 1) out vec4 NormalFragPosColor;
 
-in vec2 texCoords;
+layout(location = 0) in vec2 texCoords;
+layout(location = 1) in vec2 fragPos;
 
 uniform sampler2D uTexture;
 
 void main() {
-  FragColor = texture(uTexture, texCoords);
+  vec4 tex = texture(uTexture, texCoords);
+  if (tex.a < 0.1) discard;
+  AlbedoColor = tex;
+  NormalFragPosColor = vec4(vec2(0.0), fragPos);
 }

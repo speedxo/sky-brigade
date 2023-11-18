@@ -34,6 +34,11 @@ public class GameEngine : Entity
         get => SceneManager.CurrentInstance?.ActiveCamera;
     }
 
+    /// <summary>
+    /// Total time in seconds that the window has been open.
+    /// </summary>
+    public float TotalTime { get; private set; } = 0.0f;
+
     public EngineEventHandler EventManager { get; init; }
     public ContentManager ContentManager { get; init; }
     public WindowManager WindowManager { get; init; }
@@ -102,6 +107,8 @@ public class GameEngine : Entity
 
     public override void Render(float dt, object? obj = null)
     {
+        TotalTime += dt;
+
         // Run our custom events.
         EventManager.PreRender?.Invoke(dt);
         base.Render(dt);

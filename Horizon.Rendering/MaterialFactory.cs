@@ -35,13 +35,13 @@ public static class MaterialFactory
             if (lastIndex < 0) continue; // file name doesnt have delimiter
 
             // get the name of the file excluding any suffixes
-            string fileName = rawFileName.Substring(0, lastIndex);
+            string fileName = rawFileName[..lastIndex];
 
             // check if it matches
             if (fileName.CompareTo(name) == 0)
             {
                 // check what attachment we are
-                string identifier = rawFileName.Substring(lastIndex, rawFileName.Length - lastIndex);
+                string identifier = rawFileName[lastIndex..];
 
                 // load the image
                 var texture = GameEngine.Instance.ContentManager.Textures.CreateOrGet($"{name}{identifier}", new OpenGL.Descriptions.TextureDescription

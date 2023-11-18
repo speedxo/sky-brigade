@@ -92,7 +92,7 @@ public class FrameBufferObjectFactory
                             {
                                 InternalFormat = internalFormat,
                                 PixelFormat = pixelFormat,
-                                PixelType = TextureDefinition.RgbaFloat.PixelType
+                                PixelType = PixelType.Float
                             }
                         }
                     )
@@ -115,7 +115,7 @@ public class FrameBufferObjectFactory
                 => (InternalFormat.DepthStencil, PixelFormat.DepthStencil),
             FramebufferAttachment.DepthAttachment
                 => (InternalFormat.DepthComponent, PixelFormat.DepthComponent),
-            _ => (InternalFormat.Rgba, PixelFormat.Rgba)
+            _ => (InternalFormat.Rgba32f, PixelFormat.Rgba) // TODO:  somehow customize this
         };
     }
 }

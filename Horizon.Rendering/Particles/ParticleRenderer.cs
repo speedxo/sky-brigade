@@ -35,7 +35,9 @@ public class ParticleRenderer2D : GameObject, IDisposable
     private VertexBufferObject buffer;
     private readonly ParticleVertex[] quadVerts;
     private readonly uint[] indices;
-    private const string UNIFORM_CAMERA_MATRIX = "uMvp";
+
+    private const string UNIFORM_CAMERA_PROJ_MATRIX = "uCameraProjection";
+    private const string UNIFORM_CAMERA_VIEW_MATRIX = "uCameraView";
 
     public Technique Material { get; set; }
 
@@ -267,7 +269,8 @@ public class ParticleRenderer2D : GameObject, IDisposable
         Engine.GL.MemoryBarrier(MemoryBarrierMask.AllBarrierBits);
 
         Material.Bind();
-        Material.SetUniform(UNIFORM_CAMERA_MATRIX, Engine.ActiveCamera.ProjView);
+        Material.SetUniform(UNIFORM_CAMERA_PROJ_MATRIX, Engine.ActiveCamera.Projection);
+        Material.SetUniform(UNIFORM_CAMERA_VIEW_MATRIX, Engine.ActiveCamera.View);
 
         buffer.Bind();
         buffer.ElementBuffer.Bind();

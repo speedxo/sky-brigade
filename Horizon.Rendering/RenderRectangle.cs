@@ -15,7 +15,7 @@ public class RenderRectangle : GameObject
 {
     private static VertexBufferObject vbo;
 
-    public Technique Technique { get; init; }
+    public Technique Technique { get; set; }
 
     public RenderRectangle(in Technique technique)
     {

@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="shaders\deferredrenderer2d\**" />
+    <EmbeddedResource Remove="shaders\deferredrenderer2d\**" />
+    <None Remove="shaders\deferredrenderer2d\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Box2D.NetStandard" Version="2.4.7-alpha" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.19.0" />
     <PackageReference Include="TiledSharp" Version="1.0.1" />
@@ -21,11 +27,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="shaders\deferredrenderer2d\" />
     <Folder Include="shaders\particle\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="shaders\exposure.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\aces.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\aces.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\basic\texture_to_screen.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\basic\texture_to_screen.vs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\desaturate.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\fast_random.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="shaders\renderer2d\standard.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

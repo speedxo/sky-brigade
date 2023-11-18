@@ -26,7 +26,8 @@ public abstract partial class Tiling<TTextureID>
 
     public class TileMesh : GameObject
     {
-        protected const string UNIFORM_CAMERA_MATRIX = "uMvp";
+        private const string UNIFORM_CAMERA_PROJ_MATRIX = "uCameraProjection";
+        private const string UNIFORM_CAMERA_VIEW_MATRIX = "uCameraView";
         protected const string UNIFORM_TEXTURE_ALEBDO = "uTextureAlbedo";
         protected const string UNIFORM_TEXTURE_NORMAL = "uTextureNormal";
         public uint TileCount { get; private set; }
@@ -247,7 +248,8 @@ public abstract partial class Tiling<TTextureID>
             Set.Material.BindAttachment(MaterialAttachment.Normal, 1);
             Shader.SetUniform(UNIFORM_TEXTURE_NORMAL, 1);
 
-            Shader.SetUniform(UNIFORM_CAMERA_MATRIX, Engine.ActiveCamera.ProjView);
+            Shader.SetUniform(UNIFORM_CAMERA_PROJ_MATRIX, Engine.ActiveCamera.Projection);
+            Shader.SetUniform(UNIFORM_CAMERA_VIEW_MATRIX, Engine.ActiveCamera.View);
             Shader.SetUniform("uDiscard", (int)CullMode);
             Shader.SetUniform("uClipOffset", Map.ClippingOffset);
 

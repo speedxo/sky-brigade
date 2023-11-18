@@ -1,14 +1,16 @@
 #version 410 core
 
 in float alive;
-in float age;
+in vec2 fragPos;
 
-out vec4 FragColor;
+layout(location = 0) out vec4 AlbedoColor;
+layout(location = 1) out vec4 NormalFragPosColor;
 
 uniform vec3 uStartColor;
 uniform vec3 uEndColor;
 
 void main() {
   if (alive < 0.0) discard; 
-  FragColor = vec4(mix(uEndColor, uStartColor, alive), alive + 0.1);
+  AlbedoColor = vec4(mix(uEndColor, uStartColor, alive), alive + 0.1);
+  NormalFragPosColor = vec4(vec2(0.0), fragPos);
 }

@@ -58,14 +58,17 @@ public class Renderer2D : GameObject
     public override void Render(float dt, object? obj = null)
     {
         // Bind the framebuffer and its attachments
-        FrameBuffer.Bind(); 
+        FrameBuffer.Bind();
+        Engine.GL.Disable(EnableCap.Blend);
 
-        // set the viewport
-        FrameBuffer.Viewport(); 
+        // set the viewport & clear screen
+        FrameBuffer.Viewport();
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
 
         // draw all children
         base.Render(dt);
 
+        Engine.GL.Enable(EnableCap.Blend);
         // set to window frame buffer
         FrameBufferObject.Unbind();
 
