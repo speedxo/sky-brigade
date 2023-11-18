@@ -2,9 +2,9 @@
 
 namespace Horizon.OpenGL.Assets;
 
-public readonly struct Shader : IGLObject
+public class Shader : IGLObject
 {
-    public readonly uint Handle { get; init; }
+    public uint Handle { get; init; }
 
     public static Shader Invalid { get; } = new Shader { Handle = 0 };
 }

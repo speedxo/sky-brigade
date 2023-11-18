@@ -1,6 +1,7 @@
 ﻿namespace TileBash;
 
 
+
 //public class NoiseGenerator
 //{
 //    private RenderRectangle renderRect;
@@ -8,14 +9,14 @@
 
 //    public uint TextureHandle
 //    {
-//        get => renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0];
+//        get => renderRect.frameBuffer.Attachments[FramebufferAttachment.ColorAttachment0];
 //    }
 
 //    public NoiseGenerator(int width, int height, Vector2 scale)
 //    {
 //        renderRect = new RenderRectangle(
 //            technique = new Technique(
-//                Entity.Engine.Content.Shaders.A(
+//                Entity.Engine.ContentManager.Shaders.A(
 //                    "content/noise/noise.vert",
 //                    "content/noise/noise.frag"
 //                )
@@ -23,12 +24,12 @@
 //            width,
 //            height
 //        );
-//        renderRect.FrameBuffer.AddAttachment(FramebufferAttachment.ColorAttachment0);
-//        System.Diagnostics.Debug.Assert(renderRect.FrameBuffer.ContructFrameBuffer());
+//        renderRect.frameBuffer.AddAttachment(FramebufferAttachment.ColorAttachment0);
+//        System.Diagnostics.Debug.Assert(renderRect.frameBuffer.ContructFrameBuffer());
 
-//        renderRect.FrameBuffer.Bind();
+//        renderRect.frameBuffer.Bind();
 //        Entity.Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
-//        renderRect.FrameBuffer.Unbind();
+//        renderRect.frameBuffer.Unbind();
 
 //        technique.Use();
 //        technique.SetUniform("uNoiseScale", scale);
@@ -37,7 +38,7 @@
 
 //        Entity.Engine.GL.BindTexture(
 //            TextureTarget.Texture2D,
-//            renderRect.FrameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]
+//            renderRect.frameBuffer.Attachments[FramebufferAttachment.ColorAttachment0]
 //        );
 
 //        // Allocate array for pixel data
@@ -58,7 +59,7 @@
 //            }
 //        }
 //        Entity.Engine.GL.BindTexture(TextureTarget.Texture2D, 0);
-//        //renderRect.FrameBuffer.Dispose();
+//        //renderRect.frameBuffer.Dispose();
 
 //        ProcessData(pixelData, width, height);
 

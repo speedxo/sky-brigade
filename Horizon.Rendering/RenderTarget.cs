@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Horizon.Core.Primitives;
 using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Buffers;
@@ -17,7 +19,7 @@ public class RenderTarget : GameObject
 
     public RenderTarget(in FrameBufferObjectDescription desc)
     {
-        FrameBuffer = Engine.Content.FrameBuffers.Create(desc).Asset;
+        FrameBuffer = GameEngine.Instance.ContentManager.FrameBuffers.Create(desc).Asset;
     }
 
     /// <summary>
@@ -28,27 +30,32 @@ public class RenderTarget : GameObject
         uint counter = 0;
         foreach (var (_, texture) in FrameBuffer.Attachments)
         {
-            Engine.GL.BindTextureUnit(counter++, texture.Handle);
+            GameEngine.Instance.GL.BindTextureUnit(counter++, texture.Handle);
         }
     }
 
-    public override void Render(float dt)
+    public override void Render(float dt, object? obj = null)
     {
-        Engine
+        GameEngine.Instance
             .GL
             .BindFramebuffer(Silk.NET.OpenGL.FramebufferTarget.Framebuffer, FrameBuffer.Handle);
 
-        Engine.GL.DrawBuffers((uint)FrameBuffer.DrawBuffers.Length, FrameBuffer.DrawBuffers);
+        GameEngine.Instance.GL.DrawBuffers((uint)FrameBuffer.DrawBuffers.Length, FrameBuffer.DrawBuffers);
 
-        Engine.GL.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
-        Engine.GL.ClearColor(System.Drawing.Color.Red);
-        Engine.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit);
+        GameEngine.Instance.GL.Viewport(0, 0, (uint)FrameBuffer.Width, (uint)FrameBuffer.Height);
+        GameEngine.Instance.GL.ClearColor(System.Drawing.Color.Red);
+        GameEngine.Instance.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit);
 
         base.Render(dt);
 
-        Engine.GL.BindFramebuffer(Silk.NET.OpenGL.FramebufferTarget.Framebuffer, 0);
-        Engine
+        GameEngine.Instance.GL.BindFramebuffer(Silk.NET.OpenGL.FramebufferTarget.Framebuffer, 0);
+        GameEngine.Instance
             .GL
-            .Viewport(0, 0, (uint)Engine.Window.ViewportSize.X, (uint)Engine.Window.ViewportSize.Y);
+            .Viewport(
+                0,
+                0,
+                (uint)GameEngine.Instance.WindowManager.ViewportSize.X,
+                (uint)GameEngine.Instance.WindowManager.ViewportSize.Y
+            );
     }
 }

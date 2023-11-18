@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.10.2" name="tileset" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
- <image source="tilemap.png" width="1024" height="1024"/>
+ <image source="tilemap_albedo.png" width="1024" height="1024"/>
  <wangsets>
   <wangset name="Walls" type="edge" tile="98">
    <wangcolor name="Walls" color="#ff0000" tile="98" probability="1"/>

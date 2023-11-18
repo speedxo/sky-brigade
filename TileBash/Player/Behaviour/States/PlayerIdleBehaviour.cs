@@ -7,7 +7,7 @@ public class PlayerIdleBehaviour : Player2DStateBehaviour
 
     public override Player2DStateIdentifier Update(in float dt)
     {
-        if (Engine.Input.GetVirtualController().MovementAxis.LengthSquared() > 0)
+        if (Engine.InputManager.GetVirtualController().MovementAxis.LengthSquared() > 0)
             return Player2DStateIdentifier.Walking;
 
         Player.SetAnimation("idle");

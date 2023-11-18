@@ -87,7 +87,7 @@ public class WindowManager : IGameComponent
                 (int)config.WindowSize.Y
             ),
             FramesPerSecond = 0,
-            VSync = false
+            VSync = true
         };
 
         ViewportSize = WindowSize = config.WindowSize;
@@ -133,7 +133,7 @@ public class WindowManager : IGameComponent
         //Parent.Logger.Log(Bogz.Logging.LogLevel.Info, $"[{Name}] Created window({_options.Size})!");
     }
 
-    public void Render(float dt) { }
+    public void Render(float dt, object? obj = null) { }
 
     public void UpdateState(float dt) { }
 

@@ -23,7 +23,7 @@ namespace Horizon.Core.Components.Physics2D
             transform = Parent.GetComponent<TransformComponent2D>()!;
         }
 
-        public void Render(float dt) { }
+        public void Render(float dt, object? obj = null) { }
 
         public void UpdateState(float dt)
         {

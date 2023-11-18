@@ -6,4 +6,7 @@ using System.Threading.Tasks;
 
 namespace Horizon.Engine;
 
-public class Scene : GameObject { }
+public abstract class Scene : GameObject
+{
+    public abstract Camera ActiveCamera { get; protected set; }
+}

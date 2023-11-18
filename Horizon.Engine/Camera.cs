@@ -21,11 +21,11 @@ public abstract class Camera : GameObject
     public RectangleF Bounds { get; protected set; }
     public Vector3 Position { get; set; }
 
-    public override void Render(float dt)
+    public override void Render(float dt, object? obj = null)
     {
-        base.Render(dt);
         UpdateMatrices();
         ProjView = View * Projection;
+        base.Render(dt);
     }
 
     protected abstract void UpdateMatrices();
@@ -39,8 +39,8 @@ public abstract class Camera : GameObject
     {
         // Normalize the screen position from [0, 1] to [-1, 1]
         Vector2 normalizedScreenPosition = new Vector2(
-            (screenPosition.X / Engine.Window.WindowSize.X) * 2.0f - 1.0f,
-            1.0f - (screenPosition.Y / Engine.Window.WindowSize.Y) * 2.0f
+            (screenPosition.X / Engine.WindowManager.WindowSize.X) * 2.0f - 1.0f,
+            1.0f - (screenPosition.Y / Engine.WindowManager.WindowSize.Y) * 2.0f
         );
 
         // Calculate the inverse view-projection matrix
@@ -68,40 +68,35 @@ public abstract class Camera : GameObject
 
 public class Camera2D : Camera
 {
-    public static Camera2D Instance { get; private set; }
-    public Vector2 Viewport { get; init; }
-
     public float Zoom
     {
-        get => 1.0f / _zoom;
+        get => _zoom;
         set
         {
             _zoom = value;
-            _viewport = Viewport * (1.0f / _zoom);
-            Projection = Matrix4x4.CreateOrthographic(_viewport.X, _viewport.Y, 1f, 250.0f);
+            Projection = Matrix4x4.CreateOrthographic(Size.X * Zoom, Size.Y * Zoom, 0.1f, 1.0f);
         }
     }
 
     private float _zoom = 1.0f;
-    private Vector2 _viewport;
+    private Vector2 Size { get; set; }
 
-    public Camera2D(Vector2 size)
+    public Camera2D(in Vector2 size)
     {
-        Instance = this;
-
-        Viewport = size;
+        this.Size = size;
         Zoom = 1.0f;
     }
 
     protected override void UpdateMatrices()
     {
         View = Matrix4x4.CreateLookAt(Position, Position + CameraFront, CameraUp);
+        ProjView = View * Projection;
 
         Bounds = new RectangleF(
-            Position.X - (_viewport.X) / 2.0f,
-            Position.Y - (_viewport.Y) / 2.0f,
-            _viewport.X,
-            _viewport.Y
+            Position.X - 0.5f * Size.X * Zoom,
+            Position.Y - 0.5f * Size.Y * Zoom,
+            Zoom * Size.X,
+            Zoom * Size.Y
         );
     }
 }

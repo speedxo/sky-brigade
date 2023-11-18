@@ -10,7 +10,6 @@ using Horizon.Core.Primitives;
 using Horizon.OpenGL.Assets;
 using Horizon.OpenGL.Managers;
 using Silk.NET.OpenGL;
-
 using Shader = Horizon.OpenGL.Assets.Shader;
 
 namespace Horizon.OpenGL;
@@ -21,25 +20,38 @@ public class Technique
     private TechniqueUniformManager uniformManager;
     private TechniqueResourceIndexManager resourceManager;
 
+    public Technique() { }
+
     public Technique(in Shader shader)
     {
         this.shader = shader;
-        uniformManager = new (shader);
-        resourceManager = new (shader);
+        uniformManager = new(shader);
+        resourceManager = new(shader);
+    }
+
+    /// <summary>
+    /// Sets the internal IGLObject Shader (if null), useful for derived classes.
+    /// </summary>
+    protected void SetShader(in Shader inShader)
+    {
+        shader ??= inShader;
+        uniformManager ??= new(shader);
+        resourceManager ??= new(shader);
     }
 
     public Technique(AssetCreationResult<Shader> asset)
         : this(asset.Asset) { }
 
-
     public void BindBuffer(in string name, in BufferObject bufferObject)
     {
         bufferObject.Bind();
-        ContentManager.GL.BindBufferBase(
-            BufferTargetARB.ShaderStorageBuffer,
-            resourceManager.GetLocation(name),
-            bufferObject.Handle
-        );
+        ContentManager
+            .GL
+            .BindBufferBase(
+                BufferTargetARB.ShaderStorageBuffer,
+                resourceManager.GetLocation(name),
+                bufferObject.Handle
+            );
     }
 
     /// <summary>
@@ -50,7 +62,7 @@ public class Technique
         int location = (int)uniformManager.GetLocation(name);
         //if (location == -1 || value is null) // If GetUniformLocation returns -1, the uniform is not found.
         //{
-        //    //Engine.Logger.Log(
+        //    //ConcurrentLogger.Instance.Log(
         //    //    LogLevel.Error,
         //    //    $"Shader[{Handle}] Uniform('{name}') Error! Check if the uniform is defined!"
         //    //);
@@ -105,7 +117,7 @@ public class Technique
                 break;
 
             default:
-                //Engine.Logger.Log(
+                //ConcurrentLogger.Instance.Log(
                 //    LogLevel.Error,
                 //    $"Shader[{Handle}] Attempt to upload uniform of unsupported data type {value!.GetType()}."
                 //);

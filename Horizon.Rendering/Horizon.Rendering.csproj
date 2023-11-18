@@ -21,10 +21,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tiling\" />
+    <Folder Include="shaders\deferredrenderer2d\" />
+    <Folder Include="shaders\particle\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="shaders\renderer2d\standard.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\renderer2d\standard.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\renderer2d\deferred.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\renderer2d\deferred.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\particle\basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\particle\basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="shaders\spritebatch\sprites.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

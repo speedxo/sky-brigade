@@ -1,7 +1,9 @@
 ﻿using System.Drawing.Drawing2D;
 using System.Numerics;
 using Box2D.NetStandard.Dynamics.Bodies;
+using Horizon.Core.Components;
 using Horizon.Core.Primitives;
+using Horizon.Engine;
 using SixLabors.ImageSharp;
 
 namespace Horizon.Rendering;
@@ -18,7 +20,7 @@ public abstract partial class Tiling<TTextureID>
     /// <summary>
     /// Represents a chunk of tiles in a tile map.
     /// </summary>
-    public class TileMapChunk : IRenderable, IUpdateable
+    public class TileMapChunk : IInstantiable
     {
         /// <summary>
         /// Gets or sets the physics body associated with the chunk.
@@ -51,7 +53,7 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// Gets the renderer responsible for rendering the chunk.
         /// </summary>
-        public TilemapRenderer Renderer { get; init; }
+        public TileMapChunkRenderer Renderer { get; init; }
 
         /// <summary>
         /// Gets the bounds of the chunk in world space.
@@ -75,6 +77,8 @@ public abstract partial class Tiling<TTextureID>
         /// <param name="pos">The position of the chunk in the tile map.</param>
         public TileMapChunk(TileMap map, Vector2 pos)
         {
+            Renderer = new(this);
+
             Map = map;
             Position = pos;
 
@@ -85,15 +89,18 @@ public abstract partial class Tiling<TTextureID>
             for (int i = 0; i < Slices.Length; i++)
                 Slices[i] = new(WIDTH, HEIGHT);
 
-            Renderer = new TilemapRenderer(this);
-
             Bounds = new RectangleF(
-                pos * new Vector2(WIDTH * Tile.TILE_WIDTH, HEIGHT * Tile.TILE_HEIGHT)
-                    - new Vector2(Tile.TILE_WIDTH / 2.0f, Tile.TILE_HEIGHT / 2.0f),
-                new(WIDTH * Tile.TILE_WIDTH, HEIGHT * Tile.TILE_HEIGHT)
+                pos * new Vector2(WIDTH * Map.TileSize.X, HEIGHT * Map.TileSize.Y)
+                    - new Vector2(Map.TileSize.X / 2.0f, Map.TileSize.Y / 2.0f),
+                new(WIDTH * Map.TileSize.X, HEIGHT * Map.TileSize.Y)
             );
 
             IsDirty = true;
+        }
+
+        public void Initialize()
+        {
+            Renderer.Initialize();
         }
 
         public TileMapChunkSlice CreateSlice() => new(WIDTH, HEIGHT);
@@ -146,40 +153,14 @@ public abstract partial class Tiling<TTextureID>
         }
 
         /// <summary>
-        /// Draws the chunk.
-        /// </summary>
-        /// <param name="dt">The time elapsed since the last frame.</param>
-        /// <param name="options">Optional rendering options.</param>
-        public void Render(float dt)
-        {
-            Renderer.Draw(dt);
-        }
-
-        /// <summary>
         /// Draws the specified chunk index.
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
         /// <param name="options">Optional rendering options.</param>
-        public void RenderSlice(
-            int index,
-            float dt,
-            in TileChunkCullMode cullMode
-        )
+        public void RenderSlice(int index, float dt, in TileChunkCullMode cullMode)
         {
             Renderer.DrawSliceAtIndex(index, dt, cullMode);
         }
-
-        /// <summary>
-        /// Updates the chunk.
-        /// </summary>
-        /// <param name="dt">The time elapsed since the last update.</param>
-        public void UpdateState(float dt)
-        {
-            if (!IsVisibleByCamera)
-                return;
-        }
-
-        public void UpdatePhysics(float dt) { }
 
         /// <summary>
         /// Populates the chunk with tiles using a custom action.

@@ -19,7 +19,7 @@ public class SpriteBatch : GameObject
     /// <summary>
     /// Helper struct to aggregate data related to rendering a series of sprites with a common sprite sheet.
     /// </summary>
-    private struct SpriteSheetRenderObject
+    private class SpriteSheetRenderObject
     {
         public SpriteBatchMesh Mesh;
 
@@ -117,7 +117,7 @@ public class SpriteBatch : GameObject
     /// TODO please remind me to make a custom datastruct for this shit
     /// </summary>
     /// <value>
-    private ConcurrentDictionary<uint, SpriteSheetRenderObject> SpritesheetSprites { get; } = new();
+    private Dictionary<uint, SpriteSheetRenderObject> SpritesheetSprites { get; } = new();
     public int Count { get; private set; }
 
     private ConcurrentStack<Sprite> _queuedSprites = new();
@@ -128,10 +128,13 @@ public class SpriteBatch : GameObject
     /// <param name="shader">A custom shader used to render sprites. It is recommended to leave default and apply effects using the post processing pipeline.</param>
     public SpriteBatch()
     {
-        this.Shader = new Technique(Engine
-            .Content
-            .Shaders
-            .Create("sprite", ShaderDescription.FromPath("shaders/spritebatch", "sprites")).Asset);
+        this.Shader = new Technique(
+            Engine
+                .ContentManager
+                .Shaders
+                .Create("sprite", ShaderDescription.FromPath("shaders/spritebatch", "sprites"))
+                .Asset
+        );
 
         // this.Transform = AddComponent<TransformComponent>();
         //Engine.Debugger.GeneralDebugger.AddWatch("Sprite Count", "SpriteBatch", () => Count);
@@ -145,20 +148,30 @@ public class SpriteBatch : GameObject
     /// Commits an object to be rendered.
     /// </summary>
     /// <param name="sprite"></param>
-    public void Add(Sprite sprite) => _queuedSprites.Push(sprite);
+    public void Add(in Sprite sprite) => _queuedSprites.Push(sprite);
 
     /// <summary>
     /// Commits an object to be rendered.
     /// </summary>
     /// <param name="sprite"></param>
-    public void AddRange(Sprite[] sprites) => _queuedSprites.PushRange(sprites);
+    public void AddRange(in Sprite[] sprites) => _queuedSprites.PushRange(sprites);
+
+    public void Remove(in Sprite sprite)
+    {
+        if (!SpritesheetSprites.ContainsKey(sprite.Spritesheet.Handle))
+            return;
+        if (!SpritesheetSprites[sprite.Spritesheet.Handle].Sprites.Contains(sprite))
+            return;
+
+        SpritesheetSprites[sprite.Spritesheet.Handle].Sprites.Remove(sprite);
+    }
 
     /// <summary>
     /// Draws all the sprites commited to this instance.
     /// </summary>
     /// <param name="dt">Delta time.</param>
     /// <param name="options">Render options (optional).</param>
-    public override void Render(float dt)
+    public override void Render(float dt, object? obj = null)
     {
         base.Render(dt);
 
@@ -175,6 +188,8 @@ public class SpriteBatch : GameObject
                 Dictionary<uint, List<Sprite>> spriteSpriteSheetPairs = new();
                 for (int i = 0; i < sprites.Length; i++)
                 {
+                    sprites[i].Batch = this;
+
                     if (sprites[i].AnimationManager is null)
                     {
                         // Sprite not yet initialized
@@ -207,8 +222,7 @@ public class SpriteBatch : GameObject
             renderData
                 .Mesh
                 .Draw( /*Transform.ModelMatrix, */
-                    CollectionsMarshal.AsSpan(renderData.Sprites),
-                    Camera2D.Instance.ProjView
+                    CollectionsMarshal.AsSpan(renderData.Sprites)
                 );
     }
 }

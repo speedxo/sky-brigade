@@ -1,8 +1,8 @@
-﻿using Horizon.Core;
-using Horizon.Core.Components;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Horizon.Core;
+using Horizon.Core.Components;
 
 namespace Horizon.Rendering.Spriting;
 
@@ -38,7 +38,7 @@ public class SpriteSheetAnimationManager : IGameComponent
     {
         if (!Animations.TryGetValue(name, out SpriteAnimationDefinition value))
         {
-            //Entity.Engine.Logger.Log(
+            //Entity.ConcurrentLogger.Instance.Log(
             //    Logging.LogLevel.Error,
             //    $"Attempt to get animation '{name}' which doesn't exist!"
             //); TODO: FIX
@@ -60,7 +60,7 @@ public class SpriteSheetAnimationManager : IGameComponent
     {
         if (Animations.ContainsKey(name))
         {
-            //Entity.Engine.Logger.Log(
+            //Entity.ConcurrentLogger.Instance.Log(
             //    Logging.LogLevel.Error,
             //    $"Attempt to add animation '{name}' which already exists!"
             //); TODO: FIX
@@ -84,7 +84,7 @@ public class SpriteSheetAnimationManager : IGameComponent
         );
     }
 
-    public void Render(float dt) { }
+    public void Render(float dt, object? obj = null) { }
 
     public void Initialize() { }
 

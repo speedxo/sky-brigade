@@ -3,27 +3,27 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Horizon.Core.Components;
 using Horizon.Core.Primitives;
 using Silk.NET.Core.Native;
+using Silk.NET.OpenGL;
 
 namespace Horizon.Core;
 
-public abstract class Entity : IRenderable, IUpdateable, IDisposable
+public abstract class Entity : IRenderable, IUpdateable, IDisposable, IInstantiable
 {
     public bool Enabled { get; set; }
-    public bool RenderImplicit { get; set; } = false;
     public string Name { get; protected set; }
 
     public Entity Parent { get; set; }
-    public ConcurrentDictionary<Type, IGameComponent> Components { get; init; }
+    public List<IGameComponent> Components { get; init; }
     public List<Entity> Children { get; init; }
 
-    private readonly ConcurrentStack<Entity> _uninitializedEntities = new();
-    private readonly ConcurrentStack<IGameComponent> _uninitializedComponents = new();
+    private readonly Queue<IInstantiable> _uninitialized = new();
 
     public Entity()
     {
@@ -36,70 +36,102 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable
     /// </summary>
     public virtual void Initialize() { }
 
-    public virtual void Render(float dt)
+    public virtual void Render(float dt, object? obj = null)
     {
-        while (!_uninitializedComponents.IsEmpty)
+        InitializeAll();
+
+        if (Children.Count > 0)
         {
-            if (_uninitializedComponents.TryPop(out IGameComponent? result))
+            var entSpan = CollectionsMarshal.AsSpan(Children);
+            foreach (var ent in entSpan)
+            {
+                ent?.InitializeAll();
+                ent?.Render(dt);
+            }
+        }
+        if (Components.Count > 0)
+        {
+            var compSpan = CollectionsMarshal.AsSpan(Components);
+            foreach (var comp in compSpan)
+                comp?.Render(dt);
+        }
+    }
+
+    private void InitializeAll()
+    {
+        while (_uninitialized.Count > 0)
+        {
+            if (_uninitialized.TryDequeue(out IInstantiable? result))
             {
                 if (result is null)
                     continue;
 
                 result.Initialize();
-                result.Enabled = true;
+
+                if (result is IGameComponent comp)
+                    comp.Enabled = true;
+                if (result is Entity ent)
+                    ent.Enabled = true;
             }
         }
-        while (!_uninitializedEntities.IsEmpty)
-        {
-            if (_uninitializedEntities.TryPop(out var result))
-            {
-                if (result is null)
-                    continue;
-
-                result.Initialize();
-                result.Enabled = true;
-            }
-        }
-
-        foreach (var (_, comp) in Components)
-            comp.Render(dt);
-        for (int i = 0; i < Children.Count; i++)
-            Children[i].Render(dt);
     }
 
     public virtual void UpdatePhysics(float dt)
     {
-        foreach (var (_, comp) in Components)
-            comp.UpdatePhysics(dt);
-        for (int i = 0; i < Children.Count; i++)
-            Children[i].UpdatePhysics(dt);
+        if (Components.Count > 0)
+        {
+            var compSpan = CollectionsMarshal.AsSpan(Components);
+            foreach (var comp in compSpan)
+                comp?.UpdatePhysics(dt);
+        }
+
+        if (Children.Count > 0)
+        {
+            var entSpan = CollectionsMarshal.AsSpan(Children);
+            foreach (var ent in entSpan)
+                ent?.UpdatePhysics(dt);
+        }
     }
 
     public virtual void UpdateState(float dt)
     {
-        foreach (var (_, comp) in Components)
-            comp.UpdateState(dt);
-        for (int i = 0; i < Children.Count; i++)
-            Children[i].UpdateState(dt);
+        if (Components.Count > 0)
+        {
+            var compSpan = CollectionsMarshal.AsSpan(Components);
+            foreach (var comp in compSpan)
+                comp?.UpdateState(dt);
+        }
+
+        if (Children.Count > 0)
+        {
+            var entSpan = CollectionsMarshal.AsSpan(Children);
+            foreach (var ent in entSpan)
+                ent?.UpdateState(dt);
+        }
+    }
+
+    public void RemoveEntity(in Entity ent)
+    {
+        Children.Remove(ent);
     }
 
     /// <summary>
     /// Attempts to return a reference to a specified type of Component.
     /// </summary>
-    public T GetComponent<T>()
-        where T : IGameComponent => (T)Components[typeof(T)];
+    public T? GetComponent<T>()
+        where T : IGameComponent => (T?)Components.Find(comp => comp is T);
 
     /// <summary>
     /// Attempts to find all reference to a specified type of Entity.
     /// </summary>
     public List<Entity> GetEntities<T>()
-        where T : Entity => Children.FindAll(e => e.GetType() == typeof(T));
+        where T : Entity => Children.FindAll(e => e is T);
 
     /// <summary>
     /// Attempts to return a reference to a specified type of Entity. (if multiple are found, the first one is selected.)
     /// </summary>
     public T? GetEntity<T>()
-        where T : Entity => (T)Children.FindAll(e => e.GetType() == typeof(T)).FirstOrDefault();
+        where T : Entity => (T?)Children.FindAll(e => e is T).FirstOrDefault();
 
     /// <summary>
     /// Attempts to attach a component to this Entity.
@@ -108,17 +140,14 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable
     public T AddComponent<T>(T component)
         where T : IGameComponent
     {
-        if (
-            !Components.ContainsKey(component.GetType())
-            && !_uninitializedComponents.Contains(component)
-        )
-            _uninitializedComponents.Push(component);
+        if (GetComponent<T>() is null && !_uninitialized.Contains(component))
+            _uninitialized.Enqueue(component);
 
         component.Parent = this;
         component.Enabled = false;
         component.Name ??= component.GetType().Name;
 
-        Components.TryAdd(component.GetType(), component);
+        Components.Add(component);
         return component;
     }
 
@@ -138,17 +167,19 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable
         return AddComponent((T)component!);
     }
 
-    public void PushToInitializationQueue(in Entity entity) => _uninitializedEntities.Push(entity);
+    public void PushToInitializationQueue(in IInstantiable entity) =>
+        _uninitialized.Enqueue(entity);
 
     /// <summary>
     /// Attempts to attach a child entity to this Entity.
     /// </summary>
     /// <returns>A reference to the child entity.</returns>
+    /// <param name="renderImplicit">If set to true, this entity will be added to a separate array to be rendered implicitly by the class.</param>
     public T AddEntity<T>(in T entity)
         where T : Entity
     {
-        if (!Children.Contains(entity) && !_uninitializedEntities.Contains(entity))
-            _uninitializedEntities.Push(entity);
+        if (!Children.Contains(entity) && !_uninitialized.Contains(entity))
+            _uninitialized.Enqueue(entity);
         else
         {
             // entity already exists, dupe.
@@ -157,6 +188,7 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable
         entity.Parent = this;
         entity.Enabled = false;
         entity.Name ??= entity.GetType().Name;
+
         Children.Add(entity);
 
         return entity;
@@ -180,7 +212,7 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable
 
     public void Dispose()
     {
-        foreach (var item in Components.Values)
+        foreach (var item in Components)
             if (item is IDisposable managedItem)
                 managedItem.Dispose();
         Components.Clear();

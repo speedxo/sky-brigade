@@ -36,6 +36,7 @@ public class Player2D : Sprite
     private Tile[] visibleTiles = Array.Empty<Tile>();
 
     public Player2D(World world, TileMap map)
+        : base(new Vector2(16))
     {
         Current = this;
         this.world = world;
@@ -77,9 +78,7 @@ public class Player2D : Sprite
     {
         box2DBodyComponent = AddComponent(
             new Box2DBodyComponent(
-                world.CreateBody(
-                    new BodyDef { type = BodyType.Dynamic, position = new Vector2(-5, 16) }
-                )
+                world.CreateBody(new BodyDef { type = BodyType.Dynamic, position = new Vector2() })
             )
         );
 
@@ -88,22 +87,26 @@ public class Player2D : Sprite
         PhysicsBody.CreateFixture(shape, 1.0f);
         PhysicsBody.SetFixedRotation(true);
         PhysicsBody.SetLinearDampling(7.5f);
-        //PhysicsBody.SetTransform(
-        //    new Vector2(
-        //        map.Width / 2.0f * TileMapChunk.WIDTH * Tile.TILE_WIDTH,
-        //        map.Height / 2.0f * TileMapChunk.HEIGHT * Tile.TILE_HEIGHT
-        //    ),
-        //    0.0f
-        //);
+        PhysicsBody.SetTransform(
+            new Vector2(
+                map.Width / 2.0f * TileMapChunk.WIDTH * map.TileSize.X,
+                map.Height / 2.0f * TileMapChunk.HEIGHT * map.TileSize.Y
+            ),
+            0.0f
+        );
     }
 
     private void CreateSprite()
     {
         ConfigureSpriteSheet(
-            SpriteSheet.FromTexture(Engine.Content.Textures.Create(new TextureDescription
-            {
-                Path = "content/spritesheet.png"
-            }).Asset, new Vector2(16, 16)),
+            SpriteSheet.FromTexture(
+                Engine
+                    .ContentManager
+                    .Textures
+                    .Create(new TextureDescription { Path = "content/spritesheet.png" })
+                    .Asset,
+                new Vector2(16, 16)
+            ),
             "idle"
         );
 
@@ -127,7 +130,7 @@ public class Player2D : Sprite
         base.UpdateState(dt);
     }
 
-    public override void Render(float dt)
+    public override void Render(float dt, object? obj = null)
     {
         //foreach (var tile in visibleTiles)
         //    tile.Render(dt, ref options);
@@ -138,7 +141,7 @@ public class Player2D : Sprite
     private void GenerateTileColliders()
     {
         //// Enumerate the enumerable so its only iterated _once_.
-        //visibleTiles = map.FindVisibleTiles(Position - Transform.Scale / 2.0f, 8.0f)
+        //visibleTiles = map.FindVisibleTiles(Position - Transform.Size / 2.0f, 8.0f)
         //    .Where(e => e.PhysicsData.IsCollidable)
         //    .ToArray();
 

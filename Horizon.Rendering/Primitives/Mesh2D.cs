@@ -1,18 +1,17 @@
-﻿using Horizon.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Horizon.Core;
 using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Buffers;
 using Horizon.OpenGL.Descriptions;
 using Horizon.Rendering.Spriting.Data;
 using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Horizon.Rendering.Primitives;
-
 
 /// <summary>
 /// A new more integrated abstraction for handling geometry.
@@ -29,7 +28,7 @@ public class Mesh2D : GameObject
 
     private uint ElementCount = 0;
 
-    public Mesh2D(in Technique? shader=null)
+    public Mesh2D(in Technique? shader = null)
     {
         Shader = shader;
     }
@@ -38,7 +37,13 @@ public class Mesh2D : GameObject
     {
         base.Initialize();
 
-        Buffer = new VertexBufferObject(Engine.Content.VertexArrays.Create(VertexArrayObjectDescription.VertexBuffer).Asset);
+        Buffer = new VertexBufferObject(
+            Engine
+                .ContentManager
+                .VertexArrays
+                .Create(VertexArrayObjectDescription.VertexBuffer)
+                .Asset
+        );
         SetVboLayout();
     }
 
@@ -69,7 +74,7 @@ public class Mesh2D : GameObject
     /// </summary>
     /// <param name="dt">The elapsed time since the last render call.</param>
     /// <param name="options">Optional render options. If not provided, default options will be used.</param>
-    public override void Render(float dt)
+    public override void Render(float dt, object? obj = null)
     {
         if (ElementCount < 1)
             return; // SAVOUR THE FRAMES!!!
@@ -79,12 +84,14 @@ public class Mesh2D : GameObject
         unsafe
         {
             // Once again, I really don't want to make the whole method unsafe for one call.
-            Engine.GL.DrawElements(
-                PrimitiveType.Triangles,
-                ElementCount,
-                DrawElementsType.UnsignedInt,
-                null
-            );
+            Engine
+                .GL
+                .DrawElements(
+                    PrimitiveType.Triangles,
+                    ElementCount,
+                    DrawElementsType.UnsignedInt,
+                    null
+                );
         }
         Buffer.Unbind();
         Shader.Unbind();

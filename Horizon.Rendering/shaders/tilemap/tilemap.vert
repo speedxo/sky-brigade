@@ -9,16 +9,20 @@ layout(location = 4) in vec3 iColor;
 
 uniform mat4 uMvp;
 uniform int uDiscard;
-uniform float uClipOffset;
+uniform float uClipOffset = 0.15f;
 
 out vec2 texCoords;
 out vec3 color;
 out float shouldDiscard;
+out vec3 fragPos;
 
 void main() {
+  vec4 worldPos = vec4(vPos + iPos, 0.0, 1.0);
+  fragPos = (uMvp * vec4(vPos + iPos, 0.0, 1.0)).xyz;
+
   texCoords = vTexCoords + iTexCoords;
   color = iColor;
-  gl_Position = uMvp * vec4(vPos + iPos, 0.0, 1.0);
+  gl_Position = uMvp * worldPos;
   
   switch (uDiscard)
   {

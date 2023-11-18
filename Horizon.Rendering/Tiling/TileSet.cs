@@ -1,11 +1,12 @@
-﻿using Bogz.Logging;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
+using Bogz.Logging;
+using Bogz.Logging.Loggers;
 using Horizon.Engine;
 using Horizon.GameEntity;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Assets;
 using Horizon.Rendering.Spriting;
-using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace Horizon.Rendering;
 
@@ -13,27 +14,51 @@ public abstract partial class Tiling<TTextureID>
 {
     public class TileSet : GameObject
     {
-        public Texture Texture { get; init; }
+        public Material Material { get; private set; }
+        private string _texturePath;
+
         public Dictionary<TTextureID, SpriteDefinition> Tiles { get; init; }
         public Vector2 TileSize { get; init; }
         public int? TileCount { get; internal set; }
         public int ID { get; internal set; }
 
-        public TileSet(Texture texture, Vector2 spriteSize)
+        public TileSet(string path, Vector2 spriteSize)
         {
-            Texture = texture;
+            _texturePath = path;
             TileSize = spriteSize;
             Tiles = new();
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            string dir = Path.GetDirectoryName(_texturePath)!;
+            int lastIndex = _texturePath.LastIndexOf(MaterialFactory.Delimiter);
+            string name = Path.GetFileNameWithoutExtension(_texturePath[..lastIndex]);
+
+            Material = MaterialFactory.Create(dir, name);
+
+            //Texture = Engine
+            //    .ContentManager
+            //    .Textures
+            //    .Create(
+            //        new OpenGL.Descriptions.TextureDescription
+            //        {
+            //            Path = _texturePath,
+            //            Definition = OpenGL.Descriptions.TextureDefinition.RgbaUnsignedByte
+            //        }
+            //    )
+            //    .Asset;
         }
 
         public void RegisterTile(TTextureID key, Vector2 pos, Vector2? size = null)
         {
             if (Tiles.ContainsKey(key))
             {
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Attempt to add sprite '{key}' which already exists!"
-                );
+                ConcurrentLogger
+                    .Instance
+                    .Log(LogLevel.Error, $"Attempt to add sprite '{key}' which already exists!");
                 return;
             }
 
@@ -44,7 +69,7 @@ public abstract partial class Tiling<TTextureID>
         public Vector2 GetNormalizedTextureCoordinatesFromTiledMapId(int id)
         {
             // Calculate the number of columns in the tileset
-            int columns = (int)(Texture.Width / (int)TileSize.X);
+            int columns = (int)(Material.Width / (int)TileSize.X);
 
             // Calculate the X position of the tile in the tileset
             float tileX = id % columns * TileSize.X;
@@ -54,8 +79,8 @@ public abstract partial class Tiling<TTextureID>
             float tileY = id / columns * TileSize.Y;
 
             // Normalize the coordinates to a range of [0, 1]
-            float normalizedX = tileX / Texture.Width;
-            float normalizedY = tileY / Texture.Height;
+            float normalizedX = tileX / Material.Width;
+            float normalizedY = tileY / Material.Height;
 
             // Calculate the texture coordinates
             //float left = normalizedX;
@@ -71,16 +96,16 @@ public abstract partial class Tiling<TTextureID>
         {
             if (!Tiles.TryGetValue(key, out var sprite))
             {
-                Engine.Logger.Log(
-                    LogLevel.Error,
-                    $"Attempt to get sprite '{key}' which doesn't exist!"
-                );
+                ConcurrentLogger
+                    .Instance
+                    .Log(LogLevel.Error, $"Attempt to get sprite '{key}' which doesn't exist!");
                 return Array.Empty<Vector2>();
             }
 
             // Calculate texture coordinates for the sprite
-            Vector2 topLeftTexCoord = sprite.Position / new Vector2(Texture.Width, Texture.Height); // todo: yk.
-            Vector2 bottomRightTexCoord = (sprite.Position + sprite.Size) / new Vector2(Texture.Width, Texture.Height);
+            Vector2 topLeftTexCoord = sprite.Position / new Vector2(Material.Width, Material.Height); // todo: yk.
+            Vector2 bottomRightTexCoord =
+                (sprite.Position + sprite.Size) / new Vector2(Material.Width, Material.Height);
 
             return new Vector2[]
             {

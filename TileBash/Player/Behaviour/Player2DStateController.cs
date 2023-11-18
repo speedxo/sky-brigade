@@ -32,7 +32,7 @@ public class Player2DStateController : IGameComponent
     {
         if (!StateBehaviours.TryAdd(identifier, behaviour))
         {
-            //Entity.Engine.Logger.Log(
+            //Entity.ConcurrentLogger.Instance.Log(
             //    Horizon.Logging.LogLevel.Error,
             //    $"[State Controller] Failed to register state {identifier}!"
             //); // TODO: fix
@@ -51,5 +51,5 @@ public class Player2DStateController : IGameComponent
 
     public void UpdatePhysics(float dt) { }
 
-    public void Render(float dt) { }
+    public void Render(float dt, object? obj = null) { }
 }

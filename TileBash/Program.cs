@@ -10,8 +10,13 @@ internal class Program
         var assemName = System.Reflection.Assembly.GetExecutingAssembly().GetName();
         var version = assemName.Version;
 
-        var engine = new GameEngine(GameEngineConfiguration.Default);
-        engine.AddEntity(new GameScene());
+        var engine = new GameEngine(
+            GameEngineConfiguration.Default with
+            {
+                InitialScene = typeof(GameScene)
+            }
+        );
+
         engine.Run();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Bogz.Logging;
+using Bogz.Logging.Loggers;
 using Horizon.Content.Managers;
 using Horizon.Core;
 using Horizon.Core.Components;
@@ -18,7 +19,6 @@ public class ContentManager : IGameComponent, IDisposable
     internal static ContentManager Instance { get; private set; }
 
     public static Silk.NET.OpenGL.GL GL { get; private set; }
-    private LoggerComponent logger;
 
     public AssetManager<
         Texture,
@@ -75,16 +75,15 @@ public class ContentManager : IGameComponent, IDisposable
     public void Initialize()
     {
         GL = Parent.GetComponent<WindowManager>().GL;
-        logger = Parent.GetComponent<LoggerComponent>();
 
-        Textures.SetMessageCallback(logger.Log);
-        Shaders.SetMessageCallback(logger.Log);
-        Buffers.SetMessageCallback(logger.Log);
-        VertexArrays.SetMessageCallback(logger.Log);
-        FrameBuffers.SetMessageCallback(logger.Log);
+        Textures.SetMessageCallback(ConcurrentLogger.Instance.Log);
+        Shaders.SetMessageCallback(ConcurrentLogger.Instance.Log);
+        Buffers.SetMessageCallback(ConcurrentLogger.Instance.Log);
+        VertexArrays.SetMessageCallback(ConcurrentLogger.Instance.Log);
+        FrameBuffers.SetMessageCallback(ConcurrentLogger.Instance.Log);
     }
 
-    public void Render(float dt) { }
+    public void Render(float dt, object? obj = null) { }
 
     public void UpdateState(float dt) { }
 

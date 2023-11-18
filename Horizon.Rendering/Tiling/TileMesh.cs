@@ -7,7 +7,6 @@ using Horizon.OpenGL;
 using Horizon.OpenGL.Buffers;
 using Horizon.OpenGL.Descriptions;
 using Silk.NET.OpenGL;
-
 using Shader = Horizon.OpenGL.Assets.Shader;
 
 namespace Horizon.Rendering;
@@ -28,7 +27,8 @@ public abstract partial class Tiling<TTextureID>
     public class TileMesh : GameObject
     {
         protected const string UNIFORM_CAMERA_MATRIX = "uMvp";
-        protected const string UNIFORM_TEXTURE = "uTexture";
+        protected const string UNIFORM_TEXTURE_ALEBDO = "uTextureAlbedo";
+        protected const string UNIFORM_TEXTURE_NORMAL = "uTextureNormal";
         public uint TileCount { get; private set; }
 
         /// <summary>
@@ -40,11 +40,6 @@ public abstract partial class Tiling<TTextureID>
         public TileMap Map { get; init; }
         private VertexBufferObject Vbo { get; set; }
         public TileSet Set { get; init; }
-
-        /// <summary>
-        /// temporarty fix
-        /// </summary>
-        public static Camera2D camera;
 
         private readonly List<TileRenderData> _tileRenderData;
 
@@ -81,29 +76,46 @@ public abstract partial class Tiling<TTextureID>
             Shader = shader;
             Map = map;
 
-            Vbo = new VertexBufferObject(Engine.Content.VertexArrays.Create(new OpenGL.Descriptions.VertexArrayObjectDescription
-            {
-                Buffers = new()
-                {
-                    { VertexArrayBufferAttachmentType.ArrayBuffer, BufferObjectDescription.ArrayBuffer },
-                    { VertexArrayBufferAttachmentType.ElementBuffer, BufferObjectDescription.ElementArrayBuffer },
-                    { VertexArrayBufferAttachmentType.InstanceBuffer, BufferObjectDescription.ArrayBuffer }
-                }
-            }));
+            Vbo = new VertexBufferObject(
+                Engine
+                    .ContentManager
+                    .VertexArrays
+                    .Create(
+                        new OpenGL.Descriptions.VertexArrayObjectDescription
+                        {
+                            Buffers = new()
+                            {
+                                {
+                                    VertexArrayBufferAttachmentType.ArrayBuffer,
+                                    BufferObjectDescription.ArrayBuffer
+                                },
+                                {
+                                    VertexArrayBufferAttachmentType.ElementBuffer,
+                                    BufferObjectDescription.ElementArrayBuffer
+                                },
+                                {
+                                    VertexArrayBufferAttachmentType.InstanceBuffer,
+                                    BufferObjectDescription.ArrayBuffer
+                                }
+                            }
+                        }
+                    )
+            );
 
-            Vector2 tileTextureSize = set.TileSize / new Vector2(set.Texture.Width, set.Texture.Height);
+            Vector2 tileTextureSize =
+                set.TileSize / new Vector2(set.Material.Width, set.Material.Height);
 
             BasicVertex[] vertices = new BasicVertex[]
             {
-                new BasicVertex(-Tile.TILE_WIDTH / 2, -Tile.TILE_HEIGHT / 2, 0, tileTextureSize.Y),
+                new BasicVertex(-Map.TileSize.X / 2, -Map.TileSize.Y / 2, 0, tileTextureSize.Y),
                 new BasicVertex(
-                    Tile.TILE_WIDTH / 2,
-                    -Tile.TILE_HEIGHT / 2,
+                    Map.TileSize.X / 2,
+                    -Map.TileSize.Y / 2,
                     tileTextureSize.X,
                     tileTextureSize.Y
                 ),
-                new BasicVertex(Tile.TILE_WIDTH / 2, Tile.TILE_HEIGHT / 2, tileTextureSize.X, 0),
-                new BasicVertex(-Tile.TILE_WIDTH / 2, Tile.TILE_HEIGHT / 2, 0, 0)
+                new BasicVertex(Map.TileSize.X / 2, Map.TileSize.Y / 2, tileTextureSize.X, 0),
+                new BasicVertex(-Map.TileSize.X / 2, Map.TileSize.Y / 2, 0, 0)
             };
             Vbo.VertexBuffer.BufferData(vertices);
             uint[] indices = new uint[] { 0, 1, 2, 0, 2, 3 };
@@ -210,14 +222,16 @@ public abstract partial class Tiling<TTextureID>
             );
         }
 
-        public override void Render(float dt)
+        public override void Render(float dt, object? obj = null)
         {
             if (_uploadData)
             {
                 _uploadData = false;
                 _isUpdatingMesh = false;
 
-                Vbo.InstanceBuffer.BufferData<TileRenderData>(CollectionsMarshal.AsSpan(_tileRenderData));
+                Vbo.InstanceBuffer.NamedBufferData<TileRenderData>(
+                    CollectionsMarshal.AsSpan(_tileRenderData)
+                );
 
                 _tileRenderData.Clear();
             }
@@ -227,12 +241,13 @@ public abstract partial class Tiling<TTextureID>
 
             Shader.Bind();
 
-            Engine.GL.ActiveTexture(TextureUnit.Texture0);
-            Engine.GL.BindTexture(TextureTarget.Texture2D, Set.Texture.Handle);
+            Set.Material.BindAttachment(MaterialAttachment.Albedo, 0);
+            Shader.SetUniform(UNIFORM_TEXTURE_ALEBDO, 0);
 
-            Shader.SetUniform(UNIFORM_TEXTURE, 0);
+            Set.Material.BindAttachment(MaterialAttachment.Normal, 1);
+            Shader.SetUniform(UNIFORM_TEXTURE_NORMAL, 1);
 
-            Shader.SetUniform(UNIFORM_CAMERA_MATRIX, camera.ProjView);
+            Shader.SetUniform(UNIFORM_CAMERA_MATRIX, Engine.ActiveCamera.ProjView);
             Shader.SetUniform("uDiscard", (int)CullMode);
             Shader.SetUniform("uClipOffset", Map.ClippingOffset);
 
@@ -243,16 +258,15 @@ public abstract partial class Tiling<TTextureID>
             unsafe // i don't wanna make the whole method unsafe just for this
             {
                 Engine
-                .GL
-                .DrawElementsInstanced(
-                    PrimitiveType.Triangles,
-                    6,
-                    DrawElementsType.UnsignedInt,
-                    null,
-                    TileCount
-                );
+                    .GL
+                    .DrawElementsInstanced(
+                        PrimitiveType.Triangles,
+                        6,
+                        DrawElementsType.UnsignedInt,
+                        null,
+                        TileCount
+                    );
             }
-
 
             Vbo.Unbind();
             Shader.Unbind();

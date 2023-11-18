@@ -12,6 +12,16 @@ namespace Bogz.Logging.Loggers;
 /// </summary>
 public class ConcurrentLogger : ILoggerDisposable
 {
+    private static readonly Lazy<ConcurrentLogger> _logger = new Lazy<ConcurrentLogger>(
+        () => new ConcurrentLogger("debug.log"),
+        true
+    );
+
+    public static ConcurrentLogger Instance
+    {
+        get => _logger.Value;
+    }
+
     private ConcurrentQueue<LogMessage> logMessages;
     private StreamWriter? writer;
     private Task? task;
@@ -66,7 +76,7 @@ public class ConcurrentLogger : ILoggerDisposable
                     LogLevel.Info => ConsoleColor.Gray,
                     LogLevel.Warning => ConsoleColor.Yellow,
                     LogLevel.Error => ConsoleColor.Red,
-                    LogLevel.FatalError => ConsoleColor.DarkRed,
+                    LogLevel.Fatal => ConsoleColor.DarkRed,
                     LogLevel.Success => ConsoleColor.Green,
                     _ => Console.ForegroundColor,
                 };

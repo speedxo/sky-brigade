@@ -30,18 +30,18 @@ public class RenderRectangle : GameObject
             var verts = new Vector2[]
             {
                 new Vector2(-1, -1),
-                new Vector2(0, 1),
+                new Vector2(0, 0),
                 new Vector2(1, -1),
-                new Vector2(1, 1),
-                new Vector2(1, 1),
                 new Vector2(1, 0),
+                new Vector2(1, 1),
+                new Vector2(1, 1),
                 new Vector2(-1, 1),
-                new Vector2(0, 0)
+                new Vector2(0, 1)
             };
             var indices = new uint[] { 0, 1, 2, 0, 2, 3 };
 
             vbo = new VertexBufferObject(
-                Engine.Content.VertexArrays.Create(VertexArrayObjectDescription.VertexBuffer)
+                Engine.ContentManager.VertexArrays.Create(VertexArrayObjectDescription.VertexBuffer)
             );
 
             vbo.Bind();
@@ -75,7 +75,7 @@ public class RenderRectangle : GameObject
         }
     }
 
-    public override unsafe void Render(float dt)
+    public override unsafe void Render(float dt, object? obj = null)
     {
         base.Render(dt);
         Technique.Bind();

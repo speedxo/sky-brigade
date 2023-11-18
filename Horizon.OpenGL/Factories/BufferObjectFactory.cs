@@ -35,6 +35,13 @@ public class BufferObjectFactory : IAssetFactory<BufferObject, BufferObjectDescr
                     description.StorageMasks
                 );
 
-        return new() { Asset = buffer, Status = AssetCreationStatus.Success };
+        return new()
+        {
+            Asset = buffer,
+            Status = AssetCreationStatus.Success,
+            Message = description.IsStorageBuffer
+                ? $"Storage buffer with size {description.Size} created!"
+                : string.Empty
+        };
     }
 }

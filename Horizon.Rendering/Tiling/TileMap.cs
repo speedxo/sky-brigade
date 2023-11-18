@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Bogz.Logging;
+using Bogz.Logging.Loggers;
 using Box2D.NetStandard.Dynamics.World;
 using Horizon.Core;
 using Horizon.Engine;
@@ -35,7 +36,7 @@ public abstract partial class Tiling<TTextureID>
         public int Height { get; init; }
 
         /// <summary>
-        /// The lower layer slice in which <see cref="ParallaxEntity"/> will be rendered onto, followed by every layer above it ontop.
+        /// The lower layer slice in which all children will be rendered in, followed by every layer above it ontop.
         /// </summary>
         public int ParallaxIndex { get; set; }
 
@@ -50,14 +51,14 @@ public abstract partial class Tiling<TTextureID>
         public TileMapChunkManager ChunkManager { get; private set; }
 
         /// <summary>
-        /// An optional entity that will be rendered between the sets of layers specified by <see cref="ParallaxIndex"/>.
-        /// </summary>
-        public Entity? ParallaxEntity { get; private set; }
-
-        /// <summary>
         /// Gets the dictionary of tile sets used in the tile map.
         /// </summary>
         public Dictionary<string, TileSet> TileSets { get; init; }
+
+        /// <summary>
+        /// Tile size in pixels.
+        /// </summary>
+        public Vector2 TileSize { get; init; }
 
         private int TileUpdateCount = 0;
         private bool hasBeenInitialized = false;
@@ -65,17 +66,18 @@ public abstract partial class Tiling<TTextureID>
         /// <summary>
         /// The offset applied when calculating tilemap clipping.
         /// </summary>
-        public float ClippingOffset = 0.0f;
+        public float ClippingOffset = 0.1f;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TileMap"/> class.
         /// </summary>
         /// <param name="width">The width of the tilemap in chunks (32)</param>
         /// <param name="height"></param>
-        public TileMap(int width, int height, int depth)
+        public TileMap(int width, int height, int depth, in int tileWidth, in int tileHeight)
         {
             Name = "Tilemap";
 
+            this.TileSize = new Vector2(tileWidth, tileHeight);
             this.Depth = depth;
             this.Width = width;
             this.Height = height;
@@ -115,7 +117,13 @@ public abstract partial class Tiling<TTextureID>
                 int heightInChunks = tiledMap.Height / TileMapChunk.HEIGHT;
                 int depthInLayers = tiledMap.Layers.Count;
 
-                var map = new TileMap(widthInChunks, heightInChunks, depthInLayers)
+                var map = new TileMap(
+                    widthInChunks,
+                    heightInChunks,
+                    depthInLayers,
+                    tiledMap.TileWidth,
+                    tiledMap.TileHeight
+                )
                 {
                     Parent = parent
                 };
@@ -126,7 +134,7 @@ public abstract partial class Tiling<TTextureID>
                     if (!string.IsNullOrEmpty(tileset.Image?.Source))
                     {
                         var set = new TileSet(
-                            Engine.Content.Textures.Create(new OpenGL.Descriptions.TextureDescription { Path = tileset.Image.Source, Definition = OpenGL.Descriptions.TextureDefinition.RgbaUnsignedByte }).Asset,
+                            tileset.Image.Source,
                             new Vector2(tileset.TileWidth, tileset.TileHeight)
                         )
                         {
@@ -141,7 +149,6 @@ public abstract partial class Tiling<TTextureID>
 
                 int chunkWidth = TileMapChunk.WIDTH;
                 int chunkHeight = TileMapChunk.HEIGHT;
-
 
                 foreach (var layer in tiledMap.Layers)
                 {
@@ -190,8 +197,8 @@ public abstract partial class Tiling<TTextureID>
             }
             catch (Exception ex)
             {
-                Engine
-                    .Logger
+                ConcurrentLogger
+                    .Instance
                     .Log(LogLevel.Error, $"Error loading Tiled map: + {ex.Message}");
                 return null;
             }
@@ -217,17 +224,6 @@ public abstract partial class Tiling<TTextureID>
                 IsVisible = layer.Visible,
                 AlwaysOnTop = isOnTop
             };
-        }
-
-        /// <summary>
-        /// Sets the parallax entity. Note: This will disable the entity and render it implicitly.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        public void SetParallaxEntity(in Entity entity)
-        {
-            this.ParallaxEntity = entity;
-            entity.RenderImplicit = true;
-            entity.Enabled = false;
         }
 
         /// <summary>
@@ -302,6 +298,22 @@ public abstract partial class Tiling<TTextureID>
             //    .Debugger
             //    .GeneralDebugger
             //    .AddWatch("Total Tiles", "Tilemap", () => TileUpdateCount);
+        }
+
+        public override void Render(float dt, object? obj = null)
+        {
+            if (Children.Count > 0)
+            {
+                ChunkManager.RenderLower(ParallaxIndex + 2, dt);
+
+                base.Render(dt, obj);
+
+                ChunkManager.RenderUpper(ParallaxIndex, dt);
+                for (int i = 0; i < Width * Height; i++)
+                    ChunkManager.Chunks[i].RenderAlwaysOnTop(dt);
+            }
+            else
+                ChunkManager.RenderLower(Depth, dt);
         }
 
         /// <summary>
@@ -412,13 +424,9 @@ public abstract partial class Tiling<TTextureID>
         public TileSet AddTileSet(string name, TileSet set)
         {
             TileSets.Add(name, set);
+            PushToInitializationQueue(set);
             return set;
         }
-
-        /// <summary>
-        /// Generates meshes for the tile map.
-        /// </summary>
-        public void GenerateMeshes() => ChunkManager.GenerateMeshes();
 
         /// <summary>
         /// Populates tiles in the tile map using a custom action.
@@ -445,7 +453,7 @@ public abstract partial class Tiling<TTextureID>
                 }
             }
 
-            //Engine.Logger.Log(
+            //ConcurrentLogger.Instance.Log(
             //    Logging.LogLevel.Fatal,
             //    $"[TileMap] No TileSet is bound to the texture ID '{textureID}'!"
             //);

@@ -18,16 +18,6 @@ public partial class Tiling<TTextureID>
     public abstract class Tile : IUpdateable, IRenderable
     {
         /// <summary>
-        /// The width of the tile.
-        /// </summary>
-        public const float TILE_WIDTH = 2.0f;
-
-        /// <summary>
-        /// The height of the tile.
-        /// </summary>
-        public const float TILE_HEIGHT = 2.0f;
-
-        /// <summary>
         /// Gets the local position of the tile within its chunk.
         /// </summary>
         public Vector2 LocalPosition { get; protected set; }
@@ -84,11 +74,11 @@ public partial class Tiling<TTextureID>
         /// <returns>The global coordinates.</returns>
         public static Vector2 GetTileGlobalCoordinates(Vector2 local, TileMapChunk chunk)
         {
-            return local * new Vector2(TILE_WIDTH, TILE_HEIGHT)
+            return local * chunk.Map.TileSize
                 + chunk.Position
                     * new Vector2(
-                        TileMapChunk.WIDTH * TILE_WIDTH,
-                        TileMapChunk.HEIGHT * TILE_HEIGHT
+                        TileMapChunk.WIDTH * chunk.Map.TileSize.X,
+                        TileMapChunk.HEIGHT * chunk.Map.TileSize.Y
                     );
         }
 
@@ -121,14 +111,16 @@ public partial class Tiling<TTextureID>
         protected virtual PolygonShape GenerateCollider()
         {
             return new PolygonShape(
-                GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
-                GlobalPosition + new Vector2(TILE_WIDTH + TILE_WIDTH / -2.0f, TILE_HEIGHT / -2.0f),
+                GlobalPosition + new Vector2(Map.TileSize.X / -2.0f, Map.TileSize.Y / -2.0f),
+                GlobalPosition
+                    + new Vector2(Map.TileSize.X + Map.TileSize.X / -2.0f, Map.TileSize.Y / -2.0f),
                 GlobalPosition
                     + new Vector2(
-                        TILE_WIDTH + TILE_WIDTH / -2.0f,
-                        TILE_HEIGHT + TILE_HEIGHT / -2.0f
+                        Map.TileSize.X + Map.TileSize.X / -2.0f,
+                        Map.TileSize.Y + Map.TileSize.Y / -2.0f
                     ),
-                GlobalPosition + new Vector2(TILE_WIDTH / -2.0f, TILE_HEIGHT + TILE_HEIGHT / -2.0f)
+                GlobalPosition
+                    + new Vector2(Map.TileSize.X / -2.0f, Map.TileSize.Y + Map.TileSize.Y / -2.0f)
             );
         }
 
@@ -152,7 +144,7 @@ public partial class Tiling<TTextureID>
         /// </summary>
         /// <param name="dt">The time elapsed since the last frame.</param>
         /// <param name="options">Optional rendering options.</param>
-        public virtual void Render(float dt)
+        public virtual void Render(float dt, object? obj = null)
         {
             // Implement drawing logic here.
         }

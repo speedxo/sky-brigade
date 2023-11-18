@@ -56,7 +56,6 @@
     <None Remove="content\maps\tilesheets\tileset.tsx" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="content\" />
     <Folder Include="content\noise\" />
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +96,10 @@
     <None Update="content\cat.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="content\maps\tilesheets\tilemap.png">
+    <None Update="content\maps\tilesheets\tilemap_albedo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="content\maps\tilesheets\tilemap_normal.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="content\sprites.vert">

@@ -28,7 +28,6 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 description.Definition
             );
 
-
         return new AssetCreationResult<Texture>()
         {
             Asset = Texture.Invalid,

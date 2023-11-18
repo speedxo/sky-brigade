@@ -5,6 +5,7 @@ using Horizon.Content.Managers;
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Core.Primitives;
+using Horizon.Engine.Components;
 using Horizon.Input;
 using Horizon.OpenGL.Managers;
 using Silk.NET.OpenGL;
@@ -18,39 +19,42 @@ public class GameEngine : Entity
     /// </summary>
     public GameEngineConfiguration Configuration { get; init; }
 
-    public Silk.NET.OpenGL.GL GL
+    public GL GL
     {
-        get => Window.GL;
+        get => WindowManager.GL;
     }
 
-    /// <summary>
-    /// Temporary solution to context sharing while i work on the rewrite.
-    /// </summary>
     public static GameEngine Instance { get; private set; }
 
-    public ContentManager Content { get; init; }
+    /// <summary>
+    /// Gets the main active camera associated with the current active Scene.
+    /// </summary>
+    public Camera? ActiveCamera
+    {
+        get => SceneManager.CurrentInstance?.ActiveCamera;
+    }
 
-    public InputManager Input { get; init; }
-
-    public EngineEventHandler Events { get; init; }
-    public LoggerComponent Logger { get; init; }
-    public WindowManager Window { get; init; }
+    public EngineEventHandler EventManager { get; init; }
+    public ContentManager ContentManager { get; init; }
+    public WindowManager WindowManager { get; init; }
+    public SceneManager SceneManager { get; init; }
+    public InputManager InputManager { get; init; }
 
     public GameEngine(in GameEngineConfiguration engineConfiguration)
     {
-        Instance = this;
+        Instance = GameObject.Engine = this;
         Configuration = engineConfiguration;
 
         Enabled = true;
 
         // Create window manager, the window manager will bootstrap and call Initialize(), Render(), UpdateState() and UpdatePhysics()
-        Window = AddComponent<WindowManager>(new(Configuration.WindowConfiguration));
+        WindowManager = AddComponent<WindowManager>(new(Configuration.WindowConfiguration));
 
         // Engine components
-        Events = AddComponent<EngineEventHandler>();
-        Content = AddComponent<ContentManager>();
-        Logger = AddComponent<LoggerComponent>();
-        Input = AddComponent<InputManager>();
+        EventManager = AddComponent<EngineEventHandler>();
+        ContentManager = AddComponent<ContentManager>();
+        InputManager = AddComponent<InputManager>();
+        SceneManager = AddComponent<SceneManager>();
     }
 
     public override void Initialize()
@@ -63,6 +67,8 @@ public class GameEngine : Entity
             GL.Enable(EnableCap.DebugOutput);
             GL.DebugMessageCallback(debugCallback, null);
         }
+
+        SceneManager.AddInstance(Configuration.InitialScene);
     }
 
     private void debugCallback(
@@ -78,30 +84,32 @@ public class GameEngine : Entity
         if (id == 131185 || id == 1280)
             return;
 
-        Logger.Log(
-            LogLevel.Info,
-            $"[{source}] [{severity}] [{type}] [{id}] {Marshal.PtrToStringAnsi(message)}"
-        );
+        ConcurrentLogger
+            .Instance
+            .Log(
+                LogLevel.Info,
+                $"[{source}] [{severity}] [{type}] [{id}] {Marshal.PtrToStringAnsi(message)}"
+            );
     }
 
     public override void UpdateState(float dt)
     {
         // Run our custom events.
-        Events.PreState?.Invoke(dt);
+        EventManager.PreState?.Invoke(dt);
         base.UpdateState(dt);
-        Events.PostState?.Invoke(dt);
+        EventManager.PostState?.Invoke(dt);
     }
 
-    public override void Render(float dt)
+    public override void Render(float dt, object? obj = null)
     {
         // Run our custom events.
-        Events.PreRender?.Invoke(dt);
+        EventManager.PreRender?.Invoke(dt);
         base.Render(dt);
-        Events.PostRender?.Invoke(dt);
+        EventManager.PostRender?.Invoke(dt);
     }
 
     /// <summary>
     /// Instantiates a window, and opens it.
     /// </summary>
-    public virtual void Run() => Window.Run();
+    public virtual void Run() => WindowManager.Run();
 }

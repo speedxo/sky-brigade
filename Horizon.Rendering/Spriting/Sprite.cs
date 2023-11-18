@@ -1,7 +1,7 @@
-﻿using Horizon.Core.Components;
-using Horizon.Engine;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.CompilerServices;
+using Horizon.Core.Components;
+using Horizon.Engine;
 
 namespace Horizon.Rendering.Spriting;
 
@@ -12,20 +12,21 @@ public abstract class Sprite : GameObject
 
     public SpriteSheet Spritesheet { get; private set; }
     public SpriteSheetAnimationManager AnimationManager { get; private set; }
+    public SpriteBatch Batch { get; internal set; }
 
     public bool ShouldDraw { get; set; } = true;
     public bool Flipped
     {
         set
         {
-            if (Transform.Scale.X < 0 && value)
+            if (Transform.Size.X < 0 && value)
                 return;
-            if (Transform.Scale.X > 0 && !value)
+            if (Transform.Size.X > 0 && !value)
                 return;
 
-            Transform.Scale = new Vector2(-Transform.Scale.X, Transform.Scale.Y);
+            Transform.Size = new Vector2(-Transform.Size.X, Transform.Size.Y);
         }
-        get => Transform.Scale.X < 0;
+        get => Transform.Size.X < 0;
     }
     internal bool ShouldUpdateVbo { get; private set; }
 
@@ -34,9 +35,10 @@ public abstract class Sprite : GameObject
 
     public TransformComponent2D Transform { get; init; }
 
-    public Sprite()
+    public Sprite(in Vector2 size)
     {
         this.Transform = AddComponent<TransformComponent2D>();
+        this.Transform.Size = size;
     }
 
     /// <summary>
@@ -80,7 +82,7 @@ public abstract class Sprite : GameObject
     {
         if (!AnimationManager.Animations.TryGetValue(name, out var sprite))
         {
-            //Engine.Logger.Log(
+            //ConcurrentLogger.Instance.Log(
             //    Logging.LogLevel.Error,
             //    $"Attempt to get sprite '{name}' which doesn't exist!"
             //); TODO: FIX
@@ -108,6 +110,7 @@ public abstract class Sprite : GameObject
         this.FrameName = name;
 
         this.IsAnimated = AnimationManager.Animations.Any();
+
         _hasBeenSetup = true;
     }
 

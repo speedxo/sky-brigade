@@ -19,7 +19,7 @@ public class Box2DWorldComponent : Box2D.NetStandard.Dynamics.World.World, IGame
         Step(dt, 8, 3);
     }
 
-    public void Render(float dt) { }
+    public void Render(float dt, object? obj = null) { }
 
     public void UpdatePhysics(float dt) { }
 }

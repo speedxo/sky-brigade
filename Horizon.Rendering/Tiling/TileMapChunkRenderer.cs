@@ -1,4 +1,6 @@
 ﻿using Horizon.Content;
+using Horizon.Core;
+using Horizon.Core.Components;
 using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Descriptions;
@@ -8,7 +10,7 @@ namespace Horizon.Rendering;
 
 public abstract partial class Tiling<TTextureID>
 {
-    public class TilemapRenderer
+    public class TileMapChunkRenderer : IGameComponent
     {
         private readonly struct TileMapChunkSliceTileMeshes
         {
@@ -72,22 +74,60 @@ public abstract partial class Tiling<TTextureID>
         }
 
         private static Technique _shader;
+        private float _dirtyChunkUpdateTimer = 0.0f;
 
         public TileMapChunk Chunk { get; init; }
 
         private Dictionary<
             TileMapChunkSlice,
             TileMapChunkSliceTileMeshes
-        > TileMapChunkSliceTileMeshesKeyPairs
-        { get; init; }
+        > TileMapChunkSliceTileMeshesKeyPairs { get; init; }
 
-        public TilemapRenderer(in TileMapChunk chunk)
+        public bool Enabled { get; set; }
+        public string Name { get; set; }
+        public Entity Parent { get; set; }
+
+        public TileMapChunkRenderer(in TileMapChunk chunk)
         {
-            _shader ??= new Technique(GameEngine.Instance.Content.Shaders.Create(ShaderDescription.FromPath("shaders/tilemap", "tilemap")).Asset);
-
             this.Chunk = chunk;
             this.TileMapChunkSliceTileMeshesKeyPairs = new();
         }
+
+        public void Render(float dt, object? obj = null)
+        {
+            _dirtyChunkUpdateTimer += dt;
+            if (Chunk.IsDirty && _dirtyChunkUpdateTimer > 0.1f)
+            {
+                _dirtyChunkUpdateTimer = 0.0f;
+                Chunk.IsDirty = false;
+
+                GenerateMesh();
+            }
+
+            foreach (var (_, sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
+            {
+                foreach (var (_, mesh) in sliceMeshes.TileMeshPairs)
+                {
+                    mesh.Render(dt);
+                }
+            }
+        }
+
+        public void Initialize()
+        {
+            _shader ??= new Technique(
+                GameObject
+                    .Engine
+                    .ContentManager
+                    .Shaders
+                    .Create(ShaderDescription.FromPath("shaders/tilemap", "tilemap"))
+                    .Asset
+            );
+        }
+
+        public void UpdateState(float dt) { }
+
+        public void UpdatePhysics(float dt) { }
 
         /// <summary>d
         /// Generates the mesh for the chunk.
@@ -123,11 +163,7 @@ public abstract partial class Tiling<TTextureID>
             }
         }
 
-        public void DrawSliceAtIndex(
-            int index,
-            float dt,
-            in TileChunkCullMode cullMode
-        )
+        public void DrawSliceAtIndex(int index, float dt, in TileChunkCullMode cullMode)
         {
             //Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
             //if (!Chunk.IsVisibleByCamera)
@@ -153,32 +189,6 @@ public abstract partial class Tiling<TTextureID>
                 mesh.CullMode = cullMode;
                 mesh.Render(dt);
                 mesh.CullMode = TileChunkCullMode.None;
-            }
-        }
-
-        private float _dirtyChunkUpdateTimer = 0.0f;
-
-        public void Draw(float dt)
-        {
-            //Chunk.IsVisibleByCamera = options.Camera.Bounds.IntersectsWith(Chunk.Bounds);
-            //if (!Chunk.IsVisibleByCamera)
-            //    return;
-
-            _dirtyChunkUpdateTimer += dt;
-            if (Chunk.IsDirty && _dirtyChunkUpdateTimer > 0.1f)
-            {
-                _dirtyChunkUpdateTimer = 0.0f;
-                Chunk.IsDirty = false;
-
-                GenerateMesh();
-            }
-
-            foreach (var (_, sliceMeshes) in TileMapChunkSliceTileMeshesKeyPairs)
-            {
-                foreach (var (_, mesh) in sliceMeshes.TileMeshPairs)
-                {
-                    mesh.Render(dt);
-                }
             }
         }
     }

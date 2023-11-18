@@ -1,9 +1,9 @@
-﻿using Horizon.Core;
+﻿using System.Drawing.Drawing2D;
+using System.Numerics;
+using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.GameEntity;
 using Horizon.GameEntity.Components;
-using System.Drawing.Drawing2D;
-using System.Numerics;
 
 namespace Horizon.Rendering;
 
@@ -30,6 +30,12 @@ public abstract partial class Tiling<TTextureID>
                 Chunks[i] = new TileMapChunk(Map, new Vector2(i % Map.Width, i / Map.Width));
         }
 
+        public void Initialize()
+        {
+            for (int i = 0; i < Map.Width * Map.Height; i++)
+                Chunks[i].Initialize();
+        }
+
         public TileMapChunk? this[int index]
         {
             get
@@ -54,23 +60,14 @@ public abstract partial class Tiling<TTextureID>
             }
         }
 
-        public void Initialize()
-        {
-           
-        }
-
         public void UpdateState(float dt)
         {
             _secondTimer += dt;
-            if (_secondTimer >= 1) { _secondTimer = 0; updateSlow(); }
-
-            for (int i = 0; i < Map.Width * Map.Height; i++)
-                Chunks[i].UpdateState(dt);
-        }
-
-        private void updateSlow()
-        {
-            _drawParallax = Map.ParallaxEntity is not null;
+            if (_secondTimer >= 1)
+            {
+                _secondTimer = 0;
+                // slow
+            }
         }
 
         public void UpdatePhysics(float dt) { }
@@ -86,6 +83,7 @@ public abstract partial class Tiling<TTextureID>
             for (int _layerIndex = 0; _layerIndex < renderClampLower; _layerIndex++)
                 RenderSlices(_layerIndex, dt, TileChunkCullMode.None);
         }
+
         /// <summary>
         /// Renders all the chunk slices starting at the layer specified by renderClampUpper and ending at the final layer.
         /// </summary>
@@ -106,34 +104,9 @@ public abstract partial class Tiling<TTextureID>
             }
         }
 
-        public void RenderAll(float dt)
+        public void Render(float dt, object? obj = null)
         {
-            for (int i = 0; i < Map.Width * Map.Height; i++)
-            {
-                Chunks[i].Render(dt);
-            }
-        }
-
-        public void Render(float dt)
-        {
-            if (_drawParallax)
-            {
-                RenderLower(Map.ParallaxIndex + 2, dt);
-                Map.ParallaxEntity!.Render(dt);
-
-                RenderUpper(Map.ParallaxIndex, dt);
-                for (int i = 0; i < Map.Width * Map.Height; i++)
-                    Chunks[i].RenderAlwaysOnTop(dt);
-            }
-            else RenderAll(dt);
-        }
-
-        public void GenerateMeshes()
-        {
-            for (int i = 0; i < Map.Width * Map.Height; i++)
-            {
-                Chunks[i].Renderer.GenerateMesh();
-            }
+            // not used
         }
 
         /// <summary>

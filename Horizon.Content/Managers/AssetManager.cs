@@ -64,7 +64,6 @@ public class AssetManager<AssetType, AssetFactoryType, AssetDescriptionType, Ass
         in AssetDescriptionType description
     )
     {
-
         var result = AssetFactoryType.Create(description);
 
         if (result.Status != AssetCreationStatus.Success)
@@ -80,6 +79,9 @@ public class AssetManager<AssetType, AssetFactoryType, AssetDescriptionType, Ass
 
         if (!NamedAssets.TryAdd(name, result.Asset))
             MessageCallback?.Invoke(LogLevel.Error, $"[{name}] Failed to add {assetName}!");
+
+        if (result.Status > 0 && result.Message?.CompareTo(string.Empty) != 0)
+            MessageCallback?.Invoke(LogLevel.Info, $"[{name}] {result.Message}");
 
         return result;
     }

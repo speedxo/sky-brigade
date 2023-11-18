@@ -26,12 +26,12 @@ public class TransformComponent2D : IGameComponent
     private float rot;
 
     /// <summary>
-    /// The scale factors of the game entity along each axis (X and Y).
+    /// The size factors of the game entity along each axis (X and Y).
     /// </summary>
-    private Vector2 scale = Vector2.One;
+    private Vector2 size = Vector2.One;
 
     /// <summary>
-    /// Updates the model matrix based on the current position, rotation, and scale values.
+    /// Updates the model matrix based on the current position, rotation, and size values.
     /// </summary>
     private void updateModelMatrix()
     {
@@ -43,7 +43,7 @@ public class TransformComponent2D : IGameComponent
 
         // Create the model matrix
         ModelMatrix =
-            Matrix4x4.CreateScale(scale.X, scale.Y, 1.0f)
+            Matrix4x4.CreateScale(size.X, size.Y, 1.0f)
             * Matrix4x4.CreateFromQuaternion(rotation)
             * Matrix4x4.CreateTranslation(pos.X, pos.Y, 0.0f);
     }
@@ -80,14 +80,14 @@ public class TransformComponent2D : IGameComponent
     }
 
     /// <summary>
-    /// Gets or sets the scale factors of the game entity along each axis (X, Y, and Z).
+    /// Gets or sets the size in pixels.
     /// </summary>
-    public Vector2 Scale
+    public Vector2 Size
     {
-        get => scale;
+        get => size;
         set
         {
-            scale = value;
+            size = value;
             updateModelMatrix();
         }
     }
@@ -118,5 +118,5 @@ public class TransformComponent2D : IGameComponent
     /// </summary>
     /// <param name="dt">The elapsed time since the last draw call.</param>
     /// <param name="options">Optional render options.</param>
-    public void Render(float dt) { }
+    public void Render(float dt, object? obj = null) { }
 }

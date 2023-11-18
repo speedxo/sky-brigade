@@ -1,7 +1,7 @@
-﻿using Horizon.OpenGL;
-using Horizon.OpenGL.Assets;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.CompilerServices;
+using Horizon.OpenGL;
+using Horizon.OpenGL.Assets;
 
 namespace Horizon.Rendering.Spriting;
 
@@ -44,7 +44,7 @@ public class SpriteSheet : Texture
     {
         if (Sprites.ContainsKey(name))
         {
-            //Entity.Engine.Logger.Log(
+            //Entity.ConcurrentLogger.Instance.Log(
             //    Logging.LogLevel.Error,
             //    $"Attempt to add sprite '{name}' which already exists!"
             //); TODO: FIX
@@ -64,7 +64,7 @@ public class SpriteSheet : Texture
     {
         if (!Sprites.TryGetValue(name, out var sprite))
         {
-            //Entity.Engine.Logger.Log(
+            //Entity.ConcurrentLogger.Instance.Log(
             //    Logging.LogLevel.Error,
             //    $"Attempt to get sprite '{name}' which doesn't exist!"
             //); TODO: FIX

@@ -114,7 +114,7 @@
 //        /// </summary>
 //        /// <param name="dt">The time elapsed since the last draw.</param>
 //        /// <param name="options">Optional rendering options (not used).</param>
-//        public void Render(float dt)
+//        public void Render(float dt, object obj=null)
 //        {
 //            // Not used for joystick input.
 //        }
