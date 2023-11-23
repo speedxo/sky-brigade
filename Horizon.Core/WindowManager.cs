@@ -3,11 +3,9 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Core.Primitives;
-
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;

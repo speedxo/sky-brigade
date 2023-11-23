@@ -1,13 +1,11 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
-
 using AutoVoxel.Data;
-
+using AutoVoxel.Data.Chunks;
 using Horizon.Core.Data;
 using Horizon.Core.Primitives;
 using Horizon.Engine;
 using Horizon.OpenGL.Buffers;
-
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 
@@ -19,9 +17,10 @@ public class Chunk : IRenderable
     public const int HEIGHT = 32;
     public const int DEPTH = 16;
 
+    public IChunkData ChunkData { get; }
+
     public Vector2D<int> Position { get; }
     public VertexBufferObject Buffer { get; }
-    public ChunkSlice[] Slices { get; }
 
     private uint elementCount = 0;
     private List<Vertex3D> vertices = new List<Vertex3D>();
@@ -33,38 +32,18 @@ public class Chunk : IRenderable
         this.Buffer = vbo;
         this.Position = position;
 
-        this.Slices = new ChunkSlice[HEIGHT / ChunkSlice.HEIGHT];
-        for (int i = 0; i < Slices.Length; i++)
-            this.Slices[i] = new();
-
-    }
-
-    public void Insert(in Tile tile, in Vector3 position)
-    {
-        int sliceIndex = (int)(position.Y / ChunkSlice.HEIGHT);
-        Slices[sliceIndex].Insert(tile, (int)position.X, (int)position.Z, (int)(position.Y % ChunkSlice.HEIGHT));
+        ChunkData = new LegacyChunkData();
     }
 
     public void GenerateTree()
     {
-        for (int y = 0; y < HEIGHT; y++)
+        for (int i = 0; i < WIDTH * HEIGHT * DEPTH; i++)
         {
-            for (int x = 0; x < WIDTH; x++)
+            ChunkData[i] = new Tile
             {
-                for (int z = 0; z < DEPTH; z++)
-                {
-                    Insert(new Tile { ID = Random.Shared.NextSingle() > 0.5f ? TileID.Dirt : TileID.Air }, new Vector3(x, y, z));
-                }
-            }
+                ID = Random.Shared.NextSingle() > 0.5f ? TileID.Dirt : TileID.Air
+            };
         }
-    }
-
-    public Tile GetTile(in int x, in int y, in int z)
-    {
-        int sliceIndex = (int)(y / ChunkSlice.HEIGHT);
-        if (sliceIndex > Slices.Length - 1)
-            return default;
-        return Slices[sliceIndex].Get(x, z, y % ChunkSlice.HEIGHT);
     }
 
     public void GenerateMesh()
@@ -76,10 +55,17 @@ public class Chunk : IRenderable
 
         void updateIndicies()
         {
-            indices.AddRange(new uint[] {
-                            indiciesCount + 0, indiciesCount + 1, indiciesCount + 2,
-                            indiciesCount + 0, indiciesCount + 2, indiciesCount + 3
-                        });
+            indices.AddRange(
+                new uint[]
+                {
+                    indiciesCount + 0,
+                    indiciesCount + 1,
+                    indiciesCount + 2,
+                    indiciesCount + 0,
+                    indiciesCount + 2,
+                    indiciesCount + 3
+                }
+            );
 
             indiciesCount += 4;
         }
@@ -90,26 +76,40 @@ public class Chunk : IRenderable
             {
                 for (int z = 0; z < DEPTH - 1; z++)
                 {
-                    var tile = GetTile(x, y, z);
+                    var tile = ChunkData[x, y, z];
 
                     // Skip rendering if the current voxel is empty (Air)
                     if (tile.ID == TileID.Air)
-                         continue;
+                        continue;
 
                     // Check each face of the voxel for visibility
                     for (int faceIndex = 0; faceIndex < 6; faceIndex++)
                     {
                         // Calculate the position of the neighboring voxel
-                        Vector3 neighborPosition = GetNeighborPosition(new Vector3(x, y, z), (CubeFace)faceIndex);
+                        Vector3 neighborPosition = GetNeighborPosition(
+                            new Vector3(x, y, z),
+                            (CubeFace)faceIndex
+                        );
 
                         // Get the tile of the neighboring voxel
-                        var neighborTile = GetTile((int)neighborPosition.X, (int)neighborPosition.Y, (int)neighborPosition.Z);
+                        var neighborTile = ChunkData[
+                            (int)neighborPosition.X,
+                            (int)neighborPosition.Y,
+                            (int)neighborPosition.Z
+                        ];
 
                         // Check if the neighboring voxel is empty (Air) or occludes the current voxel
                         if (neighborTile.ID != TileID.Air)
                         {
                             // Generate the face if the neighboring voxel is empty
-                            vertices.AddRange(GenerateFace((CubeFace)faceIndex, x + Position.X * WIDTH, y, z + Position.Y * DEPTH));
+                            vertices.AddRange(
+                                GenerateFace(
+                                    (CubeFace)faceIndex,
+                                    x + Position.X * WIDTH,
+                                    y,
+                                    z + Position.Y * DEPTH
+                                )
+                            );
                             updateIndicies();
                         }
                     }
@@ -144,6 +144,7 @@ public class Chunk : IRenderable
             _ => position,
         };
     }
+
     private Vertex3D[] GenerateFace(CubeFace face, float x, float y, float z)
     {
         return face switch
@@ -158,67 +159,107 @@ public class Chunk : IRenderable
         };
     }
 
-
     private Vertex3D[] generateBackFace(float x, float y, float z)
     {
-        return new[] {
-                new Vertex3D(new Vector3(0 + x, 0 + y, 1 + z), new Vector3(0, 0, -1), new Vector2(0, 1)),
-                new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(0, 0, -1), new Vector2(1, 1)),
-                new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(0, 0, -1), new Vector2(1, 0)),
-                new Vertex3D(new Vector3(0 + x, 1 + y, 1 + z), new Vector3(0, 0, -1), new Vector2(0, 0))
-            };
+        return new[]
+        {
+            new Vertex3D(
+                new Vector3(0 + x, 0 + y, 1 + z),
+                new Vector3(0, 0, -1),
+                new Vector2(0, 1)
+            ),
+            new Vertex3D(
+                new Vector3(1 + x, 0 + y, 1 + z),
+                new Vector3(0, 0, -1),
+                new Vector2(1, 1)
+            ),
+            new Vertex3D(
+                new Vector3(1 + x, 1 + y, 1 + z),
+                new Vector3(0, 0, -1),
+                new Vector2(1, 0)
+            ),
+            new Vertex3D(new Vector3(0 + x, 1 + y, 1 + z), new Vector3(0, 0, -1), new Vector2(0, 0))
+        };
     }
 
     private Vertex3D[] generateFrontFace(float x, float y, float z)
     {
-        return new[] {
-                new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(0, 1)),
-                new Vertex3D(new Vector3(0 + x, 0 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(1, 1)),
-                new Vertex3D(new Vector3(0 + x, 1 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(1, 0)),
-                new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(0, 0))
-            };
+        return new[]
+        {
+            new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(0, 1)),
+            new Vertex3D(new Vector3(0 + x, 0 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(1, 1)),
+            new Vertex3D(new Vector3(0 + x, 1 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(1, 0)),
+            new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(0, 0, 1), new Vector2(0, 0))
+        };
     }
 
     private Vertex3D[] generateLeftFace(float x, float y, float z)
     {
-        return new[] {
-                new Vertex3D(new Vector3(0 + x, 1 + y, 0 + z), new Vector3(-1, 0, 0), new Vector2(0, 1)),
-                new Vertex3D(new Vector3(0 + x, 0 + y, 0 + z), new Vector3(-1, 0, 0), new Vector2(1, 1)),
-                new Vertex3D(new Vector3(0 + x, 0 + y, 1 + z), new Vector3(-1, 0, 0), new Vector2(1, 0)),
-                new Vertex3D(new Vector3(0 + x, 1 + y, 1 + z), new Vector3(-1, 0, 0), new Vector2(0, 0))
-            };
+        return new[]
+        {
+            new Vertex3D(
+                new Vector3(0 + x, 1 + y, 0 + z),
+                new Vector3(-1, 0, 0),
+                new Vector2(0, 1)
+            ),
+            new Vertex3D(
+                new Vector3(0 + x, 0 + y, 0 + z),
+                new Vector3(-1, 0, 0),
+                new Vector2(1, 1)
+            ),
+            new Vertex3D(
+                new Vector3(0 + x, 0 + y, 1 + z),
+                new Vector3(-1, 0, 0),
+                new Vector2(1, 0)
+            ),
+            new Vertex3D(new Vector3(0 + x, 1 + y, 1 + z), new Vector3(-1, 0, 0), new Vector2(0, 0))
+        };
     }
 
     private Vertex3D[] generateRightFace(float x, float y, float z)
     {
-        return new[] {
-                new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(0, 1)),
-                new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(1, 1)),
-                new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(1, 0)),
-                new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(0, 0))
-            };
+        return new[]
+        {
+            new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(0, 1)),
+            new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(1, 1)),
+            new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(1, 0)),
+            new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(0, 0))
+        };
     }
 
     private Vertex3D[] generateTopFace(float x, float y, float z)
     {
-        return new[] {
-                new Vertex3D(new Vector3(0 + x, 0 + y, 0 + z), new Vector3(0, 1, 0), new Vector2(0, 1)),
-                new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(0, 1, 0), new Vector2(1, 1)),
-                new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(0, 1, 0), new Vector2(1, 0)),
-                new Vertex3D(new Vector3(0 + x, 0 + y, 1 + z), new Vector3(0, 1, 0), new Vector2(0, 0))
-            };
+        return new[]
+        {
+            new Vertex3D(new Vector3(0 + x, 0 + y, 0 + z), new Vector3(0, 1, 0), new Vector2(0, 1)),
+            new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(0, 1, 0), new Vector2(1, 1)),
+            new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(0, 1, 0), new Vector2(1, 0)),
+            new Vertex3D(new Vector3(0 + x, 0 + y, 1 + z), new Vector3(0, 1, 0), new Vector2(0, 0))
+        };
     }
 
     private Vertex3D[] generateBottomFace(float x, float y, float z)
     {
-        return new[] {
-                new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(0, -1, 0), new Vector2(0, 1)),
-                new Vertex3D(new Vector3(0 + x, 1 + y, 0 + z), new Vector3(0, -1, 0), new Vector2(1, 1)),
-                new Vertex3D(new Vector3(0 + x, 1 + y, 1 + z), new Vector3(0, -1, 0), new Vector2(1, 0)),
-                new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(0, -1, 0), new Vector2(0, 0))
-            };
+        return new[]
+        {
+            new Vertex3D(
+                new Vector3(1 + x, 1 + y, 0 + z),
+                new Vector3(0, -1, 0),
+                new Vector2(0, 1)
+            ),
+            new Vertex3D(
+                new Vector3(0 + x, 1 + y, 0 + z),
+                new Vector3(0, -1, 0),
+                new Vector2(1, 1)
+            ),
+            new Vertex3D(
+                new Vector3(0 + x, 1 + y, 1 + z),
+                new Vector3(0, -1, 0),
+                new Vector2(1, 0)
+            ),
+            new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(0, -1, 0), new Vector2(0, 0))
+        };
     }
-
 
     public void BufferData(in ReadOnlySpan<Vertex3D> vertices, in ReadOnlySpan<uint> elements)
     {
@@ -239,9 +280,18 @@ public class Chunk : IRenderable
             indices.Clear();
         }
 
-        if (elementCount < 1) return;
+        if (elementCount < 1)
+            return;
 
         Buffer.Bind();
-        GameEngine.Instance.GL.DrawElements(PrimitiveType.Triangles, elementCount, DrawElementsType.UnsignedInt, null);
+        GameEngine
+            .Instance
+            .GL
+            .DrawElements(
+                PrimitiveType.Triangles,
+                elementCount,
+                DrawElementsType.UnsignedInt,
+                null
+            );
     }
 }
