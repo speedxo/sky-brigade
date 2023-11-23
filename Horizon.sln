@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bogz.Logging", "Bogz.Loggin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TileBash", "TileBash\TileBash.csproj", "{F997421D-D26C-4158-871F-B3D83AAB6F5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoVoxel", "AutoVoxel\AutoVoxel.csproj", "{FE30582E-C074-4EC0-A696-6223FE4F8F12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,14 @@ Global
 		{F997421D-D26C-4158-871F-B3D83AAB6F5F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F997421D-D26C-4158-871F-B3D83AAB6F5F}.Release|x64.ActiveCfg = Release|x64
 		{F997421D-D26C-4158-871F-B3D83AAB6F5F}.Release|x64.Build.0 = Release|x64
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE30582E-C074-4EC0-A696-6223FE4F8F12}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

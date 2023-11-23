@@ -136,11 +136,11 @@ public class ParticleRenderer2D : GameObject, IDisposable
                                 {
                                     IsStorageBuffer = true,
                                     StorageMasks =
-                                        Silk.NET.OpenGL.BufferStorageMask.MapCoherentBit
-                                        | Silk.NET.OpenGL.BufferStorageMask.MapPersistentBit
-                                        | Silk.NET.OpenGL.BufferStorageMask.MapReadBit
-                                        | Silk.NET.OpenGL.BufferStorageMask.MapWriteBit,
-                                    Type = Silk.NET.OpenGL.BufferTargetARB.ArrayBuffer,
+                                        BufferStorageMask.MapCoherentBit
+                                        | BufferStorageMask.MapPersistentBit
+                                        | BufferStorageMask.MapReadBit
+                                        | BufferStorageMask.MapWriteBit,
+                                    Type = BufferTargetARB.ArrayBuffer,
                                     Size = (uint)(Maximum * sizeof(ParticleRenderData))
                                 }
                             }
@@ -188,9 +188,10 @@ public class ParticleRenderer2D : GameObject, IDisposable
                 .InstanceBuffer
                 .MapBufferRange(
                     (uint)Maximum,
-                    Silk.NET.OpenGL.MapBufferAccessMask.CoherentBit
-                        | Silk.NET.OpenGL.MapBufferAccessMask.WriteBit
-                        | Silk.NET.OpenGL.MapBufferAccessMask.PersistentBit
+                    MapBufferAccessMask.CoherentBit
+                        | MapBufferAccessMask.WriteBit
+                        | MapBufferAccessMask.ReadBit
+                        | MapBufferAccessMask.PersistentBit
                 );
 
         base.Initialize();

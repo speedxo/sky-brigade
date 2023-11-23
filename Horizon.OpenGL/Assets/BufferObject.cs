@@ -93,21 +93,21 @@ public class BufferObject : GLObject
         );
     }
 
-    public virtual unsafe void NamedBufferSubData<T>(in ReadOnlySpan<T> data, int offset = 0)
+    public virtual unsafe void NamedBufferSubData<T>(in ReadOnlySpan<T> data, int offset = 0, int length = 0)
         where T : unmanaged
     {
         // FIXME cross static ref to BaseGameEngine
-        GL.NamedBufferSubData(Handle, offset, (nuint)(sizeof(T) * data.Length), data);
+        GL.NamedBufferSubData(Handle, offset, (nuint)(length > 0 ? length : (sizeof(T) * data.Length)), data);
     }
 
-    public virtual unsafe void NamedBufferSubData<T>(in T[] data, int offset = 0)
+    public virtual unsafe void NamedBufferSubData<T>(in T[] data, int offset = 0, int length = 0)
         where T : unmanaged
     {
         fixed (void* d = data)
         {
             GL.NamedBufferData(
                 Handle,
-                (nuint)(sizeof(T) * data.Length),
+                (nuint)(length > 0 ? length : (sizeof(T) * data.Length)),
                 d,
                 VertexBufferObjectUsage.DynamicDraw
             );

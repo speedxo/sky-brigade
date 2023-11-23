@@ -89,7 +89,8 @@ public class WindowManager : IGameComponent
                 (int)config.WindowSize.Y
             ),
             FramesPerSecond = 0,
-            VSync = true
+            VSync = true,
+            PreferredBitDepth = new Silk.NET.Maths.Vector4D<int>(10, 10, 10, 8)
         };
 
         ViewportSize = WindowSize = config.WindowSize;

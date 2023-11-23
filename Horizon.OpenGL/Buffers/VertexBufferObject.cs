@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Horizon.Content;
+using Horizon.Core.Data;
 using Horizon.Core.Primitives;
 using Horizon.OpenGL.Assets;
 using Horizon.OpenGL.Descriptions;
@@ -58,6 +61,84 @@ public class VertexBufferObject
         ContentManager.GL.EnableVertexAttribArray(index);
     }
 
+    private readonly struct VertexLayoutDescription
+    {
+        public readonly uint Index { get; init; }
+        public readonly int Size { get; init; }
+        public readonly int Count { get; init; }
+        public readonly int Offset { get; init; }
+        public readonly VertexAttribPointerType Type { get; init; }
+    }
+
+    public unsafe void SetLayout<T>()
+        where T : unmanaged
+    {
+        // get all fields
+        var fields = typeof(T)
+            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance) // read all fields and sort by index, we trust every propert has the attribute.
+            .OrderBy(p => p.GetCustomAttributes().OfType<VertexLayout>().First().Index)
+            .ToArray(); // remember enumerate the array.
+
+        // store queue of layout.
+        var queue = new Queue<VertexLayoutDescription>();
+
+        // iterate
+        int totalSizeInBytes = 0;
+        for (uint i = 0; i < fields.Length; i++)
+        {
+            var attribute =
+                (fields[i].GetCustomAttribute(typeof(VertexLayout)) as VertexLayout)
+                ?? throw new Exception("Undescribed property!");
+
+            int count = Math.Max(fields[i].FieldType.GetFields().Length, 1);
+            int size = count * GetSizeFromVertexAttribPointerType(attribute.Type);
+
+            queue.Enqueue(
+                new VertexLayoutDescription
+                {
+                    Index = i,
+                    Size = size,
+                    Count = count,
+                    Offset = totalSizeInBytes,
+                    Type = attribute.Type
+                }
+            );
+            totalSizeInBytes += size;
+        }
+
+        if (totalSizeInBytes != sizeof(T))
+            throw new Exception("Size of {nameof(T)} doesn't match VertexLayout declarations!");
+
+        while (queue.Count > 0)
+        {
+            var ptr = queue.Dequeue();
+
+            VertexAttributePointer(
+                ptr.Index,
+                ptr.Count,
+                ptr.Type,
+                (uint)totalSizeInBytes,
+                ptr.Offset
+            );
+        }
+    }
+
+    public static int GetSizeFromVertexAttribPointerType(in VertexAttribPointerType type)
+    {
+        return type switch
+        {
+            VertexAttribPointerType.Double => sizeof(double),
+
+            VertexAttribPointerType.Float => sizeof(float),
+            VertexAttribPointerType.Int => sizeof(int),
+            VertexAttribPointerType.UnsignedInt => sizeof(uint),
+
+            VertexAttribPointerType.UnsignedShort => sizeof(uint),
+            VertexAttribPointerType.HalfFloat => sizeof(float) / 2,
+            _ => 0
+        };
+    }
+
     public void VertexAttributeDivisor(uint index, uint divisor)
     {
         ContentManager.GL.VertexAttribDivisor(index, divisor);
@@ -67,11 +148,15 @@ public class VertexBufferObject
     {
         // Binding the vertex array.
         ContentManager.GL.BindVertexArray(Handle);
+        VertexBuffer.Bind();
+        ElementBuffer.Bind();
     }
 
     public virtual void Unbind()
     {
         // Unbinding the vertex array.
         ContentManager.GL.BindVertexArray(0);
+        VertexBuffer.Unbind();
+        ElementBuffer.Unbind();
     }
 }

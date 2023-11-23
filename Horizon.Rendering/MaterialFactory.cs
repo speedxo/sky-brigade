@@ -11,7 +11,12 @@ public static class MaterialFactory
     public static char Delimiter { get; } = '_';
 
     private static readonly Dictionary<string, MaterialAttachment> _fileSuffixes =
-        new() { { $"{Delimiter}albedo", MaterialAttachment.Albedo }, { $"{Delimiter}normal", MaterialAttachment.Normal } };
+        new()
+        {
+            { $"{Delimiter}albedo", MaterialAttachment.Albedo },
+            { $"{Delimiter}normal", MaterialAttachment.Normal },
+            { $"{Delimiter}specular", MaterialAttachment.Specular }
+        };
 
     /// <summary>
     /// Creates a material from a sequence of images located inside a directory with a common name, each image attachment is identified by a suffix seperated from its name by <see cref="MaterialFactory.Delimiter"/>.
@@ -32,7 +37,8 @@ public static class MaterialFactory
             string rawFileName = Path.GetFileNameWithoutExtension(fullFile);
             int lastIndex = rawFileName.LastIndexOf(Delimiter);
 
-            if (lastIndex < 0) continue; // file name doesnt have delimiter
+            if (lastIndex < 0)
+                continue; // file name doesnt have delimiter
 
             // get the name of the file excluding any suffixes
             string fileName = rawFileName[..lastIndex];
@@ -44,10 +50,14 @@ public static class MaterialFactory
                 string identifier = rawFileName[lastIndex..];
 
                 // load the image
-                var texture = GameEngine.Instance.ContentManager.Textures.CreateOrGet($"{name}{identifier}", new OpenGL.Descriptions.TextureDescription
-                {
-                    Path = fullFile
-                });
+                var texture = GameEngine
+                    .Instance
+                    .ContentManager
+                    .Textures
+                    .CreateOrGet(
+                        $"{name}{identifier}",
+                        new OpenGL.Descriptions.TextureDescription { Path = fullFile }
+                    );
 
                 // add it to attachment list
                 attachments.Add(_fileSuffixes[identifier], texture);

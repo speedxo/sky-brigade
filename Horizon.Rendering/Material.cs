@@ -20,7 +20,8 @@ public class Material
             Attachments = new()
             {
                 { MaterialAttachment.Albedo, Texture.Invalid },
-                { MaterialAttachment.Normal, Texture.Invalid }
+                { MaterialAttachment.Normal, Texture.Invalid },
+                { MaterialAttachment.Specular, Texture.Invalid }
             }
         };
 

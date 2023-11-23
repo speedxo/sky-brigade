@@ -54,6 +54,7 @@ public class ConcurrentLogger : ILoggerDisposable
             if (task?.Status == TaskStatus.Running)
                 return;
 
+            // TODO yk
             task ??= Task.Factory.StartNew(() => MessageLoggingCallback());
         }
         catch { }

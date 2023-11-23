@@ -61,7 +61,7 @@ public class GameScene : Scene
         //debugDrawCallback = new();
         //debugDrawCallback.Parent = this;
         //debugDrawCallback.Initialize();
-
+            
         //debugDrawCallback.AppendFlags(
         //    DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair | DrawFlags.Shape
         //);
@@ -83,7 +83,7 @@ public class GameScene : Scene
 
         deferredRenderer.AddEntity(
             rainParticleSystem = new ParticleRenderer2D(100_000)
-            {   
+            {
                 MaxAge = 2.5f,
                 StartColor = new Vector3(4, 0, 255) / new Vector3(255),
                 EndColor = new Vector3(66, 135, 245) / new Vector3(255),
@@ -108,11 +108,7 @@ public class GameScene : Scene
                     for (int diagonal = 0; diagonal < 4; diagonal++)
                     {
                         (var x, var y) = roll(diagonal); // slight bias
-                        SpawnParticle(
-                            cam.ScreenToWorld(new Vector2(x, y)),
-                            -Vector2.One,
-                            0.2f
-                        );
+                        SpawnParticle(cam.ScreenToWorld(new Vector2(x, y)), -Vector2.One, 0.2f);
                     }
                 }
             )
@@ -140,18 +136,12 @@ public class GameScene : Scene
     {
         //if (Engine.InputManager.KeyboardManager.IsKeyPressed(Key.F3))
         //    Engine.Debugger.Enabled = !Engine.Debugger.Enabled;
+        if (Engine.InputManager.KeyboardManager.IsKeyPressed(Key.E))
+            cameraMovement = Math.Clamp(cameraMovement - 2, 0, 32);
+        else if (Engine.InputManager.KeyboardManager.IsKeyPressed(Key.Q))
+            cameraMovement = Math.Clamp(cameraMovement + 2, 1, 32);
 
-        cameraMovement +=
-            cameraMovement
-            * dt
-            * (
-                Engine.InputManager.KeyboardManager.IsKeyDown(Key.E)
-                    ? -1
-                    : Engine.InputManager.KeyboardManager.IsKeyDown(Key.Q)
-                        ? 1
-                        : 0
-            );
-        cam.Zoom = cameraMovement;
+        cam.Zoom = cameraMovement < 2 ? 1 : 2 * MathF.Round((cameraMovement) / 2);
 
         if (Engine.InputManager.KeyboardManager.IsKeyPressed(Key.G))
         {

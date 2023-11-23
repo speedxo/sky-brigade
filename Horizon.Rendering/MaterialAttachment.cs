@@ -3,5 +3,6 @@
 public enum MaterialAttachment
 {
     Albedo,
-    Normal
+    Normal,
+    Specular
 }

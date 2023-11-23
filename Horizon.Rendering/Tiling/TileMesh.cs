@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Horizon.Core.Data;
 using Horizon.Engine;
 using Horizon.GameEntity;
 using Horizon.OpenGL;
@@ -49,10 +50,25 @@ public abstract partial class Tiling<TTextureID>
 
         private readonly struct BasicVertex
         {
-            public readonly Vector2 Position { get; init; }
-            public readonly Vector2 TexCoords { get; init; }
+            public readonly Vector2 Position
+            {
+                get => position;
+                init => position = value;
+            }
 
-            public static readonly uint SizeInBytes = sizeof(float) * 4;
+            public readonly Vector2 TexCoords
+            {
+                get => texCoords;
+                init => texCoords = value;
+            }
+
+            public static uint SizeInBytes { get; } = sizeof(float) * 4;
+
+            [VertexLayout(0, VertexAttribPointerType.Float)]
+            private readonly Vector2 position;
+
+            [VertexLayout(1, VertexAttribPointerType.Float)]
+            private readonly Vector2 texCoords;
 
             public BasicVertex(Vector2 position, Vector2 texCoords)
             {
@@ -124,21 +140,21 @@ public abstract partial class Tiling<TTextureID>
 
             Vbo.Bind();
             Vbo.VertexBuffer.Bind();
-
-            Vbo.VertexAttributePointer(
-                0,
-                2,
-                VertexAttribPointerType.Float,
-                BasicVertex.SizeInBytes,
-                0
-            );
-            Vbo.VertexAttributePointer(
-                1,
-                2,
-                VertexAttribPointerType.Float,
-                BasicVertex.SizeInBytes,
-                2 * sizeof(float)
-            );
+            Vbo.SetLayout<BasicVertex>();
+            //Vbo.VertexAttributePointer(
+            //    0,
+            //    2,
+            //    VertexAttribPointerType.Float,
+            //    BasicVertex.SizeInBytes,
+            //    0
+            //);
+            //Vbo.VertexAttributePointer(
+            //    1,
+            //    2,
+            //    VertexAttribPointerType.Float,
+            //    BasicVertex.SizeInBytes,
+            //    2 * sizeof(float)
+            //);
             Vbo.InstanceBuffer.Bind();
 
             Vbo.VertexAttributePointer(

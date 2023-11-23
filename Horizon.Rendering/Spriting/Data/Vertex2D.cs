@@ -1,18 +1,33 @@
 ﻿using System.Numerics;
+using Horizon.Core.Data;
 
 namespace Horizon.Rendering.Spriting.Data
 {
     public struct Vertex2D
     {
+        [VertexLayout(0, Silk.NET.OpenGL.VertexAttribPointerType.Float)]
+        private Vector2 position;
+
+        [VertexLayout(1, Silk.NET.OpenGL.VertexAttribPointerType.Float)]
+        private Vector2 texCoords;
+
         /// <summary>
         /// Gets or sets the position of the vertex in 2D world space.
         /// </summary>
-        public Vector2 Position { get; set; }
+        public Vector2 Position
+        {
+            get => position;
+            set => position = value;
+        }
 
         /// <summary>
         /// Gets or sets the texture coordinates (UV) of the vertex, used for texture mapping.
         /// </summary>
-        public Vector2 TexCoords { get; set; }
+        public Vector2 TexCoords
+        {
+            get => texCoords;
+            set => texCoords = value;
+        }
 
         /// <summary>
         /// Initializes a new instance of the Vertex struct.
