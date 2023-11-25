@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Box2D.NetStandard.Dynamics.World;
-
 using Horizon.Engine;
 using Horizon.Rendering.Techniques;
-
 using Silk.NET.Input;
 using Silk.NET.SDL;
 

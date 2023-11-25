@@ -1,5 +1,4 @@
 ﻿using AutoVoxel.Rendering;
-
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.OpenGL;
@@ -37,21 +36,15 @@ public class ChunkRenderer : IGameComponent
         Technique.Bind();
         BindMaterialAttachments();
 
-        foreach (var chunk in manager.Chunks.Values)
+        foreach (var chunk in manager.Chunks)
             chunk.Render(dt);
 
         Technique.Unbind();
     }
 
-    public void UpdateState(float dt)
-    {
+    public void UpdateState(float dt) { }
 
-    }
-
-    public void UpdatePhysics(float dt)
-    {
-
-    }
+    public void UpdatePhysics(float dt) { }
 
     protected void BindMaterialAttachments()
     {

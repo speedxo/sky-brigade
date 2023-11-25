@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using AutoVoxel.Data;
 using AutoVoxel.Data.Chunks;
@@ -39,18 +40,12 @@ public class Chunk : IRenderable
     {
         for (int i = 0; i < WIDTH * HEIGHT * DEPTH; i++)
         {
-            ChunkData[i] = new Tile
-            {
-                ID = Random.Shared.NextSingle() > 0.5f ? TileID.Dirt : TileID.Air
-            };
+            ChunkData[i] = new Tile { ID = i % (WIDTH - 1) % 2 == 0 ? TileID.Dirt : TileID.Air };
         }
     }
 
-    public void GenerateMesh()
+    public void GenerateMesh(ChunkManager chunkManager)
     {
-        vertices.Clear();
-        indices.Clear();
-
         uint indiciesCount = 0;
 
         void updateIndicies()
@@ -91,23 +86,22 @@ public class Chunk : IRenderable
                             (CubeFace)faceIndex
                         );
 
-                        // Get the tile of the neighboring voxel
-                        var neighborTile = ChunkData[
+                        var neighborTile = chunkManager[
                             (int)neighborPosition.X,
                             (int)neighborPosition.Y,
                             (int)neighborPosition.Z
                         ];
 
                         // Check if the neighboring voxel is empty (Air) or occludes the current voxel
-                        if (neighborTile.ID != TileID.Air)
+                        if (neighborTile.ID == TileID.Air)
                         {
                             // Generate the face if the neighboring voxel is empty
                             vertices.AddRange(
                                 GenerateFace(
-                                    (CubeFace)faceIndex,
-                                    x + Position.X * WIDTH,
+                                    GetOpposingFace((CubeFace)faceIndex),
+                                    x + Position.X * (WIDTH - 1),
                                     y,
-                                    z + Position.Y * DEPTH
+                                    z + Position.Y * (DEPTH - 1)
                                 )
                             );
                             updateIndicies();
@@ -119,30 +113,48 @@ public class Chunk : IRenderable
         flagUpload = true;
     }
 
-    // Enum to represent cube faces
-    public enum CubeFace
-    {
-        Front,
-        Back,
-        Left,
-        Right,
-        Top,
-        Bottom
-    }
-
-    // Function to calculate the position of a neighboring voxel based on the cube face
-    private Vector3 GetNeighborPosition(Vector3 position, CubeFace face)
+    private CubeFace GetOpposingFace(CubeFace face)
     {
         return face switch
         {
-            CubeFace.Front => new Vector3(position.X, position.Y, position.Z + 1),
-            CubeFace.Back => new Vector3(position.X, position.Y, position.Z - 1),
-            CubeFace.Left => new Vector3(position.X - 1, position.Y, position.Z),
-            CubeFace.Right => new Vector3(position.X + 1, position.Y, position.Z),
-            CubeFace.Top => new Vector3(position.X, position.Y + 1, position.Z),
-            CubeFace.Bottom => new Vector3(position.X, position.Y - 1, position.Z),
-            _ => position,
+            CubeFace.Left => CubeFace.Right,
+            CubeFace.Right => CubeFace.Left,
+
+            CubeFace.Front => CubeFace.Back,
+            CubeFace.Back => CubeFace.Front,
+
+            CubeFace.Top => CubeFace.Bottom,
+            CubeFace.Bottom => CubeFace.Top
         };
+    }
+
+    // Enum to represent cube faces
+    public enum CubeFace
+    {
+        Front = 0,
+        Back = 1,
+
+        Left = 2,
+        Right = 3,
+
+        Top = 4,
+        Bottom = 5
+    }
+
+    private Vector3 GetNeighborPosition(Vector3 position, CubeFace face)
+    {
+        int chunkWidth = WIDTH;
+        int chunkDepth = DEPTH;
+        return face switch
+            {
+                CubeFace.Front => new Vector3(position.X, position.Y, position.Z + 1),
+                CubeFace.Back => new Vector3(position.X, position.Y, position.Z - 1),
+                CubeFace.Left => new Vector3(position.X - 1, position.Y, position.Z),
+                CubeFace.Right => new Vector3(position.X + 1, position.Y, position.Z),
+                CubeFace.Top => new Vector3(position.X, position.Y + 1, position.Z),
+                CubeFace.Bottom => new Vector3(position.X, position.Y - 1, position.Z),
+                _ => position,
+            } + new Vector3(Position.X * chunkWidth, 0, Position.Y * chunkDepth);
     }
 
     private Vertex3D[] GenerateFace(CubeFace face, float x, float y, float z)
@@ -193,7 +205,7 @@ public class Chunk : IRenderable
         };
     }
 
-    private Vertex3D[] generateLeftFace(float x, float y, float z)
+    private Vertex3D[] generateRightFace(float x, float y, float z)
     {
         return new[]
         {
@@ -216,14 +228,14 @@ public class Chunk : IRenderable
         };
     }
 
-    private Vertex3D[] generateRightFace(float x, float y, float z)
+    private Vertex3D[] generateLeftFace(float x, float y, float z)
     {
         return new[]
         {
-            new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(0, 1)),
-            new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(1, 1)),
-            new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(1, 0)),
-            new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(0, 0))
+            new Vertex3D(new Vector3(1 + x, 0 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(0, 0)),
+            new Vertex3D(new Vector3(1 + x, 1 + y, 0 + z), new Vector3(1, 0, 0), new Vector2(0, 1)),
+            new Vertex3D(new Vector3(1 + x, 1 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(1, 1)),
+            new Vertex3D(new Vector3(1 + x, 0 + y, 1 + z), new Vector3(1, 0, 0), new Vector2(1, 0))
         };
     }
 

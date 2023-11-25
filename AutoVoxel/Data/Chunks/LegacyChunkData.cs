@@ -21,13 +21,25 @@ internal class LegacyChunkData : IChunkData
                     : Tiles[index];
         set
         {
-            if (index < Tiles.Length - 1)
+            if (index < Tiles.Length)
                 Tiles[index] = value;
         }
     }
+
     public Tile this[int x, int y, int z]
     {
-        get => this[x + Chunk.WIDTH * (y + Chunk.DEPTH * z)];
-        set => this[x + Chunk.WIDTH * (y + Chunk.DEPTH * z)] = value;
+        get
+        {
+            int index = x + (y * Chunk.WIDTH) + (z * Chunk.WIDTH * Chunk.HEIGHT);
+
+            return index >= 0 && index < Tiles.Length ? Tiles[index] : Tile.Empty;
+        }
+        set
+        {
+            int index = x + (y * Chunk.WIDTH) + (z * Chunk.WIDTH * Chunk.HEIGHT);
+
+            if (index >= 0 && index < Tiles.Length)
+                Tiles[index] = value;
+        }
     }
 }
