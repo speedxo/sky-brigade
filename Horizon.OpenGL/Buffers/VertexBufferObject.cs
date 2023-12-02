@@ -5,12 +5,15 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+
 using Horizon.Content;
 using Horizon.Core.Data;
 using Horizon.Core.Primitives;
 using Horizon.OpenGL.Assets;
 using Horizon.OpenGL.Descriptions;
 using Horizon.OpenGL.Managers;
+
+using Silk.NET.Core;
 using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL.Buffers;
@@ -60,6 +63,19 @@ public class VertexBufferObject
             .VertexAttribPointer(index, count, type, false, vertexSize, (void*)(offSet));
         ContentManager.GL.EnableVertexAttribArray(index);
     }
+    public unsafe void VertexAttributeIPointer(
+        uint index,
+        int count,
+        VertexAttribIType type,
+        uint vertexSize,
+        int offSet
+    )
+    {
+        ContentManager
+            .GL
+            .VertexAttribIPointer(index, count, type, vertexSize, (void*)(offSet));
+        ContentManager.GL.EnableVertexAttribArray(index);
+    }
 
     private readonly struct VertexLayoutDescription
     {
@@ -90,7 +106,7 @@ public class VertexBufferObject
                 (fields[i].GetCustomAttribute(typeof(VertexLayout)) as VertexLayout)
                 ?? throw new Exception("Undescribed property!");
 
-            int count = Math.Max(fields[i].FieldType.GetFields().Length, 1);
+            int count = fields[i].FieldType.IsPrimitive ? 1 : Math.Max(fields[i].FieldType.GetFields().Length, 1);
             int size = count * GetSizeFromVertexAttribPointerType(attribute.Type);
 
             queue.Enqueue(
@@ -109,17 +125,40 @@ public class VertexBufferObject
         if (totalSizeInBytes != sizeof(T))
             throw new Exception("Size of {nameof(T)} doesn't match VertexLayout declarations!");
 
+        if (totalSizeInBytes % 4 != 0)
+            throw new Exception("Size of {nameof(T)} doesn't align to 4 byte boundary!");
+
+
         while (queue.Count > 0)
         {
             var ptr = queue.Dequeue();
+            switch (ptr.Type)
+            {
+                case VertexAttribPointerType.Int:
+                case VertexAttribPointerType.Byte:
+                case VertexAttribPointerType.UnsignedByte:
+                case VertexAttribPointerType.Short:
+                case VertexAttribPointerType.UnsignedShort:
+                case VertexAttribPointerType.UnsignedInt:
+                    VertexAttributeIPointer(
+                        ptr.Index,
+                        ptr.Count,
+                        (VertexAttribIType)ptr.Type,
+                        (uint)totalSizeInBytes,
+                        ptr.Offset
+                    );
+                    break;
 
-            VertexAttributePointer(
-                ptr.Index,
-                ptr.Count,
-                ptr.Type,
-                (uint)totalSizeInBytes,
-                ptr.Offset
-            );
+                default:
+                    VertexAttributePointer(
+                        ptr.Index,
+                        ptr.Count,
+                        ptr.Type,
+                        (uint)totalSizeInBytes,
+                        ptr.Offset
+                    );
+                    break;
+            }
         }
     }
 

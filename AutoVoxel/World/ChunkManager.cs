@@ -1,4 +1,6 @@
-﻿using AutoVoxel.Data;
+﻿using System.Numerics;
+
+using AutoVoxel.Data;
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Engine;
@@ -69,7 +71,7 @@ public class ChunkManager : IGameComponent
 
         for (int i = 0; i < Width * Height; i++)
         {
-            span[i] = new Chunk(BufferPool.Get(), new Vector2D<int>(i % Width, i / Width));
+            span[i] = new Chunk(BufferPool.Get(), new Vector2(i % Width, i / Width));
             span[i].GenerateTree();
         }
         for (int i = 0; i < Width * Height; i++)

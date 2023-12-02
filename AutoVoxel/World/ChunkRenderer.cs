@@ -37,7 +37,10 @@ public class ChunkRenderer : IGameComponent
         BindMaterialAttachments();
 
         foreach (var chunk in manager.Chunks)
+        {
+            Technique.SetUniform("uChunkPosition", chunk.Position);
             chunk.Render(dt);
+        }
 
         Technique.Unbind();
     }

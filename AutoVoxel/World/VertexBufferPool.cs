@@ -1,4 +1,6 @@
-﻿using Horizon.Core.Data;
+﻿using AutoVoxel.Data;
+
+using Horizon.Core.Data;
 using Horizon.Engine;
 using Horizon.OpenGL.Buffers;
 
@@ -55,7 +57,7 @@ public class VertexBufferPool
 
         buffer.Bind();
         buffer.VertexBuffer.Bind();
-        buffer.SetLayout<Vertex3D>();
+        buffer.SetLayout<ChunkVertex>();
         buffer.VertexBuffer.Unbind();
         buffer.Unbind();
 
