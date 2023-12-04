@@ -29,9 +29,9 @@ vec3 unpackPosition(uint packedData)
 {
     vec3 result;
 
-    result.x = float(packedData & 0x1F); // 0 - 4 = x
-    result.y = float((packedData >> 5) & 0x1F); // 5 - 9 = y
-    result.z = float((packedData >> 10) & 0x1F); // 10 - 14 = z
+    result.x = float(packedData & 0x3F); // 0 - 4 = x
+    result.y = float((packedData >> 6) & 0x3F); // 5 - 9 = y
+    result.z = float((packedData >> 12) & 0x3F); // 10 - 14 = z
 
     return result;
 }
@@ -58,12 +58,12 @@ vec2 convertUV(uint uv) {
 
 vec3 unpackNormal(uint packedData)
 {
-    return convertNormal((packedData >> 15) & 0x1F);
+    return convertNormal((packedData >> 18) & 0x1F);
 }
 
 vec2 unpackTexCoord(uint packedData)
 {
-	return convertUV((packedData >> 20) & 0x1F);
+	return convertUV((packedData >> 23) & 0x3);
 }
 
 
@@ -71,7 +71,7 @@ void main()
 {
 	oTexCoords = unpackTexCoord(vPackedData);
     oNormal = unpackNormal(vPackedData);
-    oShade = float(((vPackedData >> 22) & 0xF)) / 8.0;
+    oShade = float(((vPackedData >> 25) & 0xF)) / 8.0;
 
-	gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData) + vec3(uChunkPosition.x * (WIDTH - 1), 0, uChunkPosition.y * (DEPTH - 1)), 1.0);
+	gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData) + vec3(uChunkPosition.x * (WIDTH), 0, uChunkPosition.y * (DEPTH)), 1.0);
 }

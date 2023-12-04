@@ -57,14 +57,13 @@ public struct ChunkVertex
          * Each tile locally is within a 32^3 coordinate space, which only needs 5 bytes,
          * the chunks coordinates can be sent via a shader uniform and the final vertex position
          * can be computed in the vertex shader. */
-
         packedData =
               (uint)(
-              (x & 0b11111) << 0 // 0 - 4 = x
-            | (y & 0b11111) << 5 // 5 - 9 = y
-            | (z & 0b11111) << 10 // 10 - 14 = z
-            | ((int)normal & 0b11111) << 15 // 15 - 19 = normal 
-            | ((int)uv & 0b111) << 20 // 20 - 22 = texture coordinate 
-            | (c & 0b1111) << 22); // 23 - 27 = shade
+              (x & 0b111111) << 0 // 0 - 5 = x
+            | (y & 0b111111) << 6 // 6 - 11 = y
+            | (z & 0b111111) << 12 // 12 - 17 = z
+            | ((int)normal & 0b11111) << 18 // 18 - 22 = normal 
+            | ((int)uv & 0b11) << 23 // 23 - 24 = texture coordinate 
+            | (c & 0b1111) << 25); // 25 - 28 = shade
     }
 }

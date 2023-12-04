@@ -1,4 +1,5 @@
 ﻿using AutoVoxel.Rendering;
+
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Engine;
@@ -31,18 +32,20 @@ public class ChunkRenderer : IGameComponent
         Material = MaterialFactory.Create("content/atlas", "atlas");
         Technique = new ChunkTechnique();
 
-        // enable depth testing
+        // enable depth testing and culling
         GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.DepthTest);
+        GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.CullFace);
     }
 
     public void Render(float dt, object? obj = null)
     {
         // make sure to clear the color and depth buffers
         GameEngine.Instance.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.DepthBufferBit | Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit);
-        
+
         Technique.Bind();
         BindMaterialAttachments();
 
+        // todo: indirect drawing??
         foreach (var chunk in manager.Chunks)
         {
             Technique.SetUniform("uChunkPosition", chunk.Position);
