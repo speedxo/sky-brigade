@@ -26,7 +26,6 @@ internal class Program : Scene
 
         world = AddEntity<GameWorld>();
 
-
         MouseInputManager.Mouse.Cursor.CursorMode = Silk.NET.Input.CursorMode.Raw;
         Engine.GL.ClearColor(System.Drawing.Color.CornflowerBlue);
         Engine.GL.Enable(Silk.NET.OpenGL.EnableCap.Texture2D);
@@ -46,10 +45,10 @@ internal class Program : Scene
 
         camera.Position +=
                  Vector3.Normalize(Vector3.Cross(camera.Front, Vector3.UnitY))
-                 * 5
+                 * 15
                  * axis.X
                  * dt;
-        camera.Position += 5 * camera.Front * axis.Y * dt;
+        camera.Position += 15 * camera.Front * axis.Y * dt;
         if (float.IsNaN(camera.Position.X) || float.IsNaN(camera.Position.Y) || float.IsNaN(camera.Position.Z))
             camera.Position = new Vector3(0, 0, 0);
 

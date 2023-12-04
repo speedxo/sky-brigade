@@ -1,9 +1,11 @@
 ﻿using System.Numerics;
 
 using AutoVoxel.Data;
+
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Engine;
+
 using Silk.NET.Maths;
 
 namespace AutoVoxel.World;
@@ -36,30 +38,20 @@ public class ChunkManager : IGameComponent
     {
         get
         {
-            int chunkX = x / Chunk.WIDTH;
-            int chunkY = y / Chunk.DEPTH;
-            int localX = x % Chunk.WIDTH;
-            int localY = y % Chunk.HEIGHT;
-            int localZ = z % Chunk.DEPTH;
+            if (x < 0 || y < 0 || z < 0) return Tile.Empty;
 
-            if (
-                chunkX >= 0
-                && chunkX < Width
-                && chunkY >= 0
-                && chunkY < Height
-                && localX >= 0
-                && localX < Chunk.WIDTH
-                && localY >= 0
-                && localY < Chunk.HEIGHT
-                && localZ >= 0
-                && localZ < Chunk.DEPTH
-            )
-            {
-                int chunkIndex = chunkX + chunkY * Width;
-                return Chunks[chunkIndex].ChunkData[localX, localY, localZ];
-            }
+            int chunkX = x / (Chunk.WIDTH);
+            int chunkY = z / (Chunk.DEPTH);
 
-            return Tile.Empty;
+            if (chunkX > Width - 1 || chunkY > Height - 1 || y > Chunk.HEIGHT - 1) return Tile.Empty;
+
+            int localX = x % (Chunk.WIDTH);
+            int localY = y;
+            int localZ = z % (Chunk.DEPTH);
+
+            int chunkIndex = chunkX + chunkY * Width;
+
+            return Chunks[chunkIndex].ChunkData[localX, localY, localZ];
         }
     }
 

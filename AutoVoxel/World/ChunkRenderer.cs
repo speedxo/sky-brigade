@@ -1,6 +1,7 @@
 ﻿using AutoVoxel.Rendering;
 using Horizon.Core;
 using Horizon.Core.Components;
+using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.Rendering;
 
@@ -29,10 +30,16 @@ public class ChunkRenderer : IGameComponent
     {
         Material = MaterialFactory.Create("content/atlas", "atlas");
         Technique = new ChunkTechnique();
+
+        // enable depth testing
+        GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.DepthTest);
     }
 
     public void Render(float dt, object? obj = null)
     {
+        // make sure to clear the color and depth buffers
+        GameEngine.Instance.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.DepthBufferBit | Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit);
+        
         Technique.Bind();
         BindMaterialAttachments();
 

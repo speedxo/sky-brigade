@@ -22,7 +22,7 @@ public class Camera3D : Camera
             MathHelper.DegreesToRadians(fov),
             GameEngine.Instance.WindowManager.AspectRatio,
             0.1f,
-            100.0f
+            1000.0f
         );
     }
 

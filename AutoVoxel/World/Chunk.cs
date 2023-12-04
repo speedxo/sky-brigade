@@ -16,9 +16,9 @@ using Silk.NET.OpenGL;
 namespace AutoVoxel.World;
 public class Chunk : IRenderable
 {
-    public const int WIDTH = 16;
-    public const int HEIGHT = 16;
-    public const int DEPTH = 16;
+    public const int WIDTH = 32;
+    public const int HEIGHT = 32;
+    public const int DEPTH = 32;
 
     public IChunkData ChunkData { get; }
 
@@ -35,14 +35,34 @@ public class Chunk : IRenderable
         this.Buffer = vbo;
         this.Position = position;
 
-        ChunkData = new LegacyChunkData();
+        ChunkData = new JaggedChunkData();
     }
 
     public void GenerateTree()
     {
-        for (int i = 0; i < WIDTH * HEIGHT * DEPTH; i++)
+        //for (int x = 0; x < WIDTH; x++)
+        //{
+        //    for (int z = 0; z < DEPTH; z++)
+        //    {
+        //        for (int y = 0; y < HEIGHT; y++)
+        //        {
+        //            ChunkData[x, y, z] = new Tile
+        //            {
+        //                ID = TileID.Dirt
+        //            };
+        //        }
+        //    }
+        //}
+        for (int x = 0; x < WIDTH; x++)
         {
-            ChunkData[i] = new Tile { ID = TileID.Dirt };
+            for (int z = 0; z < DEPTH; z++)
+            {
+                int height = (int)(Perlin.perlin((x + Position.X * (WIDTH - 1)) * 0.05, 0.0, (z + Position.Y * (DEPTH - 1)) * 0.05) * HEIGHT);
+                for (int y = HEIGHT - height; y > 0; y--)
+                {
+                    ChunkData[x, y, z] = new Tile { ID = TileID.Dirt };
+                }
+            }
         }
     }
 
@@ -67,37 +87,48 @@ public class Chunk : IRenderable
             indiciesCount += 4;
         }
 
-        for (int y = 0; y < HEIGHT - 1; y++)
+        //int wth = WIDTH * HEIGHT, idx;
+        //for (int i = 0; i < WIDTH * DEPTH * HEIGHT; i++)
+        //{
+        //    int z = i / wth;
+        //    idx = i - z * wth;
+        //    int y = idx / WIDTH;
+        //    int x = idx % WIDTH;
+
+
+        //}
+
+        for (int x = 0; x < WIDTH; x++)
         {
-            for (int x = 0; x < WIDTH - 1; x++)
+            for (int z = 0; z < DEPTH; z++)
             {
-                for (int z = 0; z < DEPTH - 1; z++)
+                for (int y = 0; y < HEIGHT; y++)
                 {
                     var tile = ChunkData[x, y, z];
 
-                    // Skip rendering if the current voxel is empty (Air)
+                    // skip rendering if the current voxel is empty
                     if (tile.ID == TileID.Air)
                         continue;
 
-                    // Check each face of the voxel for visibility
+                    // check each face of the voxel for visibility
                     for (int faceIndex = 0; faceIndex < 6; faceIndex++)
                     {
-                        // Calculate the position of the neighboring voxel
-                        Vector3 neighborPosition = GetNeighborPosition(
+                        //// calculate the position of the neighboring voxel
+                        Vector3 neighbourPosition = GetNeighborPosition(
                             new Vector3(x, y, z),
                             (CubeFace)faceIndex
                         );
 
                         var neighborTile = chunkManager[
-                            (int)neighborPosition.X,
-                            (int)neighborPosition.Y,
-                            (int)neighborPosition.Z
+                            (int)neighbourPosition.X,
+                            (int)neighbourPosition.Y,
+                            (int)neighbourPosition.Z
                         ];
 
-                        // Check if the neighboring voxel is empty (Air) or occludes the current voxel
-                        //if (neighborTile.ID == TileID.Air)
+                        // check if the neighboring voxel is empty or occludes the current voxel
+                        if (neighborTile.ID == TileID.Air)
                         {
-                            // Generate the face if the neighboring voxel is empty
+                            // generate the face if the neighboring voxel is empty
                             vertices.AddRange(
                                 GenerateFace(
                                     GetOpposingFace((CubeFace)faceIndex),
@@ -132,22 +163,24 @@ public class Chunk : IRenderable
 
     private Vector3 GetNeighborPosition(Vector3 position, CubeFace face)
     {
-        int chunkWidth = WIDTH - 1;
-        int chunkDepth = DEPTH - 1;
         return face switch
         {
             CubeFace.Front => new Vector3(position.X, position.Y, position.Z + 1),
             CubeFace.Back => new Vector3(position.X, position.Y, position.Z - 1),
+
             CubeFace.Left => new Vector3(position.X - 1, position.Y, position.Z),
             CubeFace.Right => new Vector3(position.X + 1, position.Y, position.Z),
-            CubeFace.Top => new Vector3(position.X, position.Y + 1, position.Z),
-            CubeFace.Bottom => new Vector3(position.X, position.Y - 1, position.Z),
+
+            CubeFace.Top => new Vector3(position.X, position.Y - 1, position.Z),
+            CubeFace.Bottom => new Vector3(position.X, position.Y + 1, position.Z),
             _ => position,
-        } + new Vector3(Position.X * chunkWidth, 0, Position.Y * chunkDepth);
+        } + new Vector3(Position.X * (WIDTH), 0, Position.Y * (DEPTH));
     }
 
     private ChunkVertex[] GenerateFace(CubeFace face, int x, int y, int z)
     {
+        if (x > 31 || y > 31 || z > 31) throw new Exception();
+
         return face switch
         {
             CubeFace.Front => generateFrontFace(x, y, z),
@@ -163,23 +196,11 @@ public class Chunk : IRenderable
     private ChunkVertex[] generateBackFace(int x, int y, int z)
     {
         return new[]
-        {
-            new ChunkVertex(
-                0 + x, 0 + y, 1 + z,
-                CubeFace.Back,
-                UVCoordinate.TopLeft
-            ),
-            new ChunkVertex(
-               1 + x, 0 + y, 1 + z,
-                CubeFace.Back,
-                UVCoordinate.TopLeft
-            ),
-            new ChunkVertex(
-                1 + x, 1 + y, 1 + z,
-                CubeFace.Back,
-                UVCoordinate.TopLeft
-            ),
-            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Back, UVCoordinate.TopLeft)
+       {
+            new ChunkVertex(0 + x, 0 + y, 1 + z, CubeFace.Back, UVCoordinate.TopLeft),
+            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Back, UVCoordinate.BottomLeft),
+            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Back, UVCoordinate.TopRight),
+            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Back, UVCoordinate.BottomRight)
         };
     }
 
@@ -198,26 +219,10 @@ public class Chunk : IRenderable
     {
         return new[]
         {
-            new ChunkVertex(
-                0 + x, 1 + y, 0 + z,
-                CubeFace.Right,
-                UVCoordinate.TopLeft
-            ),
-            new ChunkVertex(
-                0 + x, 0 + y, 0 + z,
-                CubeFace.Right,
-                UVCoordinate.BottomLeft
-            ),
-            new ChunkVertex(
-                 0 + x, 0 + y, 1 + z,
-                CubeFace.Right,
-                UVCoordinate.BottomRight
-            ),
-            new ChunkVertex(
-                0 + x, 1 + y, 1 + z,
-                CubeFace.Right,
-                UVCoordinate.TopRight
-                )
+            new ChunkVertex(0 + x, 0 + y, 0 + z, CubeFace.Right, UVCoordinate.TopLeft),
+            new ChunkVertex(0 + x, 0 + y, 1 + z, CubeFace.Right, UVCoordinate.TopRight),
+            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Right, UVCoordinate.BottomRight),
+            new ChunkVertex(0 + x, 1 + y, 0 + z, CubeFace.Right, UVCoordinate.BottomLeft)
         };
     }
 
@@ -227,9 +232,9 @@ public class Chunk : IRenderable
         return new[]
         {
             new ChunkVertex(1 + x, 0 + y, 0 + z, CubeFace.Left, UVCoordinate.TopLeft),
-            new ChunkVertex(1 + x, 1 + y, 0 + z, CubeFace.Left, UVCoordinate.TopLeft),
-            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Left, UVCoordinate.TopLeft),
-            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Left, UVCoordinate.TopLeft)
+            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Left, UVCoordinate.TopRight),
+            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Left, UVCoordinate.BottomRight),
+            new ChunkVertex(1 + x, 1 + y, 0 + z, CubeFace.Left, UVCoordinate.BottomLeft)
         };
     }
 
@@ -249,22 +254,22 @@ public class Chunk : IRenderable
         return new[]
         {
             new ChunkVertex(
-                1 + x, 1 + y, 0 + z,
+                1 + x, 0 + y, 0 + z,
                 CubeFace.Bottom,
                 UVCoordinate.TopLeft
             ),
             new ChunkVertex(
-                0 + x, 1 + y, 0 + z,
+                0 + x, 0 + y, 0 + z,
                 CubeFace.Bottom,
                 UVCoordinate.BottomLeft
             ),
             new ChunkVertex(
-                0 + x, 1 + y, 1 + z,
+                0 + x, 0 + y, 1 + z,
                 CubeFace.Bottom,
                 UVCoordinate.BottomRight
             ),
             new ChunkVertex(
-                1 + x, 1 + y, 1 + z,
+                1 + x, 0 + y, 1 + z,
                 CubeFace.Bottom,
                 UVCoordinate.TopRight
                 )
