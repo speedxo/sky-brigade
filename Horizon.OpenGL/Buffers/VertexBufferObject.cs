@@ -123,10 +123,10 @@ public class VertexBufferObject
         }
 
         if (totalSizeInBytes != sizeof(T))
-            throw new Exception("Size of {nameof(T)} doesn't match VertexLayout declarations!");
+            throw new Exception($"Size of {nameof(T)} doesn't match VertexLayout declarations!");
 
         if (totalSizeInBytes % 4 != 0)
-            throw new Exception("Size of {nameof(T)} doesn't align to 4 byte boundary!");
+            throw new Exception($"Size of {nameof(T)} doesn't align to 4 byte boundary!");
 
 
         while (queue.Count > 0)

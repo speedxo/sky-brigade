@@ -2,7 +2,7 @@
 
 namespace AutoVoxel.Data.Chunks;
 
-internal class JaggedChunkData : IChunkData
+internal class JaggedChunkData : ISliceData
 {
     public Tile[,,] Tiles = new Tile[Chunk.WIDTH, Chunk.HEIGHT, Chunk.DEPTH];
 

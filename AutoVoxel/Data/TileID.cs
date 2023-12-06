@@ -4,5 +4,6 @@ public enum TileID
 {
     Null = -1,
     Air = 0,
-    Dirt = 1
+    Dirt = 1,
+    Stone = 2
 }

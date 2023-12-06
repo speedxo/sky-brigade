@@ -8,11 +8,11 @@ using AutoVoxel.World;
 
 namespace AutoVoxel.Data.Chunks;
 
-internal class LegacyChunkData : IChunkData
+internal class LegacySliceData : ISliceData
 {
-    public Tile[] Tiles = new Tile[Chunk.WIDTH * Chunk.HEIGHT * Chunk.DEPTH];
+    public Tile[] Tiles = new Tile[Slice.WIDTH * Slice.HEIGHT * Slice.DEPTH];
 
-    public LegacyChunkData()
+    public LegacySliceData()
     {
         Array.Fill(Tiles, Tile.Empty);
     }
@@ -35,14 +35,14 @@ internal class LegacyChunkData : IChunkData
     {
         get
         {
-            int index = x + Chunk.WIDTH * (y + Chunk.HEIGHT * z);
+            int index = x + Slice.WIDTH * (y + Slice.HEIGHT * z);
 
             return index > -1 && index < Tiles.Length ? Tiles[index]
                 : Tile.OOB;
         }
         set
         {
-            int index = x + Chunk.WIDTH * (y + Chunk.HEIGHT * z);
+            int index = x + Slice.WIDTH * (y + Slice.HEIGHT * z);
 
             if (index > -1 && index < Tiles.Length)
                 Tiles[index] = value;

@@ -85,7 +85,7 @@ public class ChunkManager : IGameComponent
             int localX = x % (Chunk.WIDTH);
             int localZ = z % (Chunk.DEPTH);
 
-            return Chunks[chunkX + chunkY * Width].ChunkData[localX, y, localZ];
+            return Chunks[chunkX + chunkY * Width][localX, y, localZ];
         }
     }
 

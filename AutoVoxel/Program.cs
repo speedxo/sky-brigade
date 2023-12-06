@@ -25,6 +25,7 @@ internal class Program : Scene
         ActiveCamera = camera = AddEntity<Camera3D>();
 
         world = AddEntity<GameWorld>();
+        camera.Position = new Vector3((world.ChunkManager.Width * Chunk.WIDTH) / 2.0f, 128, (world.ChunkManager.Height * Chunk.DEPTH) / 2.0f);
 
         MouseInputManager.Mouse.Cursor.CursorMode = Silk.NET.Input.CursorMode.Raw;
         Engine.GL.ClearColor(System.Drawing.Color.CornflowerBlue);
@@ -51,7 +52,7 @@ internal class Program : Scene
                  * dt;
         camera.Position += 15 * camera.Front * axis.Y * dt;
         if (float.IsNaN(camera.Position.X) || float.IsNaN(camera.Position.Y) || float.IsNaN(camera.Position.Z))
-            camera.Position = new Vector3(0, 0, 0);
+            camera.Position = new Vector3((world.ChunkManager.Width * Chunk.WIDTH) / 2.0f, 128, (world.ChunkManager.Height * Chunk.DEPTH) / 2.0f);
 
         base.UpdateState(dt);
     }

@@ -3,7 +3,8 @@
 #define WIDTH 32
 #define DEPTH 32
 
-layout(location = 0) in uint vPackedData;
+layout(location = 0) in uint vPackedData0;
+layout(location = 1) in uint vPackedData1;
 
 uniform mat4 uCameraView;
 uniform mat4 uCameraProjection;
@@ -11,7 +12,10 @@ uniform vec2 uChunkPosition;
 
 layout(location = 0) out vec2 oTexCoords;
 layout(location = 1) out vec3 oNormal;
-layout(location = 2) out float oShade;
+
+#define ATLAS_SIZE 256.0
+#define SINGLE_TILE_SIZE (16.0 / ATLAS_SIZE)
+#define ATLAS_OFFSET 256.0 / 16.0
 
 #define UVCoordinateTopLeft 0
 #define UVCoordinateBottomLeft 1
@@ -30,8 +34,8 @@ vec3 unpackPosition(uint packedData)
     vec3 result;
 
     result.x = float(packedData & 0x3F); // 0 - 4 = x
-    result.y = float((packedData >> 6) & 0x3F); // 5 - 9 = y
-    result.z = float((packedData >> 12) & 0x3F); // 10 - 14 = z
+    result.y = float((packedData >> 6) & 0xFF); // 5 - 9 = y
+    result.z = float((packedData >> 14) & 0x3F); // 10 - 14 = z
 
     return result;
 }
@@ -58,21 +62,22 @@ vec2 convertUV(uint uv)
     return vec2(0, 0); 
 }
 
-vec3 unpackNormal(uint packedData)
+vec3 unpackNormal()
 {
-    return convertNormal((packedData >> 18) & 0x1F);
+    return convertNormal((vPackedData0 >> 20) & 0x1F);
 }
 
-vec2 unpackTexCoord(uint packedData)
+vec2 unpackTexCoord()
 {
-	return convertUV((packedData >> 23) & 0x3);
+    float tileId = float(vPackedData1 & 0xFF);
+
+	return convertUV((vPackedData0 >> 25) & 0x3) * SINGLE_TILE_SIZE + vec2(mod(tileId, ATLAS_OFFSET), tileId / ATLAS_OFFSET) * SINGLE_TILE_SIZE;
 }
 
 void main()
 {
-	oTexCoords = unpackTexCoord(vPackedData);
-    oNormal = unpackNormal(vPackedData);
-    oShade = float(((vPackedData >> 25) & 0xF)) / 8.0;
+	oTexCoords = unpackTexCoord();
+    oNormal = unpackNormal();
 
-	gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData) + vec3(uChunkPosition.x * (WIDTH), 0, uChunkPosition.y * (DEPTH)), 1.0);
+	gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData0) + vec3(uChunkPosition.x * (WIDTH), 0, uChunkPosition.y * (DEPTH)), 1.0);
 }
