@@ -13,5 +13,5 @@ vec3 lightDir = vec3(0.707, 0.9, 0.36);
 
 void main() 
 {
-  AlbedoColor = vec4(vec3(clamp(dot(normalize(normal), lightDir), 0.3, 1.0))  * texture(uTexAlbedo, texCoords * singleTextureSize).xyz, 1.0);
+  AlbedoColor = vec4(vec3(clamp(dot(normalize(normal), lightDir), 0.3, 1.0)) * texture(uTexAlbedo, texCoords * singleTextureSize).xyz, 1.0);
 }

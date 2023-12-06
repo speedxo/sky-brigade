@@ -35,6 +35,7 @@ internal class Program : Scene
     public override void Render(float dt, object? obj = null)
     {
         Engine.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit | Silk.NET.OpenGL.ClearBufferMask.DepthBufferBit);
+        Engine.GL.Viewport(0, 0, (uint)Engine.WindowManager.ViewportSize.X, (uint)Engine.WindowManager.ViewportSize.Y);
 
         base.Render(dt, obj);
     }

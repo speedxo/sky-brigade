@@ -7,8 +7,10 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+
 using Horizon.Core.Components;
 using Horizon.Core.Primitives;
+
 using Silk.NET.Core.Native;
 using Silk.NET.OpenGL;
 
@@ -209,6 +211,10 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable, IInstantia
 
         return AddEntity((T)entity!);
     }
+    protected virtual void DisposeOther()
+    {
+        
+    }
 
     public void Dispose()
     {
@@ -221,6 +227,8 @@ public abstract class Entity : IRenderable, IUpdateable, IDisposable, IInstantia
             if (item is IDisposable managedItem)
                 managedItem.Dispose();
         Children.Clear();
+
+        DisposeOther();
 
         GC.SuppressFinalize(this);
     }

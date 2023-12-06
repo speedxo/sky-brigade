@@ -27,13 +27,14 @@ public abstract class Mesh<VertexType> : Entity
     public Mesh() { }
 
     protected abstract VertexArrayObjectDescription ArrayDescription { get; }
+    protected virtual VertexBufferObject AcquireBuffer() => new(
+            GameEngine.Instance.ContentManager.VertexArrays.Create(ArrayDescription)
+        );
 
     public override void Initialize()
     {
         base.Initialize();
-        Buffer = new VertexBufferObject(
-            GameEngine.Instance.ContentManager.VertexArrays.Create(ArrayDescription)
-        );
+        Buffer = AcquireBuffer();
         SetBufferLayout();
     }
 

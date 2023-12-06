@@ -36,7 +36,8 @@ vec3 unpackPosition(uint packedData)
     return result;
 }
 
-vec3 convertNormal(uint normal) {
+vec3 convertNormal(uint normal) 
+{
     if (normal == CubeFaceFront) return vec3(0, 0, 1);
     if (normal == CubeFaceBack) return vec3(0, 0, -1);
     if (normal == CubeFaceLeft) return vec3(-1, 0, 0);
@@ -47,7 +48,8 @@ vec3 convertNormal(uint normal) {
     return vec3(0, 0, 0); 
 }
 
-vec2 convertUV(uint uv) {
+vec2 convertUV(uint uv) 
+{
     if (uv == UVCoordinateTopLeft) return vec2(0, 1);
     if (uv == UVCoordinateBottomLeft) return vec2(0, 0);
     if (uv == UVCoordinateTopRight) return vec2(1, 1);
@@ -65,7 +67,6 @@ vec2 unpackTexCoord(uint packedData)
 {
 	return convertUV((packedData >> 23) & 0x3);
 }
-
 
 void main()
 {

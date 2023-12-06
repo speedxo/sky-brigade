@@ -1,20 +1,20 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Numerics;
-using System.Runtime.InteropServices;
 
 using AutoVoxel.Data;
 using AutoVoxel.Data.Chunks;
 
 using Horizon.Core.Data;
 using Horizon.Core.Primitives;
-using Horizon.Engine;
-using Horizon.OpenGL.Buffers;
+using Horizon.OpenGL.Descriptions;
+using Horizon.Rendering.Mesh;
 
 using Silk.NET.Maths;
-using Silk.NET.OpenGL;
 
 namespace AutoVoxel.World;
-public class Chunk : IRenderable
+
+public class Chunk : IRenderable, IDisposable
 {
     public const int WIDTH = 32;
     public const int HEIGHT = 32;
@@ -23,23 +23,18 @@ public class Chunk : IRenderable
     public IChunkData ChunkData { get; }
 
     public Vector2 Position { get; }
-    private VertexBufferObject buffer;
+    public TessellatorMesh Mesh { get; }
 
     private uint elementCount = 0;
-    private List<ChunkVertex> vertices = new List<ChunkVertex>();
-    private List<uint> indices = new List<uint>();
     private bool flagUpload;
+
 
     public Chunk(in Vector2 position)
     {
         this.Position = position;
 
         ChunkData = new LegacyChunkData();
-    }
-
-    public void SetBuffer(in VertexBufferObject vbo)
-    {
-        this.buffer ??= vbo;
+        Mesh = new();
     }
 
     public void GenerateTree()
@@ -55,29 +50,12 @@ public class Chunk : IRenderable
                 }
             }
         }
-        Console.WriteLine();
     }
 
     public void GenerateMesh(ChunkManager chunkManager)
     {
-        uint indiciesCount = 0;
+        Tessellator tes = new(Mesh);
 
-        void updateIndicies()
-        {
-            indices.AddRange(
-                new uint[]
-                {
-                    indiciesCount + 0,
-                    indiciesCount + 1,
-                    indiciesCount + 2,
-                    indiciesCount + 0,
-                    indiciesCount + 2,
-                    indiciesCount + 3
-                }
-            );
-
-            indiciesCount += 4;
-        }
         for (int x = 0; x < WIDTH; x++)
         {
             for (int z = 0; z < DEPTH; z++)
@@ -109,21 +87,13 @@ public class Chunk : IRenderable
                         if (neighborTile.ID == TileID.Air)
                         {
                             // generate the face if the neighboring voxel is empty
-                            vertices.AddRange(
-                                GenerateFace(
-                                    GetOpposingFace((CubeFace)faceIndex),
-                                    x,
-                                    y,
-                                    z
-                                )
-                            );
-                            updateIndicies();
+                            tes.AddCubeFace(GetOpposingFace((CubeFace)faceIndex), x, y, z);
                         }
                     }
                 }
             }
         }
-        flagUpload = true;
+        Mesh.FlagDirty();
     }
 
     private CubeFace GetOpposingFace(CubeFace face)
@@ -156,121 +126,13 @@ public class Chunk : IRenderable
             _ => position,
         } + new Vector3(Position.X * (WIDTH), 0, Position.Y * (DEPTH));
     }
-
-    private ChunkVertex[] GenerateFace(CubeFace face, int x, int y, int z)
-    {
-        if (x > 31 || y > 31 || z > 31) throw new Exception();
-
-        return face switch
-        {
-            CubeFace.Front => generateFrontFace(x, y, z),
-            CubeFace.Back => generateBackFace(x, y, z),
-            CubeFace.Top => generateTopFace(x, y, z),
-            CubeFace.Bottom => generateBottomFace(x, y, z),
-            CubeFace.Left => generateLeftFace(x, y, z),
-            CubeFace.Right => generateRightFace(x, y, z),
-            _ => Array.Empty<ChunkVertex>(),
-        };
-    }
-
-    private ChunkVertex[] generateBackFace(int x, int y, int z)
-    {
-        return new[]
-       {
-            new ChunkVertex(0 + x, 0 + y, 1 + z, CubeFace.Back, UVCoordinate.TopLeft),
-            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Back, UVCoordinate.TopRight),
-            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Back, UVCoordinate.BottomRight),
-            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Back, UVCoordinate.BottomLeft)
-        };
-    }
-
-    private ChunkVertex[] generateFrontFace(int x, int y, int z)
-    {
-        return new[]
-        {
-            new ChunkVertex(0 + x, 0 + y, 0 + z, CubeFace.Front, UVCoordinate.TopLeft),
-            new ChunkVertex(0 + x, 1 + y, 0 + z, CubeFace.Front, UVCoordinate.TopRight),
-            new ChunkVertex(1 + x, 1 + y, 0 + z, CubeFace.Front, UVCoordinate.BottomRight),
-            new ChunkVertex(1 + x, 0 + y, 0 + z, CubeFace.Front, UVCoordinate.BottomLeft)
-        };
-    }
-
-    private ChunkVertex[] generateRightFace(int x, int y, int z)
-    {
-        return new[]
-        {
-            new ChunkVertex(0 + x, 0 + y, 0 + z, CubeFace.Right, UVCoordinate.TopLeft),
-            new ChunkVertex(0 + x, 0 + y, 1 + z, CubeFace.Right, UVCoordinate.TopRight),
-            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Right, UVCoordinate.BottomRight),
-            new ChunkVertex(0 + x, 1 + y, 0 + z, CubeFace.Right, UVCoordinate.BottomLeft)
-        };
-    }
-
-
-    private ChunkVertex[] generateLeftFace(int x, int y, int z)
-    {
-        return new[]
-        {
-            new ChunkVertex(1 + x, 0 + y, 0 + z, CubeFace.Left, UVCoordinate.TopLeft),
-            new ChunkVertex(1 + x, 1 + y, 0 + z, CubeFace.Left, UVCoordinate.TopRight),
-            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Left, UVCoordinate.BottomRight),
-            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Left, UVCoordinate.BottomLeft)
-        };
-    }
-
-    private ChunkVertex[] generateTopFace(int x, int y, int z)
-    {
-        return new[]
-        {
-            new ChunkVertex(0 + x, 1 + y, 0 + z, CubeFace.Top, UVCoordinate.TopLeft),
-            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Top, UVCoordinate.TopRight),
-            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Top, UVCoordinate.BottomRight),
-            new ChunkVertex(1 + x, 1 + y, 0 + z, CubeFace.Top, UVCoordinate.BottomLeft)
-        };
-    }
-
-    private ChunkVertex[] generateBottomFace(int x, int y, int z)
-    {
-        return new[]
-        {
-            new ChunkVertex(0 + x, 0 + y, 1 + z, CubeFace.Top, UVCoordinate.TopLeft),
-            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Top, UVCoordinate.TopRight),
-            new ChunkVertex(1 + x, 0 + y, 0 + z, CubeFace.Top, UVCoordinate.BottomRight),
-            new ChunkVertex(0 + x, 0 + y, 0 + z, CubeFace.Top, UVCoordinate.BottomLeft)
-        };
-    }
-
-    public void BufferData(in ReadOnlySpan<ChunkVertex> vertices, in ReadOnlySpan<uint> elements)
-    {
-        this.buffer.VertexBuffer.NamedBufferData(vertices);
-        this.buffer.ElementBuffer.NamedBufferData(elements);
-
-        this.elementCount = (uint)elements.Length;
-    }
-
     public unsafe void Render(float dt, object? obj = null)
     {
-        if (flagUpload)
-        {
-            flagUpload = false;
-            BufferData(CollectionsMarshal.AsSpan(vertices), CollectionsMarshal.AsSpan(indices));
+        Mesh.Render(dt);
+    }
 
-            vertices.Clear();
-            indices.Clear();
-        }
-
-        if (elementCount < 1)
-            return;
-
-        buffer.Bind();
-        GameEngine
-            .Instance
-            .GL
-            .DrawElements(
-                PrimitiveType.Triangles,
-                elementCount,
-                DrawElementsType.UnsignedInt,
-                null
-            );
+    public void Dispose()
+    {
+        Mesh.Dispose();
     }
 }
