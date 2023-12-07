@@ -1,6 +1,7 @@
 ﻿using AutoVoxel.Data;
+using AutoVoxel.World;
 
-namespace AutoVoxel.World;
+namespace AutoVoxel.Rendering;
 
 /// <summary>
 /// Helper class to add vertices to a voxel mesh.

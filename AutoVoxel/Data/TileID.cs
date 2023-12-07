@@ -1,9 +1,9 @@
 ﻿namespace AutoVoxel.Data;
 
-public enum TileID
+public enum TileID : byte
 {
-    Null = -1,
-    Air = 0,
-    Dirt = 1,
-    Stone = 2
+    Null = 0,
+    Air = 1,
+    Dirt = 2,
+    Stone = 3
 }

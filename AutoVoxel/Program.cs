@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-
+using AutoVoxel.Data.Chunks;
 using AutoVoxel.World;
 
 using Box2D.NetStandard.Dynamics.World;

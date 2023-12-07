@@ -1,6 +1,4 @@
-﻿using AutoVoxel.World;
-
-namespace AutoVoxel.Data.Chunks;
+﻿namespace AutoVoxel.Data.Chunks;
 
 internal class JaggedChunkData : ISliceData
 {
@@ -16,13 +14,13 @@ internal class JaggedChunkData : ISliceData
     {
         get
         {
-            //if (x >= Chunk.WIDTH || y >= Chunk.HEIGHT || z >= Chunk.DEPTH || x < 0 || y < 0 || z < 0) return Tile.Empty;
+            //if (x >= Chunk.SIZE || y >= Chunk.SIZE || z >= Chunk.SIZE || x < 0 || y < 0 || z < 0) return Tile.Empty;
 
             return Tiles[x, y, z];
         }
         set
         {
-            //if (x >= Chunk.WIDTH || y >= Chunk.HEIGHT || z >= Chunk.DEPTH || x < 0 || y < 0 || z < 0) return;
+            //if (x >= Chunk.SIZE || y >= Chunk.SIZE || z >= Chunk.SIZE || x < 0 || y < 0 || z < 0) return;
 
             Tiles[x, y, z] = value;
         }

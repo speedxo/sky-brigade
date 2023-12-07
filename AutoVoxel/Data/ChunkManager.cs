@@ -1,14 +1,16 @@
 ﻿using System.Numerics;
-
-using AutoVoxel.Data;
-
+using System.Runtime.InteropServices;
+using AutoVoxel.Data.Chunks;
+using AutoVoxel.Generator;
+using AutoVoxel.Rendering;
+using AutoVoxel.World;
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Engine;
 
 using Silk.NET.Maths;
 
-namespace AutoVoxel.World;
+namespace AutoVoxel.Data;
 
 public class ChunkManager : IGameComponent
 {
@@ -27,8 +29,8 @@ public class ChunkManager : IGameComponent
 
     public ChunkManager(int width, int height)
     {
-        this.Width = width;
-        this.Height = height;
+        Width = width;
+        Height = height;
 
         BufferPool = new();
         Chunks = new Chunk[Width * Height];
@@ -76,14 +78,14 @@ public class ChunkManager : IGameComponent
             if (x < 0 || y < 0 || z < 0)
                 return Tile.OOB;
 
-            int chunkX = x / (Chunk.WIDTH);
-            int chunkY = z / (Chunk.DEPTH);
+            int chunkX = x / Chunk.WIDTH;
+            int chunkY = z / Chunk.DEPTH;
 
             if (chunkX > Width - 1 || chunkY > Height - 1 || y > Chunk.HEIGHT - 1)
                 return Tile.OOB;
 
-            int localX = x % (Chunk.WIDTH);
-            int localZ = z % (Chunk.DEPTH);
+            int localX = x % Chunk.WIDTH;
+            int localZ = z % Chunk.DEPTH;
 
             return Chunks[chunkX + chunkY * Width][localX, y, localZ];
         }
@@ -93,11 +95,15 @@ public class ChunkManager : IGameComponent
     {
         BufferPool.Initialize();
 
+        var generator = new HeightmapGenerator(this);
+        generator.Generate();
+
         Parallel.For(0, Width * Height, i =>
         {
             Chunks[i] = new Chunk(new Vector2(i % Width, i / Width));
-            Chunks[i].GenerateTree();
+            Chunks[i].GenerateTree(generator);
         });
+
         Parallel.For(0, Width * Height, i =>
         {
             Chunks[i].GenerateMesh(this);

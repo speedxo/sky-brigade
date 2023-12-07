@@ -1,6 +1,6 @@
 ﻿using AutoVoxel.Data;
 
-namespace AutoVoxel.World;
+namespace AutoVoxel.Data.Chunks;
 
 public class ChunkSlice
 {
@@ -34,7 +34,7 @@ public class ChunkSlice
 
     public Tile Get(in int x, in int z, in int y)
     {
-        if (IsSingle) 
+        if (IsSingle)
             return SingleType;
 
         int i = x + Chunk.WIDTH * (y + Chunk.DEPTH * z);

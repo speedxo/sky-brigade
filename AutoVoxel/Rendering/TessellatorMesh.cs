@@ -1,14 +1,12 @@
 ﻿using System.Runtime.InteropServices;
-
 using AutoVoxel.Data;
-
 using Horizon.Core.Primitives;
 using Horizon.Engine;
 using Horizon.OpenGL.Buffers;
 
 using Silk.NET.OpenGL;
 
-namespace AutoVoxel.World;
+namespace AutoVoxel.Rendering;
 
 /// <summary>
 /// Class to simplify storing a voxel mesh.

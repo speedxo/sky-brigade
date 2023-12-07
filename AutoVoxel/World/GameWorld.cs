@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoVoxel.Data;
+using AutoVoxel.Rendering;
 using Box2D.NetStandard.Dynamics.World;
 using Horizon.Engine;
 using Horizon.Rendering.Techniques;

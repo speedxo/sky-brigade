@@ -1,12 +1,11 @@
-﻿using AutoVoxel.Rendering;
-
+﻿using AutoVoxel.Data;
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.Rendering;
 
-namespace AutoVoxel.World;
+namespace AutoVoxel.Rendering;
 
 public class ChunkRenderer : IGameComponent
 {

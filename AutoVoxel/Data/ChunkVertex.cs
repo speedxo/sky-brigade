@@ -69,7 +69,8 @@ public struct ChunkVertex
             | ((int)uv & 0b11) << 25); // 25 - 27 = texture coordinate
 
         packedData1 = (uint)(
-            (((byte)id - 1) & 0b11111111) << 0 // 0 - 7 = tile id
+            // subtract 2 from ID as first 2 IDs are null and air tiles
+            (((byte)id - 2) & 0b11111111) << 0 // 0 - 7 = tile id
             );
     }
 }
