@@ -7,7 +7,7 @@ namespace AutoVoxel.Rendering;
 
 public class VertexBufferPool
 {
-    private int maximumCount = 512;
+    private int maximumCount = 4096;
     private Queue<VertexBufferObject> freeBuffers;
     private List<VertexBufferObject> usedBuffers;
     private int activeCount { get => freeBuffers.Count + usedBuffers.Count; }

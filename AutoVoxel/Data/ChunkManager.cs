@@ -25,7 +25,7 @@ public class ChunkManager : IGameComponent
     public int Height { get; }
 
     public ChunkManager()
-        : this(16, 16) { }
+        : this(32, 32) { }
 
     public ChunkManager(int width, int height)
     {

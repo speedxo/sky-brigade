@@ -321,7 +321,7 @@ public class Perlin
         int ba = p[b] + zi; // and add z to it.  We do the whole thing over again starting with x+1.  Later
         int bb = p[b + 1] + zi; // we plug aa, ab, ba, and bb back into p[] along with their +1's to get another set.
         // in the end we have 8 values between 0 and 255 - one for each vertex on the unit cube.
-        // These are all interpolated together using u, v, and w below.
+        // These are all interpolated together using u, strength, and w below.
 
         double x1,
             x2,
@@ -331,7 +331,7 @@ public class Perlin
             grad(p[aa], xf, yf, zf), // This is where the "magic" happens.  We calculate a new set of p[] values and use that to get
             grad(p[ba], xf - 1, yf, zf), // our final gradient values.  Then, we interpolate between those gradients with the u value to get
             u
-        ); // 4 x-values.  Next, we interpolate between the 4 x-values with v to get 2 y-values.  Finally,
+        ); // 4 x-values.  Next, we interpolate between the 4 x-values with strength to get 2 y-values.  Finally,
         x2 = lerp(
             grad(p[ab], xf, yf - 1, zf), // we interpolate between the y-values to get a z-value.
             grad(p[bb], xf - 1, yf - 1, zf),
@@ -363,17 +363,17 @@ public class Perlin
 
         if (
             h < 4 /* 0b0100 */
-        ) // If the first and second signifigant bits are 0 set v = y
+        ) // If the first and second signifigant bits are 0 set strength = y
             v = y;
         else if (
             h == 12 /* 0b1100 */
             || h == 14 /* 0b1110*/
-        ) // If the first and second signifigant bits are 1 set v = x
+        ) // If the first and second signifigant bits are 1 set strength = x
             v = x;
-        else // If the first and second signifigant bits are not equal (0/1, 1/0) set v = z
+        else // If the first and second signifigant bits are not equal (0/1, 1/0) set strength = z
             v = z;
 
-        return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v); // Use the last 2 bits to decide if u and v are positive or negative.  Then return their addition.
+        return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v); // Use the last 2 bits to decide if u and strength are positive or negative.  Then return their addition.
     }
 
     public static double fade(double t)

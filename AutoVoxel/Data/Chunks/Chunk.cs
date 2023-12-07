@@ -53,11 +53,14 @@ public class Chunk : IRenderable, IDisposable
         {
             for (int z = 0; z < DEPTH; z++)
             {
-                int height = (int)(generator[(int)(x + Position.X * (WIDTH - 1)), (int)(z + Position.Y * (DEPTH - 1))] * (HEIGHT - 1));
+                int height = (int)(generator[(int)(x + Position.X * (WIDTH - 1)), (int)(z + Position.Y * (DEPTH - 1))] * (HEIGHT - 5));
                 for (int y = height; y > 0; y--)
                 {
-                    int localY = height - y;
-                    this[x, y, z] = new Tile { ID = localY < 6 ? TileID.Dirt : TileID.Stone };
+                    if (Perlin.OctavePerlin((x + Position.X * (WIDTH - 1)) * 0.05, y * 0.05, (z + Position.Y * (DEPTH - 1)) * 0.05, 2, 0.5) > 0.7)
+                    {
+                        int localY = height - y;
+                        this[x, y, z] = new Tile { ID = localY < 6 ? TileID.Dirt : TileID.Stone };
+                    }
                 }
             }
         }

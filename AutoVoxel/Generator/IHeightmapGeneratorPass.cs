@@ -1,8 +1,8 @@
-﻿namespace AutoVoxel.Generator;
+﻿using Silk.NET.Maths;
+
+namespace AutoVoxel.Generator;
 
 public interface IHeightmapGeneratorPass
 {
-    public byte Level { get; protected set; }
-
-    void Execute(ref float[] heightmap, int width, int height);
+    void Execute(ref float[] heightmap, int level, Vector2D<int> size, Vector2D<int> offset);
 }
