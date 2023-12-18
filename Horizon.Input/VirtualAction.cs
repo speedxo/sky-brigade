@@ -12,12 +12,13 @@
         MoveBackwards = 2, // S/JoystickDown
         MoveLeft = 4, // A/JoystickLeft
         MoveRight = 8, // D/JoystickRight
+        MoveJump = 16, // Space/JoystickX
 
-        Interact = 16, // E/X
-        Pause = 32, // Escape/Menu
-        Back = 64,
+        Interact = 32, // E/X
+        Pause = 64, // Escape/Menu
+        Back = 128,
 
-        PrimaryAction = 128, // LeftClick/LeftTrigger
-        SecondaryAction = 256 // RightClick/RightTrigger
+        PrimaryAction = 256, // LeftClick/LeftTrigger
+        SecondaryAction = 512 // RightClick/RightTrigger
     }
 }

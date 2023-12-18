@@ -78,6 +78,7 @@ void main()
 {
 	oTexCoords = unpackTexCoord();
     oNormal = unpackNormal();
-
-	gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData0) + vec3(uChunkPosition.x * (WIDTH), 0, uChunkPosition.y * (DEPTH)), 1.0);
+    vec3 chunkOffset = vec3(uChunkPosition.x * (WIDTH), 0, uChunkPosition.y * (DEPTH));
+    
+    gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData0) + chunkOffset, 1.0);
 }

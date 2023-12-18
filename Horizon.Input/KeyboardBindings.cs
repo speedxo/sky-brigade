@@ -21,7 +21,8 @@ namespace Horizon.Input
                 KeyActionPairs = new Dictionary<Key, VirtualAction>
                 {
                     { Key.E, VirtualAction.Interact },
-                    { Key.Escape, VirtualAction.Pause }
+                    { Key.Escape, VirtualAction.Pause },
+                    { Key.Space, VirtualAction.MoveJump },
                 }
             };
     }

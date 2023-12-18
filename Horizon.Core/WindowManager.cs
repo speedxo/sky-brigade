@@ -87,7 +87,7 @@ public class WindowManager : IGameComponent
                 (int)config.WindowSize.Y
             ),
             FramesPerSecond = 0,
-            VSync = false,
+            VSync = true,
             PreferredBitDepth = new Silk.NET.Maths.Vector4D<int>(10, 10, 10, 8)
         };
 
@@ -191,20 +191,22 @@ public class WindowManager : IGameComponent
 
         if (!_window.IsClosing)
             _window.DoRender();
+        if (!_window.IsClosing)
+            Window.DoUpdate();
 
         /* it is important to ensure that atleast one Render pass has happened, before
          * we dispatch all the threads, as lazy initialization of unmanaged object is done in the render thread. */
 
         // Dispatch threads.
-        logicTask ??= Task.Run(OnLogicFrame);
-        physicsTask ??= Task.Run(OnPhysicsFrame);
+        //logicTask ??= Task.Run(OnLogicFrame);
+        //physicsTask ??= Task.Run(OnPhysicsFrame);
     }
 
     public void Dispose()
     {
         // this freezes the app if any threads get stuck so lets not do this
-        physicsTask.Wait();
-        logicTask.Wait();
+        //physicsTask.Wait();
+        //logicTask.Wait();
         Parent.Dispose();
 
         _window.Dispose();

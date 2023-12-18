@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Numerics;
+
 using AutoVoxel.Generator;
 using AutoVoxel.Rendering;
 using AutoVoxel.World;
+
 using Horizon.Core.Data;
 using Horizon.Core.Primitives;
+using Horizon.Engine;
 using Horizon.OpenGL.Descriptions;
 using Horizon.Rendering.Mesh;
 
@@ -22,7 +25,8 @@ public class Chunk : IRenderable, IDisposable
 
     public Slice[] Slices { get; }
     public Vector2 Position { get; }
-    public TessellatorMesh Mesh { get; }
+    public TessellatorMesh VoxelMesh { get; }
+    public TessellatorMesh FolliageMesh { get; }
 
     private uint elementCount = 0;
     private bool flagUpload;
@@ -44,7 +48,9 @@ public class Chunk : IRenderable, IDisposable
         Slices = new Slice[SLICES];
         for (int i = 0; i < SLICES; i++)
             Slices[i] = new();
-        Mesh = new();
+
+        VoxelMesh = new();
+        FolliageMesh = new();
     }
 
     public void GenerateTree(in HeightmapGenerator generator)
@@ -54,11 +60,16 @@ public class Chunk : IRenderable, IDisposable
             for (int z = 0; z < DEPTH; z++)
             {
                 int height = (int)(generator[(int)(x + Position.X * (WIDTH - 1)), (int)(z + Position.Y * (DEPTH - 1))] * (HEIGHT - 5));
+
                 for (int y = height; y > 0; y--)
                 {
                     if (Perlin.OctavePerlin((x + Position.X * (WIDTH - 1)) * 0.05, y * 0.05, (z + Position.Y * (DEPTH - 1)) * 0.05, 2, 0.5) > 0.7)
                     {
                         int localY = height - y;
+
+                        if (y == height && Random.Shared.NextSingle() > 0.8f)
+                            this[x, height + 1, z] = new Tile { ID = TileID.Grass };
+
                         this[x, y, z] = new Tile { ID = localY < 6 ? TileID.Dirt : TileID.Stone };
                     }
                 }
@@ -68,7 +79,8 @@ public class Chunk : IRenderable, IDisposable
 
     public void GenerateMesh(ChunkManager chunkManager)
     {
-        Tessellator tes = new(Mesh);
+        Tessellator tes = new(VoxelMesh);
+        Tessellator folTes = new(FolliageMesh);
 
         for (int x = 0; x < WIDTH; x++)
         {
@@ -81,6 +93,13 @@ public class Chunk : IRenderable, IDisposable
                     // skip rendering if the current voxel is empty
                     if ((int)tile.ID < 2)
                         continue;
+
+                    // hack in grass
+                    if (tile.ID == TileID.Grass)
+                    {
+                        folTes.AddCross(new Tile { ID = TileID.Grass }, (int)x, (int)y, (int)z);
+                        continue;
+                    }
 
                     // check each face of the voxel for visibility
                     for (int faceIndex = 0; faceIndex < 6; faceIndex++)
@@ -97,8 +116,9 @@ public class Chunk : IRenderable, IDisposable
                             (int)neighbourPosition.Z
                         ];
 
+
                         // check if the neighboring voxel is empty or occludes the current voxel
-                        if (neighborTile.ID == TileID.Air || neighborTile.ID == TileID.Null)
+                        if (neighborTile.ID == TileID.Air || neighborTile.ID == TileID.Grass)
                         {
                             // generate the face if the neighboring voxel is empty
                             tes.AddCubeFace(GetOpposingFace((CubeFace)faceIndex), tile, x, y, z);
@@ -107,7 +127,8 @@ public class Chunk : IRenderable, IDisposable
                 }
             }
         }
-        Mesh.FlagDirty();
+        VoxelMesh.FlagDirty();
+        FolliageMesh.FlagDirty();
     }
 
     private CubeFace GetOpposingFace(CubeFace face)
@@ -142,11 +163,16 @@ public class Chunk : IRenderable, IDisposable
     }
     public unsafe void Render(float dt, object? obj = null)
     {
-        Mesh.Render(dt);
+        VoxelMesh.Render(dt);
+
+    }
+    public unsafe void RenderFolliage(float dt, object? obj = null)
+    {
+        FolliageMesh.Render(dt);
     }
 
     public void Dispose()
     {
-        Mesh.Dispose();
+        VoxelMesh.Dispose();
     }
 }

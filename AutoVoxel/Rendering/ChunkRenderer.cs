@@ -34,6 +34,7 @@ public class ChunkRenderer : IGameComponent
         // enable depth testing and culling
         GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.DepthTest);
         GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.CullFace);
+        GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.Blend);
     }
 
     public void Render(float dt, object? obj = null)
@@ -45,10 +46,19 @@ public class ChunkRenderer : IGameComponent
         BindMaterialAttachments();
 
         // todo: indirect drawing??
+        GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.CullFace);
+        GameEngine.Instance.GL.BlendFunc(Silk.NET.OpenGL.BlendingFactor.SrcAlpha, Silk.NET.OpenGL.BlendingFactor.OneMinusSrcAlpha);
         foreach (var chunk in manager.Chunks)
         {
             Technique.SetUniform("uChunkPosition", chunk.Position);
             chunk.Render(dt);
+        }
+        GameEngine.Instance.GL.Disable(Silk.NET.OpenGL.EnableCap.CullFace);
+        //GameEngine.Instance.GL.BlendFunc(Silk.NET.OpenGL.BlendingFactor.SrcAlpha, Silk.NET.OpenGL.BlendingFactor.One);
+        foreach (var chunk in manager.Chunks)
+        {
+            Technique.SetUniform("uChunkPosition", chunk.Position);
+            chunk.RenderFolliage(dt);
         }
 
         Technique.Unbind();

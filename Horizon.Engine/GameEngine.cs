@@ -101,6 +101,7 @@ public class GameEngine : Entity
     {
         // Run our custom events.
         EventManager.PreState?.Invoke(dt);
+        base.UpdatePhysics(dt);
         base.UpdateState(dt);
         EventManager.PostState?.Invoke(dt);
     }

@@ -17,6 +17,30 @@ public class Tessellator
         Mesh = mesh;
     }
 
+    public void AddCross(in Tile tile, in int x, in int y, in int z)
+    {
+        // first face
+        Mesh.Vertices.AddRange(new ChunkVertex[] {
+            new ChunkVertex(0 + x, 0 + y, 0 + z, CubeFace.Left, UVCoordinate.TopLeft, id: tile.ID),
+            new ChunkVertex(1 + x, 0 + y, 1 + z, CubeFace.Left, UVCoordinate.TopRight, id: tile.ID),
+            new ChunkVertex(1 + x, 1 + y, 1 + z, CubeFace.Left, UVCoordinate.BottomRight, id: tile.ID),
+            new ChunkVertex(0 + x, 1 + y, 0 + z, CubeFace.Left, UVCoordinate.BottomLeft, id: tile.ID),
+        });
+
+        updateIndicies();
+
+        // second face
+        Mesh.Vertices.AddRange(new ChunkVertex[] {
+            new ChunkVertex(0 + x, 0 + y, 1 + z, CubeFace.Front, UVCoordinate.TopLeft, id: tile.ID),
+            new ChunkVertex(1 + x, 0 + y, 0 + z, CubeFace.Front, UVCoordinate.TopRight, id: tile.ID),
+            new ChunkVertex(1 + x, 1 + y, 0 + z, CubeFace.Front, UVCoordinate.BottomRight, id: tile.ID),
+            new ChunkVertex(0 + x, 1 + y, 1 + z, CubeFace.Front, UVCoordinate.BottomLeft, id: tile.ID),
+        });
+
+        updateIndicies();
+    }
+
+
     public void AddCubeFace(in CubeFace face, in Tile tile, in int x, in int y, in int z)
     {
         Mesh.Vertices.AddRange(face switch
