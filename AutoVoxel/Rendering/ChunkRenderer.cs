@@ -1,4 +1,6 @@
 ﻿using AutoVoxel.Data;
+using AutoVoxel.Data.Chunks;
+
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Engine;
@@ -13,6 +15,7 @@ public class ChunkRenderer : IGameComponent
     private const string UNIFORM_NORMAL = "uTexNormal";
     private const string UNIFORM_SPECULAR = "uTexSpecular";
     private readonly ChunkManager manager;
+    private float iTime = 0.0f;
 
     public Material Material { get; set; }
     public Technique Technique { get; set; }
@@ -39,6 +42,8 @@ public class ChunkRenderer : IGameComponent
 
     public void Render(float dt, object? obj = null)
     {
+        iTime += dt;
+
         // make sure to clear the color and depth buffers
         GameEngine.Instance.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.DepthBufferBit | Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit);
 
@@ -48,13 +53,17 @@ public class ChunkRenderer : IGameComponent
         // todo: indirect drawing??
         GameEngine.Instance.GL.Enable(Silk.NET.OpenGL.EnableCap.CullFace);
         GameEngine.Instance.GL.BlendFunc(Silk.NET.OpenGL.BlendingFactor.SrcAlpha, Silk.NET.OpenGL.BlendingFactor.OneMinusSrcAlpha);
+        Technique.SetUniform("uWavy", false);
         foreach (var chunk in manager.Chunks)
         {
             Technique.SetUniform("uChunkPosition", chunk.Position);
             chunk.Render(dt);
         }
+
+        Technique.SetUniform("uTime", iTime);
+        Technique.SetUniform("uWavy", true);
+
         GameEngine.Instance.GL.Disable(Silk.NET.OpenGL.EnableCap.CullFace);
-        //GameEngine.Instance.GL.BlendFunc(Silk.NET.OpenGL.BlendingFactor.SrcAlpha, Silk.NET.OpenGL.BlendingFactor.One);
         foreach (var chunk in manager.Chunks)
         {
             Technique.SetUniform("uChunkPosition", chunk.Position);

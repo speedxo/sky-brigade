@@ -11,6 +11,8 @@ using Horizon.Input.Components;
 using Horizon.Rendering;
 using Horizon.Rendering.Techniques;
 
+using ImGuiNET;
+
 namespace AutoVoxel;
 
 internal class Program : Scene
@@ -20,7 +22,7 @@ internal class Program : Scene
     private GameWorld world;
 
     private const float MOVEMENT_SPEED = 5.0f;
-    private const float GRAVITY = 7.0f;
+    private const float GRAVITY = 7.0f  ;
 
     public override void Initialize()
     {
@@ -39,16 +41,30 @@ internal class Program : Scene
 
     public override void Render(float dt, object? obj = null)
     {
+        if (ImGui.Begin("test"))
+        {
+            ImGui.Text($"{MathF.Round(1.0f / dt )}");
+            ImGui.End();
+        }
+        
         Engine.GL.Clear(Silk.NET.OpenGL.ClearBufferMask.ColorBufferBit | Silk.NET.OpenGL.ClearBufferMask.DepthBufferBit);
         Engine.GL.Viewport(0, 0, (uint)Engine.WindowManager.ViewportSize.X, (uint)Engine.WindowManager.ViewportSize.Y);
 
         base.Render(dt, obj);
     }
 
-    private bool isJumping = false;
+    private bool isJumping = false, captureInput = true;
     private float jumpTimer = 0.0f;
     public override void UpdateState(float dt)
     {
+        if (Engine.InputManager.WasPressed(VirtualAction.Pause))
+        {
+            captureInput = !captureInput;
+            MouseInputManager.Mouse.Cursor.CursorMode = captureInput ? Silk.NET.Input.CursorMode.Raw : Silk.NET.Input.CursorMode.Normal;
+        }
+
+        if (!captureInput) return;
+
         float movementSpeed = MOVEMENT_SPEED * (Engine.InputManager.KeyboardManager.IsKeyDown(Silk.NET.Input.Key.ShiftLeft) ? 2.0f : 1.0f);
         Vector2 axis = Engine.InputManager.GetVirtualController().MovementAxis;
         Vector3 oldPos = camera.Position;

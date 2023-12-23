@@ -21,7 +21,7 @@ public class Renderer2D : GameObject
     protected virtual Renderer2DTechnique CreateTechnique() => new(FrameBuffer);
     protected virtual FrameBufferObject CreateFrameBuffer(in uint width, in uint height) => GameEngine
             .Instance
-            .ContentManager
+            .ObjectManager
             .FrameBuffers
             .Create(
                 new FrameBufferObjectDescription

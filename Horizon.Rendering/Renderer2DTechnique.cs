@@ -31,7 +31,7 @@ public class Renderer2DTechnique : Technique
 
         SetShader(GameEngine
                 .Instance
-                .ContentManager
+                .ObjectManager
                 .Shaders
                 .CreateOrGet(
                     $"renderer2d_{ShaderFileName}",

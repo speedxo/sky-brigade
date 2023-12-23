@@ -28,7 +28,7 @@ public abstract class Mesh<VertexType> : Entity
 
     protected abstract VertexArrayObjectDescription ArrayDescription { get; }
     protected virtual VertexBufferObject AcquireBuffer() => new(
-            GameEngine.Instance.ContentManager.VertexArrays.Create(ArrayDescription)
+            GameEngine.Instance.ObjectManager.VertexArrays.Create(ArrayDescription)
         );
 
     public override void Initialize()

@@ -18,7 +18,7 @@ public class BufferObjectFactory : IAssetFactory<BufferObject, BufferObjectDescr
     {
         var buffer = new BufferObject
         {
-            Handle = ContentManager.GL.CreateBuffer(),
+            Handle = ObjectManager.GL.CreateBuffer(),
             Type = description.Type
         };
 
@@ -26,7 +26,7 @@ public class BufferObjectFactory : IAssetFactory<BufferObject, BufferObjectDescr
             return new() { Asset = buffer, Status = AssetCreationStatus.Failed };
 
         if (description.IsStorageBuffer)
-            ContentManager
+            ObjectManager
                 .GL
                 .NamedBufferStorage(
                     buffer.Handle,

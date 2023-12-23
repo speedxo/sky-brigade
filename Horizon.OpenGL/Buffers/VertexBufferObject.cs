@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -23,18 +24,18 @@ public class VertexBufferObject
 {
     public uint Handle
     {
-        get => vao.Handle;
+        get => VertexArrayObject.Handle;
     }
 
     public BufferObject VertexBuffer { get; init; }
     public BufferObject ElementBuffer { get; init; }
     public BufferObject? InstanceBuffer { get; init; }
 
-    private VertexArrayObject vao;
+    public VertexArrayObject VertexArrayObject { get; init; }
 
     public VertexBufferObject(in VertexArrayObject vao)
     {
-        this.vao = vao;
+        this.VertexArrayObject = vao;
 
         VertexBuffer = vao.Buffers[VertexArrayBufferAttachmentType.ArrayBuffer];
         ElementBuffer = vao.Buffers[VertexArrayBufferAttachmentType.ElementBuffer];
@@ -58,10 +59,10 @@ public class VertexBufferObject
         int offSet
     )
     {
-        ContentManager
+        ObjectManager
             .GL
             .VertexAttribPointer(index, count, type, false, vertexSize, (void*)(offSet));
-        ContentManager.GL.EnableVertexAttribArray(index);
+        ObjectManager.GL.EnableVertexAttribArray(index);
     }
     public unsafe void VertexAttributeIPointer(
         uint index,
@@ -71,10 +72,10 @@ public class VertexBufferObject
         int offSet
     )
     {
-        ContentManager
+        ObjectManager
             .GL
             .VertexAttribIPointer(index, count, type, vertexSize, (void*)(offSet));
-        ContentManager.GL.EnableVertexAttribArray(index);
+        ObjectManager.GL.EnableVertexAttribArray(index);
     }
 
     private readonly struct VertexLayoutDescription
@@ -86,12 +87,12 @@ public class VertexBufferObject
         public readonly VertexAttribPointerType Type { get; init; }
     }
 
-    public unsafe void SetLayout<T>()
+    public unsafe void SetLayout<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicFields)] T>()
         where T : unmanaged
     {
         // get all fields
         var fields = typeof(T)
-            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance) // read all fields and sort by index, we trust every propert has the attribute.
+            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance) // read all fields and sort by index, we trust every property has the attribute.
             .OrderBy(p => p.GetCustomAttributes().OfType<VertexLayout>().First().Index)
             .ToArray(); // remember enumerate the array.
 
@@ -180,13 +181,13 @@ public class VertexBufferObject
 
     public void VertexAttributeDivisor(uint index, uint divisor)
     {
-        ContentManager.GL.VertexAttribDivisor(index, divisor);
+        ObjectManager.GL.VertexAttribDivisor(index, divisor);
     }
 
     public virtual void Bind()
     {
         // Binding the vertex array.
-        ContentManager.GL.BindVertexArray(Handle);
+        ObjectManager.GL.BindVertexArray(Handle);
         VertexBuffer.Bind();
         ElementBuffer.Bind();
     }
@@ -194,7 +195,7 @@ public class VertexBufferObject
     public virtual void Unbind()
     {
         // Unbinding the vertex array.
-        ContentManager.GL.BindVertexArray(0);
+        ObjectManager.GL.BindVertexArray(0);
         VertexBuffer.Unbind();
         ElementBuffer.Unbind();
     }

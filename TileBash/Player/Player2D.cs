@@ -101,7 +101,7 @@ public class Player2D : Sprite
         ConfigureSpriteSheet(
             SpriteSheet.FromTexture(
                 Engine
-                    .ContentManager
+                    .ObjectManager
                     .Textures
                     .Create(new TextureDescription { Path = "content/spritesheet.png" })
                     .Asset,

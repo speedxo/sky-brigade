@@ -14,9 +14,9 @@ namespace Horizon.OpenGL.Managers;
 /// <summary>
 /// Managed class to create, manage and destroy unmanaged OpenGL assets.
 /// </summary>
-public class ContentManager : IGameComponent, IDisposable
+public class ObjectManager : IGameComponent, IDisposable
 {
-    internal static ContentManager Instance { get; private set; }
+    internal static ObjectManager Instance { get; private set; }
 
     public static Silk.NET.OpenGL.GL GL { get; private set; }
 
@@ -59,7 +59,7 @@ public class ContentManager : IGameComponent, IDisposable
     public Entity Parent { get; set; }
     public bool Enabled { get; set; }
 
-    public ContentManager()
+    public ObjectManager()
     {
         Instance = this;
         Name = "Content Manager";

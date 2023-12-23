@@ -10,5 +10,5 @@ internal class TechniqueResourceIndexManager : IndexManager
         : base(obj) { }
 
     protected override uint GetIndex(in string name) =>
-        ContentManager.GL.GetProgramResourceIndex(glObject.Handle, ProgramInterface.ShaderStorageBlock, name);
+        ObjectManager.GL.GetProgramResourceIndex(glObject.Handle, ProgramInterface.ShaderStorageBlock, name);
 }

@@ -13,7 +13,7 @@ public class BufferObjectFinalizer : IGameAssetFinalizer<BufferObject>
 {
     public static void Dispose(in BufferObject asset)
     {
-        ContentManager.GL.DeleteBuffer(asset.Handle);
+        ObjectManager.GL.DeleteBuffer(asset.Handle);
     }
 
     public static unsafe void DisposeAll(in IEnumerable<BufferObject> assets)
@@ -25,6 +25,6 @@ public class BufferObjectFinalizer : IGameAssetFinalizer<BufferObject>
         uint[] handles = assets.Select((t) => t.Handle).ToArray();
 
         fixed (uint* first = &handles[0])
-            ContentManager.GL.DeleteBuffers((uint)handles.Length, first);
+            ObjectManager.GL.DeleteBuffers((uint)handles.Length, first);
     }
 }

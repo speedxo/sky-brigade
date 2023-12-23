@@ -52,7 +52,7 @@ public class VertexBufferPool
 
     private static VertexBufferObject CreateVertexBuffer()
     {
-        var buffer = new VertexBufferObject(GameEngine.Instance.ContentManager.VertexArrays.Create(Horizon.OpenGL.Descriptions.VertexArrayObjectDescription.VertexBuffer));
+        var buffer = new VertexBufferObject(GameEngine.Instance.ObjectManager.VertexArrays.Create(Horizon.OpenGL.Descriptions.VertexArrayObjectDescription.VertexBuffer));
 
         buffer.Bind();
         buffer.VertexBuffer.Bind();

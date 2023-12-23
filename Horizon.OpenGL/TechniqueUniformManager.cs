@@ -9,5 +9,5 @@ internal class TechniqueUniformManager : IndexManager
         : base(obj) { }
 
     protected override uint GetIndex(in string name) =>
-        (uint)ContentManager.GL.GetUniformLocation(glObject.Handle, name);
+        (uint)ObjectManager.GL.GetUniformLocation(glObject.Handle, name);
 }

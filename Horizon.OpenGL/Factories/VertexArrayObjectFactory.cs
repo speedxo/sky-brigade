@@ -18,24 +18,24 @@ public class VertexArrayObjectFactory
         in VertexArrayObjectDescription description
     )
     {
-        uint vaoHandle = ContentManager.GL.CreateVertexArray();
+        uint vaoHandle = ObjectManager.GL.CreateVertexArray();
 
         Dictionary<VertexArrayBufferAttachmentType, BufferObject> buffers = new();
 
-        ContentManager.GL.BindVertexArray(vaoHandle);
+        ObjectManager.GL.BindVertexArray(vaoHandle);
 
         foreach (var (type, desc) in description.Buffers)
         {
-            var buffer = ContentManager.Instance.Buffers.Create(desc);
+            var buffer = ObjectManager.Instance.Buffers.Create(desc);
             if (buffer.Status != AssetCreationStatus.Success)
             {
-                // make sure to free the vao
-                ContentManager.GL.BindVertexArray(0);
-                ContentManager.GL.DeleteVertexArray(vaoHandle);
+                // make sure to free the VertexArrayObject
+                ObjectManager.GL.BindVertexArray(0);
+                ObjectManager.GL.DeleteVertexArray(vaoHandle);
 
                 // incase the first buffer wasnt the one to fail.
                 foreach (var (_, item) in buffers)
-                    ContentManager.Instance.Buffers.Remove(item);
+                    ObjectManager.Instance.Buffers.Remove(item);
                 buffers.Clear();
 
                 return new AssetCreationResult<VertexArrayObject>
@@ -48,12 +48,12 @@ public class VertexArrayObjectFactory
             else
                 buffers.Add(type, buffer.Asset);
 
-            // simply binding the buffer is enough to attach it to the vao.
-            ContentManager.GL.BindVertexArray(vaoHandle);
+            // simply binding the buffer is enough to attach it to the VertexArrayObject.
+            ObjectManager.GL.BindVertexArray(vaoHandle);
             buffer.Asset.Bind();
             buffer.Asset.Unbind();
         }
-        ContentManager.GL.BindVertexArray(0);
+        ObjectManager.GL.BindVertexArray(0);
 
         return new AssetCreationResult<VertexArrayObject>
         {

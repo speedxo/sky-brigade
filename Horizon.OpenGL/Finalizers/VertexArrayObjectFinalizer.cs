@@ -13,7 +13,7 @@ public class VertexArrayObjectFinalizer : IGameAssetFinalizer<VertexArrayObject>
 {
     public static void Dispose(in VertexArrayObject asset)
     {
-        ContentManager.GL.DeleteVertexArray(asset.Handle);
+        ObjectManager.GL.DeleteVertexArray(asset.Handle);
     }
 
     public static unsafe void DisposeAll(in IEnumerable<VertexArrayObject> assets)
@@ -25,6 +25,6 @@ public class VertexArrayObjectFinalizer : IGameAssetFinalizer<VertexArrayObject>
         uint[] handles = assets.Select((t) => t.Handle).ToArray();
 
         fixed (uint* first = &handles[0])
-            ContentManager.GL.DeleteVertexArrays((uint)handles.Length, first);
+            ObjectManager.GL.DeleteVertexArrays((uint)handles.Length, first);
     }
 }

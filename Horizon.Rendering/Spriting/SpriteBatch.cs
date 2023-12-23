@@ -130,7 +130,7 @@ public class SpriteBatch : GameObject
     {
         this.Shader = new Technique(
             Engine
-                .ContentManager
+                .ObjectManager
                 .Shaders
                 .Create("sprite", ShaderDescription.FromPath("shaders/spritebatch", "sprites"))
                 .Asset

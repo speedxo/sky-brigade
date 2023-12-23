@@ -28,31 +28,31 @@ public class FrameBufferObjectFactory
 
         var buffer = new FrameBufferObject
         {
-            Handle = ContentManager.GL.CreateFramebuffer(),
+            Handle = ObjectManager.GL.CreateFramebuffer(),
             Width = description.Width,
             Height = description.Height,
             Attachments = attachments,
             DrawBuffers = drawBuffers
         };
 
-        ContentManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Handle);
+        ObjectManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Handle);
 
         foreach (var (attachment, texture) in attachments)
-            ContentManager.GL.NamedFramebufferTexture(buffer.Handle, attachment, texture.Handle, 0);
+            ObjectManager.GL.NamedFramebufferTexture(buffer.Handle, attachment, texture.Handle, 0);
 
         // Check if the framebuffer is complete
         if (
-            ContentManager.GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
+            ObjectManager.GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
             != GLEnum.FramebufferComplete
         )
         {
             // Unbind the framebuffer
-            ContentManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            ObjectManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
             // cleanup
-            ContentManager.GL.DeleteFramebuffer(buffer.Handle);
+            ObjectManager.GL.DeleteFramebuffer(buffer.Handle);
             foreach (var (_, texture) in attachments)
-                ContentManager.Instance.Textures.Remove(texture);
+                ObjectManager.Instance.Textures.Remove(texture);
 
             return new AssetCreationResult<FrameBufferObject>
             {
@@ -63,7 +63,7 @@ public class FrameBufferObjectFactory
         }
 
         // Unbind the framebuffer
-        ContentManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        ObjectManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         return new() { Asset = buffer, Status = AssetCreationStatus.Success };
     }
 
@@ -80,7 +80,7 @@ public class FrameBufferObjectFactory
             var (internalFormat, pixelFormat) = GetCorrespondingAttachmentFormats(attachmentType);
             attachments.Add(
                 attachmentType,
-                ContentManager
+                ObjectManager
                     .Instance
                     .Textures
                     .Create(

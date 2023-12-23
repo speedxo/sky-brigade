@@ -40,7 +40,7 @@ public abstract partial class Tiling<TTextureID>
             Material = MaterialFactory.Create(dir, name);
 
             //Texture = Engine
-            //    .ContentManager
+            //    .ObjectManager
             //    .Textures
             //    .Create(
             //        new OpenGL.Descriptions.TextureDescription

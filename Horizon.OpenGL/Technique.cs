@@ -45,7 +45,7 @@ public class Technique
     public void BindBuffer(in string name, in BufferObject bufferObject)
     {
         bufferObject.Bind();
-        ContentManager
+        ObjectManager
             .GL
             .BindBufferBase(
                 BufferTargetARB.ShaderStorageBuffer,
@@ -72,29 +72,29 @@ public class Technique
         switch (value)
         {
             case int intValue:
-                ContentManager.GL.Uniform1(location, intValue);
+                ObjectManager.GL.Uniform1(location, intValue);
                 break;
 
             case float floatValue:
-                ContentManager.GL.Uniform1(location, floatValue);
+                ObjectManager.GL.Uniform1(location, floatValue);
                 break;
 
             case uint uintValue:
-                ContentManager.GL.Uniform1(location, uintValue);
+                ObjectManager.GL.Uniform1(location, uintValue);
                 break;
 
             case Vector2 vector2Value:
-                ContentManager.GL.Uniform2(location, vector2Value.X, vector2Value.Y);
+                ObjectManager.GL.Uniform2(location, vector2Value.X, vector2Value.Y);
                 break;
 
             case Vector3 vector3Value:
-                ContentManager
+                ObjectManager
                     .GL
                     .Uniform3(location, vector3Value.X, vector3Value.Y, vector3Value.Z);
                 break;
 
             case Vector4 vector4Value:
-                ContentManager
+                ObjectManager
                     .GL
                     .Uniform4(
                         location,
@@ -108,12 +108,12 @@ public class Technique
             case Matrix4x4 matrixValue:
                 unsafe // Don't wanna make the whole method unsafe for a single call.
                 {
-                    ContentManager.GL.UniformMatrix4(location, 1, false, (float*)&matrixValue);
+                    ObjectManager.GL.UniformMatrix4(location, 1, false, (float*)&matrixValue);
                 }
                 break;
 
             case bool boolValue:
-                ContentManager.GL.Uniform1(location, boolValue ? 1 : 0);
+                ObjectManager.GL.Uniform1(location, boolValue ? 1 : 0);
                 break;
 
             default:
@@ -132,9 +132,9 @@ public class Technique
 
     public void Bind()
     {
-        ContentManager.GL.UseProgram(shader.Handle);
+        ObjectManager.GL.UseProgram(shader.Handle);
         SetUniforms();
     }
 
-    public void Unbind() => ContentManager.GL.UseProgram(Shader.Invalid.Handle);
+    public void Unbind() => ObjectManager.GL.UseProgram(Shader.Invalid.Handle);
 }

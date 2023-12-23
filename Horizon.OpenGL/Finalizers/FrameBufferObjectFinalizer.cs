@@ -11,7 +11,7 @@ public class FrameBufferObjectFinalizer : IGameAssetFinalizer<FrameBufferObject>
 {
     public static void Dispose(in FrameBufferObject asset)
     {
-        ContentManager.GL.DeleteFramebuffer(asset.Handle);
+        ObjectManager.GL.DeleteFramebuffer(asset.Handle);
     }
 
     public static unsafe void DisposeAll(in IEnumerable<FrameBufferObject> assets)
@@ -23,6 +23,6 @@ public class FrameBufferObjectFinalizer : IGameAssetFinalizer<FrameBufferObject>
         uint[] handles = assets.Select((t) => t.Handle).ToArray();
 
         fixed (uint* first = &handles[0])
-            ContentManager.GL.DeleteFramebuffers((uint)handles.Length, first);
+            ObjectManager.GL.DeleteFramebuffers((uint)handles.Length, first);
     }
 }

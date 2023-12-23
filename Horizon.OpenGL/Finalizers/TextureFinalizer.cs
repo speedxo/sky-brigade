@@ -14,7 +14,7 @@ public class TextureFinalizer : IGameAssetFinalizer<Texture>
 {
     public static void Dispose(in Texture asset)
     {
-        ContentManager.GL.DeleteTexture(asset.Handle);
+        ObjectManager.GL.DeleteTexture(asset.Handle);
     }
 
     public static unsafe void DisposeAll(in IEnumerable<Texture> assets)
@@ -27,6 +27,6 @@ public class TextureFinalizer : IGameAssetFinalizer<Texture>
 
         // delete all handles.
         fixed (uint* firstHandle = &handles[0])
-            ContentManager.GL.DeleteTextures((uint)handles.Length, firstHandle);
+            ObjectManager.GL.DeleteTextures((uint)handles.Length, firstHandle);
     }
 }

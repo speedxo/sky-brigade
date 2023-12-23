@@ -118,7 +118,7 @@ public abstract partial class Tiling<TTextureID>
             _shader ??= new Technique(
                 GameObject
                     .Engine
-                    .ContentManager
+                    .ObjectManager
                     .Shaders
                     .Create(ShaderDescription.FromPath("shaders/tilemap", "tilemap"))
                     .Asset

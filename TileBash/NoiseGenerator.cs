@@ -16,7 +16,7 @@
 //    {
 //        renderRect = new RenderRectangle(
 //            technique = new Technique(
-//                Entity.Engine.ContentManager.Shaders.A(
+//                Entity.Engine.ObjectManager.Shaders.A(
 //                    "content/noise/noise.vert",
 //                    "content/noise/noise.frag"
 //                )

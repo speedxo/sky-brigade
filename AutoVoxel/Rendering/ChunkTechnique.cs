@@ -20,7 +20,7 @@ public class ChunkTechnique : Technique
         SetShader(
             GameEngine
                 .Instance
-                .ContentManager
+                .ObjectManager
                 .Shaders
                 .CreateOrGet(
                     "chunk_technique",

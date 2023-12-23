@@ -50,11 +50,11 @@ public class SpriteBatchMesh : GameObject
         this.sheet = sheet;
 
         Buffer = new VertexBufferObject(
-            Engine.ContentManager.VertexArrays.Create(VertexArrayObjectDescription.VertexBuffer)
+            Engine.ObjectManager.VertexArrays.Create(VertexArrayObjectDescription.VertexBuffer)
         );
 
         StorageBuffer = Engine
-            .ContentManager
+            .ObjectManager
             .Buffers
             .Create(
                 new BufferObjectDescription

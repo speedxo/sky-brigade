@@ -22,7 +22,7 @@ public class RenderTarget : GameObject
 
     protected virtual FrameBufferObject CreateFrameBuffer(in uint width, in uint height) => GameEngine
             .Instance
-            .ContentManager
+            .ObjectManager
             .FrameBuffers
             .Create(
                 new FrameBufferObjectDescription

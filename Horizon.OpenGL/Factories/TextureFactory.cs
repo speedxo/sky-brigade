@@ -43,15 +43,15 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
     {
         var texture = new Texture
         {
-            Handle = ContentManager.GL.GenTexture(),
+            Handle = ObjectManager.GL.GenTexture(),
             Width = (uint)width,
             Height = (uint)height
         };
 
-        ContentManager.GL.ActiveTexture(TextureUnit.Texture0);
-        ContentManager.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        ObjectManager.GL.ActiveTexture(TextureUnit.Texture0);
+        ObjectManager.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
 
-        ContentManager
+        ObjectManager
             .GL
             .TexImage2D(
                 TextureTarget.Texture2D,
@@ -65,7 +65,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 null
             );
         SetParameters();
-        ContentManager.GL.BindTexture(TextureTarget.Texture2D, 0);
+        ObjectManager.GL.BindTexture(TextureTarget.Texture2D, 0);
 
         return new() { Asset = texture, Status = AssetCreationStatus.Success };
     }
@@ -79,16 +79,16 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
 
         var texture = new Texture
         {
-            Handle = ContentManager.GL.CreateTexture(TextureTarget.Texture2D),
+            Handle = ObjectManager.GL.CreateTexture(TextureTarget.Texture2D),
             Width = (uint)img.Width,
             Height = (uint)img.Height
         };
 
-        ContentManager.GL.ActiveTexture(TextureUnit.Texture0);
-        ContentManager.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
+        ObjectManager.GL.ActiveTexture(TextureUnit.Texture0);
+        ObjectManager.GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
 
         //Reserve enough memory from the gpu for the whole image
-        ContentManager
+        ObjectManager
             .GL
             .TexImage2D(
                 TextureTarget.Texture2D,
@@ -111,7 +111,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
                 fixed (void* data = accessor.GetRowSpan(y))
                 {
                     //Loading the actual image.
-                    ContentManager
+                    ObjectManager
                         .GL
                         .TexSubImage2D(
                             TextureTarget.Texture2D,
@@ -128,7 +128,7 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
             }
         });
         SetParameters();
-        ContentManager.GL.BindTexture(TextureTarget.Texture2D, 0);
+        ObjectManager.GL.BindTexture(TextureTarget.Texture2D, 0);
 
         return new() { Asset = texture, Status = AssetCreationStatus.Success };
     }
@@ -136,37 +136,37 @@ public class TextureFactory : IAssetFactory<Texture, TextureDescription>
     private static void SetParameters()
     {
         // Setting some texture parameters so the texture behaves as expected.
-        ContentManager
+        ObjectManager
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapS,
                 (int)GLEnum.ClampToEdge
             );
-        ContentManager
+        ObjectManager
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapT,
                 (int)GLEnum.ClampToEdge
             );
-        ContentManager
+        ObjectManager
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMinFilter,
                 (int)GLEnum.NearestMipmapLinear
             );
-        ContentManager
+        ObjectManager
             .GL
             .TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter,
                 (int)GLEnum.Nearest
             );
-        ContentManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-        ContentManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 4);
+        ObjectManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+        ObjectManager.GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 4);
         //Generating mipmaps.
-        ContentManager.GL.GenerateMipmap(TextureTarget.Texture2D);
+        ObjectManager.GL.GenerateMipmap(TextureTarget.Texture2D);
     }
 }

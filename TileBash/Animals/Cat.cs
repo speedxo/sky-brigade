@@ -26,7 +26,7 @@ namespace TileBash.Animals
             ConfigureSpriteSheet(
                 SpriteSheet.FromTexture(
                     Engine
-                        .ContentManager
+                        .ObjectManager
                         .Textures
                         .CreateOrGet(
                             "cat_spritesheet",

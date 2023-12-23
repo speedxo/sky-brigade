@@ -21,7 +21,7 @@ public class ShaderFactory : IAssetFactory<Shader, ShaderDescription>
     public static AssetCreationResult<Shader> Create(in ShaderDescription description)
     {
         // Program compilation result.
-        var result = new Shader { Handle = ContentManager.GL.CreateProgram() };
+        var result = new Shader { Handle = ObjectManager.GL.CreateProgram() };
 
         // Enumerate and compile each program in the source.
         var aggregatedResults = CompileShaderSources(description.Definitions).ToArray();
@@ -45,33 +45,33 @@ public class ShaderFactory : IAssetFactory<Shader, ShaderDescription>
 
         // Attach each shader to the program.
         foreach (var res in aggregatedResults)
-            ContentManager.GL.AttachShader(result.Handle, res.Handle);
+            ObjectManager.GL.AttachShader(result.Handle, res.Handle);
 
         // Attempt to link them together.
-        ContentManager.GL.LinkProgram(result.Handle);
+        ObjectManager.GL.LinkProgram(result.Handle);
 
         // (cleanup) Detach and delete each shader to the program.
         foreach (var res in aggregatedResults)
         {
-            ContentManager.GL.DetachShader(result.Handle, res.Handle);
-            ContentManager.GL.DeleteShader(res.Handle);
+            ObjectManager.GL.DetachShader(result.Handle, res.Handle);
+            ObjectManager.GL.DeleteShader(res.Handle);
         }
 
         // Check for linking errors.
-        ContentManager.GL.GetProgram(result.Handle, GLEnum.LinkStatus, out var status);
+        ObjectManager.GL.GetProgram(result.Handle, GLEnum.LinkStatus, out var status);
         if (status == 0)
         {
             return new()
             {
                 Asset = result,
                 Message =
-                    $"Shader Failed to link with error: {ContentManager.GL.GetProgramInfoLog(result.Handle)}",
+                    $"Shader Failed to link with error: {ObjectManager.GL.GetProgramInfoLog(result.Handle)}",
                 Status = AssetCreationStatus.Failed
             };
         }
 
         // Success
-        //ContentManager.Logger.Log(LogLevel.Debug, $"Shader[{handle}] created!");
+        //ObjectManager.Logger.Log(LogLevel.Debug, $"Shader[{handle}] created!");
         return new() { Asset = result, Status = AssetCreationStatus.Success };
     }
 
@@ -97,7 +97,7 @@ public class ShaderFactory : IAssetFactory<Shader, ShaderDescription>
     private static CompilationResult CompileShaderFromSource(in ShaderType type, in string source)
     {
         // Create a shader handle.
-        uint handle = ContentManager.GL.CreateShader(type);
+        uint handle = ObjectManager.GL.CreateShader(type);
 
         // Shader compilation result.
         CompilationResult result =
@@ -109,13 +109,13 @@ public class ShaderFactory : IAssetFactory<Shader, ShaderDescription>
             };
 
         // Stream shader source into the gl shader.
-        ContentManager.GL.ShaderSource(handle, source);
+        ObjectManager.GL.ShaderSource(handle, source);
 
         // Attempt to compile the shader.
-        ContentManager.GL.CompileShader(handle);
+        ObjectManager.GL.CompileShader(handle);
 
         // Get the compilation result.
-        string infoLog = ContentManager.GL.GetShaderInfoLog(handle);
+        string infoLog = ObjectManager.GL.GetShaderInfoLog(handle);
 
         // If the result is empty then the compilation was a success.
         if (!string.IsNullOrWhiteSpace(infoLog))

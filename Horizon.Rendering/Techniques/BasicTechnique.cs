@@ -19,7 +19,7 @@ public class BasicTechnique : Technique
         SetShader(
             GameEngine
                 .Instance
-                .ContentManager
+                .ObjectManager
                 .Shaders
                 .CreateOrGet(
                     "basic_technique",

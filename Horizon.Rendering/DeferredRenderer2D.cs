@@ -14,7 +14,7 @@ public class DeferredRenderer2D : Renderer2D
 {
     protected override FrameBufferObject CreateFrameBuffer(in uint width, in uint height) => GameEngine
             .Instance
-            .ContentManager
+            .ObjectManager
             .FrameBuffers
             .Create(
                 new FrameBufferObjectDescription

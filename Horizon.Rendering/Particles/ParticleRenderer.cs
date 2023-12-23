@@ -89,7 +89,7 @@ public class ParticleRenderer2D : GameObject, IDisposable
         this.Material = new Materials.BasicParticle2DTechnique(
             this,
             Engine
-                .ContentManager
+                .ObjectManager
                 .Shaders
                 .CreateOrGet("particle2d", ShaderDescription.FromPath("shaders/particle", "basic"))
         );
@@ -115,7 +115,7 @@ public class ParticleRenderer2D : GameObject, IDisposable
     {
         buffer = new VertexBufferObject(
             Engine
-                .ContentManager
+                .ObjectManager
                 .VertexArrays
                 .Create(
                     new OpenGL.Descriptions.VertexArrayObjectDescription

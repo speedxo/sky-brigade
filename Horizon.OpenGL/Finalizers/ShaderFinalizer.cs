@@ -14,7 +14,7 @@ public class ShaderFinalizer : IGameAssetFinalizer<Shader>
 {
     public static void Dispose(in Shader asset)
     {
-        ContentManager.GL.DeleteProgram(asset.Handle);
+        ObjectManager.GL.DeleteProgram(asset.Handle);
     }
 
     public static unsafe void DisposeAll(in IEnumerable<Shader> assets)
@@ -26,6 +26,6 @@ public class ShaderFinalizer : IGameAssetFinalizer<Shader>
         uint[] handles = assets.Select((t) => t.Handle).ToArray();
 
         for (int i = 0; i < handles.Length; i++)
-            ContentManager.GL.DeleteProgram(handles[i]);
+            ObjectManager.GL.DeleteProgram(handles[i]);
     }
 }

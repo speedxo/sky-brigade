@@ -39,7 +39,7 @@ public class Mesh2D : GameObject
 
         Buffer = new VertexBufferObject(
             Engine
-                .ContentManager
+                .ObjectManager
                 .VertexArrays
                 .Create(VertexArrayObjectDescription.VertexBuffer)
                 .Asset

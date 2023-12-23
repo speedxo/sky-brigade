@@ -95,7 +95,7 @@ public abstract partial class Tiling<TTextureID>
 
             Vbo = new VertexBufferObject(
                 Engine
-                    .ContentManager
+                    .ObjectManager
                     .VertexArrays
                     .Create(
                         new OpenGL.Descriptions.VertexArrayObjectDescription

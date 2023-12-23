@@ -52,7 +52,7 @@ public static class MaterialFactory
                 // load the image
                 var texture = GameEngine
                     .Instance
-                    .ContentManager
+                    .ObjectManager
                     .Textures
                     .CreateOrGet(
                         $"{name}{identifier}",

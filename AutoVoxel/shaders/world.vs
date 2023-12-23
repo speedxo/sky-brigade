@@ -10,6 +10,9 @@ uniform mat4 uCameraView;
 uniform mat4 uCameraProjection;
 uniform vec2 uChunkPosition;
 
+uniform bool uWavy;
+uniform float uTime;
+
 layout(location = 0) out vec2 oTexCoords;
 layout(location = 1) out vec3 oNormal;
 
@@ -28,6 +31,8 @@ layout(location = 1) out vec3 oNormal;
 #define CubeFaceRight 3
 #define CubeFaceTop 4
 #define CubeFaceBottom 5
+
+#import "fastRandom"
 
 vec3 unpackPosition(uint packedData) 
 {
@@ -78,7 +83,14 @@ void main()
 {
 	oTexCoords = unpackTexCoord();
     oNormal = unpackNormal();
+
     vec3 chunkOffset = vec3(uChunkPosition.x * (WIDTH), 0, uChunkPosition.y * (DEPTH));
+    vec3 unpackedPosition = unpackPosition(vPackedData0);
+    vec3 wavyness = vec3(0.0);
     
-    gl_Position = uCameraProjection * uCameraView * vec4(unpackPosition(vPackedData0) + chunkOffset, 1.0);
+    if (uWavy && mod(gl_VertexID, 2) == 0) {
+        wavyness = vec3(rand(unpackedPosition.xz) * sin(uTime + rand(unpackedPosition.xz) * 5.0) * 0.1);
+    }
+
+    gl_Position = uCameraProjection * uCameraView * vec4(unpackedPosition + wavyness + chunkOffset, 1.0);
 }

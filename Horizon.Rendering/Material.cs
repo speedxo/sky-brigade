@@ -36,5 +36,5 @@ public class Material
     /// Binds a specified attachment to a texture unit.
     /// </summary>
     public void BindAttachment(in MaterialAttachment type, in uint index) =>
-        ContentManager.GL.BindTextureUnit(index, Attachments[type].Handle);
+        ObjectManager.GL.BindTextureUnit(index, Attachments[type].Handle);
 }
