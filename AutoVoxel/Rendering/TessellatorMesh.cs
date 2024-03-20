@@ -30,7 +30,7 @@ public class TessellatorMesh : IDisposable, IRenderable
     {
         Buffer.Bind();
         Buffer.VertexBuffer.Bind();
-        Buffer.SetLayout<ChunkVertex>();
+        Buffer.VertexBuffer.SetLayout<ChunkVertex>();
         Buffer.VertexBuffer.Unbind();
         Buffer.Unbind();
     }

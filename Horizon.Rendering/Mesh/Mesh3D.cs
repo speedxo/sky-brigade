@@ -19,7 +19,7 @@ public class Mesh3D : Mesh<Vertex3D>
         // configure a 3d layout.
         Buffer.Bind();
         Buffer.VertexBuffer.Bind();
-        Buffer.SetLayout<Vertex3D>();
+        Buffer.VertexBuffer.SetLayout<Vertex3D>();
         Buffer.VertexBuffer.Unbind();
         Buffer.Unbind();
     }

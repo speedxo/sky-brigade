@@ -48,10 +48,7 @@ public class VertexArrayObjectFactory
             else
                 buffers.Add(type, buffer.Asset);
 
-            // simply binding the buffer is enough to attach it to the VertexArrayObject.
-            ObjectManager.GL.BindVertexArray(vaoHandle);
             buffer.Asset.Bind();
-            buffer.Asset.Unbind();
         }
         ObjectManager.GL.BindVertexArray(0);
 

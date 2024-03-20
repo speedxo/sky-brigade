@@ -140,7 +140,7 @@ public abstract partial class Tiling<TTextureID>
 
             Vbo.Bind();
             Vbo.VertexBuffer.Bind();
-            Vbo.SetLayout<BasicVertex>();
+            Vbo.VertexBuffer.SetLayout<BasicVertex>();
             //Vbo.VertexAttributePointer(
             //    0,
             //    2,
@@ -157,30 +157,30 @@ public abstract partial class Tiling<TTextureID>
             //);
             Vbo.InstanceBuffer.Bind();
 
-            Vbo.VertexAttributePointer(
+            Vbo.VertexBuffer.VertexAttributePointer(
                 2,
                 2,
                 VertexAttribPointerType.Float,
                 TileRenderData.SizeInBytes,
                 0
             );
-            Vbo.VertexAttributePointer(
+            Vbo.VertexBuffer.VertexAttributePointer(
                 3,
                 2,
                 VertexAttribPointerType.Float,
                 TileRenderData.SizeInBytes,
                 2 * sizeof(float)
             );
-            Vbo.VertexAttributePointer(
+            Vbo.VertexBuffer.VertexAttributePointer(
                 4,
                 3,
                 VertexAttribPointerType.Float,
                 TileRenderData.SizeInBytes,
                 4 * sizeof(float)
             );
-            Vbo.VertexAttributeDivisor(2, 1);
-            Vbo.VertexAttributeDivisor(3, 1);
-            Vbo.VertexAttributeDivisor(4, 1);
+            Vbo.VertexBuffer.VertexAttributeDivisor(2, 1);
+            Vbo.VertexBuffer.VertexAttributeDivisor(3, 1);
+            Vbo.VertexBuffer.VertexAttributeDivisor(4, 1);
 
             Vbo.Unbind();
             Vbo.VertexBuffer.Unbind();

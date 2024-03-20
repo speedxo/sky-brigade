@@ -21,6 +21,7 @@ public readonly struct BufferObjectDescription : IAssetDescription
             Size = 0
         };
 
+
     /// <summary>
     /// Element array buffer preset.
     /// </summary>

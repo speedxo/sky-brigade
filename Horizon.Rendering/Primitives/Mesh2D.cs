@@ -55,8 +55,8 @@ public class Mesh2D : GameObject
         Buffer.Bind();
         Buffer.VertexBuffer.Bind();
 
-        Buffer.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, Vertex2D.SizeInBytes, 0);
-        Buffer.VertexAttributePointer(
+        Buffer.VertexBuffer.VertexAttributePointer(0, 2, VertexAttribPointerType.Float, Vertex2D.SizeInBytes, 0);
+        Buffer.VertexBuffer.VertexAttributePointer(
             1,
             2,
             VertexAttribPointerType.Float,

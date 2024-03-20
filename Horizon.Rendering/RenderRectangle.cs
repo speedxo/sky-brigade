@@ -48,14 +48,14 @@ public class RenderRectangle : GameObject
             {
                 // setup vertex buffer
                 vbo.VertexBuffer.Bind();
-                vbo.VertexAttributePointer(
+                vbo.VertexBuffer.VertexAttributePointer(
                     0,
                     2,
                     Silk.NET.OpenGL.VertexAttribPointerType.Float,
                     sizeof(float) * 4,
                     0
                 );
-                vbo.VertexAttributePointer(
+                vbo.VertexBuffer.VertexAttributePointer(
                     1,
                     2,
                     Silk.NET.OpenGL.VertexAttribPointerType.Float,

@@ -152,7 +152,7 @@ public class ParticleRenderer2D : GameObject, IDisposable
         // Configure VAO layout
         buffer.Bind();
         buffer.VertexBuffer.Bind();
-        buffer.VertexAttributePointer(
+        buffer.VertexBuffer.VertexAttributePointer(
             0,
             2,
             Silk.NET.OpenGL.VertexAttribPointerType.Float,
@@ -162,22 +162,22 @@ public class ParticleRenderer2D : GameObject, IDisposable
 
         // Configure instance array.
         buffer.InstanceBuffer.Bind();
-        buffer.VertexAttributePointer(
+        buffer.VertexBuffer.VertexAttributePointer(
             1,
             2,
             Silk.NET.OpenGL.VertexAttribPointerType.Float,
             ParticleRenderData.SizeInBytes,
             0
         );
-        buffer.VertexAttributePointer(
+        buffer.VertexBuffer.VertexAttributePointer(
             2,
             1,
             Silk.NET.OpenGL.VertexAttribPointerType.Float,
             ParticleRenderData.SizeInBytes,
             sizeof(float) * 2
         );
-        buffer.VertexAttributeDivisor(1, 1); // Each particle has its own offset.
-        buffer.VertexAttributeDivisor(2, 1); // Each particle has its own offset.
+        buffer.VertexBuffer.VertexAttributeDivisor(1, 1); // Each particle has its own offset.
+        buffer.VertexBuffer.VertexAttributeDivisor(2, 1); // Each particle has its own offset.
         buffer.Unbind();
 
         buffer.VertexBuffer.NamedBufferData(quadVerts);

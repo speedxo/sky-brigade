@@ -90,7 +90,7 @@ public class SpriteBatchMesh : GameObject
     {
         Buffer.Bind();
         Buffer.VertexBuffer.Bind();
-        Buffer.SetLayout<Vertex2D>();
+        Buffer.VertexBuffer.SetLayout<Vertex2D>();
         Buffer.VertexBuffer.Unbind();
         Buffer.Unbind();
     }

@@ -56,7 +56,7 @@ public class VertexBufferPool
 
         buffer.Bind();
         buffer.VertexBuffer.Bind();
-        buffer.SetLayout<ChunkVertex>();
+        buffer.VertexBuffer.SetLayout<ChunkVertex>();
         buffer.VertexBuffer.Unbind();
         buffer.Unbind();
 
