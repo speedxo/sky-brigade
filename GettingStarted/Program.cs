@@ -1,4 +1,6 @@
-﻿using Bogz.Logging;
+﻿using System.Numerics;
+
+using Bogz.Logging;
 
 using Horizon.Engine;
 using Horizon.OpenGL;
@@ -8,6 +10,8 @@ using Horizon.OpenGL.Descriptions;
 
 using Silk.NET.OpenGL;
 
+using Texture = Horizon.OpenGL.Assets.Texture;
+
 namespace GettingStarted;
 
 class Program : Scene
@@ -16,10 +20,37 @@ class Program : Scene
 
     private VertexBufferObject vbo;
     private Technique technique;
+    private Texture texture;
+
+    private Matrix4x4 modelMatrix;
+
+    private Vector2 spritePos;
+    private float spriteScale = 0.1f;
+
+    // Primitive shader class, implemented here to showcase extendability.
+    private unsafe class ShaderTeq : Technique
+    {
+        public ShaderTeq()
+        {
+            SetShader(GameEngine
+                .Instance
+                .ObjectManager
+                .Shaders
+                .CreateOrGet(
+                "basic",
+                ShaderDescription.FromPath("shader", "basic")));
+        }
+    }
 
     public override void Initialize()
     {
         base.Initialize();
+
+        // We need to enable some features which are done through flags, in this case we need Textures.
+        Engine.GL.Enable(EnableCap.Texture2D);
+
+        // Likewise we should enable a texture unit to bind our texture to.
+        Engine.GL.ActiveTexture(TextureUnit.Texture0);
 
         /* In OpenGL it is required that you create one or more VBOs (vertex buffer object), then create and bind said buffers to a VAO (vertex array object),
           * a VBO is simply a buffer on the GPU side of which we can upload data to, and do whatever with. Horizon provides an exceptionless asset creation pipeline,
@@ -31,30 +62,35 @@ class Program : Scene
         LayoutAndUploadData();
 
         /* And finally we create the shader :) */
-        CreateShader();
+        CreateShaderAndTexture();
 
         // here we specify the color to clear the screen to, since we will be drawing a fullscreen quad we shouldnt ever see this.
         Engine.GL.ClearColor(0.3f, 0.0f, 0.5f, 1.0f);
     }
 
-    private void CreateShader()
+    private unsafe void CreateShaderAndTexture()
     {
         /* The technique is just a decorated Shader object with more functionality, here we will use the less verbose inline definition. */
-
         // side note: to copy source files to the build directory, select them in visual studio and in the properties panel you will see an option for "Copy to output directory"
-        technique = new Technique(Engine.ObjectManager.Shaders.Create(ShaderDescription.FromPath("shader", "basic")));
+        technique = new ShaderTeq();
+
+        texture = Engine.ObjectManager.Textures.CreateOrGet("texture", new TextureDescription { Path = "image.jpg" });
 
         /* You can F12 on the ShaderDescription.FromPath() to see that it simply is a shorthand for finding the path of all shaders in a folder with the same name, 
          * and creating a program from the shaders in said folder, this also enables my pre processor to use things such as #include :) */
     }
-    private void LayoutAndUploadData()
+    private unsafe void LayoutAndUploadData()
     {
+        // Set the model matrix to be a basic scale.
+        modelMatrix = Matrix4x4.Identity;
+
         // We create the 4 unique vertices required to render a square, the left side of the screen is -1 and the right is +1, same goes for the top and bottom.
+        // The second set of floats is the texture UV coordinates.
         float[] vertexData = new float[] {
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-            -1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,     0.0f, 1.0f,
+            1.0f, -1.0f, 0.0f,      1.0f, 1.0f,
+            1.0f, 1.0f, 0.0f,       1.0f, 0.0f,
+            -1.0f, 1.0f, 0.0f,      0.0f, 0.0f
         };
 
         // as well as the 6 indices.
@@ -74,7 +110,8 @@ class Program : Scene
         vbo.VertexBuffer.Bind();
 
         // 3. Enable and specify the layout of each vertex attribute
-        vbo.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, sizeof(float) * 3, 0);
+        vbo.VertexBuffer.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, sizeof(float) * 5, 0);
+        vbo.VertexBuffer.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, sizeof(float) * 5, sizeof(float) * 3);
 
         /* The index parameter specifies which shader binding point we want to bind to, it is standard to start from 0, the next specifies the size of the vector,
          * if it is 1, then we pass a single value, if it is say 2, we are passing a 2D vector, etc. in this case will be passing 3 floats for each vertex, so we specify that. 
@@ -146,9 +183,19 @@ class Program : Scene
         }
     }
 
+    public override void UpdateState(float dt)
+    {
+        base.UpdateState(dt);
+
+        spritePos += GameEngine.Instance.InputManager.GetVirtualController().MovementAxis * dt;
+    }
+
     public override void Render(float dt, object? obj = null)
     {
         base.Render(dt, obj);
+
+        // ensure we update our matrix.
+        modelMatrix = Matrix4x4.CreateOrthographic(1.0f * (16.0f / 9.0f), 1.0f, 0.01f, 10.0f) * Matrix4x4.CreateScale(spriteScale) * Matrix4x4.CreateTranslation(spritePos.X, spritePos.Y, 0.0f);
 
         // first we clear the screen and set the viewport size.
         Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -156,6 +203,11 @@ class Program : Scene
 
         // next we bind the shader, the currently bound program will be used to draw anything.
         technique.Bind();
+
+        // Make sure to upload our matrix.
+        technique.SetUniform("uModelMatrix", modelMatrix);
+        texture.Bind(0);
+        technique.SetUniform("uTexture", 0);
 
         // next we bind the vertex array object (in this case the VBO)
         vbo.Bind();

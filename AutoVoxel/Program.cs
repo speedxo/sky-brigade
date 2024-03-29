@@ -132,9 +132,9 @@ internal class Program : Scene
             return;
         }
 
-
+        float scalar = (0.25f - jumpTimer) / 0.25f;
         jumpTimer += dt;
-        camera.Position += Vector3.UnitY * dt * 15.0f;
+        camera.Position += Vector3.UnitY * dt * 15.0f * scalar;
     }
 
     static void Main(string[] _)

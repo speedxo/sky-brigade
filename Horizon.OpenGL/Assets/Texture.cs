@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Horizon.Core.Primitives;
+using Horizon.OpenGL.Managers;
 
 namespace Horizon.OpenGL.Assets;
 
@@ -21,4 +22,11 @@ public class Texture : IGLObject
             Width = 0,
             Height = 0
         };
+
+    public void Bind(uint bindingPoint)
+    {
+        ObjectManager
+            .GL
+            .BindTextureUnit(bindingPoint, Handle);
+    }
 }
