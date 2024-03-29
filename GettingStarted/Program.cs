@@ -79,25 +79,33 @@ class Program : Scene
         /* You can F12 on the ShaderDescription.FromPath() to see that it simply is a shorthand for finding the path of all shaders in a folder with the same name, 
          * and creating a program from the shaders in said folder, this also enables my pre processor to use things such as #include :) */
     }
+    
+    private readonly struct Vertex(float x, float y, float z, float uvX, float uvY, float cR, float cG, float cB)
+    {
+        public readonly Vector3 Position { get; init; } = new Vector3(x, y, z);
+        public readonly Vector2 TexCoords { get; init; } = new Vector2(uvX, uvY);
+        public readonly Vector3 Colour { get; init; } = new Vector3(cR, cG, cB);
+    }
+
     private unsafe void LayoutAndUploadData()
     {
         // Set the model matrix to be a basic scale.
         modelMatrix = Matrix4x4.Identity;
 
         // We create the 4 unique vertices required to render a square, the left side of the screen is -1 and the right is +1, same goes for the top and bottom.
-        // The second set of floats is the texture UV coordinates.
-        float[] vertexData = new float[] {
-            -1.0f, -1.0f, 0.0f,     0.0f, 1.0f,
-            1.0f, -1.0f, 0.0f,      1.0f, 1.0f,
-            1.0f, 1.0f, 0.0f,       1.0f, 0.0f,
-            -1.0f, 1.0f, 0.0f,      0.0f, 0.0f
-        };
+        Vertex[] vertexData = [
+            new Vertex( -1.0f, -1.0f, 0.0f,     0.0f, 1.0f,     0.1f, 0.1f, 1.0f),
+            new Vertex( 1.0f, -1.0f, 0.0f,      1.0f, 1.0f,     0.5f, 0.6f, 0.1f),
+            new Vertex( 1.0f, 1.0f, 0.0f,       1.0f, 0.0f,     0.2f, 0.4f, 0.8f),
+            new Vertex( -1.0f, 1.0f, 0.0f,      0.0f, 0.0f,     0.9f, 0.2f, 0.5f),
+        ];
+
 
         // as well as the 6 indices.
-        uint[] indices = new uint[] { 0, 1, 2, 0, 2, 3 };
+        uint[] indices = [0, 1, 2, 0, 2, 3];
 
         // next we upload the data, we can use modern DSA (direct state access) calls to skip having to bind and unbind a buffer to the state machine.
-        vbo.VertexBuffer.NamedBufferData(new ReadOnlySpan<float>(vertexData));
+        vbo.VertexBuffer.NamedBufferData(new ReadOnlySpan<Vertex>(vertexData));
         vbo.ElementBuffer.NamedBufferData(new ReadOnlySpan<uint>(indices));
 
         /* next we need to tell the GPU how the data is layed out in memory, so it can be exposed to the shader correctly. Since data is passed into the shader
@@ -110,8 +118,9 @@ class Program : Scene
         vbo.VertexBuffer.Bind();
 
         // 3. Enable and specify the layout of each vertex attribute
-        vbo.VertexBuffer.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, sizeof(float) * 5, 0);
-        vbo.VertexBuffer.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, sizeof(float) * 5, sizeof(float) * 3);
+        vbo.VertexBuffer.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, (uint)sizeof(Vertex), 0);
+        vbo.VertexBuffer.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)sizeof(Vertex), sizeof(float) * 3);
+        vbo.VertexBuffer.VertexAttributePointer(1, 2, VertexAttribPointerType.Float, (uint)sizeof(Vertex), sizeof(float) * 3);
 
         /* The index parameter specifies which shader binding point we want to bind to, it is standard to start from 0, the next specifies the size of the vector,
          * if it is 1, then we pass a single value, if it is say 2, we are passing a 2D vector, etc. in this case will be passing 3 floats for each vertex, so we specify that. 
@@ -187,6 +196,7 @@ class Program : Scene
     {
         base.UpdateState(dt);
 
+        // Update the sprite position by an offset from the input managers virtual controller, which aggregates a variety of input source types into a single virtual controller.
         spritePos += GameEngine.Instance.InputManager.GetVirtualController().MovementAxis * dt;
     }
 
@@ -206,6 +216,8 @@ class Program : Scene
 
         // Make sure to upload our matrix.
         technique.SetUniform("uModelMatrix", modelMatrix);
+
+        // Binding the texture to the unit we enabled and setting the shader uniform.
         texture.Bind(0);
         technique.SetUniform("uTexture", 0);
 
