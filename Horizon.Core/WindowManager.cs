@@ -3,9 +3,13 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+
+using Bogz.Logging.Loggers;
+
 using Horizon.Core;
 using Horizon.Core.Components;
 using Horizon.Core.Primitives;
+
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -86,7 +90,9 @@ public class WindowManager : IGameComponent
                 (int)config.WindowSize.X,
                 (int)config.WindowSize.Y
             ),
+            UpdatesPerSecond = 0,
             FramesPerSecond = 0,
+            ShouldSwapAutomatically = true,
             VSync = false,
             PreferredBitDepth = new Silk.NET.Maths.Vector4D<int>(10, 10, 10, 8)
         };
@@ -131,7 +137,7 @@ public class WindowManager : IGameComponent
 
     public void Initialize()
     {
-        //Parent.Logger.Log(Bogz.Logging.LogLevel.Info, $"[{Name}] Created window({_options.Size})!");
+        ConcurrentLogger.Instance.Log(Bogz.Logging.LogLevel.Info, $"[{Name}] Created window({_options.Size})!");
     }
 
     public void Render(float dt, object? obj = null) { }

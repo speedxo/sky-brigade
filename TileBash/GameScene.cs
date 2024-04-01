@@ -63,7 +63,7 @@ public class GameScene : Scene
         //debugDrawCallback.Initialize();
             
         //debugDrawCallback.AppendFlags(
-        //    DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair | DrawFlags.Shape
+        //    DrawFlags.CenterOfMass | DrawFlags.Joint | DrawFlags.Pair | DrawFlags.ShapePrimitive
         //);
         //debugDrawCallback.Enabled = true;
 

@@ -6,8 +6,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
+using Horizon.Core;
 using Horizon.Core.Data;
 using Horizon.Core.Primitives;
+using Horizon.OpenGL.Descriptions;
 using Horizon.OpenGL.Managers;
 
 using Silk.NET.OpenGL;
@@ -32,7 +34,7 @@ public class BufferObject : GLObject
         Bind();
         // FIXME cross static ref to BaseGameEngine
 
-        GL.BufferData(Type, (nuint)(data.Length * sizeof(T)), data, BufferUsageARB.DynamicDraw);
+        GL.BufferData(Type, (nuint)(data.Length * sizeof(T)), data, BufferUsageARB.StreamDraw);
 
         // FIXME cross static ref to BaseGameEngine
         GL.BindBuffer(Type, 0);
@@ -73,7 +75,7 @@ public class BufferObject : GLObject
         fixed (void* d = data)
         {
             // FIXME cross static ref to BaseGameEngine
-            GL.BufferData(Type, (nuint)(data.Length * sizeof(T)), d, BufferUsageARB.DynamicDraw);
+            GL.BufferData(Type, (nuint)(data.Length * sizeof(T)), d, BufferUsageARB.StreamDraw );
         }
         // FIXME cross static ref to BaseGameEngine
         GL.BindBuffer(Type, 0);
@@ -113,6 +115,7 @@ public class BufferObject : GLObject
         public readonly int Size { get; init; }
         public readonly int Count { get; init; }
         public readonly int Offset { get; init; }
+        public readonly bool Instanced { get; init; }
         public readonly VertexAttribPointerType Type { get; init; }
     }
 
@@ -146,7 +149,8 @@ public class BufferObject : GLObject
                     Size = size,
                     Count = count,
                     Offset = totalSizeInBytes,
-                    Type = attribute.Type
+                    Type = attribute.Type,
+                    Instanced = attribute.Instanced
                 }
             );
             totalSizeInBytes += size;
@@ -162,6 +166,9 @@ public class BufferObject : GLObject
         while (queue.Count > 0)
         {
             var ptr = queue.Dequeue();
+            
+            if (ptr.Instanced) VertexAttributeDivisor(ptr.Index, 1);
+            
             switch (ptr.Type)
             {
                 case VertexAttribPointerType.Int:
@@ -229,7 +236,18 @@ public class BufferObject : GLObject
             Handle,
             (nuint)(data.Length * sizeof(T)),
             data,
-            VertexBufferObjectUsage.DynamicDraw
+            VertexBufferObjectUsage.StreamDraw
+        );
+    }
+
+    public virtual unsafe void NamedBufferData(in nuint size)
+    {
+        // FIXME cross static ref to BaseGameEngine
+        GL.NamedBufferData(
+            Handle,
+            (nuint)(size),
+            null,
+            VertexBufferObjectUsage.StreamDraw
         );
     }
 
@@ -249,7 +267,7 @@ public class BufferObject : GLObject
                 Handle,
                 (nuint)(length > 0 ? length : (sizeof(T) * data.Length)),
                 d,
-                VertexBufferObjectUsage.DynamicDraw
+                VertexBufferObjectUsage.StreamDraw
             );
         }
     }
@@ -263,7 +281,7 @@ public class BufferObject : GLObject
                 Handle,
                 (nuint)(sizeof(T) * data.Length),
                 d,
-                VertexBufferObjectUsage.DynamicDraw
+                VertexBufferObjectUsage.StreamDraw
             );
         }
     }
@@ -285,7 +303,17 @@ public class BufferObject : GLObject
 
     public virtual void Unbind()
     {
-        // FIXME cross static ref to BaseGameEngine
         GL.BindBuffer(Type, 0);
+    }
+
+    public unsafe void BufferStorage(
+        uint size,
+        BufferStorageMask masks =
+            BufferStorageMask.MapPersistentBit
+            | BufferStorageMask.MapCoherentBit
+            | BufferStorageMask.MapWriteBit
+    )
+    {
+        GL.NamedBufferStorage(Handle, (nuint)(size), null, masks);
     }
 }

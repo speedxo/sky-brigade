@@ -6,14 +6,9 @@ namespace Horizon.Core.Data;
 /// Attach this to properties and call Buffer.SetLayout() to automatically configure a buffer layout.
 /// </summary>
 [AttributeUsage(AttributeTargets.Field, Inherited = false)]
-public class VertexLayout : Attribute
+public class VertexLayout(uint index, VertexAttribPointerType type, bool instanced = false) : Attribute
 {
-    public uint Index { get; }
-    public VertexAttribPointerType Type { get; }
-
-    public VertexLayout(uint index, VertexAttribPointerType type)
-    {
-        this.Index = index;
-        Type = type;
-    }
+    public uint Index { get; } = index;
+    public VertexAttribPointerType Type { get; } = type;
+    public bool Instanced { get; } = instanced;
 }

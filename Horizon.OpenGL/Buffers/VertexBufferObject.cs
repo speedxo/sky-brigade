@@ -40,8 +40,8 @@ public class VertexBufferObject
         VertexBuffer = vao.Buffers[VertexArrayBufferAttachmentType.ArrayBuffer];
         ElementBuffer = vao.Buffers[VertexArrayBufferAttachmentType.ElementBuffer];
 
-        if (vao.Buffers.ContainsKey(VertexArrayBufferAttachmentType.InstanceBuffer))
-            InstanceBuffer = vao.Buffers[VertexArrayBufferAttachmentType.InstanceBuffer];
+        if (vao.Buffers.ContainsKey(VertexArrayBufferAttachmentType.AdditionalBuffer0))
+            InstanceBuffer = vao.Buffers[VertexArrayBufferAttachmentType.AdditionalBuffer0];
 
         Bind();
         VertexBuffer.Bind();

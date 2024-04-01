@@ -131,7 +131,7 @@ public class ParticleRenderer2D : GameObject, IDisposable
                                 BufferObjectDescription.ElementArrayBuffer
                             },
                             {
-                                VertexArrayBufferAttachmentType.InstanceBuffer,
+                                VertexArrayBufferAttachmentType.AdditionalBuffer0,
                                 new BufferObjectDescription
                                 {
                                     IsStorageBuffer = true,

@@ -19,7 +19,7 @@ public class SpriteBatchMesh : GameObject
     private const string UNIFORM_CAMERA_PROJ_MATRIX = "uCameraProjection";
     private const string UNIFORM_CAMERA_VIEW_MATRIX = "uCameraView";
 
-    // TODO: we'll get back to memory alignment later.
+    // TODO: we'll get back to memory alignment later. edit: still havent
     [StructLayout(LayoutKind.Sequential)]
     private struct SpriteData
     {

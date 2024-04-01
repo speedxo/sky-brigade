@@ -1,4 +1,5 @@
 ﻿using Horizon.Content.Descriptions;
+
 using Silk.NET.OpenGL;
 
 namespace Horizon.OpenGL.Descriptions;
@@ -35,6 +36,7 @@ public readonly struct ShaderDescription : IAssetDescription
                         "vert" or "vs" or "vsh" => ShaderType.VertexShader,
                         "frag" or "fs" or "fsh" => ShaderType.FragmentShader,
                         "comp" or "cs" or "csh" => ShaderType.ComputeShader,
+                        "geom" or "gs" or "gsh" => ShaderType.GeometryShader,
                         _ => throw new Exception($"Unrecognized shader file extension '{ext}'!")
                     },
                     File = file

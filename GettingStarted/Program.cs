@@ -7,6 +7,7 @@ using Horizon.OpenGL;
 using Horizon.OpenGL.Assets;
 using Horizon.OpenGL.Buffers;
 using Horizon.OpenGL.Descriptions;
+using Horizon.Rendering.Primitives;
 
 using Silk.NET.OpenGL;
 
@@ -27,6 +28,8 @@ class Program : Scene
     private Vector2 spritePos;
     private float spriteScale = 0.1f;
 
+    private PrimitiveRenderer shapeRenderer;
+
     // Primitive shader class, implemented here to showcase extendability.
     private unsafe class ShaderTeq : Technique
     {
@@ -41,7 +44,21 @@ class Program : Scene
                 ShaderDescription.FromPath("shader", "basic")));
         }
     }
+    public Program()
+    { 
+        shapeRenderer = AddEntity<PrimitiveRenderer>();
 
+        int size = 100;
+        float scale = 0.01f;
+        for (int x = 0; x < size / 2; x++)
+        {
+            for (int y = 0; y < size / 2; y++)
+            {
+                shapeRenderer.Shapes.Add(new ShapePrimitive((PrimitiveShapeType)((x + y * size / 2) % 3), new Vector2((x / (float)size) - (size * scale) + scale * x + 0.5f, (y / (float)size) - (size * scale) + scale * y + 0.5f), Vector2.One * scale, new Vector3(Random.Shared.NextSingle(), Random.Shared.NextSingle(), Random.Shared.NextSingle()), 0.0f));
+            }
+        }
+
+    }
     public override void Initialize()
     {
         base.Initialize();
@@ -79,7 +96,7 @@ class Program : Scene
         /* You can F12 on the ShaderDescription.FromPath() to see that it simply is a shorthand for finding the path of all shaders in a folder with the same name, 
          * and creating a program from the shaders in said folder, this also enables my pre processor to use things such as #include :) */
     }
-    
+
     private readonly struct Vertex(float x, float y, float z, float uvX, float uvY, float cR, float cG, float cB)
     {
         public readonly Vector3 Position { get; init; } = new Vector3(x, y, z);
@@ -195,21 +212,28 @@ class Program : Scene
     public override void UpdateState(float dt)
     {
         base.UpdateState(dt);
-
         // Update the sprite position by an offset from the input managers virtual controller, which aggregates a variety of input source types into a single virtual controller.
         spritePos += GameEngine.Instance.InputManager.GetVirtualController().MovementAxis * dt;
-    }
 
-    public override void Render(float dt, object? obj = null)
+        for (int i = 0; i < shapeRenderer.Shapes.Count; i++)
+        {
+            shapeRenderer.Shapes[i] = shapeRenderer.Shapes[i] with
+            {
+                Rotation = shapeRenderer.Shapes[i].Rotation + Random.Shared.NextSingle() * dt * 100.0f
+            };
+        }
+
+    }
+    public override unsafe void Render(float dt, object? obj = null)
     {
+        // first we clear the screen and set the viewport size.
+        Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
+        Engine.GL.Viewport(0, 0, (uint)Engine.WindowManager.ViewportSize.X, (uint)Engine.WindowManager.ViewportSize.Y);
+
         base.Render(dt, obj);
 
         // ensure we update our matrix.
         modelMatrix = Matrix4x4.CreateOrthographic(1.0f * (16.0f / 9.0f), 1.0f, 0.01f, 10.0f) * Matrix4x4.CreateScale(spriteScale) * Matrix4x4.CreateTranslation(spritePos.X, spritePos.Y, 0.0f);
-
-        // first we clear the screen and set the viewport size.
-        Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
-        Engine.GL.Viewport(0, 0, (uint)Engine.WindowManager.ViewportSize.X, (uint)Engine.WindowManager.ViewportSize.Y);
 
         // next we bind the shader, the currently bound program will be used to draw anything.
         technique.Bind();
@@ -236,7 +260,7 @@ class Program : Scene
         vbo.Unbind();
         technique.Unbind();
     }
-
+     
     static void Main(string[] args)
     {
         new GameEngine(

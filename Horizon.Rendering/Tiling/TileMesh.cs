@@ -111,7 +111,7 @@ public abstract partial class Tiling<TTextureID>
                                     BufferObjectDescription.ElementArrayBuffer
                                 },
                                 {
-                                    VertexArrayBufferAttachmentType.InstanceBuffer,
+                                    VertexArrayBufferAttachmentType.AdditionalBuffer0,
                                     BufferObjectDescription.ArrayBuffer
                                 }
                             }
