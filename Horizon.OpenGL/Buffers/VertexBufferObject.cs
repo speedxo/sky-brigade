@@ -29,7 +29,9 @@ public class VertexBufferObject
 
     public BufferObject VertexBuffer { get; init; }
     public BufferObject ElementBuffer { get; init; }
+
     public BufferObject? InstanceBuffer { get; init; }
+    public BufferObject? IndirectBuffer { get; init; }
 
     public VertexArrayObject VertexArrayObject { get; init; }
 
@@ -40,8 +42,14 @@ public class VertexBufferObject
         VertexBuffer = vao.Buffers[VertexArrayBufferAttachmentType.ArrayBuffer];
         ElementBuffer = vao.Buffers[VertexArrayBufferAttachmentType.ElementBuffer];
 
-        if (vao.Buffers.ContainsKey(VertexArrayBufferAttachmentType.AdditionalBuffer0))
-            InstanceBuffer = vao.Buffers[VertexArrayBufferAttachmentType.AdditionalBuffer0];
+        {
+            if (vao.Buffers.TryGetValue(VertexArrayBufferAttachmentType.IndirectBuffer, out BufferObject? value))
+                IndirectBuffer = value;
+        }
+        {
+            if (vao.Buffers.TryGetValue(VertexArrayBufferAttachmentType.AdditionalBuffer0, out BufferObject? value))
+                InstanceBuffer = value;
+        }
 
         Bind();
         VertexBuffer.Bind();

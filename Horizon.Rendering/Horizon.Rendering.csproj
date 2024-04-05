@@ -39,6 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="shaders\basic\basic_material.fs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\basic\basic_material.vs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="shaders\basic\basic_technique .fs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

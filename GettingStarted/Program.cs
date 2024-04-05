@@ -23,7 +23,7 @@ class Program : Scene
     private Technique technique;
     private Texture texture;
 
-    private Matrix4x4 modelMatrix;
+    private Matrix4x4 modelMatrix, viewMatrix;
 
     private Vector2 spritePos;
     private float spriteScale = 0.1f;
@@ -45,7 +45,7 @@ class Program : Scene
         }
     }
     public Program()
-    { 
+    {
         shapeRenderer = AddEntity<PrimitiveRenderer>();
 
         int size = 100;
@@ -58,6 +58,9 @@ class Program : Scene
             }
         }
 
+        viewMatrix = Matrix4x4.CreateOrthographic(1.0f * (16.0f / 9.0f), 1.0f, 0.01f, 10.0f);
+        shapeRenderer.ViewMatrix = viewMatrix;
+
     }
     public override void Initialize()
     {
@@ -65,6 +68,8 @@ class Program : Scene
 
         // We need to enable some features which are done through flags, in this case we need Textures.
         Engine.GL.Enable(EnableCap.Texture2D);
+        Engine.GL.Enable(EnableCap.Blend);
+        Engine.GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
         // Likewise we should enable a texture unit to bind our texture to.
         Engine.GL.ActiveTexture(TextureUnit.Texture0);
@@ -91,7 +96,7 @@ class Program : Scene
         // side note: to copy source files to the build directory, select them in visual studio and in the properties panel you will see an option for "Copy to output directory"
         technique = new ShaderTeq();
 
-        texture = Engine.ObjectManager.Textures.CreateOrGet("texture", new TextureDescription { Path = "image.jpg" });
+        texture = Engine.ObjectManager.Textures.CreateOrGet("texture", new TextureDescription { Path = "image.png" });
 
         /* You can F12 on the ShaderDescription.FromPath() to see that it simply is a shorthand for finding the path of all shaders in a folder with the same name, 
          * and creating a program from the shaders in said folder, this also enables my pre processor to use things such as #include :) */
@@ -222,18 +227,22 @@ class Program : Scene
                 Rotation = shapeRenderer.Shapes[i].Rotation + Random.Shared.NextSingle() * dt * 100.0f
             };
         }
-
     }
+    float timer = 0.0f;
     public override unsafe void Render(float dt, object? obj = null)
     {
+        timer += dt;
+
         // first we clear the screen and set the viewport size.
         Engine.GL.Clear(ClearBufferMask.ColorBufferBit);
         Engine.GL.Viewport(0, 0, (uint)Engine.WindowManager.ViewportSize.X, (uint)Engine.WindowManager.ViewportSize.Y);
 
+        shapeRenderer.Transform.Rotation += dt * 20.0f;
+        shapeRenderer.Transform.Size = new Vector2(MathF.Sin(timer), MathF.Cos(timer));
         base.Render(dt, obj);
 
         // ensure we update our matrix.
-        modelMatrix = Matrix4x4.CreateOrthographic(1.0f * (16.0f / 9.0f), 1.0f, 0.01f, 10.0f) * Matrix4x4.CreateScale(spriteScale) * Matrix4x4.CreateTranslation(spritePos.X, spritePos.Y, 0.0f);
+        modelMatrix = viewMatrix * Matrix4x4.CreateScale(spriteScale) * Matrix4x4.CreateTranslation(spritePos.X, spritePos.Y, 0.0f);
 
         // next we bind the shader, the currently bound program will be used to draw anything.
         technique.Bind();
@@ -260,7 +269,7 @@ class Program : Scene
         vbo.Unbind();
         technique.Unbind();
     }
-     
+
     static void Main(string[] args)
     {
         new GameEngine(

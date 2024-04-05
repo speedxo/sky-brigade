@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GettingStarted", "GettingSt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoxelExplorer", "VoxelExplorer\VoxelExplorer.csproj", "{990C0565-7944-47BC-A76F-2CCF02739488}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoPlane", "DemoPlane\DemoPlane.csproj", "{48EB7EF4-A0AF-4737-8030-DDA008C18925}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,14 @@ Global
 		{990C0565-7944-47BC-A76F-2CCF02739488}.Release|Any CPU.Build.0 = Release|Any CPU
 		{990C0565-7944-47BC-A76F-2CCF02739488}.Release|x64.ActiveCfg = Release|Any CPU
 		{990C0565-7944-47BC-A76F-2CCF02739488}.Release|x64.Build.0 = Release|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Debug|x64.Build.0 = Debug|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Release|x64.ActiveCfg = Release|Any CPU
+		{48EB7EF4-A0AF-4737-8030-DDA008C18925}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

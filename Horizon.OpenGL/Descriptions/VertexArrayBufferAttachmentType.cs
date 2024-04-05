@@ -4,6 +4,7 @@ public enum VertexArrayBufferAttachmentType : uint
 {
     ArrayBuffer,
     ElementBuffer,
+    IndirectBuffer,
     AdditionalBuffer0,
     AdditionalBuffer1,
     AdditionalBuffer2,

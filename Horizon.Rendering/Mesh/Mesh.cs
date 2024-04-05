@@ -1,4 +1,9 @@
-﻿using Horizon.Core;
+﻿using System;
+using System.Runtime.InteropServices;
+
+using Bogz.Logging.Loggers;
+
+using Horizon.Core;
 using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Buffers;
@@ -13,12 +18,16 @@ namespace Horizon.Rendering.Mesh;
 public abstract class Mesh<VertexType> : Entity
     where VertexType : unmanaged
 {
+    public readonly record struct QueuedMeshData(VertexType[] Vertices, uint[] Indices);
+
     private const string UNIFORM_ALBEDO = "uTexAlbedo";
     private const string UNIFORM_NORMAL = "uTexNormal";
     private const string UNIFORM_SPECULAR = "uTexSpecular";
 
     public Material Material { get; set; }
     public Technique Technique { get; set; }
+    public bool HasUploadQueued { get; protected set; }
+    public QueuedMeshData QueuedData { get; protected set; }
 
     public VertexBufferObject Buffer { get; protected set; }
 
@@ -71,21 +80,37 @@ public abstract class Mesh<VertexType> : Entity
             );
     }
 
-    protected void UploadData(in VertexType[] vertices, in uint[] indices)
+    public void QueueUpload(in VertexType[] vertices, in uint[] indices)
     {
-        if (ElementCount < indices.Length) // dont reallocate unless we have to.
-            Buffer.VertexBuffer.NamedBufferSubData(vertices);
-        else Buffer.VertexBuffer.NamedBufferData(vertices);
+        if (HasUploadQueued)
+        {
+            ConcurrentLogger.Instance.Log(Bogz.Logging.LogLevel.Error, "An attempt was made to queue mesh data for upload when it already had one queued; as a result it was discarded.");
+            return;
+        }
 
-        Buffer.ElementBuffer.NamedBufferData(indices);
-
-        ElementCount = (uint)indices.Length;
+        HasUploadQueued = true;
+        QueuedData = new QueuedMeshData(vertices, indices);
     }
 
     public override void Render(float dt, object? obj = null)
     {
-        if (ElementCount < 1 || Buffer is null || Technique is null || Material is null)
+        if (Buffer is null || Technique is null || Material is null)
             return;
+
+        if (HasUploadQueued)
+        {
+            HasUploadQueued = false;
+
+            if (ElementCount < QueuedData.Indices.Length) // dont reallocate unless we have to.
+                Buffer.VertexBuffer.NamedBufferSubData(QueuedData.Vertices);
+            else Buffer.VertexBuffer.NamedBufferData(QueuedData.Vertices);
+
+            Buffer.ElementBuffer.NamedBufferData(QueuedData.Indices);
+
+            ElementCount = (uint)QueuedData.Indices.Length;
+        }
+
+        if (ElementCount < 1) return;
 
         // bind shader and set uniforms
         Technique.Bind();

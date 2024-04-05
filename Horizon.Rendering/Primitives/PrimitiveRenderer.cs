@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Horizon.Core;
+using Horizon.Core.Components;
 using Horizon.Core.Data;
 using Horizon.Engine;
 using Horizon.OpenGL;
@@ -68,6 +69,8 @@ public struct ShapePrimitive(PrimitiveShapeType type, Vector2 pos, Vector2 scale
 /// </summary>
 public class PrimitiveRenderer : Entity
 {
+    public TransformComponent2D Transform { get; init; }
+    public Matrix4x4 ViewMatrix { get; set; }
     public VertexArrayObject VertexArray { get; private set; }
     public List<ShapePrimitive> Shapes { get; init; }
 
@@ -86,9 +89,19 @@ public class PrimitiveRenderer : Entity
 
     private class ShapeRendererTechnique : Technique
     {
-        public ShapeRendererTechnique()
+        private readonly TransformComponent2D transform;
+
+        public ShapeRendererTechnique(in TransformComponent2D transform)
         {
             SetShader(GameEngine.Instance.ObjectManager.Shaders.CreateOrGet("ShapeRendererTechnique", ShaderDescription.FromPath("shaders/primitives", "shapes")));
+            this.transform = transform;
+        }
+
+        protected override void SetUniforms()
+        {
+            base.SetUniforms();
+
+            SetUniform("uModel", transform.ModelMatrix);
         }
     }
 
@@ -98,6 +111,9 @@ public class PrimitiveRenderer : Entity
     {
         uploadMethod = method;
         Shapes = [];
+
+        ViewMatrix = Matrix4x4.Identity;
+        Transform = AddComponent<TransformComponent2D>();
     }
 
     public ShapePrimitive this[int index]
@@ -117,7 +133,7 @@ public class PrimitiveRenderer : Entity
     {
         base.Initialize();
 
-        technique = new ShapeRendererTechnique();
+        technique = new ShapeRendererTechnique(Transform);
         arrayBufferSize = 4096;
         VertexArray = GameEngine.Instance.ObjectManager.VertexArrays.Create(new VertexArrayObjectDescription
         {
@@ -172,6 +188,7 @@ public class PrimitiveRenderer : Entity
 
 
         technique.Bind();
+        technique.SetUniform("uView", ViewMatrix);
         VertexArray.Bind();
         GameEngine.Instance.GL.DrawArrays(Silk.NET.OpenGL.PrimitiveType.Points, 0, (uint)Shapes.Count);
         VertexArray.Unbind();

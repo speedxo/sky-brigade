@@ -17,7 +17,13 @@ layout(location = 0) out GS_OUT {
 
 out vec3 color;
 
+uniform mat4 uModel;
+uniform mat4 uView;
+
 void main() {
+    // premutate matrix
+    mat4 transMat = uView * uModel;
+
     // convert rotation to radians
     float rotation = radians(gs_in[0].rotation); 
     vec2 scale = gs_in[0].scale;
@@ -40,7 +46,7 @@ void main() {
             float x = vertex.x * cos(rotation) - vertex.y * sin(rotation);
             float y = vertex.x * sin(rotation) + vertex.y * cos(rotation);
             vertex = vec2(x, y) + translation;
-            gl_Position = vec4(vertex, 0.0, 1.0);
+            gl_Position = transMat * vec4(vertex, 0.0, 1.0);
             EmitVertex();
         }
     } else if (type == 1u) {
@@ -57,7 +63,7 @@ void main() {
             float x = vertex.x * cos(rotation) - vertex.y * sin(rotation);
             float y = vertex.x * sin(rotation) + vertex.y * cos(rotation);
             vertex = vec2(x, y) + translation;
-            gl_Position = vec4(vertex, 0.0, 1.0);
+            gl_Position = transMat * vec4(vertex, 0.0, 1.0);
             EmitVertex();
         }
     } 
@@ -79,12 +85,12 @@ void main() {
             float y = vertex.x * sin(rotation) + vertex.y * cos(rotation);
             vertex = vec2(x, y) + translation;
         
-            gl_Position = vec4(vertex, 0.0, 1.0);
+            gl_Position = transMat * vec4(vertex, 0.0, 1.0);
             EmitVertex();
 
             // Close the circle by emitting a vertex at the center for every second vertex
             if (i % 2 == 0) {
-                gl_Position = vec4(translation, 0.0, 1.0);
+                gl_Position = transMat * vec4(translation, 0.0, 1.0);
                 EmitVertex();
             }
         }

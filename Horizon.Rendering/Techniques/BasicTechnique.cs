@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Horizon.Engine;
 using Horizon.OpenGL;
 using Horizon.OpenGL.Descriptions;
@@ -24,6 +25,37 @@ public class BasicTechnique : Technique
                 .CreateOrGet(
                     "basic_technique",
                     ShaderDescription.FromPath("shaders/basic", "basic_technique")
+                )
+        );
+    }
+
+    protected override void SetUniforms()
+    {
+        SetUniform(
+            UNIFORM_VIEW,
+            GameEngine.Instance.SceneManager.CurrentInstance.ActiveCamera.View
+        );
+        SetUniform(
+            UNIFORM_PROJECTION,
+            GameEngine.Instance.SceneManager.CurrentInstance.ActiveCamera.Projection
+        );
+    }
+}
+public class BasicMaterialTechnique : Technique
+{
+    private const string UNIFORM_VIEW = "uCameraView";
+    private const string UNIFORM_PROJECTION = "uCameraProjection";
+
+    public BasicMaterialTechnique()
+    {
+        SetShader(
+            GameEngine
+                .Instance
+                .ObjectManager
+                .Shaders
+                .CreateOrGet(
+                    "basic_material_technique",
+                    ShaderDescription.FromPath("shaders/basic", "basic_material")
                 )
         );
     }

@@ -21,6 +21,16 @@ public readonly struct BufferObjectDescription : IAssetDescription
             Size = 0
         };
 
+    /// <summary>
+    /// Indirect buffer preset.
+    /// </summary>
+    public static BufferObjectDescription IndirectBuffer { get; } =
+        new BufferObjectDescription
+        {
+            Type = BufferTargetARB.DrawIndirectBuffer,
+            IsStorageBuffer = false,
+            Size = 0
+        };
 
     /// <summary>
     /// Element array buffer preset.
