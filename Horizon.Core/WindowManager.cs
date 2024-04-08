@@ -104,9 +104,6 @@ public class WindowManager : IGameComponent
         ViewportSize = WindowSize = config.WindowSize;
 
         // Create the window.
-        SdlWindowing.Use();
-        //GlfwProvider.GLFW.Value.WindowHint(WindowHintContextApi.ContextCreationApi, ContextApi.NativeContextApi);
-        
         this._window = Silk.NET.Windowing.Window.Create(_options);
         SubscribeWindowEvents();
     }
