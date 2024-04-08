@@ -13,8 +13,10 @@ using Horizon.Core.Primitives;
 using Silk.NET.GLFW;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
+using Silk.NET.SDL;
 using Silk.NET.Windowing;
 using Silk.NET.Windowing.Glfw;
+using Silk.NET.Windowing.Sdl;
 
 namespace Horizon.Core;
 
@@ -102,9 +104,9 @@ public class WindowManager : IGameComponent
         ViewportSize = WindowSize = config.WindowSize;
 
         // Create the window.
-        GlfwWindowing.Use();
-        GlfwProvider.GLFW.Value.WindowHint(WindowHintContextApi.ContextCreationApi, ContextApi.NativeContextApi);
-
+        SdlWindowing.Use();
+        //GlfwProvider.GLFW.Value.WindowHint(WindowHintContextApi.ContextCreationApi, ContextApi.NativeContextApi);
+        
         this._window = Silk.NET.Windowing.Window.Create(_options);
         SubscribeWindowEvents();
     }
